@@ -2,19 +2,19 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../../utils/factory';
-import Mercator from '../../../utils/mercator';
-import Utils from '../../../utils/utils';
+import { Factory } from '../../../utils/factory';
+import { Mercator } from '../../../utils/mercator';
+import { Utils } from '../../../utils/utils';
 
 import { Map, MapArea, MapItem } from '../../../models/map';
 
-import MapAreaCard from '../../cards/map-area-card';
-import MapTileCard from '../../cards/map-tile-card';
-import ConfirmButton from '../../controls/confirm-button';
-import Textbox from '../../controls/textbox';
-import MapPanel from '../../panels/map-panel';
-import Note from '../../panels/note';
-import ImageSelectionModal from '../image-selection-modal';
+import { MapAreaCard } from '../../cards/map-area-card';
+import { MapTileCard } from '../../cards/map-tile-card';
+import { ConfirmButton } from '../../controls/confirm-button';
+import { Textbox } from '../../controls/textbox';
+import { MapPanel } from '../../panels/map-panel';
+import { Note } from '../../panels/note';
+import { ImageSelectionModal } from '../image-selection-modal';
 
 interface Props {
 	map: Map;
@@ -29,7 +29,7 @@ interface State {
 	showImageSelection: boolean;
 }
 
-export default class MapEditorModal extends React.Component<Props, State> {
+export class MapEditorModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

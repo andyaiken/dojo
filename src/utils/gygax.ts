@@ -1,8 +1,8 @@
 // This utility file contains D&D-specific helper methods
 
-import Factory from './factory';
-import Frankenstein from './frankenstein';
-import Utils from './utils';
+import { Factory } from './factory';
+import { Frankenstein } from './frankenstein';
+import { Utils } from './utils';
 
 import { Combatant, CombatSlotInfo } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
@@ -11,7 +11,7 @@ import { Encounter, EncounterWave } from '../models/encounter';
 import { Monster, MonsterGroup } from '../models/monster';
 import { PC } from '../models/party';
 
-export default class Gygax {
+export class Gygax {
 	public static modifierValue(score: number): number {
 		return Math.floor((score - 10) / 2);
 	}

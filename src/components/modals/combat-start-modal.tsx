@@ -2,11 +2,11 @@ import { CloseCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { Col, Row, Slider } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
+import { Factory } from '../../utils/factory';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
+import { Mercator } from '../../utils/mercator';
+import { Napoleon } from '../../utils/napoleon';
 
 import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
@@ -14,16 +14,16 @@ import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import MonsterCard from '../cards/monster-card';
-import Checkbox from '../controls/checkbox';
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
-import DifficultyChartPanel from '../panels/difficulty-chart-panel';
-import FilterPanel from '../panels/filter-panel';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
+import { MonsterCard } from '../cards/monster-card';
+import { Checkbox } from '../controls/checkbox';
+import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
+import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
+import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
+import { FilterPanel } from '../panels/filter-panel';
+import { MapPanel } from '../panels/map-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	type: 'start' | 'add-wave' | 'add-combatants';
@@ -44,7 +44,7 @@ interface State {
 	mapFixed: boolean;
 }
 
-export default class CombatStartModal extends React.Component<Props, State> {
+export class CombatStartModal extends React.Component<Props, State> {
 	public static defaultProps = {
 		parties: null,
 		encounters: null,

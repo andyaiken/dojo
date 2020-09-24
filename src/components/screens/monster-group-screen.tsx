@@ -2,23 +2,23 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
-import Shakespeare from '../../utils/shakespeare';
-import Utils from '../../utils/utils';
+import { Factory } from '../../utils/factory';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
+import { Shakespeare } from '../../utils/shakespeare';
+import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
-import MonsterCard from '../cards/monster-card';
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
-import Textbox from '../controls/textbox';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { MonsterCard } from '../cards/monster-card';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { NumberSpin } from '../controls/number-spin';
+import { Textbox } from '../controls/textbox';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	monsterGroup: MonsterGroup;
@@ -38,7 +38,7 @@ interface Props {
 	nudgeValue: (source: any, field: string, value: number) => void;
 }
 
-export default class MonsterGroupScreen extends React.Component<Props> {
+export class MonsterGroupScreen extends React.Component<Props> {
 	private export(monster: Monster) {
 		const filename = monster.name + '.monster';
 		Utils.saveFile(filename, monster);

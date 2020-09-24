@@ -2,13 +2,13 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Gygax from '../../utils/gygax';
-import Matisse from '../../utils/matisse';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
+import { Factory } from '../../utils/factory';
+import { Gygax } from '../../utils/gygax';
+import { Matisse } from '../../utils/matisse';
+import { Mercator } from '../../utils/mercator';
+import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsPlayer } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -17,24 +17,24 @@ import { Exploration, Map } from '../../models/map';
 import { Handout, Options, Sidebar } from '../../models/misc';
 import { Monster } from '../../models/monster';
 
-import MonsterStatblockCard from '../cards/monster-statblock-card';
-import NumberSpin from '../controls/number-spin';
-import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
-import ConditionModal from '../modals/condition-modal';
-import PCEditorModal from '../modals/editors/pc-editor-modal';
-import StatBlockModal from '../modals/stat-block-modal';
-import DieRollPanel from '../panels/die-roll-panel';
-import DieRollResultPanel from '../panels/die-roll-result-panel';
-import ErrorBoundary from '../panels/error-boundary';
-import GridPanel from '../panels/grid-panel';
-import InitiativeOrder from '../panels/initiative-order';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
-import PageHeader from '../panels/page-header';
-import PageSidebar from '../panels/page-sidebar';
-import PDF from '../panels/pdf';
-import PortraitPanel from '../panels/portrait-panel';
+import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { NumberSpin } from '../controls/number-spin';
+import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
+import { ConditionModal } from '../modals/condition-modal';
+import { PCEditorModal } from '../modals/editors/pc-editor-modal';
+import { StatBlockModal } from '../modals/stat-block-modal';
+import { DieRollPanel } from '../panels/die-roll-panel';
+import { DieRollResultPanel } from '../panels/die-roll-result-panel';
+import { ErrorBoundary } from '../panels/error-boundary';
+import { GridPanel } from '../panels/grid-panel';
+import { InitiativeOrder } from '../panels/initiative-order';
+import { MapPanel } from '../panels/map-panel';
+import { Note } from '../panels/note';
+import { PageHeader } from '../panels/page-header';
+import { PageSidebar } from '../panels/page-sidebar';
+import { PDF } from '../panels/pdf';
+import { PortraitPanel } from '../panels/portrait-panel';
 import { MessagePanel } from '../panels/session-panel';
 
 interface Props {
@@ -47,7 +47,7 @@ interface State {
 	options: Options;
 }
 
-export default class Player extends React.Component<Props, State> {
+export class Player extends React.Component<Props, State> {
 
 	//#region Constructor
 

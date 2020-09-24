@@ -1,12 +1,12 @@
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
-import NumberSpin from '../controls/number-spin';
+import { NumberSpin } from '../controls/number-spin';
 
 interface Props {
 	combatants: Combatant[];
@@ -17,7 +17,7 @@ interface Props {
 	removeCondition: (combatant: Combatant, condition: Condition) => void;
 }
 
-export default class ConditionsPanel extends React.Component<Props> {
+export class ConditionsPanel extends React.Component<Props> {
 	public render() {
 		try {
 			const conditions: JSX.Element[] = [];

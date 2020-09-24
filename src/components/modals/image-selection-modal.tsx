@@ -2,14 +2,14 @@ import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
 import { notification, Upload } from 'antd';
 import React from 'react';
 
-import Matisse from '../../utils/matisse';
-import Sherlock from '../../utils/sherlock';
-import Utils from '../../utils/utils';
+import { Matisse } from '../../utils/matisse';
+import { Sherlock } from '../../utils/sherlock';
+import { Utils } from '../../utils/utils';
 
 import { SavedImage } from '../../models/misc';
 
-import Textbox from '../controls/textbox';
-import Note from '../panels/note';
+import { Textbox } from '../controls/textbox';
+import { Note } from '../panels/note';
 
 interface Props {
 	select: (id: string) => void;
@@ -21,7 +21,7 @@ interface State {
 	filter: string;
 }
 
-export default class ImageSelectionModal extends React.Component<Props, State> {
+export class ImageSelectionModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

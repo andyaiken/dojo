@@ -3,14 +3,14 @@ import { Col, Drawer, notification, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
-import Matisse from '../../utils/matisse';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
+import { Factory } from '../../utils/factory';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
+import { Matisse } from '../../utils/matisse';
+import { Mercator } from '../../utils/mercator';
+import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsDM } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -20,37 +20,37 @@ import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
-import Selector from '../controls/selector';
-import CombatStartModal from '../modals/combat-start-modal';
-import ConditionModal from '../modals/condition-modal';
-import DemographicsModal from '../modals/demographics-modal';
-import EncounterEditorModal from '../modals/editors/encounter-editor-modal';
-import MapEditorModal from '../modals/editors/map-editor-modal';
-import MonsterEditorModal from '../modals/editors/monster-editor-modal';
-import PCEditorModal from '../modals/editors/pc-editor-modal';
-import MapImportModal from '../modals/import/map-import-modal';
-import MonsterGroupImportModal from '../modals/import/monster-group-import-modal';
-import MonsterImportModal from '../modals/import/monster-import-modal';
-import PartyImportModal from '../modals/import/party-import-modal';
-import PCImportModal from '../modals/import/pc-import-modal';
-import StatBlockModal from '../modals/stat-block-modal';
-import CombatNotificationPanel from '../panels/combat-notification-panel';
-import ErrorBoundary from '../panels/error-boundary';
-import PageFooter from '../panels/page-footer';
-import PageHeader from '../panels/page-header';
-import PageSidebar from '../panels/page-sidebar';
+import { Selector } from '../controls/selector';
+import { CombatStartModal } from '../modals/combat-start-modal';
+import { ConditionModal } from '../modals/condition-modal';
+import { DemographicsModal } from '../modals/demographics-modal';
+import { EncounterEditorModal } from '../modals/editors/encounter-editor-modal';
+import { MapEditorModal } from '../modals/editors/map-editor-modal';
+import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
+import { PCEditorModal } from '../modals/editors/pc-editor-modal';
+import { MapImportModal } from '../modals/import/map-import-modal';
+import { MonsterGroupImportModal } from '../modals/import/monster-group-import-modal';
+import { MonsterImportModal } from '../modals/import/monster-import-modal';
+import { PartyImportModal } from '../modals/import/party-import-modal';
+import { PCImportModal } from '../modals/import/pc-import-modal';
+import { StatBlockModal } from '../modals/stat-block-modal';
+import { CombatNotificationPanel } from '../panels/combat-notification-panel';
+import { ErrorBoundary } from '../panels/error-boundary';
+import { PageFooter } from '../panels/page-footer';
+import { PageHeader } from '../panels/page-header';
+import { PageSidebar } from '../panels/page-sidebar';
 import { MessagePanel } from '../panels/session-panel';
-import CombatScreen from '../screens/combat-screen';
-import EncounterListScreen from '../screens/encounter-list-screen';
-import EncounterScreen from '../screens/encounter-screen';
-import ExplorationScreen from '../screens/exploration-screen';
-import HomeScreen from '../screens/home-screen';
-import MapListScreen from '../screens/map-list-screen';
-import MapScreen from '../screens/map-screen';
-import MonsterGroupListScreen from '../screens/monster-group-list-screen';
-import MonsterGroupScreen from '../screens/monster-group-screen';
-import PartyListScreen from '../screens/party-list-screen';
-import PartyScreen from '../screens/party-screen';
+import { CombatScreen } from '../screens/combat-screen';
+import { EncounterListScreen } from '../screens/encounter-list-screen';
+import { EncounterScreen } from '../screens/encounter-screen';
+import { ExplorationScreen } from '../screens/exploration-screen';
+import { HomeScreen } from '../screens/home-screen';
+import { MapListScreen } from '../screens/map-list-screen';
+import { MapScreen } from '../screens/map-screen';
+import { MonsterGroupListScreen } from '../screens/monster-group-list-screen';
+import { MonsterGroupScreen } from '../screens/monster-group-screen';
+import { PartyListScreen } from '../screens/party-list-screen';
+import { PartyScreen } from '../screens/party-screen';
 
 interface Props {
 }
@@ -76,7 +76,7 @@ interface State {
 	selectedExplorationID: string | null;
 }
 
-export default class Main extends React.Component<Props, State> {
+export class Main extends React.Component<Props, State> {
 
 	//#region Constructor
 

@@ -7,12 +7,12 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import MonsterStatblockCard from '../cards/monster-statblock-card';
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Textbox from '../controls/textbox';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Textbox } from '../controls/textbox';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -28,7 +28,7 @@ interface Props {
 	goBack: () => void;
 }
 
-export default class EncounterScreen extends React.Component<Props> {
+export class EncounterScreen extends React.Component<Props> {
 	private getSlots(id: string, name: string, slots: EncounterSlot[]) {
 		const filledSlots = slots.filter(s => s.monsterName !== '');
 		if (filledSlots.length === 0) {

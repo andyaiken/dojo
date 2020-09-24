@@ -3,11 +3,11 @@ import React from 'react';
 import { DieRollResult } from '../../models/dice';
 import { CardDraw, Handout } from '../../models/misc';
 
-import Selector from '../controls/selector';
-import DieRollerTool from './tools/die-roller-tool';
-import HandoutTool from './tools/handout-tool';
-import LanguageTool from './tools/language-tool';
-import OracleTool from './tools/oracle-tool';
+import { Selector } from '../controls/selector';
+import { DieRollerTool } from './tools/die-roller-tool';
+import { HandoutTool } from './tools/handout-tool';
+import { LanguageTool } from './tools/language-tool';
+import { OracleTool } from './tools/oracle-tool';
 
 interface Props {
 	view: string;
@@ -39,7 +39,7 @@ interface Props {
 	resetDraw: () => void;
 }
 
-export default class ToolsSidebar extends React.Component<Props> {
+export class ToolsSidebar extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [

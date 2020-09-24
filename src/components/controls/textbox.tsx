@@ -13,7 +13,7 @@ interface Props {
 	onPressEnter: () => void;
 }
 
-export default class Textbox extends React.Component<Props> {
+export class Textbox extends React.Component<Props> {
 	public static defaultProps = {
 		placeholder: '',
 		multiLine: false,

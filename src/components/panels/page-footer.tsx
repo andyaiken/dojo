@@ -9,7 +9,7 @@ interface Props {
 	onSelectView: (view: string) => void;
 }
 
-export default class PageFooter extends React.Component<Props> {
+export class PageFooter extends React.Component<Props> {
 	public static defaultProps = {
 		tabs: [],
 		onSelectView: null

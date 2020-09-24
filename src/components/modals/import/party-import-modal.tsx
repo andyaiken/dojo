@@ -2,16 +2,16 @@ import { FileOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
-import Hero from '../../../utils/hero';
-import Utils from '../../../utils/utils';
+import { Hero } from '../../../utils/hero';
+import { Utils } from '../../../utils/utils';
 
 import { Party } from '../../../models/party';
 
-import PCCard from '../../cards/pc-card';
-import Tabs from '../../controls/tabs';
-import Textbox from '../../controls/textbox';
-import GridPanel from '../../panels/grid-panel';
-import Note from '../../panels/note';
+import { PCCard } from '../../cards/pc-card';
+import { Tabs } from '../../controls/tabs';
+import { Textbox } from '../../controls/textbox';
+import { GridPanel } from '../../panels/grid-panel';
+import { Note } from '../../panels/note';
 
 interface Props {
 	party: Party;
@@ -23,7 +23,7 @@ interface State {
 	party: Party;
 }
 
-export default class PartyImportModal extends React.Component<Props, State> {
+export class PartyImportModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

@@ -2,18 +2,18 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../../utils/factory';
-import Gygax from '../../../utils/gygax';
-import Utils from '../../../utils/utils';
+import { Factory } from '../../../utils/factory';
+import { Gygax } from '../../../utils/gygax';
+import { Utils } from '../../../utils/utils';
 
 import { MonsterGroup } from '../../../models/monster';
 import { PC } from '../../../models/party';
 
-import Dropdown from '../../controls/dropdown';
-import NumberSpin from '../../controls/number-spin';
-import Textbox from '../../controls/textbox';
-import PortraitPanel from '../../panels/portrait-panel';
-import ImageSelectionModal from '../image-selection-modal';
+import { Dropdown } from '../../controls/dropdown';
+import { NumberSpin } from '../../controls/number-spin';
+import { Textbox } from '../../controls/textbox';
+import { PortraitPanel } from '../../panels/portrait-panel';
+import { ImageSelectionModal } from '../image-selection-modal';
 
 interface Props {
 	pc: PC;
@@ -25,7 +25,7 @@ interface State {
 	showImageSelection: boolean;
 }
 
-export default class PCEditorModal extends React.Component<Props, State> {
+export class PCEditorModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

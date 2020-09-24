@@ -11,7 +11,7 @@ interface State {
 	containerElement: HTMLElement | null;
 }
 
-export default class Popout extends React.Component<Props, State> {
+export class Popout extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

@@ -3,17 +3,17 @@ import { Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Gygax from '../../utils/gygax';
-import Matisse from '../../utils/matisse';
+import { Gygax } from '../../utils/gygax';
+import { Matisse } from '../../utils/matisse';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import HitPointGauge from './hit-point-gauge';
+import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
+import { HitPointGauge } from './hit-point-gauge';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -59,7 +59,7 @@ interface MapItemStyle {
 	opacity?: string;
 }
 
-export default class MapPanel extends React.Component<Props, State> {
+export class MapPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		mode: 'thumbnail',
 		viewport: null,

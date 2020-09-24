@@ -1,14 +1,14 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
-import Napoleon from '../../utils/napoleon';
+import { Gygax } from '../../utils/gygax';
+import { Napoleon } from '../../utils/napoleon';
 
 import { Encounter } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import Dropdown from '../controls/dropdown';
+import { Dropdown } from '../controls/dropdown';
 
 interface Props {
 	encounter: Encounter;
@@ -22,7 +22,7 @@ interface State {
 	selectedWaveID: string | null;
 }
 
-export default class DifficultyChartPanel extends React.Component<Props, State> {
+export class DifficultyChartPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		party: null
 	};

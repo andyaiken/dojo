@@ -8,7 +8,7 @@ interface Props {
 	onChecked: (value: boolean) => void;
 }
 
-export default class Checkbox extends React.Component<Props> {
+export class Checkbox extends React.Component<Props> {
 	public static defaultProps = {
 		display: 'switch',
 		disabled: false

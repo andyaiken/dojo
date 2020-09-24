@@ -1,9 +1,9 @@
 import { CloseCircleOutlined, EllipsisOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Sherlock from '../../utils/sherlock';
+import { Sherlock } from '../../utils/sherlock';
 
-import Textbox from './textbox';
+import { Textbox } from './textbox';
 
 interface Props {
 	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
@@ -19,7 +19,7 @@ interface State {
 	filterText: string;
 }
 
-export default class Dropdown extends React.Component<Props, State> {
+export class Dropdown extends React.Component<Props, State> {
 	public static defaultProps = {
 		selectedID: null,
 		placeholder: 'select...',

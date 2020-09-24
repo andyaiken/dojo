@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Sherlock from '../../utils/sherlock';
+import { Sherlock } from '../../utils/sherlock';
 
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import Textbox from '../controls/textbox';
-import Note from '../panels/note';
+import { Textbox } from '../controls/textbox';
+import { Note } from '../panels/note';
 
 interface Props {
 	parties: Party[];
@@ -25,7 +25,7 @@ interface State {
 	text: string;
 }
 
-export default class SearchDMSidebar extends React.Component<Props, State> {
+export class SearchSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

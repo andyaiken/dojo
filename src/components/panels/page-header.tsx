@@ -12,7 +12,7 @@ interface Props {
 	onToggleSettings: () => void;
 }
 
-export default class PageHeader extends React.Component<Props> {
+export class PageHeader extends React.Component<Props> {
 	public static defaultProps = {
 		sidebarVisible: false,
 		onToggleSidebar: null,

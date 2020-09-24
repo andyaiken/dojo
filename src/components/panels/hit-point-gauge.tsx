@@ -6,7 +6,7 @@ interface Props {
 	combatant: Combatant;
 }
 
-export default class HitPointGauge extends React.Component<Props> {
+export class HitPointGauge extends React.Component<Props> {
 	public render() {
 		try {
 			const hpCurrent = this.props.combatant.hpCurrent || 0;

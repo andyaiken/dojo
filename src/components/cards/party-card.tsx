@@ -3,9 +3,9 @@ import React from 'react';
 import { Encounter } from '../../models/encounter';
 import { Party, PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	party: Party;
@@ -17,7 +17,7 @@ interface Props {
 	openStatBlock: (pc: PC) => void;
 }
 
-export default class PartyCard extends React.Component<Props> {
+export class PartyCard extends React.Component<Props> {
 	private getText(pc: PC) {
 		let name = pc.name || 'unnamed pc';
 		if (pc.player) {

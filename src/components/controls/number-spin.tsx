@@ -11,7 +11,7 @@ interface Props {
 	onNudgeValue: (delta: number) => void;
 }
 
-export default class NumberSpin extends React.Component<Props> {
+export class NumberSpin extends React.Component<Props> {
 	public static defaultProps = {
 		label: null,
 		upEnabled: true,

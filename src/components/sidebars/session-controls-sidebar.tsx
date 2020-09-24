@@ -1,18 +1,18 @@
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Gygax from '../../utils/gygax';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
+import { Factory } from '../../utils/factory';
+import { Gygax } from '../../utils/gygax';
+import { Mercator } from '../../utils/mercator';
+import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsPlayer } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration, Map } from '../../models/map';
 
-import CombatControlsPanel from '../panels/combat-controls-panel';
-import Note from '../panels/note';
+import { CombatControlsPanel } from '../panels/combat-controls-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
@@ -21,7 +21,7 @@ interface Props {
 	onUpdated: () => void;
 }
 
-export default class SessionControlsSidebar extends React.Component<Props> {
+export class SessionControlsSidebar extends React.Component<Props> {
 	private getContent() {
 		if (CommsPlayer.getState() === 'connected') {
 			let allCombatants: Combatant[] = [];

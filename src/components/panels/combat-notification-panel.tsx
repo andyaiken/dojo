@@ -10,7 +10,7 @@ interface Props {
 	close: (notification: Notification, removeCondition: boolean) => void;
 }
 
-export default class CombatNotificationPanel extends React.Component<Props> {
+export class CombatNotificationPanel extends React.Component<Props> {
 	private success() {
 		switch (this.props.notification.type) {
 			case 'condition-save':

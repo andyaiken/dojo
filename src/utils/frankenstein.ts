@@ -1,13 +1,13 @@
 // This utility file deals with monster groups and monsters
 
-import Factory from './factory';
-import Gygax from './gygax';
-import Utils from './utils';
+import { Factory } from './factory';
+import { Gygax } from './gygax';
+import { Utils } from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
 import { Monster, Trait, TRAIT_TYPES } from '../models/monster';
 
-export default class Frankenstein {
+export class Frankenstein {
 	public static getTypicalHP(monster: Monster) {
 		const sides = Gygax.hitDieType(monster.size);
 		const hpPerDie = ((sides + 1) / 2) + Gygax.modifierValue(monster.abilityScores.con);

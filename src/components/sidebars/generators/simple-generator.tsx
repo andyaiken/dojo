@@ -1,7 +1,7 @@
 import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Shakespeare from '../../../utils/shakespeare';
+import { Shakespeare } from '../../../utils/shakespeare';
 
 interface Props {
 	type: 'book' | 'name' | 'potion' | 'treasure';
@@ -11,7 +11,7 @@ interface State {
 	values: string[];
 }
 
-export default class SimpleGenerator extends React.Component<Props, State> {
+export class SimpleGenerator extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

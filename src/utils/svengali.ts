@@ -1,10 +1,10 @@
 // This utility file deals with tarot cards
 
-import Utils from './utils';
+import { Utils } from './utils';
 
 import { OracleCard } from '../models/misc';
 
-export default class Svengali {
+export class Svengali {
 	private static deck: OracleCard[] = [];
 
 	public static getCards() {

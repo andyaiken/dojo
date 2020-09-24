@@ -1,11 +1,11 @@
 import { BookOutlined, BulbOutlined, CommentOutlined, ControlOutlined, InfoCircleOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
-import Shakespeare from '../../utils/shakespeare';
-import Svengali from '../../utils/svengali';
+import { Gygax } from '../../utils/gygax';
+import { Shakespeare } from '../../utils/shakespeare';
+import { Svengali } from '../../utils/svengali';
 import { Comms, CommsPlayer } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -15,15 +15,15 @@ import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import AboutSidebar from '../sidebars/about-sidebar';
-import GeneratorsSidebar from '../sidebars/generators-sidebar';
-import ReferenceSidebar from '../sidebars/reference-sidebar';
-import SearchSidebar from '../sidebars/search-sidebar';
-import SessionChatSidebar from '../sidebars/session-chat-sidebar';
-import SessionControlsSidebar from '../sidebars/session-controls-sidebar';
-import SessionPlayerSidebar from '../sidebars/session-player-sidebar';
-import SessionSidebar from '../sidebars/session-sidebar';
-import ToolsSidebar from '../sidebars/tools-sidebar';
+import { AboutSidebar } from '../sidebars/about-sidebar';
+import { GeneratorsSidebar } from '../sidebars/generators-sidebar';
+import { ReferenceSidebar } from '../sidebars/reference-sidebar';
+import { SearchSidebar } from '../sidebars/search-sidebar';
+import { SessionChatSidebar } from '../sidebars/session-chat-sidebar';
+import { SessionControlsSidebar } from '../sidebars/session-controls-sidebar';
+import { SessionPlayerSidebar } from '../sidebars/session-player-sidebar';
+import { SessionSidebar } from '../sidebars/session-sidebar';
+import { ToolsSidebar } from '../sidebars/tools-sidebar';
 
 interface Props {
 	sidebar: Sidebar;
@@ -52,7 +52,7 @@ interface Props {
 	setOption: (option: string, value: any) => void;
 }
 
-export default class PageSidebar extends React.Component<Props> {
+export class PageSidebar extends React.Component<Props> {
 	public static defaultProps = {
 		parties: [],
 		library: [],

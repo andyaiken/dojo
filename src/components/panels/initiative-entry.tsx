@@ -6,12 +6,12 @@ import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
-import NumberSpin from '../controls/number-spin';
-import HitPointGauge from './hit-point-gauge';
-import Note from './note';
-import PortraitPanel from './portrait-panel';
+import { NumberSpin } from '../controls/number-spin';
+import { HitPointGauge } from './hit-point-gauge';
+import { Note } from './note';
+import { PortraitPanel } from './portrait-panel';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -24,7 +24,7 @@ interface Props {
 	select: (combatant: Combatant, ctrl: boolean) => void;
 }
 
-export default class InitiativeEntry extends React.Component<Props> {
+export class InitiativeEntry extends React.Component<Props> {
 	private getInformationTag() {
 		if (this.props.combatant.current) {
 			return <Tag className='info'>current turn</Tag>;

@@ -7,7 +7,7 @@ interface Props {
 	disabled: boolean;
 }
 
-export default class Expander extends React.Component<Props> {
+export class Expander extends React.Component<Props> {
 	public static defaultProps = {
 		disabled: false
 	};

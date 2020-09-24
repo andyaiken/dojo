@@ -3,9 +3,9 @@ import React from 'react';
 
 import { MapItem } from '../../models/map';
 
-import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import Selector from '../controls/selector';
+import { NumberSpin } from '../controls/number-spin';
+import { Radial } from '../controls/radial';
+import { Selector } from '../controls/selector';
 
 interface Props {
 	item: MapItem;
@@ -15,7 +15,7 @@ interface Props {
 	nudgeValue: (source: any, field: string, delta: number) => void;
 }
 
-export default class MapItemCard extends React.Component<Props> {
+export class MapItemCard extends React.Component<Props> {
 	public render() {
 		try {
 			const typeOptions = ['overlay', 'token'].map(t => {

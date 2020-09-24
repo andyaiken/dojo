@@ -1,6 +1,6 @@
 // This utility file deals with speech
 
-export default class Ustinov {
+export class Ustinov {
 	public static async say(text: string, languages: string[]) {
 		// If we're already saying something, stop it
 		window.speechSynthesis.cancel();

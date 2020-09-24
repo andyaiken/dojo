@@ -2,14 +2,14 @@ import { MinusCircleOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React from 'react';
 
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
 
 import { Monster, Trait } from '../../models/monster';
 
-import AbilityScorePanel from '../panels/ability-score-panel';
-import PortraitPanel from '../panels/portrait-panel';
-import TraitsPanel from '../panels/traits-panel';
+import { AbilityScorePanel } from '../panels/ability-score-panel';
+import { PortraitPanel } from '../panels/portrait-panel';
+import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
 	monster: Monster;
@@ -18,7 +18,7 @@ interface Props {
 	deselectMonster: (monster: Monster) => void;
 }
 
-export default class MonsterTemplateCard extends React.Component<Props> {
+export class MonsterTemplateCard extends React.Component<Props> {
 	private getAC() {
 		let value = this.props.monster.ac.toString();
 		if (this.props.monster.acInfo) {

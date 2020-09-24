@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import ConfirmButton from '../controls/confirm-button';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	group: MonsterGroup;
@@ -14,7 +14,7 @@ interface Props {
 	openStatBlock: (monster: Monster) => void;
 }
 
-export default class MonsterGroupCard extends React.Component<Props> {
+export class MonsterGroupCard extends React.Component<Props> {
 	private getMonsters() {
 		if (this.props.group.monsters.length === 0) {
 			return (

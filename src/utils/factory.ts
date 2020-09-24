@@ -1,4 +1,4 @@
-import Utils from './utils';
+import { Utils } from './utils';
 
 import { Combat, CombatSetup, CombatSlotInfo, CombatSlotMember, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
@@ -7,7 +7,7 @@ import { Exploration, Map, MapArea, MapItem } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
-export default class Factory {
+export class Factory {
 
 	public static createParty(): Party {
 		return {

@@ -12,7 +12,7 @@ interface Props {
 	onSelect: (itemID: string) => void;
 }
 
-export default class RadioGroup extends React.Component<Props> {
+export class RadioGroup extends React.Component<Props> {
 	public render() {
 		try {
 			const content = this.props.items.map(item => {

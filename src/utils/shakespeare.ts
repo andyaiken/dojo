@@ -1,7 +1,7 @@
 // This utility file deals with text
 
-import Gygax from './gygax';
-import Utils from './utils';
+import { Gygax } from './gygax';
+import { Utils } from './utils';
 
 import { PC } from '../models/party';
 
@@ -15,7 +15,7 @@ interface ModelChar {
 	count: number;
 }
 
-export default class Shakespeare {
+export class Shakespeare {
 
 	//#region Text generation
 

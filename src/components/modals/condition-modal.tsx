@@ -1,19 +1,19 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Gygax from '../../utils/gygax';
-import Utils from '../../utils/utils';
+import { Factory } from '../../utils/factory';
+import { Gygax } from '../../utils/gygax';
+import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../../models/condition';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import RadioGroup from '../controls/radio-group';
-import Selector from '../controls/selector';
+import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
+import { RadioGroup } from '../controls/radio-group';
+import { Selector } from '../controls/selector';
 
 interface Props {
 	condition: Condition;
@@ -25,7 +25,7 @@ interface State {
 	condition: Condition;
 }
 
-export default class ConditionModal extends React.Component<Props, State> {
+export class ConditionModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

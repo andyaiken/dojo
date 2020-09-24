@@ -2,10 +2,10 @@ import React from 'react';
 
 import { NPC } from '../../models/misc';
 
-import Selector from '../controls/selector';
-import NPCGenerator from './generators/npc-generator';
-import PlaceNameGenerator from './generators/place-name-generator';
-import SimpleGenerator from './generators/simple-generator';
+import { Selector } from '../controls/selector';
+import { NPCGenerator } from './generators/npc-generator';
+import { PlaceNameGenerator } from './generators/place-name-generator';
+import { SimpleGenerator } from './generators/simple-generator';
 
 interface Props {
 	view: string;
@@ -14,7 +14,7 @@ interface Props {
 	generateNPC: () => void;
 }
 
-export default class GeneratorsSidebar extends React.Component<Props> {
+export class GeneratorsSidebar extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [

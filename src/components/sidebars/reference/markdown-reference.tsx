@@ -14,7 +14,7 @@ interface State {
 	source: string | null;
 }
 
-export default class MarkdownReference extends React.Component<Props, State> {
+export class MarkdownReference extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

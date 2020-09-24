@@ -2,11 +2,11 @@ import React from 'react';
 
 import { DOORWAY_TYPES, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
 
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import RadioGroup from '../controls/radio-group';
-import Selector from '../controls/selector';
+import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
+import { Radial } from '../controls/radial';
+import { RadioGroup } from '../controls/radio-group';
+import { Selector } from '../controls/selector';
 
 interface Props {
 	tile: MapItem;
@@ -25,7 +25,7 @@ interface State {
 	view: string;
 }
 
-export default class MapTileCard extends React.Component<Props, State> {
+export class MapTileCard extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

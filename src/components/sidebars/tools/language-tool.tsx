@@ -2,13 +2,13 @@ import { CopyOutlined, SoundOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Shakespeare from '../../../utils/shakespeare';
-import Ustinov from '../../../utils/ustinov';
+import { Shakespeare } from '../../../utils/shakespeare';
+import { Ustinov } from '../../../utils/ustinov';
 
-import Checkbox from '../../controls/checkbox';
-import Expander from '../../controls/expander';
-import Selector from '../../controls/selector';
-import GridPanel from '../../panels/grid-panel';
+import { Checkbox } from '../../controls/checkbox';
+import { Expander } from '../../controls/expander';
+import { Selector } from '../../controls/selector';
+import { GridPanel } from '../../panels/grid-panel';
 
 interface Props {
 	languagePreset: string | null;
@@ -22,7 +22,7 @@ interface Props {
 	generateLanguage: () => void;
 }
 
-export default class LanguageTool extends React.Component<Props> {
+export class LanguageTool extends React.Component<Props> {
 	public render() {
 		try {
 			const presetOptions = ['draconic', 'dwarvish', 'elvish', 'goblin', 'orc', 'custom'].map(p => {

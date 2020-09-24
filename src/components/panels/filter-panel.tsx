@@ -1,15 +1,15 @@
 import { Slider } from 'antd';
 import React from 'react';
 
-import Napoleon from '../../utils/napoleon';
+import { Napoleon } from '../../utils/napoleon';
 
 import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
 
 interface Props {
 	filter: MonsterFilter;
@@ -18,7 +18,7 @@ interface Props {
 	resetFilter: () => void;
 }
 
-export default class FilterPanel extends React.Component<Props> {
+export class FilterPanel extends React.Component<Props> {
 	public static defaultProps = {
 		showRoles: true
 	};

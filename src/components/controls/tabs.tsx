@@ -7,7 +7,7 @@ interface Props {
 	onSelect: (optionID: string) => void;
 }
 
-export default class Tabs extends React.Component<Props> {
+export class Tabs extends React.Component<Props> {
 	public static defaultProps = {
 		disabled: false
 	};

@@ -4,9 +4,9 @@ import LZString from 'lz-string';
 import Peer, { DataConnection } from 'peerjs';
 import recursivediff from 'recursive-diff';
 
-import Matisse from './matisse';
-import Napoleon from './napoleon';
-import Utils from './utils';
+import { Matisse } from './matisse';
+import { Napoleon } from './napoleon';
+import { Utils } from './utils';
 
 import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';

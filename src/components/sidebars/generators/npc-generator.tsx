@@ -7,7 +7,7 @@ interface Props {
 	generateNPC: () => void;
 }
 
-export default class NPCTool extends React.Component<Props> {
+export class NPCGenerator extends React.Component<Props> {
 	public render() {
 		try {
 			let item = null;

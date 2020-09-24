@@ -5,7 +5,7 @@ import { Map, MapArea } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
 
-export default class Sherlock {
+export class Sherlock {
 	public static matchParty(filter: string, party: Party) {
 		if (Sherlock.match(filter, party.name)) {
 			return true;

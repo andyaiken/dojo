@@ -2,10 +2,10 @@ import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icon
 import { notification } from 'antd';
 import React from 'react';
 
-import ErrorBoundary from '../panels/error-boundary';
-import PageHeader from '../panels/page-header';
+import { ErrorBoundary } from '../panels/error-boundary';
+import { PageHeader } from '../panels/page-header';
 
-export default class Test extends React.Component {
+export class Test extends React.Component {
 	private testNotification() {
 		notification.open({
 			message: (

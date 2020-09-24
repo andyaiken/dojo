@@ -4,7 +4,7 @@ import React from 'react';
 interface Props {
 }
 
-export default class HomeScreen extends React.Component<Props> {
+export class HomeScreen extends React.Component<Props> {
 	public render() {
 		try {
 			const carousel = (

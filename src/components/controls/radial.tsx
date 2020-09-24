@@ -7,7 +7,7 @@ interface Props {
 	onClick: (dir: string) => void;
 }
 
-export default class Radial extends React.Component<Props> {
+export class Radial extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'eight',
 		disabled: false

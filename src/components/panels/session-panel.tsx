@@ -3,21 +3,21 @@ import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Gygax from '../../utils/gygax';
-import Shakespeare from '../../utils/shakespeare';
+import { Gygax } from '../../utils/gygax';
+import { Shakespeare } from '../../utils/shakespeare';
 import { Comms, CommsPlayer, Message, Person } from '../../utils/uhura';
 
 import { DieRollResult } from '../../models/dice';
 
-import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Selector from '../controls/selector';
-import Textbox from '../controls/textbox';
-import DieRollPanel from './die-roll-panel';
-import DieRollResultPanel from './die-roll-result-panel';
-import Note from './note';
-import PortraitPanel from './portrait-panel';
+import { Checkbox } from '../controls/checkbox';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
+import { DieRollPanel } from './die-roll-panel';
+import { DieRollResultPanel } from './die-roll-result-panel';
+import { Note } from './note';
+import { PortraitPanel } from './portrait-panel';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);

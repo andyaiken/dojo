@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Exploration } from '../../models/map';
 
-import ConfirmButton from '../controls/confirm-button';
-import MapPanel from '../panels/map-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	exploration: Exploration;
@@ -11,7 +11,7 @@ interface Props {
 	delete: (exploration: Exploration) => void;
 }
 
-export default class ExplorationCard extends React.Component<Props> {
+export class ExplorationCard extends React.Component<Props> {
 	public render() {
 		try {
 			return (

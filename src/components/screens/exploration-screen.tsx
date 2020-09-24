@@ -2,11 +2,11 @@ import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../utils/factory';
-import Gygax from '../../utils/gygax';
-import Mercator from '../../utils/mercator';
+import { Factory } from '../../utils/factory';
+import { Gygax } from '../../utils/gygax';
+import { Mercator } from '../../utils/mercator';
 import { Comms, CommsDM } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -15,18 +15,18 @@ import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
-import MapItemCard from '../cards/map-item-card';
-import MonsterStatblockCard from '../cards/monster-statblock-card';
-import PCCard from '../cards/pc-card';
-import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
-import CombatControlsPanel from '../panels/combat-controls-panel';
-import GridPanel from '../panels/grid-panel';
+import { MapItemCard } from '../cards/map-item-card';
+import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { PCCard } from '../cards/pc-card';
+import { Checkbox } from '../controls/checkbox';
+import { ConfirmButton } from '../controls/confirm-button';
+import { CombatControlsPanel } from '../panels/combat-controls-panel';
+import { GridPanel } from '../panels/grid-panel';
 import { NotOnMapInitiativeEntry } from '../panels/initiative-entry';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
-import Popout from '../panels/popout';
-import TraitsPanel from '../panels/traits-panel';
+import { MapPanel } from '../panels/map-panel';
+import { Note } from '../panels/note';
+import { Popout } from '../panels/popout';
+import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
 	exploration: Exploration;
@@ -69,7 +69,7 @@ interface State {
 	selectedAreaID: string | null;
 }
 
-export default class ExplorationScreen extends React.Component<Props, State> {
+export class ExplorationScreen extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

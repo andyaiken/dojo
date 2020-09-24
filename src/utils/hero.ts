@@ -1,11 +1,11 @@
 // This utility file deals with parties and pcs
 
-import Factory from './factory';
-import Gygax from './gygax';
+import { Factory } from './factory';
+import { Gygax } from './gygax';
 
 import { Party, PC } from '../models/party';
 
-export default class Hero {
+export class Hero {
 	public static importParty(source: string, party: Party): void {
 		party.name = '';
 		party.pcs = [];

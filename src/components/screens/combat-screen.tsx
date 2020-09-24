@@ -3,11 +3,11 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Factory from '../../utils/factory';
-import Mercator from '../../utils/mercator';
-import Napoleon from '../../utils/napoleon';
+import { Factory } from '../../utils/factory';
+import { Mercator } from '../../utils/mercator';
+import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsDM } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -17,21 +17,21 @@ import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
-import MapItemCard from '../cards/map-item-card';
-import MonsterStatblockCard from '../cards/monster-statblock-card';
-import PCCard from '../cards/pc-card';
-import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
-import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
-import CombatControlsPanel from '../panels/combat-controls-panel';
-import GridPanel from '../panels/grid-panel';
+import { MapItemCard } from '../cards/map-item-card';
+import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { PCCard } from '../cards/pc-card';
+import { Checkbox } from '../controls/checkbox';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Expander } from '../controls/expander';
+import { NumberSpin } from '../controls/number-spin';
+import { CombatControlsPanel } from '../panels/combat-controls-panel';
+import { GridPanel } from '../panels/grid-panel';
 import { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initiative-entry';
-import InitiativeOrder from '../panels/initiative-order';
-import MapPanel from '../panels/map-panel';
-import Note from '../panels/note';
-import Popout from '../panels/popout';
-import TraitsPanel from '../panels/traits-panel';
+import { InitiativeOrder } from '../panels/initiative-order';
+import { MapPanel } from '../panels/map-panel';
+import { Note } from '../panels/note';
+import { Popout } from '../panels/popout';
+import { TraitsPanel } from '../panels/traits-panel';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -89,7 +89,7 @@ interface State {
 	middleColumnWidth: number;
 }
 
-export default class CombatScreen extends React.Component<Props, State> {
+export class CombatScreen extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

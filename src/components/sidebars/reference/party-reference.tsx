@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Shakespeare from '../../../utils/shakespeare';
+import { Shakespeare } from '../../../utils/shakespeare';
 
 import { Party } from '../../../models/party';
 
-import Dropdown from '../../controls/dropdown';
+import { Dropdown } from '../../controls/dropdown';
 
 interface Props {
 	selectedPartyID: string | null;
@@ -12,7 +12,7 @@ interface Props {
 	selectPartyID: (id: string | null) => void;
 }
 
-export default class PartyReference extends React.Component<Props> {
+export class PartyReference extends React.Component<Props> {
 	private getSummary() {
 		const party = this.props.parties.find(p => p.id === this.props.selectedPartyID);
 		if (!party) {

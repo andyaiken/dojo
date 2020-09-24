@@ -2,20 +2,20 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Napoleon from '../../utils/napoleon';
-import Utils from '../../utils/utils';
+import { Napoleon } from '../../utils/napoleon';
+import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import CombatCard from '../cards/combat-card';
-import EncounterCard from '../cards/encounter-card';
-import Expander from '../controls/expander';
-import RadioGroup from '../controls/radio-group';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { CombatCard } from '../cards/combat-card';
+import { EncounterCard } from '../cards/encounter-card';
+import { Expander } from '../controls/expander';
+import { RadioGroup } from '../controls/radio-group';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	encounters: Encounter[];
@@ -35,7 +35,7 @@ interface Props {
 	deleteCombat: (combat: Combat) => void;
 }
 
-export default class EncounterListScreen extends React.Component<Props> {
+export class EncounterListScreen extends React.Component<Props> {
 	private openStatBlock(slot: EncounterSlot) {
 		const monster = this.props.getMonster(slot.monsterID);
 		if (monster) {

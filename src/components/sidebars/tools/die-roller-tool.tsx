@@ -2,8 +2,8 @@ import React from 'react';
 
 import { DieRollResult } from '../../../models/dice';
 
-import DieRollPanel from '../../panels/die-roll-panel';
-import DieRollResultPanel from '../../panels/die-roll-result-panel';
+import { DieRollPanel } from '../../panels/die-roll-panel';
+import { DieRollResultPanel } from '../../panels/die-roll-result-panel';
 
 interface Props {
 	dice: { [sides: number]: number };
@@ -15,7 +15,7 @@ interface Props {
 	resetDice: () => void;
 }
 
-export default class DieRollerTool extends React.Component<Props> {
+export class DieRollerTool extends React.Component<Props> {
 	public render() {
 		try {
 			const results = this.props.dieRolls.map(result => <DieRollResultPanel key={result.id} result={result} />);

@@ -3,10 +3,10 @@ import React from 'react';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import Selector from '../controls/selector';
-import MarkdownReference from './reference/markdown-reference';
-import MonsterReference from './reference/monster-reference';
-import PartyReference from './reference/party-reference';
+import { Selector } from '../controls/selector';
+import { MarkdownReference } from './reference/markdown-reference';
+import { MonsterReference } from './reference/monster-reference';
+import { PartyReference } from './reference/party-reference';
 
 interface Props {
 	view: string;
@@ -21,7 +21,7 @@ interface Props {
 	selectMonsterID: (id: string | null) => void;
 }
 
-export default class ReferenceSidebar extends React.Component<Props> {
+export class ReferenceSidebar extends React.Component<Props> {
 	public render() {
 		try {
 			const options = [

@@ -1,12 +1,12 @@
 // This utility file deals with images
 
-import Utils from './utils';
+import { Utils } from './utils';
 
 import { Combat } from '../models/combat';
 import { Exploration, Map } from '../models/map';
 import { SavedImage } from '../models/misc';
 
-export default class Matisse {
+export class Matisse {
 	public static allImages() {
 		const images: SavedImage[] = [];
 		for (let n = 0; n !== window.localStorage.length; ++n) {

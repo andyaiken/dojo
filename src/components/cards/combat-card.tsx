@@ -4,9 +4,9 @@ import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import MapPanel from '../panels/map-panel';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { MapPanel } from '../panels/map-panel';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	combat: Combat;
@@ -15,7 +15,7 @@ interface Props {
 	openStatBlock: (combatant: Combatant) => void;
 }
 
-export default class CombatCard extends React.Component<Props> {
+export class CombatCard extends React.Component<Props> {
 	private getValue(combatant: Combatant) {
 		switch (combatant.type) {
 			case 'pc':

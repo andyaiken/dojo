@@ -6,11 +6,11 @@ import { Comms, CommsDM } from '../../../utils/uhura';
 
 import { Handout } from '../../../models/misc';
 
-import Checkbox from '../../controls/checkbox';
-import Selector from '../../controls/selector';
-import Note from '../../panels/note';
-import PDF from '../../panels/pdf';
-import Popout from '../../panels/popout';
+import { Checkbox } from '../../controls/checkbox';
+import { Selector } from '../../controls/selector';
+import { Note } from '../../panels/note';
+import { PDF } from '../../panels/pdf';
+import { Popout } from '../../panels/popout';
 
 interface Props {
 	handout: Handout | null;
@@ -22,7 +22,7 @@ interface State {
 	playerViewOpen: boolean;
 }
 
-export default class HandoutTool extends React.Component<Props, State> {
+export class HandoutTool extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

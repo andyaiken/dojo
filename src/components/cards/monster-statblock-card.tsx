@@ -1,15 +1,15 @@
 import { Tag } from 'antd';
 import React from 'react';
 
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Monster, Trait } from '../../models/monster';
 
-import AbilityScorePanel from '../panels/ability-score-panel';
-import PortraitPanel from '../panels/portrait-panel';
-import TraitsPanel from '../panels/traits-panel';
+import { AbilityScorePanel } from '../panels/ability-score-panel';
+import { PortraitPanel } from '../panels/portrait-panel';
+import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
 	monster: Monster | (Monster & Combatant);
@@ -20,7 +20,7 @@ interface Props {
 	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
-export default class MonsterStatblockCard extends React.Component<Props> {
+export class MonsterStatblockCard extends React.Component<Props> {
 	public static defaultProps = {
 		combat: false,
 		showRollButtons: false,

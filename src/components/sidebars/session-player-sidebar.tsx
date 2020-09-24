@@ -8,7 +8,7 @@ interface Props {
 	editPC: (id: string) => void;
 }
 
-export default class SessionPlayerSidebar extends React.Component<Props> {
+export class SessionPlayerSidebar extends React.Component<Props> {
 	private getContent() {
 		if (CommsPlayer.getState() === 'connected') {
 			return (

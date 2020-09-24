@@ -1,8 +1,8 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Matisse from '../../utils/matisse';
-import Utils from '../../utils/utils';
+import { Matisse } from '../../utils/matisse';
+import { Utils } from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 import { Exploration, Map } from '../../models/map';
@@ -10,9 +10,9 @@ import { Options } from '../../models/misc';
 import { MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import Checkbox from '../controls/checkbox';
-import Selector from '../controls/selector';
-import Note from '../panels/note';
+import { Checkbox } from '../controls/checkbox';
+import { Selector } from '../controls/selector';
+import { Note } from '../panels/note';
 
 import pkg from '../../../package.json';
 
@@ -30,7 +30,7 @@ interface State {
 	view: string;
 }
 
-export default class AboutSidebar extends React.Component<Props, State> {
+export class AboutSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

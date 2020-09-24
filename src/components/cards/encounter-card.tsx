@@ -1,16 +1,16 @@
 import React from 'react';
 
-import Napoleon from '../../utils/napoleon';
+import { Napoleon } from '../../utils/napoleon';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import Textbox from '../controls/textbox';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Textbox } from '../controls/textbox';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	encounter: Encounter;
@@ -28,7 +28,7 @@ interface State {
 	cloneName: string;
 }
 
-export default class EncounterCard extends React.Component<Props, State> {
+export class EncounterCard extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

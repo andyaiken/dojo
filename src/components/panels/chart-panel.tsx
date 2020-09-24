@@ -6,7 +6,7 @@ interface Props {
 	onFormatValue: (value: number) => string;
 }
 
-export default class ChartPanel extends React.Component<Props> {
+export class ChartPanel extends React.Component<Props> {
 	public static defaultProps = {
 		collapse: false,
 		onFormatValue: (value: number) => value.toString()

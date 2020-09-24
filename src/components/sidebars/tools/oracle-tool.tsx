@@ -2,7 +2,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import { CardDraw, OracleCard } from '../../../models/misc';
-import Svengali from '../../../utils/svengali';
+import { Svengali } from '../../../utils/svengali';
 
 interface Props {
 	draws: CardDraw[];
@@ -10,7 +10,7 @@ interface Props {
 	resetDraw: () => void;
 }
 
-export default class OracleTool extends React.Component<Props> {
+export class OracleTool extends React.Component<Props> {
 	public render() {
 		try {
 			if (this.props.draws.length === 0) {

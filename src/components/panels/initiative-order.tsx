@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Napoleon from '../../utils/napoleon';
+import { Napoleon } from '../../utils/napoleon';
 
 import { Combat, Combatant } from '../../models/combat';
 
-import InitiativeEntry from './initiative-entry';
+import { InitiativeEntry } from './initiative-entry';
 
 interface Props {
 	combat: Combat;
@@ -15,7 +15,7 @@ interface Props {
 	toggleItemSelection: (id: string, ctrl: boolean) => void;
 }
 
-export default class InitiativeOrder extends React.Component<Props> {
+export class InitiativeOrder extends React.Component<Props> {
 	private orderCombatants(list: Combatant[]) {
 		const current = list.find(c => c.current);
 		if (current) {

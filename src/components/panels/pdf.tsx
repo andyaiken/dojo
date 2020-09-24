@@ -14,7 +14,7 @@ interface State {
 	page: number;
 }
 
-export default class PDF extends React.Component<Props, State> {
+export class PDF extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

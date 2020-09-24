@@ -1,13 +1,13 @@
 import { ReloadOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Shakespeare from '../../utils/shakespeare';
+import { Shakespeare } from '../../utils/shakespeare';
 
 import { MapArea } from '../../models/map';
 
-import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import Textbox from '../controls/textbox';
+import { NumberSpin } from '../controls/number-spin';
+import { Radial } from '../controls/radial';
+import { Textbox } from '../controls/textbox';
 
 interface Props {
 	area: MapArea;
@@ -17,7 +17,7 @@ interface Props {
 	remove: (area: MapArea) => void;
 }
 
-export default class MapAreaCard extends React.Component<Props> {
+export class MapAreaCard extends React.Component<Props> {
 	private randomName() {
 		const name = Shakespeare.capitalise(Shakespeare.generateRoomName());
 		this.props.changeValue(this.props.area, 'name', name);

@@ -1,14 +1,14 @@
 // This utility file deals with maps
 
-import Factory from './factory';
-import Gygax from './gygax';
-import Shakespeare from './shakespeare';
-import Utils from './utils';
+import { Factory } from './factory';
+import { Gygax } from './gygax';
+import { Shakespeare } from './shakespeare';
+import { Utils } from './utils';
 
 import { Combatant } from '../models/combat';
 import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
 
-export default class Mercator {
+export class Mercator {
 	public static scatterCombatants(map: Map, combatants: Combatant[], areaID: string | null) {
 		// Remove these combatants from the map
 		map.items = map.items.filter(item => !combatants.map(c => c.id).includes(item.id));

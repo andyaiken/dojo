@@ -1,26 +1,26 @@
 import { Col, Drawer, InputNumber, Row } from 'antd';
 import React from 'react';
 
-import Factory from '../../../utils/factory';
-import Gygax from '../../../utils/gygax';
-import Napoleon from '../../../utils/napoleon';
-import Utils from '../../../utils/utils';
+import { Factory } from '../../../utils/factory';
+import { Gygax } from '../../../utils/gygax';
+import { Napoleon } from '../../../utils/napoleon';
+import { Utils } from '../../../utils/utils';
 
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../../models/encounter';
 import { Monster, MonsterGroup } from '../../../models/monster';
 import { Party } from '../../../models/party';
 
-import EncounterSlotCard from '../../cards/encounter-slot-card';
-import ConfirmButton from '../../controls/confirm-button';
-import Expander from '../../controls/expander';
-import RadioGroup from '../../controls/radio-group';
-import Selector from '../../controls/selector';
-import Textbox from '../../controls/textbox';
-import DifficultyChartPanel from '../../panels/difficulty-chart-panel';
-import FilterPanel from '../../panels/filter-panel';
-import GridPanel from '../../panels/grid-panel';
-import Note from '../../panels/note';
-import StatBlockModal from '../stat-block-modal';
+import { EncounterSlotCard } from '../../cards/encounter-slot-card';
+import { ConfirmButton } from '../../controls/confirm-button';
+import { Expander } from '../../controls/expander';
+import { RadioGroup } from '../../controls/radio-group';
+import { Selector } from '../../controls/selector';
+import { Textbox } from '../../controls/textbox';
+import { DifficultyChartPanel } from '../../panels/difficulty-chart-panel';
+import { FilterPanel } from '../../panels/filter-panel';
+import { GridPanel } from '../../panels/grid-panel';
+import { Note } from '../../panels/note';
+import { StatBlockModal } from '../stat-block-modal';
 
 interface Props {
 	encounter: Encounter;
@@ -40,7 +40,7 @@ interface State {
 	randomEncounterXP: number;
 }
 
-export default class EncounterEditorModal extends React.Component<Props, State> {
+export class EncounterEditorModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

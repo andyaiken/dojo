@@ -2,14 +2,14 @@ import { FileOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
-import Hero from '../../../utils/hero';
+import { Hero } from '../../../utils/hero';
 
 import { PC } from '../../../models/party';
 
-import PCCard from '../../cards/pc-card';
-import Tabs from '../../controls/tabs';
-import Textbox from '../../controls/textbox';
-import Note from '../../panels/note';
+import { PCCard } from '../../cards/pc-card';
+import { Tabs } from '../../controls/tabs';
+import { Textbox } from '../../controls/textbox';
+import { Note } from '../../panels/note';
 
 interface Props {
 	pc: PC;
@@ -21,7 +21,7 @@ interface State {
 	pc: PC;
 }
 
-export default class PCImportModal extends React.Component<Props, State> {
+export class PCImportModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

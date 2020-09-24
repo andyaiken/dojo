@@ -1,7 +1,7 @@
 import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import Shakespeare from '../../../utils/shakespeare';
+import { Shakespeare } from '../../../utils/shakespeare';
 
 interface Props {
 }
@@ -10,7 +10,7 @@ interface State {
 	values: string[];
 }
 
-export default class PlaceNameTool extends React.Component<Props, State> {
+export class PlaceNameGenerator extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

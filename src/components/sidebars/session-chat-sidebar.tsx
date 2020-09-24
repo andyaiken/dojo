@@ -8,7 +8,7 @@ interface Props {
 	openImage: (data: string) => void;
 }
 
-export default class SessionChatSidebar extends React.Component<Props> {
+export class SessionChatSidebar extends React.Component<Props> {
 	private getContent() {
 		if (CommsPlayer.getState() === 'connected') {
 			return (

@@ -13,7 +13,7 @@ interface State {
 	showContent: boolean;
 }
 
-export default class GridPanel extends React.Component<Props, State> {
+export class GridPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		columns: 0,
 		heading: null,

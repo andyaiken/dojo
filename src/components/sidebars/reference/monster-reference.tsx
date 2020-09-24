@@ -4,10 +4,10 @@ import { Comms, CommsDM } from '../../../utils/uhura';
 
 import { Monster } from '../../../models/monster';
 
-import MonsterStatblockCard from '../../cards/monster-statblock-card';
-import Checkbox from '../../controls/checkbox';
-import Dropdown from '../../controls/dropdown';
-import Popout from '../../panels/popout';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { Checkbox } from '../../controls/checkbox';
+import { Dropdown } from '../../controls/dropdown';
+import { Popout } from '../../panels/popout';
 
 interface Props {
 	selectedMonsterID: string | null;
@@ -19,7 +19,7 @@ interface State {
 	playerViewOpen: boolean;
 }
 
-export default class MonsterReference extends React.Component<Props, State> {
+export class MonsterReference extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

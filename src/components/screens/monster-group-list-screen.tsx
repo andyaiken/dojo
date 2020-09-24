@@ -1,13 +1,13 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import MonsterGroupCard from '../cards/monster-group-card';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { MonsterGroupCard } from '../cards/monster-group-card';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	library: MonsterGroup[];
@@ -21,7 +21,7 @@ interface Props {
 	openDemographics: (group: MonsterGroup | null) => void;
 }
 
-export default class MonsterGroupListScreen extends React.Component<Props> {
+export class MonsterGroupListScreen extends React.Component<Props> {
 	public render() {
 		try {
 			if (!this.props.hasMonsters) {

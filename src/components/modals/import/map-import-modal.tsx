@@ -2,15 +2,15 @@ import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
 import { Col, notification, Row, Upload } from 'antd';
 import React from 'react';
 
-import Factory from '../../../utils/factory';
-import Utils from '../../../utils/utils';
+import { Factory } from '../../../utils/factory';
+import { Utils } from '../../../utils/utils';
 
 import { Map } from '../../../models/map';
 
-import NumberSpin from '../../controls/number-spin';
-import Textbox from '../../controls/textbox';
-import MapPanel from '../../panels/map-panel';
-import Note from '../../panels/note';
+import { NumberSpin } from '../../controls/number-spin';
+import { Textbox } from '../../controls/textbox';
+import { MapPanel } from '../../panels/map-panel';
+import { Note } from '../../panels/note';
 
 interface Props {
 	map: Map;
@@ -31,7 +31,7 @@ interface State {
 	};
 }
 
-export default class MapImportModal extends React.Component<Props, State> {
+export class MapImportModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

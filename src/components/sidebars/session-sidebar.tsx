@@ -8,11 +8,11 @@ import { Exploration } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import Checkbox from '../controls/checkbox';
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Selector from '../controls/selector';
-import Note from '../panels/note';
+import { Checkbox } from '../controls/checkbox';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Selector } from '../controls/selector';
+import { Note } from '../panels/note';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 
 interface Props {
@@ -22,7 +22,7 @@ interface Props {
 	openImage: (data: string) => void;
 }
 
-export default class SessionSidebar extends React.Component<Props> {
+export class SessionSidebar extends React.Component<Props> {
 	private getContent() {
 		switch (CommsDM.getState()) {
 			case 'not started':

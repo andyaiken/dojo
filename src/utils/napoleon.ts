@@ -1,9 +1,9 @@
 // This utility file deals with encounters and combat
 
-import Factory from './factory';
-import Gygax from './gygax';
-import Sherlock from './sherlock';
-import Utils from './utils';
+import { Factory } from './factory';
+import { Gygax } from './gygax';
+import { Sherlock } from './sherlock';
+import { Utils } from './utils';
 
 import { Combat, Combatant } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
@@ -11,7 +11,7 @@ import { Map } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster';
 import { Companion, PC } from '../models/party';
 
-export default class Napoleon {
+export class Napoleon {
 	public static getMonsterCount(encounter: Encounter, waveID: string | null) {
 		let count = 0;
 

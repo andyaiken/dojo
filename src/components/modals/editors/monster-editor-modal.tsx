@@ -3,31 +3,31 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
 
-import Factory from '../../../utils/factory';
-import Frankenstein from '../../../utils/frankenstein';
-import Gygax from '../../../utils/gygax';
-import Napoleon from '../../../utils/napoleon';
-import Shakespeare from '../../../utils/shakespeare';
-import Utils from '../../../utils/utils';
+import { Factory } from '../../../utils/factory';
+import { Frankenstein } from '../../../utils/frankenstein';
+import { Gygax } from '../../../utils/gygax';
+import { Napoleon } from '../../../utils/napoleon';
+import { Shakespeare } from '../../../utils/shakespeare';
+import { Utils } from '../../../utils/utils';
 
 import { MonsterFilter } from '../../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
-import MonsterCard from '../../cards/monster-card';
-import MonsterStatblockCard from '../../cards/monster-statblock-card';
-import MonsterTemplateCard from '../../cards/monster-template-card';
-import Checkbox from '../../controls/checkbox';
-import ConfirmButton from '../../controls/confirm-button';
-import Dropdown from '../../controls/dropdown';
-import Expander from '../../controls/expander';
-import NumberSpin from '../../controls/number-spin';
-import Selector from '../../controls/selector';
-import Tabs from '../../controls/tabs';
-import Textbox from '../../controls/textbox';
-import AbilityScorePanel from '../../panels/ability-score-panel';
-import FilterPanel from '../../panels/filter-panel';
-import Note from '../../panels/note';
-import PortraitPanel from '../../panels/portrait-panel';
+import { MonsterCard } from '../../cards/monster-card';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { MonsterTemplateCard } from '../../cards/monster-template-card';
+import { Checkbox } from '../../controls/checkbox';
+import { ConfirmButton } from '../../controls/confirm-button';
+import { Dropdown } from '../../controls/dropdown';
+import { Expander } from '../../controls/expander';
+import { NumberSpin } from '../../controls/number-spin';
+import { Selector } from '../../controls/selector';
+import { Tabs } from '../../controls/tabs';
+import { Textbox } from '../../controls/textbox';
+import { AbilityScorePanel } from '../../panels/ability-score-panel';
+import { FilterPanel } from '../../panels/filter-panel';
+import { Note } from '../../panels/note';
+import { PortraitPanel } from '../../panels/portrait-panel';
 
 interface Props {
 	monster: Monster;
@@ -53,7 +53,7 @@ interface State {
 	scratchpadList: Monster[];
 }
 
-export default class MonsterEditorModal extends React.Component<Props, State> {
+export class MonsterEditorModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

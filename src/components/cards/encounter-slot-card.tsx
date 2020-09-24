@@ -1,15 +1,15 @@
 import { Tag } from 'antd';
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import Dropdown from '../controls/dropdown';
-import NumberSpin from '../controls/number-spin';
-import Note from '../panels/note';
-import PortraitPanel from '../panels/portrait-panel';
+import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
+import { Note } from '../panels/note';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	slot: EncounterSlot;
@@ -24,7 +24,7 @@ interface Props {
 	viewMonster: (monster: Monster) => void;
 }
 
-export default class EncounterSlotCard extends React.Component<Props> {
+export class EncounterSlotCard extends React.Component<Props> {
 	public render() {
 		try {
 			let name = 'monster';

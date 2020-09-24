@@ -1,11 +1,11 @@
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster';
 
-import Selector from '../controls/selector';
-import ChartPanel from '../panels/chart-panel';
+import { Selector } from '../controls/selector';
+import { ChartPanel } from '../panels/chart-panel';
 
 interface Props {
 	groups: MonsterGroup[];
@@ -15,7 +15,7 @@ interface State {
 	chart: string;
 }
 
-export default class DemographicsModal extends React.Component<Props, State> {
+export class DemographicsModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

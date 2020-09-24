@@ -1,10 +1,10 @@
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
+import { Gygax } from '../../utils/gygax';
 
 import { Monster } from '../../models/monster';
 
-import NumberSpin from '../controls/number-spin';
+import { NumberSpin } from '../controls/number-spin';
 
 interface Props {
 	combatant: Monster;
@@ -18,7 +18,7 @@ interface State {
 	showAbilityScores: boolean;
 }
 
-export default class AbilityScorePanel extends React.Component<Props, State> {
+export class AbilityScorePanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		edit: false,
 		showRollButtons: false,

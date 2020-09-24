@@ -1,16 +1,16 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Exploration, Map } from '../../models/map';
 import { Party } from '../../models/party';
 
-import ExplorationCard from '../cards/exploration-card';
-import MapCard from '../cards/map-card';
-import Expander from '../controls/expander';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { ExplorationCard } from '../cards/exploration-card';
+import { MapCard } from '../cards/map-card';
+import { Expander } from '../controls/expander';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	maps: Map[];
@@ -28,7 +28,7 @@ interface Props {
 	deleteExploration: (exploration: Exploration) => void;
 }
 
-export default class MapListScreen extends React.Component<Props> {
+export class MapListScreen extends React.Component<Props> {
 	public render() {
 		try {
 			const explorations = this.props.explorations;

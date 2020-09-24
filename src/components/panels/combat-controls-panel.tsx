@@ -1,7 +1,7 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -9,16 +9,16 @@ import { Map } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import NumberSpin from '../controls/number-spin';
-import Radial from '../controls/radial';
-import Selector from '../controls/selector';
-import Tabs from '../controls/tabs';
-import Textbox from '../controls/textbox';
-import ConditionsPanel from './conditions-panel';
-import Note from './note';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { NumberSpin } from '../controls/number-spin';
+import { Radial } from '../controls/radial';
+import { Selector } from '../controls/selector';
+import { Tabs } from '../controls/tabs';
+import { Textbox } from '../controls/textbox';
+import { ConditionsPanel } from './conditions-panel';
+import { Note } from './note';
 
 interface Props {
 	combatants: Combatant[];
@@ -59,7 +59,7 @@ interface State {
 	damageMultipliers: { [id: string]: number };
 }
 
-export default class CombatControlsPanel extends React.Component<Props, State> {
+export class CombatControlsPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		showTabs: true,
 		defaultTab: 'main',

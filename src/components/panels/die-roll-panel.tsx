@@ -11,7 +11,7 @@ interface Props {
 	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
-export default class DieRollPanel extends React.Component<Props> {
+export class DieRollPanel extends React.Component<Props> {
 	private getDieTypeBox(sides: number) {
 		const count = this.props.dice[sides];
 		return (

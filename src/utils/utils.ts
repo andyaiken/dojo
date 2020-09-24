@@ -1,6 +1,6 @@
 import { v4 as uuid4 } from 'uuid';
 
-export default class Utils {
+export class Utils {
 	public static guid(): string {
 		return uuid4();
 	}

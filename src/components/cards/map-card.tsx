@@ -3,11 +3,11 @@ import React from 'react';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import Textbox from '../controls/textbox';
-import MapPanel from '../panels/map-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Textbox } from '../controls/textbox';
+import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	map: Map;
@@ -23,7 +23,7 @@ interface State {
 	cloneName: string;
 }
 
-export default class MapCard extends React.Component<Props, State> {
+export class MapCard extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {

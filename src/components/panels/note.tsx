@@ -4,7 +4,7 @@ interface Props {
 	white: boolean;
 }
 
-export default class Note extends React.Component<Props> {
+export class Note extends React.Component<Props> {
 	public static defaultProps = {
 		white: false
 	};

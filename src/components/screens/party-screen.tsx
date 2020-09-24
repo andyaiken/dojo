@@ -3,15 +3,15 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Comms, CommsDM } from '../../utils/uhura';
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Party, PC } from '../../models/party';
 
-import PCCard from '../cards/pc-card';
-import ConfirmButton from '../controls/confirm-button';
-import Textbox from '../controls/textbox';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { PCCard } from '../cards/pc-card';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Textbox } from '../controls/textbox';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	party: Party;
@@ -27,7 +27,7 @@ interface Props {
 	nudgeValue: (source: any, field: string, value: number) => void;
 }
 
-export default class PartyScreen extends React.Component<Props> {
+export class PartyScreen extends React.Component<Props> {
 	public componentDidUpdate() {
 		if (Comms.data.party) {
 			CommsDM.sendPartyUpdate();

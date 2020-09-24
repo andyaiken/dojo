@@ -12,7 +12,7 @@ interface Props {
 	clear: () => void;
 }
 
-export default class PortraitPanel extends React.Component<Props> {
+export class PortraitPanel extends React.Component<Props> {
 	public static defaultProps = {
 		inline: false,
 		setPortrait: null,

@@ -2,13 +2,13 @@ import { StarFilled, StarOutlined } from '@ant-design/icons';
 import React from 'react';
 import Showdown from 'showdown';
 
-import Frankenstein from '../../utils/frankenstein';
-import Gygax from '../../utils/gygax';
+import { Frankenstein } from '../../utils/frankenstein';
+import { Gygax } from '../../utils/gygax';
 
 import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
-import Note from '../panels/note';
+import { Note } from '../panels/note';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -23,7 +23,7 @@ interface Props {
 	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
-export default class TraitsPanel extends React.Component<Props> {
+export class TraitsPanel extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'view',
 		showRollButtons: false,

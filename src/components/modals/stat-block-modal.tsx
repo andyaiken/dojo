@@ -4,14 +4,14 @@ import { Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import MonsterStatblockCard from '../cards/monster-statblock-card';
-import PCCard from '../cards/pc-card';
+import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { PCCard } from '../cards/pc-card';
 
 interface Props {
 	source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;
 }
 
-export default class StatBlockModal extends React.Component<Props> {
+export class StatBlockModal extends React.Component<Props> {
 	public render() {
 		try {
 			if (!this.props.source) {

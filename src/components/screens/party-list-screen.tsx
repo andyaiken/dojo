@@ -1,14 +1,14 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import Utils from '../../utils/utils';
+import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { Party, PC } from '../../models/party';
 
-import PartyCard from '../cards/party-card';
-import GridPanel from '../panels/grid-panel';
-import Note from '../panels/note';
+import { PartyCard } from '../cards/party-card';
+import { GridPanel } from '../panels/grid-panel';
+import { Note } from '../panels/note';
 
 interface Props {
 	parties: Party[];
@@ -22,7 +22,7 @@ interface Props {
 	openStatBlock: (pc: PC) => void;
 }
 
-export default class PartyListScreen extends React.Component<Props> {
+export class PartyListScreen extends React.Component<Props> {
 	public render() {
 		try {
 			const parties = this.props.parties;

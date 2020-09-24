@@ -8,7 +8,7 @@ interface Props {
 	result: DieRollResult;
 }
 
-export default class DieRollResultPanel extends React.Component<Props> {
+export class DieRollResultPanel extends React.Component<Props> {
 	public render() {
 		const rolls: JSX.Element[] = [];
 		let sum = 0;

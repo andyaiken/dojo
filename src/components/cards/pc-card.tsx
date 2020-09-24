@@ -4,8 +4,8 @@ import React from 'react';
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
-import ConfirmButton from '../controls/confirm-button';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	pc: PC | (PC & Combatant);
@@ -17,7 +17,7 @@ interface Props {
 	exportPC: (pc: PC) => void;
 }
 
-export default class PCCard extends React.Component<Props> {
+export class PCCard extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'view',
 		changeValue: null,

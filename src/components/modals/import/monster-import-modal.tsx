@@ -2,14 +2,14 @@ import { FileOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
-import Frankenstein from '../../../utils/frankenstein';
+import { Frankenstein } from '../../../utils/frankenstein';
 
 import { Monster } from '../../../models/monster';
 
-import MonsterStatblockCard from '../../cards/monster-statblock-card';
-import Tabs from '../../controls/tabs';
-import Textbox from '../../controls/textbox';
-import Note from '../../panels/note';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { Tabs } from '../../controls/tabs';
+import { Textbox } from '../../controls/textbox';
+import { Note } from '../../panels/note';
 
 interface Props {
 	monster: Monster;
@@ -21,7 +21,7 @@ interface State {
 	monster: Monster;
 }
 
-export default class MonsterImportModal extends React.Component<Props, State> {
+export class MonsterImportModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 

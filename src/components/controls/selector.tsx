@@ -8,7 +8,7 @@ interface Props {
 	onSelect: (optionID: string) => void;
 }
 
-export default class Selector extends React.Component<Props> {
+export class Selector extends React.Component<Props> {
 	public static defaultProps = {
 		itemsPerRow: null,
 		disabled: false

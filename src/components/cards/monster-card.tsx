@@ -2,17 +2,17 @@ import { PlusCircleOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React from 'react';
 
-import Gygax from '../../utils/gygax';
-import Napoleon from '../../utils/napoleon';
+import { Gygax } from '../../utils/gygax';
+import { Napoleon } from '../../utils/napoleon';
 
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import ConfirmButton from '../controls/confirm-button';
-import Dropdown from '../controls/dropdown';
-import Expander from '../controls/expander';
-import Textbox from '../controls/textbox';
-import PortraitPanel from '../panels/portrait-panel';
+import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Textbox } from '../controls/textbox';
+import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	monster: Monster;
@@ -33,7 +33,7 @@ interface State {
 	cloneName: string;
 }
 
-export default class MonsterCard extends React.Component<Props, State> {
+export class MonsterCard extends React.Component<Props, State> {
 	public static defaultProps = {
 		mode: 'editable',
 		library: null,

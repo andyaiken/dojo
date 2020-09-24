@@ -2,13 +2,13 @@ import { FileOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
-import Utils from '../../../utils/utils';
+import { Utils } from '../../../utils/utils';
 
 import { MonsterGroup } from '../../../models/monster';
 
-import MonsterStatblockCard from '../../cards/monster-statblock-card';
-import GridPanel from '../../panels/grid-panel';
-import Note from '../../panels/note';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { GridPanel } from '../../panels/grid-panel';
+import { Note } from '../../panels/note';
 
 interface Props {
 	group: MonsterGroup;
@@ -18,7 +18,7 @@ interface State {
 	group: MonsterGroup;
 }
 
-export default class MonsterGroupImportModal extends React.Component<Props, State> {
+export class MonsterGroupImportModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
