@@ -2660,7 +2660,7 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'image':
 					content = (
-						<img className='nonselectable-image' src={this.state.drawer.data} alt='shared image' />
+						<img className='nonselectable-image' src={this.state.drawer.data} alt='shared' />
 					);
 					header = 'image';
 					closable = true;

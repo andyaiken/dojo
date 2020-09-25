@@ -31,6 +31,7 @@
 		"quotemark": [true, "single"],
 		"react-this-binding-issue": false,
 		"react-no-dangerous-html": false,
+		"react-unused-props-and-state": true,
 		"trailing-comma": [
 			true,
 			{

@@ -1,6 +1,7 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
 import { Napoleon } from '../../utils/napoleon';
 
@@ -9,6 +10,7 @@ import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { Dropdown } from '../controls/dropdown';
+import { NumberSpin } from '../controls/number-spin';
 
 interface Props {
 	encounter: Encounter;
@@ -20,6 +22,8 @@ interface Props {
 interface State {
 	selectedPartyID: string | null;
 	selectedWaveID: string | null;
+	customPartySize: number;
+	customPartyLevel: number;
 }
 
 export class DifficultyChartPanel extends React.Component<Props, State> {
@@ -31,7 +35,9 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			selectedPartyID: props.party ? props.party.id : null,
-			selectedWaveID: null
+			selectedWaveID: null,
+			customPartySize: 5,
+			customPartyLevel: 1
 		};
 	}
 
@@ -94,9 +100,20 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 				</div>
 			);
 
+			let party: Party | null = null;
+			if (this.state.selectedPartyID === 'custom') {
+				party = Factory.createParty();
+				for (let n = 0; n !== this.state.customPartySize; ++n) {
+					const pc = Factory.createPC();
+					pc.level = this.state.customPartyLevel;
+					party.pcs.push(pc);
+				}
+			} else {
+				party = this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null;
+			}
+
 			let xpThresholds;
 			let diffSection;
-			const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
 			if (party) {
 				let xpEasy = 0;
 				let xpMedium = 0;
@@ -134,11 +151,11 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 						difficulty = 'tpk';
 						adjustedDifficulty = 'tpk';
 					}
-					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 100))) {
+					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 20))) {
 						difficulty = 'dm with a grudge';
 						adjustedDifficulty = 'dm with a grudge';
 					}
-					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 1000))) {
+					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 30))) {
 						difficulty = 'now you\'re just being silly';
 						adjustedDifficulty = 'now you\'re just being silly';
 					}
@@ -235,7 +252,6 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 				diffSection = basicData;
 			}
 
-			let partySelection = null;
 			if (!this.props.party) {
 				const partyOptions = [];
 				if (this.props.parties) {
@@ -247,23 +263,43 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 						});
 					}
 				}
+				partyOptions.push({
+					id: 'custom',
+					text: 'custom party'
+				});
 
-				partySelection = (
-					<Dropdown
-						options={partyOptions}
-						placeholder='select party...'
-						selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
-						onSelect={optionID => this.selectParty(optionID)}
-						onClear={() => this.selectParty(null)}
-					/>
-				);
-			}
+				let customPartySection = null;
+				if (this.state.selectedPartyID === 'custom') {
+					customPartySection = (
+						<div>
+							<NumberSpin
+								value={this.state.customPartySize}
+								label='party size'
+								downEnabled={this.state.customPartySize > 1}
+								onNudgeValue={delta => this.setState({ customPartySize: this.state.customPartySize + delta })}
+							/>
+							<NumberSpin
+								value={this.state.customPartyLevel}
+								label='party level'
+								downEnabled={this.state.customPartyLevel > 1}
+								upEnabled={this.state.customPartyLevel < 20}
+								onNudgeValue={delta => this.setState({ customPartyLevel: this.state.customPartyLevel + delta })}
+							/>
+						</div>
+					);
+				}
 
-			if (partySelection) {
 				return (
 					<div className='group-panel'>
 						<div className='subheading'>difficulty</div>
-						{partySelection}
+						<Dropdown
+							options={partyOptions}
+							placeholder='select party...'
+							selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
+							onSelect={optionID => this.selectParty(optionID)}
+							onClear={() => this.selectParty(null)}
+						/>
+						{customPartySection}
 						{xpThresholds}
 						{diffSection}
 					</div>
