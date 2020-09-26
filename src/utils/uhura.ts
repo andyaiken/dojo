@@ -266,7 +266,10 @@ export class Comms {
 						if (index !== -1) {
 							Comms.data.party.pcs[index] = pc;
 						}
+					} else {
+						Comms.data.party.pcs.push(pc);
 					}
+					Utils.sort(Comms.data.party.pcs);
 				}
 				break;
 			case 'message':

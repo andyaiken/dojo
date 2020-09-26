@@ -233,6 +233,17 @@ export class Player extends React.Component<Props, State> {
 		}
 	}
 
+	private newPC() {
+		const pc = Factory.createPC();
+		pc.player = Comms.getName(Comms.getID());
+		this.setState({
+			drawer: {
+				type: 'pc',
+				pc: pc
+			}
+		});
+	}
+
 	private savePC() {
 		CommsPlayer.sendCharacter(this.state.drawer.pc);
 
@@ -329,6 +340,7 @@ export class Player extends React.Component<Props, State> {
 					<hr/>
 					<p>in the meantime, please select your character:</p>
 					{pcs}
+					<p>or, create a new character <button className='link' onClick={() => this.newPC()}>here</button></p>
 				</div>
 			);
 		}
