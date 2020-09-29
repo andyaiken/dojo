@@ -6,10 +6,8 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
-import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
-import { Textbox } from '../controls/textbox';
+import { EncounterOptions } from '../options/encounter-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -17,9 +15,9 @@ interface Props {
 	parties: Party[];
 	view: (encounter: Encounter) => void;
 	edit: (encounter: Encounter) => void;
-	delete: (encounter: Encounter) => void;
 	clone: (encounter: Encounter, name: string) => void;
-	run: (encounter: Encounter, partyID: string) => void;
+	run: (partyID: string, encounterID: string) => void;
+	delete: (encounter: Encounter) => void;
 	openStatBlock: (slot: EncounterSlot) => void;
 	getMonster: (id: string) => Monster | null;
 }
@@ -105,23 +103,6 @@ export class EncounterCard extends React.Component<Props, State> {
 				}
 			});
 
-			let run = null;
-			if (this.props.parties.length > 0) {
-				const options = this.props.parties.map(p => {
-					return {
-						id: p.id,
-						text: p.name
-					};
-				});
-				run = (
-					<Dropdown
-						options={options}
-						placeholder='start combat with...'
-						onSelect={partyID => this.props.run(this.props.encounter, partyID)}
-					/>
-				);
-			}
-
 			return (
 				<div className='card encounter'>
 					<div className='heading'>
@@ -138,17 +119,16 @@ export class EncounterCard extends React.Component<Props, State> {
 						</div>
 						<hr/>
 						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>
-						<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
-						<Expander text='copy encounter'>
-							<Textbox
-								text={this.state.cloneName}
-								placeholder='encounter name'
-								onChange={value => this.setCloneName(value)}
+						<Expander text='more options'>
+							<EncounterOptions
+								encounter={this.props.encounter}
+								parties={this.props.parties}
+								edit={encounter => this.props.edit(encounter)}
+								clone={(encounter, name) => this.props.clone(encounter, name)}
+								run={(partyID, encounterID) => this.props.run(partyID, encounterID)}
+								delete={encounter => this.props.delete(encounter)}
 							/>
-							<button onClick={() => this.props.clone(this.props.encounter, this.state.cloneName)}>create copy</button>
 						</Expander>
-						{run}
-						<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
 					</div>
 				</div>
 			);

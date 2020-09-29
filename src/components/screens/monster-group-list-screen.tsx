@@ -6,6 +6,7 @@ import { Utils } from '../../utils/utils';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { MonsterGroupCard } from '../cards/monster-group-card';
+import { MonsterGroupListOptions } from '../options/monster-group-list-options';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -19,6 +20,8 @@ interface Props {
 	addOpenGameContent: () => void;
 	openStatBlock: (monster: Monster) => void;
 	openDemographics: (group: MonsterGroup | null) => void;
+	addMonster: (monster: Monster | null) => void;
+	importMonster: () => void;
 }
 
 export class MonsterGroupListScreen extends React.Component<Props> {
@@ -46,7 +49,11 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 				<MonsterGroupCard
 					key={group.id}
 					group={group}
+					library={this.props.library}
 					open={grp => this.props.selectMonsterGroup(grp)}
+					addMonster={monster => this.props.addMonster(monster)}
+					importMonster={() => this.props.importMonster()}
+					openDemographics={grp => this.props.openDemographics(grp)}
 					delete={grp => this.props.deleteMonsterGroup(grp)}
 					openStatBlock={monster => this.props.openStatBlock(monster)}
 				/>
@@ -64,9 +71,11 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>to start adding monsters, press the <b>create a new monster group</b> button</div>
 						</Note>
-						<button onClick={() => this.props.addMonsterGroup()}>create a new monster group</button>
-						<button onClick={() => this.props.importMonsterGroup()}>import a monster group</button>
-						<button onClick={() => this.props.openDemographics(null)}>show demographics</button>
+						<MonsterGroupListOptions
+							addMonsterGroup={() => this.props.addMonsterGroup()}
+							importMonsterGroup={() => this.props.importMonsterGroup()}
+							openDemographics={() => this.props.openDemographics(null)}
+						/>
 					</Col>
 					<Col span={18} className='scrollable'>
 						<GridPanel heading='monster groups' content={listItems} />

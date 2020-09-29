@@ -8,9 +8,8 @@ import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
-import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
 import { Textbox } from '../controls/textbox';
+import { EncounterOptions } from '../options/encounter-options';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -21,8 +20,9 @@ interface Props {
 	encounter: Encounter;
 	parties: Party[];
 	edit: (encounter: Encounter) => void;
+	clone: (encounter: Encounter, name: string) => void;
 	delete: (encounter: Encounter) => void;
-	run: (encounter: Encounter, partyID: string) => void;
+	run: (partyID: string, encounterID: string) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (encounter: Encounter, field: string, value: string) => void;
 	goBack: () => void;
@@ -68,15 +68,25 @@ export class EncounterScreen extends React.Component<Props> {
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>
-						<EncounterInfo
+						<div className='section'>
+							<div className='subheading'>encounter name</div>
+							<Textbox
+								text={this.props.encounter.name}
+								placeholder='encounter name'
+								onChange={value => this.props.changeValue(this.props.encounter, 'name', value)}
+							/>
+						</div>
+						<hr />
+						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
-							edit={enc => this.props.edit(enc)}
-							delete={enc => this.props.delete(enc)}
-							run={(enc, partyID) => this.props.run(enc, partyID)}
-							changeValue={(encounter, field, value) => this.props.changeValue(encounter, field, value)}
-							goBack={() => this.props.goBack()}
+							edit={encounter => this.props.edit(encounter)}
+							clone={(encounter, name) => this.props.clone(encounter, name)}
+							run={(partyID, encounterID) => this.props.run(partyID, encounterID)}
+							delete={encounter => this.props.delete(encounter)}
 						/>
+						<hr />
+						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 					</Col>
 					<Col span={18} className='scrollable'>
 						<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.encounter.notes) }} />
@@ -84,57 +94,6 @@ export class EncounterScreen extends React.Component<Props> {
 						{this.props.encounter.waves.map(wave => this.getSlots(wave.id, wave.name ?? 'wave', wave.slots))}
 					</Col>
 				</Row>
-			);
-		} catch (e) {
-			console.error(e);
-			return <div className='render-error'/>;
-		}
-	}
-}
-
-interface EncounterInfoProps {
-	encounter: Encounter;
-	parties: Party[];
-	edit: (encounter: Encounter) => void;
-	delete: (encounter: Encounter) => void;
-	run: (encounter: Encounter, partyID: string) => void;
-	changeValue: (encounter: Encounter, field: string, value: string) => void;
-	goBack: () => void;
-}
-
-class EncounterInfo extends React.Component<EncounterInfoProps> {
-	public render() {
-		try {
-			let run = null;
-			if (this.props.parties.length > 0) {
-				run = (
-					<Dropdown
-						options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
-						placeholder='start combat with...'
-						onSelect={partyID => this.props.run(this.props.encounter, partyID)}
-					/>
-				);
-			}
-
-			return (
-				<div>
-					<div className='section'>
-						<div className='subheading'>encounter name</div>
-						<Textbox
-							text={this.props.encounter.name}
-							placeholder='encounter name'
-							onChange={value => this.props.changeValue(this.props.encounter, 'name', value)}
-						/>
-					</div>
-					<hr />
-					<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
-					{run}
-					<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
-					<hr />
-					<div className='section'>
-						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
-					</div>
-				</div>
 			);
 		} catch (e) {
 			console.error(e);

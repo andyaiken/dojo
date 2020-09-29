@@ -7,7 +7,7 @@ import { Utils } from '../../../utils/utils';
 
 import { Party } from '../../../models/party';
 
-import { PCCard } from '../../cards/pc-card';
+import { PCStatblockCard } from '../../cards/pc-statblock-card';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { GridPanel } from '../../panels/grid-panel';
@@ -141,7 +141,7 @@ export class PartyImportModal extends React.Component<Props, State> {
 						<GridPanel
 							heading={this.props.party.name}
 							columns={1}
-							content={this.props.party.pcs.map(pc => <PCCard key={pc.id} pc={pc} />)}
+							content={this.props.party.pcs.map(pc => <PCStatblockCard key={pc.id} pc={pc} />)}
 						/>
 					</Col>
 				</Row>

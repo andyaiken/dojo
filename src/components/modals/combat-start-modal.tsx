@@ -13,7 +13,7 @@ import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter'
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import { MonsterCard } from '../cards/monster-card';
+import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
@@ -645,7 +645,7 @@ class MonsterSelectionSection extends React.Component<MonsterSelectionSectionPro
 
 		let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !selectedIDs.includes(m.id)).map(m => {
 			return (
-				<MonsterCard key={m.id} monster={m} mode='candidate' selectMonster={monster => this.props.addMonster(monster)} />
+				<MonsterCandidateCard key={m.id} monster={m} selectMonster={monster => this.props.addMonster(monster)} />
 			);
 		});
 		if (allCombatants.length === 0) {

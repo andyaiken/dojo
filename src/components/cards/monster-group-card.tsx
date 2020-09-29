@@ -4,12 +4,17 @@ import { Gygax } from '../../utils/gygax';
 
 import { Monster, MonsterGroup } from '../../models/monster';
 
-import { ConfirmButton } from '../controls/confirm-button';
+import { Expander } from '../controls/expander';
+import { MonsterGroupOptions } from '../options/monster-group-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	group: MonsterGroup;
+	library: MonsterGroup[];
 	open: (group: MonsterGroup) => void;
+	addMonster: (monster: Monster | null) => void;
+	importMonster: () => void;
+	openDemographics: (group: MonsterGroup) => void;
 	delete: (group: MonsterGroup) => void;
 	openStatBlock: (monster: Monster) => void;
 }
@@ -46,7 +51,16 @@ export class MonsterGroupCard extends React.Component<Props> {
 						</div>
 						<hr/>
 						<button onClick={() => this.props.open(this.props.group)}>open group</button>
-						<ConfirmButton text='delete group' onConfirm={() => this.props.delete(this.props.group)} />
+						<Expander text='more options'>
+							<MonsterGroupOptions
+								monsterGroup={this.props.group}
+								library={this.props.library}
+								addMonster={monster => this.props.addMonster(monster)}
+								importMonster={() => this.props.importMonster()}
+								openDemographics={group => this.props.openDemographics(group)}
+								removeMonsterGroup={group => this.props.delete(group)}
+							/>
+						</Expander>
 					</div>
 				</div>
 			);

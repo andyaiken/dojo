@@ -652,13 +652,6 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private removeCurrentParty() {
-		const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
-		if (party) {
-			this.removeParty(party);
-		}
-	}
-
 	private removeParty(party: Party) {
 		const index = this.state.parties.indexOf(party);
 		this.state.parties.splice(index, 1);
@@ -803,13 +796,6 @@ export class Main extends React.Component<Props, State> {
 			library: this.state.library,
 			drawer: null
 		});
-	}
-
-	private removeCurrentMonsterGroup() {
-		const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
-		if (group) {
-			this.removeMonsterGroup(group);
-		}
 	}
 
 	private removeMonsterGroup(group: MonsterGroup) {
@@ -2322,13 +2308,23 @@ export class Main extends React.Component<Props, State> {
 					return (
 						<PartyScreen
 							party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
+							encounters={this.state.encounters}
+							maps={this.state.maps}
 							goBack={() => this.selectParty(null)}
-							removeParty={() => this.removeCurrentParty()}
+							removeParty={party => this.removeParty(party)}
 							addPC={() => this.editPC(null)}
 							importPC={() => this.importPC()}
 							editPC={pc => this.editPC(pc)}
 							updatePC={pc => this.updatePC(pc)}
 							removePC={pc => this.removePC(pc)}
+							runEncounter={(partyID, encounterID) => {
+								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
+								this.createCombat(partyID, encounter);
+							}}
+							explore={(partyID, mapID) => {
+								const map = this.state.maps.find(m => m.id === mapID) as Map;
+								this.startExploration(map, partyID);
+							}}
 							showReference={party => this.showPartyReference(party)}
 							changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
 							nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
@@ -2343,7 +2339,8 @@ export class Main extends React.Component<Props, State> {
 						addParty={() => this.addParty()}
 						importParty={() => this.importParty()}
 						selectParty={party => this.selectParty(party)}
-						deleteParty={party => this.removeParty(party)}
+						addPC={() => this.editPC(null)}
+						importPC={() => this.importPC()}
 						runEncounter={(partyID, encounterID) => {
 							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 							this.createCombat(partyID, encounter);
@@ -2353,6 +2350,7 @@ export class Main extends React.Component<Props, State> {
 							this.startExploration(map, partyID);
 						}}
 						showReference={party => this.showPartyReference(party)}
+						deleteParty={party => this.removeParty(party)}
 						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
 					/>
 				);
@@ -2364,7 +2362,7 @@ export class Main extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							goBack={() => this.selectMonsterGroup(null)}
-							removeMonsterGroup={() => this.removeCurrentMonsterGroup()}
+							removeMonsterGroup={group => this.removeMonsterGroup(group)}
 							openDemographics={group => this.openDemographics(group)}
 							addMonster={monster => this.addMonster(monster)}
 							importMonster={() => this.importMonster()}
@@ -2389,6 +2387,8 @@ export class Main extends React.Component<Props, State> {
 						addOpenGameContent={() => this.addOpenGameContent()}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						openDemographics={group => this.openDemographics(group)}
+						addMonster={monster => this.addMonster(monster)}
+						importMonster={() => this.importMonster()}
 					/>
 				);
 			case 'encounters':
@@ -2473,8 +2473,12 @@ export class Main extends React.Component<Props, State> {
 							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
 							parties={this.state.parties}
 							edit={encounter => this.editEncounter(encounter)}
+							clone={(encounter, name) => this.cloneEncounter(encounter, name)}
 							delete={encounter => this.removeEncounter(encounter)}
-							run={(encounter, partyID) => this.createCombat(partyID, encounter)}
+							run={(partyID, encounterID) => {
+								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
+								this.createCombat(partyID, encounter);
+							}}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
 							goBack={() => this.selectEncounter(null)}
@@ -2492,7 +2496,10 @@ export class Main extends React.Component<Props, State> {
 						editEncounter={encounter => this.editEncounter(encounter)}
 						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
-						runEncounter={(encounter, partyID) => this.createCombat(partyID, encounter)}
+						runEncounter={(partyID, encounterID) => {
+							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
+							this.createCombat(partyID, encounter);
+						}}
 						getMonster={id => this.getMonster(id)}
 						setView={view => this.setView(view)}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
@@ -2572,8 +2579,16 @@ export class Main extends React.Component<Props, State> {
 							map={this.state.maps.find(m => m.id === this.state.selectedMapID) as Map}
 							parties={this.state.parties}
 							edit={map => this.editMap(map)}
+							clone={(map, name) => this.cloneMap(map, name)}
 							delete={map => this.removeMap(map)}
-							startExploration={(map, partyID) => this.startExploration(map, partyID)}
+							startCombat={(partyID, mapID) => {
+								const map = this.state.maps.find(m => m.id === mapID) as Map;
+								this.createCombat(partyID, null, map);
+							}}
+							startExploration={(partyID, mapID) => {
+								const map = this.state.maps.find(m => m.id === mapID) as Map;
+								this.startExploration(map, partyID);
+							}}
 							changeValue={(map, type, value) => this.changeValue(map, type, value)}
 							goBack={() => this.selectMap(null)}
 						/>

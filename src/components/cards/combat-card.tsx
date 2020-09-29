@@ -4,7 +4,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import { ConfirmButton } from '../controls/confirm-button';
+import { CombatOptions } from '../options/combat-options';
 import { MapPanel } from '../panels/map-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -78,8 +78,11 @@ export class CombatCard extends React.Component<Props> {
 							{list}
 						</div>
 						<hr/>
-						<button onClick={() => this.props.resume(this.props.combat)}>resume combat</button>
-						<ConfirmButton text='delete combat' onConfirm={() => this.props.delete(this.props.combat)} />
+						<CombatOptions
+							combat={this.props.combat}
+							resume={combat => this.props.resume(combat)}
+							delete={combat => this.props.delete(combat)}
+						/>
 					</div>
 				</div>
 			);

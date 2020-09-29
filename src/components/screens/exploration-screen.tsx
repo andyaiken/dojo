@@ -17,7 +17,7 @@ import { Companion, PC } from '../../models/party';
 
 import { MapItemCard } from '../cards/map-item-card';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
-import { PCCard } from '../cards/pc-card';
+import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
@@ -538,7 +538,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 		switch (combatant.type) {
 			case 'pc':
 				return (
-					<PCCard pc={combatant as Combatant & PC} />
+					<PCStatblockCard pc={combatant as Combatant & PC} />
 				);
 			case 'monster':
 				return (

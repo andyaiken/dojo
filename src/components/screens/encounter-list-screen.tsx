@@ -2,7 +2,6 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -12,8 +11,7 @@ import { Party } from '../../models/party';
 
 import { CombatCard } from '../cards/combat-card';
 import { EncounterCard } from '../cards/encounter-card';
-import { Expander } from '../controls/expander';
-import { RadioGroup } from '../controls/radio-group';
+import { EncounterListOptions } from '../options/encounter-list-options';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -27,7 +25,7 @@ interface Props {
 	editEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
-	runEncounter: (encounter: Encounter, partyID: string) => void;
+	runEncounter: (partyID: string, encounterID: string) => void;
 	getMonster: (id: string) => Monster | null;
 	setView: (view: string) => void;
 	openStatBlock: (monster: Monster | Combatant) => void;
@@ -90,7 +88,7 @@ export class EncounterListScreen extends React.Component<Props> {
 					edit={encounter => this.props.editEncounter(encounter)}
 					delete={encounter => this.props.deleteEncounter(encounter)}
 					clone={(encounter, name) => this.props.cloneEncounter(encounter, name)}
-					run={(encounter, partyID) => this.props.runEncounter(encounter, partyID)}
+					run={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
 					openStatBlock={slot => this.openStatBlock(slot)}
 					getMonster={id => this.props.getMonster(id)}
 				/>
@@ -113,14 +111,9 @@ export class EncounterListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
 						</Note>
-						<button onClick={() => this.props.addEncounter(null)}>create a new encounter</button>
-						<Expander text='use an encounter template'>
-							<RadioGroup
-								items={Napoleon.encounterTemplates().map(t => ({ id: t.name, text: t.name }))}
-								selectedItemID={null}
-								onSelect={id => this.props.addEncounter(id)}
-							/>
-						</Expander>
+						<EncounterListOptions
+							addEncounter={templateID => this.props.addEncounter(templateID)}
+						/>
 					</Col>
 					<Col span={18} className='scrollable'>
 						<GridPanel heading='in progress' content={combatItems} />

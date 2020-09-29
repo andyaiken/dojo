@@ -3,10 +3,8 @@ import React from 'react';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
-import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
-import { Textbox } from '../controls/textbox';
+import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 
 interface Props {
@@ -15,56 +13,14 @@ interface Props {
 	viewMap: (map: Map) => void;
 	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
-	removeMap: (map: Map) => void;
 	runEncounter: (partyID: string, mapID: string) => void;
 	explore: (partyID: string, mapID: string) => void;
+	removeMap: (map: Map) => void;
 }
 
-interface State {
-	cloneName: string;
-}
-
-export class MapCard extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			cloneName: props.map.name + ' copy'
-		};
-	}
-
-	private setCloneName(cloneName: string) {
-		this.setState({
-			cloneName: cloneName
-		});
-	}
-
+export class MapCard extends React.Component<Props> {
 	public render() {
 		try {
-			let run = null;
-			let explore = null;
-			if (this.props.parties.length > 0) {
-				const options = this.props.parties.map(p => {
-					return {
-						id: p.id,
-						text: p.name
-					};
-				});
-				run = (
-					<Dropdown
-						options={options}
-						placeholder='start combat with...'
-						onSelect={partyID => this.props.runEncounter(partyID, this.props.map.id)}
-					/>
-				);
-				explore = (
-					<Dropdown
-						options={options}
-						placeholder='start exploration with...'
-						onSelect={partyID => this.props.explore(partyID, this.props.map.id)}
-					/>
-				);
-			}
-
 			return (
 				<div className='card map'>
 					<div className='heading'>
@@ -81,18 +37,17 @@ export class MapCard extends React.Component<Props, State> {
 						</div>
 						<hr/>
 						<button onClick={() => this.props.viewMap(this.props.map)}>open map</button>
-						<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
-						<Expander text='copy map'>
-							<Textbox
-								text={this.state.cloneName}
-								placeholder='map name'
-								onChange={value => this.setCloneName(value)}
+						<Expander text='more options'>
+							<MapOptions
+								map={this.props.map}
+								parties={this.props.parties}
+								edit={map => this.props.editMap(map)}
+								clone={(map, name) => this.props.cloneMap(map, name)}
+								startCombat={(partyID, mapID) => this.props.runEncounter(partyID, mapID)}
+								startExploration={(partyID, mapID) => this.props.explore(partyID, mapID)}
+								delete={map => this.props.removeMap(map)}
 							/>
-							<button onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}>create copy</button>
 						</Expander>
-						{run}
-						{explore}
-						<ConfirmButton text='delete map' onConfirm={() => this.props.removeMap(this.props.map)} />
 					</div>
 				</div>
 			);

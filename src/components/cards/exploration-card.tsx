@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Exploration } from '../../models/map';
 
-import { ConfirmButton } from '../controls/confirm-button';
+import { ExplorationOptions } from '../options/exploration-options';
 import { MapPanel } from '../panels/map-panel';
 
 interface Props {
@@ -30,8 +30,11 @@ export class ExplorationCard extends React.Component<Props> {
 							/>
 						</div>
 						<hr/>
-						<button onClick={() => this.props.resume(this.props.exploration)}>resume exploration</button>
-						<ConfirmButton text='delete exploration' onConfirm={() => this.props.delete(this.props.exploration)} />
+						<ExplorationOptions
+							exploration={this.props.exploration}
+							resume={exploration => this.props.resume(exploration)}
+							delete={exploration => this.props.delete(exploration)}
+						/>
 					</div>
 				</div>
 			);

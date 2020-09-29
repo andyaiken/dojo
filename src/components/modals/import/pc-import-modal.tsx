@@ -6,7 +6,7 @@ import { Hero } from '../../../utils/hero';
 
 import { PC } from '../../../models/party';
 
-import { PCCard } from '../../cards/pc-card';
+import { PCStatblockCard } from '../../cards/pc-statblock-card';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { Note } from '../../panels/note';
@@ -159,7 +159,7 @@ export class PCImportModal extends React.Component<Props, State> {
 						{content}
 					</Col>
 					<Col span={12} className='scrollable'>
-						<PCCard pc={this.state.pc} />
+						<PCStatblockCard pc={this.state.pc} />
 					</Col>
 				</Row>
 			);

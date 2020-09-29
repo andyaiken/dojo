@@ -4,18 +4,13 @@ import React from 'react';
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
-import { PCOptions } from '../options/pc-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	pc: PC | (PC & Combatant);
-	changeValue: (pc: any, field: string, value: any) => void;
-	removePC: (pc: PC) => void;
-	editPC: (pc: PC) => void;
-	updatePC: (pc: PC) => void;
 }
 
-export class PCCard extends React.Component<Props> {
+export class PCStatblockCard extends React.Component<Props> {
 	public render() {
 		try {
 			let companions = null;
@@ -69,14 +64,6 @@ export class PCCard extends React.Component<Props> {
 								</div>
 							</div>
 						</div>
-						<hr/>
-						<PCOptions
-							pc={this.props.pc}
-							editPC={pc => this.props.editPC(pc)}
-							updatePC={pc => this.props.updatePC(pc)}
-							removePC={pc => this.props.removePC(pc)}
-							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-						/>
 					</div>
 				</div>
 			);

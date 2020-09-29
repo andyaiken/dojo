@@ -8,6 +8,7 @@ import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
 import { PartyCard } from '../cards/party-card';
+import { PartyListOptions } from '../options/party-list-options';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -19,6 +20,8 @@ interface Props {
 	importParty: () => void;
 	selectParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
+	addPC: () => void;
+	importPC: () => void;
 	runEncounter: (partyID: string, encounterID: string) => void;
 	explore: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
@@ -37,11 +40,13 @@ export class PartyListScreen extends React.Component<Props> {
 					encounters={this.props.encounters}
 					maps={this.props.maps}
 					open={party => this.props.selectParty(party)}
-					delete={party => this.props.deleteParty(party)}
+					addPC={() => this.props.addPC()}
+					importPC={() => this.props.importPC()}
 					runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
 					explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
 					showReference={party => this.props.showReference(party)}
 					openStatBlock={pc => this.props.openStatBlock(pc)}
+					delete={party => this.props.deleteParty(party)}
 				/>
 			));
 
@@ -58,8 +63,10 @@ export class PartyListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>to start adding a party, press the <b>create a new party</b> button</div>
 						</Note>
-						<button onClick={() => this.props.addParty()}>create a new party</button>
-						<button onClick={() => this.props.importParty()}>import a party</button>
+						<PartyListOptions
+							addParty={() => this.props.addParty()}
+							importParty={() => this.props.importParty()}
+						/>
 					</Col>
 					<Col span={18} className='scrollable'>
 						<GridPanel heading='parties' content={listItems} />

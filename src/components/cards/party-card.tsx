@@ -4,8 +4,8 @@ import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
-import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { PartyOptions } from '../options/party-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -13,11 +13,13 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	open: (party: Party) => void;
-	delete: (party: Party) => void;
+	addPC: () => void;
+	importPC: () => void;
 	runEncounter: (partyID: string, encounterID: string) => void;
-	explore: (paryID: string, mapID: string) => void;
+	explore: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
+	delete: (party: Party) => void;
 }
 
 export class PartyCard extends React.Component<Props> {
@@ -47,40 +49,6 @@ export class PartyCard extends React.Component<Props> {
 
 	public render() {
 		try {
-			let run = null;
-			if (this.props.encounters.length > 0) {
-				const options = this.props.encounters.map(enc => {
-					return {
-						id: enc.id,
-						text: enc.name
-					};
-				});
-				run = (
-					<Dropdown
-						options={options}
-						placeholder='start combat...'
-						onSelect={encounterID => this.props.runEncounter(this.props.party.id, encounterID)}
-					/>
-				);
-			}
-
-			let explore = null;
-			if (this.props.maps.length > 0) {
-				const options = this.props.maps.map(m => {
-					return {
-						id: m.id,
-						text: m.name
-					};
-				});
-				explore = (
-					<Dropdown
-						options={options}
-						placeholder='start exploration...'
-						onSelect={mapID => this.props.explore(this.props.party.id, mapID)}
-					/>
-				);
-			}
-
 			return (
 				<div className='card pc'>
 					<div className='heading'>
@@ -94,10 +62,19 @@ export class PartyCard extends React.Component<Props> {
 						</div>
 						<hr/>
 						<button onClick={() => this.props.open(this.props.party)}>open party</button>
-						{run}
-						{explore}
-						<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
-						<ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
+						<Expander text='more options'>
+							<PartyOptions
+								party={this.props.party}
+								encounters={this.props.encounters}
+								maps={this.props.maps}
+								addPC={() => this.props.addPC()}
+								importPC={() => this.props.importPC()}
+								runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
+								explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
+								showReference={party => this.props.showReference(party)}
+								delete={party => this.props.delete(party)}
+							/>
+						</Expander>
 					</div>
 				</div>
 			);

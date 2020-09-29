@@ -5,17 +5,18 @@ import React from 'react';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
-import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
 import { Textbox } from '../controls/textbox';
+import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	map: Map;
 	parties: Party[];
 	edit: (map: Map) => void;
+	clone: (map: Map, name: string) => void;
 	delete: (map: Map) => void;
-	startExploration: (map: Map, partyID: string) => void;
+	startCombat: (partyID: string, mapID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
 	changeValue: (map: Map, field: string, value: string) => void;
 	goBack: () => void;
 }
@@ -65,17 +66,17 @@ export class MapScreen extends React.Component<Props, State> {
 							/>
 						</div>
 						<hr/>
-						<button onClick={() => this.props.edit(this.props.map)}>edit map</button>
-						<Dropdown
-							options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
-							placeholder='start exploration with...'
-							onSelect={id => this.props.startExploration(this.props.map, id)}
+						<MapOptions
+							map={this.props.map}
+							parties={this.props.parties}
+							edit={map => this.props.edit(map)}
+							clone={(map, name) => this.props.clone(map, name)}
+							startCombat={(partyID, mapID) => this.props.startCombat(partyID, mapID)}
+							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
+							delete={map => this.props.delete(map)}
 						/>
-						<ConfirmButton text='delete map' onConfirm={() => this.props.delete(this.props.map)} />
 						<hr />
-						<div className='section'>
-							<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
-						</div>
+						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 					</Col>
 					<Col span={18} className='scrollable both-ways'>
 						<MapPanel

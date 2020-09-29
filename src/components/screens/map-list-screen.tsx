@@ -8,7 +8,7 @@ import { Party } from '../../models/party';
 
 import { ExplorationCard } from '../cards/exploration-card';
 import { MapCard } from '../cards/map-card';
-import { Expander } from '../controls/expander';
+import { MapListOptions } from '../options/map-list-options';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -70,12 +70,11 @@ export class MapListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>to design a new map, press the <b>create a new map</b> button</div>
 						</Note>
-						<button onClick={() => this.props.addMap()}>create a new map</button>
-						<button onClick={() => this.props.importMap()}>import a map image</button>
-						<Expander text='create a random map'>
-							<button onClick={() => this.props.generateMap('dungeon')}>create a new dungeon map</button>
-							<button onClick={() => this.props.generateMap('delve')}>create a new delve map</button>
-						</Expander>
+						<MapListOptions
+							addMap={() => this.props.addMap()}
+							importMap={() => this.props.importMap()}
+							generateMap={type => this.props.generateMap(type)}
+						/>
 					</Col>
 					<Col span={18} className='scrollable'>
 						<GridPanel heading='in progress' content={explorationItems} />

@@ -13,7 +13,7 @@ import { Utils } from '../../../utils/utils';
 import { MonsterFilter } from '../../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
-import { MonsterCard } from '../../cards/monster-card';
+import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
@@ -702,9 +702,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			} else {
 				return (
 					<div className='section' key={m.id}>
-						<MonsterCard
+						<MonsterCandidateCard
 							monster={m}
-							mode='candidate'
 							selectMonster={monster => this.addToScratchpad(monster)}
 						/>
 					</div>
