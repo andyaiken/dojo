@@ -28,6 +28,7 @@ interface State {
 
 export class DifficultyChartPanel extends React.Component<Props, State> {
 	public static defaultProps = {
+		parties: [],
 		party: null
 	};
 
@@ -100,16 +101,18 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 				</div>
 			);
 
-			let party: Party | null = null;
-			if (this.state.selectedPartyID === 'custom') {
-				party = Factory.createParty();
-				for (let n = 0; n !== this.state.customPartySize; ++n) {
-					const pc = Factory.createPC();
-					pc.level = this.state.customPartyLevel;
-					party.pcs.push(pc);
+			let party: Party | null = this.props.party;
+			if (party === null) {
+				if (this.state.selectedPartyID === 'custom') {
+					party = Factory.createParty();
+					for (let n = 0; n !== this.state.customPartySize; ++n) {
+						const pc = Factory.createPC();
+						pc.level = this.state.customPartyLevel;
+						party.pcs.push(pc);
+					}
+				} else {
+					party = this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null;
 				}
-			} else {
-				party = this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null;
 			}
 
 			let xpThresholds;

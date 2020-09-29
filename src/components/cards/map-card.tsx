@@ -16,7 +16,8 @@ interface Props {
 	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	removeMap: (map: Map) => void;
-	explore: (map: Map, partyID: string) => void;
+	runEncounter: (partyID: string, mapID: string) => void;
+	explore: (partyID: string, mapID: string) => void;
 }
 
 interface State {
@@ -39,6 +40,7 @@ export class MapCard extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			let run = null;
 			let explore = null;
 			if (this.props.parties.length > 0) {
 				const options = this.props.parties.map(p => {
@@ -47,11 +49,18 @@ export class MapCard extends React.Component<Props, State> {
 						text: p.name
 					};
 				});
+				run = (
+					<Dropdown
+						options={options}
+						placeholder='start combat with...'
+						onSelect={partyID => this.props.runEncounter(partyID, this.props.map.id)}
+					/>
+				);
 				explore = (
 					<Dropdown
 						options={options}
 						placeholder='start exploration with...'
-						onSelect={partyID => this.props.explore(this.props.map, partyID)}
+						onSelect={partyID => this.props.explore(partyID, this.props.map.id)}
 					/>
 				);
 			}
@@ -81,6 +90,7 @@ export class MapCard extends React.Component<Props, State> {
 							/>
 							<button onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}>create copy</button>
 						</Expander>
+						{run}
 						{explore}
 						<ConfirmButton text='delete map' onConfirm={() => this.props.removeMap(this.props.map)} />
 					</div>

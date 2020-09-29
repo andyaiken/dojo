@@ -4,6 +4,7 @@ import React from 'react';
 import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
+import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
 import { PartyCard } from '../cards/party-card';
@@ -13,11 +14,13 @@ import { Note } from '../panels/note';
 interface Props {
 	parties: Party[];
 	encounters: Encounter[];
+	maps: Map[];
 	addParty: () => void;
 	importParty: () => void;
 	selectParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
-	runEncounter: (party: Party, encounterID: string) => void;
+	runEncounter: (partyID: string, encounterID: string) => void;
+	explore: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 }
@@ -32,9 +35,11 @@ export class PartyListScreen extends React.Component<Props> {
 					key={p.id}
 					party={p}
 					encounters={this.props.encounters}
+					maps={this.props.maps}
 					open={party => this.props.selectParty(party)}
 					delete={party => this.props.deleteParty(party)}
-					runEncounter={(party, encounterID) => this.props.runEncounter(party, encounterID)}
+					runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
+					explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
 					showReference={party => this.props.showReference(party)}
 					openStatBlock={pc => this.props.openStatBlock(pc)}
 				/>

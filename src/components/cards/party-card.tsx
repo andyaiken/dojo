@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Encounter } from '../../models/encounter';
+import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
 import { ConfirmButton } from '../controls/confirm-button';
@@ -10,9 +11,11 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	party: Party;
 	encounters: Encounter[];
+	maps: Map[];
 	open: (party: Party) => void;
 	delete: (party: Party) => void;
-	runEncounter: (party: Party, encounterID: string) => void;
+	runEncounter: (partyID: string, encounterID: string) => void;
+	explore: (paryID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 }
@@ -56,7 +59,24 @@ export class PartyCard extends React.Component<Props> {
 					<Dropdown
 						options={options}
 						placeholder='start combat...'
-						onSelect={encounterID => this.props.runEncounter(this.props.party, encounterID)}
+						onSelect={encounterID => this.props.runEncounter(this.props.party.id, encounterID)}
+					/>
+				);
+			}
+
+			let explore = null;
+			if (this.props.maps.length > 0) {
+				const options = this.props.maps.map(m => {
+					return {
+						id: m.id,
+						text: m.name
+					};
+				});
+				explore = (
+					<Dropdown
+						options={options}
+						placeholder='start exploration...'
+						onSelect={mapID => this.props.explore(this.props.party.id, mapID)}
 					/>
 				);
 			}
@@ -75,6 +95,7 @@ export class PartyCard extends React.Component<Props> {
 						<hr/>
 						<button onClick={() => this.props.open(this.props.party)}>open party</button>
 						{run}
+						{explore}
 						<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 						<ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
 					</div>

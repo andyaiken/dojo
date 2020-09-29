@@ -1285,8 +1285,8 @@ export class Main extends React.Component<Props, State> {
 	// Start combat
 
 	private createCombat(
-		encounter: Encounter | null = null,
-		partyID: string | null = null,
+		partyID: string,
+		encounter: Encounter | null,
 		map: Map | null = null,
 		fog: { x: number, y: number }[] = [],
 		combatants: Combatant[] = []
@@ -2361,15 +2361,18 @@ export class Main extends React.Component<Props, State> {
 					<PartyListScreen
 						parties={this.state.parties}
 						encounters={this.state.encounters}
+						maps={this.state.maps}
 						addParty={() => this.addParty()}
 						importParty={() => this.importParty()}
 						selectParty={party => this.selectParty(party)}
 						deleteParty={party => this.removeParty(party)}
-						runEncounter={(party, encounterID) => {
-							const encounter = this.state.encounters.find(enc => enc.id === encounterID);
-							if (encounter) {
-								this.createCombat(encounter, party.id);
-							}
+						runEncounter={(partyID, encounterID) => {
+							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
+							this.createCombat(partyID, encounter);
+						}}
+						explore={(partyID, mapID) => {
+							const map = this.state.maps.find(m => m.id === mapID) as Map;
+							this.startExploration(map, partyID);
 						}}
 						showReference={party => this.showPartyReference(party)}
 						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
@@ -2493,7 +2496,7 @@ export class Main extends React.Component<Props, State> {
 							parties={this.state.parties}
 							edit={encounter => this.editEncounter(encounter)}
 							delete={encounter => this.removeEncounter(encounter)}
-							run={(encounter, partyID) => this.createCombat(encounter, partyID)}
+							run={(encounter, partyID) => this.createCombat(partyID, encounter)}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
 							goBack={() => this.selectEncounter(null)}
@@ -2511,7 +2514,7 @@ export class Main extends React.Component<Props, State> {
 						editEncounter={encounter => this.editEncounter(encounter)}
 						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 						deleteEncounter={encounter => this.removeEncounter(encounter)}
-						runEncounter={(encounter, partyID) => this.createCombat(encounter, partyID)}
+						runEncounter={(encounter, partyID) => this.createCombat(partyID, encounter)}
 						getMonster={id => this.getMonster(id)}
 						setView={view => this.setView(view)}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
@@ -2526,7 +2529,7 @@ export class Main extends React.Component<Props, State> {
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
 							library={this.state.library}
 							options={this.state.options}
-							startCombat={ex => this.createCombat(null, ex.partyID, ex.map, ex.fog, ex.combatants)}
+							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.fog, ex.combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
@@ -2610,7 +2613,14 @@ export class Main extends React.Component<Props, State> {
 						editMap={map => this.editMap(map)}
 						cloneMap={(map, name) => this.cloneMap(map, name)}
 						deleteMap={map => this.removeMap(map)}
-						explore={(map, partyID) => this.startExploration(map, partyID)}
+						runEncounter={(partyID, mapID) => {
+							const map = this.state.maps.find(m => m.id === mapID) as Map;
+							this.createCombat(partyID, null, map);
+						}}
+						explore={(partyID, mapID) => {
+							const map = this.state.maps.find(m => m.id === mapID) as Map;
+							this.startExploration(map, partyID);
+						}}
 						resumeExploration={ex => this.resumeExploration(ex)}
 						deleteExploration={ex => this.endExploration(ex)}
 					/>
@@ -2857,7 +2867,6 @@ export class Main extends React.Component<Props, State> {
 						<CombatStartModal
 							type='start'
 							combatSetup={this.state.drawer.combatSetup}
-							parties={this.state.parties}
 							library={this.state.library}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
@@ -2874,7 +2883,6 @@ export class Main extends React.Component<Props, State> {
 							start combat
 						</button>
 					);
-					width = '75%';
 					closable = true;
 					break;
 				case 'combat-wave':
@@ -2896,7 +2904,6 @@ export class Main extends React.Component<Props, State> {
 							add wave
 						</button>
 					);
-					width = '75%';
 					closable = true;
 					break;
 				case 'combat-add-combatants':
@@ -2919,7 +2926,6 @@ export class Main extends React.Component<Props, State> {
 							add combatants
 						</button>
 					);
-					width = '75%';
 					closable = true;
 					break;
 				case 'condition-add':
