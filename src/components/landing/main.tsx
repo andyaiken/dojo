@@ -546,28 +546,6 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private resetAll() {
-		this.setState({
-			parties: [],
-			library: [],
-			encounters: [],
-			maps: [],
-			combats: [],
-			selectedPartyID: null,
-			selectedMonsterGroupID: null,
-			selectedCombatID: null
-		}, () => {
-			this.saveAll();
-
-			for (let n = 0; n !== window.localStorage.length; ++n) {
-				const key = window.localStorage.key(n);
-				if (key) {
-					window.localStorage.removeItem(key);
-				}
-			}
-		});
-	}
-
 	// This is an internal dictionary to speed up monster lookup
 	private monsterIdToGroup: { [id: string]: Monster } = {};
 

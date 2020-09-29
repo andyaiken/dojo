@@ -253,6 +253,10 @@ export class CombatStartModal extends React.Component<Props, State> {
 					);
 					rightSection = (
 						<div>
+							<SelectedMonsterSection
+								encounter={this.state.combatSetup.encounter as Encounter}
+								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+							/>
 							<OptionsSection
 								type={this.props.type}
 								combatSetup={this.state.combatSetup}
@@ -537,6 +541,47 @@ class WaveSection extends React.Component<WaveSectionProps> {
 	}
 }
 
+interface SelectedMonsterSectionProps {
+	encounter: Encounter;
+	nudgeValue: (source: any, field: string, delta: number) => void;
+}
+
+class SelectedMonsterSection extends React.Component<SelectedMonsterSectionProps> {
+	public render() {
+		const monsterSections = this.props.encounter.slots.map(slot => {
+			let name = slot.monsterName || 'unnamed monster';
+			if (slot.count > 1) {
+				name += ' (x' + slot.count + ')';
+			}
+			return (
+				<div key={slot.id} className='group-panel'>
+					{name}
+					<NumberSpin
+						value={'count: ' + slot.count}
+						downEnabled={slot.count > 1}
+						onNudgeValue={delta => this.props.nudgeValue(slot, 'count', delta)}
+					/>
+				</div>
+			);
+		});
+
+		if (monsterSections.length === 0) {
+			monsterSections.push(
+				<Note key={'empty'}>no monsters</Note>
+			);
+		}
+
+		return (
+			<div>
+				<div className='heading'>
+					selected monsters
+				</div>
+				{monsterSections}
+			</div>
+		);
+	}
+}
+
 interface MonsterSelectionSectionProps {
 	combatSetup: CombatSetup;
 	library: MonsterGroup[];
@@ -593,7 +638,10 @@ class MonsterSelectionSection extends React.Component<MonsterSelectionSectionPro
 			return 0;
 		});
 
-		const selectedIDs = this.props.combatSetup.slotInfo.map(s => s.id);
+		let selectedIDs: string[] = [];
+		if (this.props.combatSetup.encounter) {
+			selectedIDs = this.props.combatSetup.encounter?.slots.map(s => s.monsterID);
+		}
 
 		let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !selectedIDs.includes(m.id)).map(m => {
 			return (
