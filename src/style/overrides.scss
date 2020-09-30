@@ -241,6 +241,10 @@ button {
 	}
 }
 
+.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
+	color: rgba(0, 0, 0, 0.65);
+}
+
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
 	padding: 5px 10px;
 	overflow-y: auto;
