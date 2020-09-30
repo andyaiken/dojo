@@ -587,6 +587,17 @@ export class Main extends React.Component<Props, State> {
 			}
 		}
 
+		if (type === 'hpCurrent') {
+			const c = combatant as Combatant;
+			c.hpCurrent = Math.min(c.hpCurrent || 0, c.hpMax || 0);
+			c.hpCurrent = Math.max(c.hpCurrent || 0, 0);
+		}
+
+		if (type === 'hpTemp') {
+			const c = combatant as Combatant;
+			c.hpTemp = Math.max(c.hpTemp || 0, 0);
+		}
+
 		if (type === 'mountID') {
 			const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 			if (combat && combat.map) {

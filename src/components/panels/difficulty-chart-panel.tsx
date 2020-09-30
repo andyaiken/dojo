@@ -89,13 +89,13 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 					<div className='section'>
 						<Row>
 							<Col span={16}>xp for these monsters</Col>
-							<Col span={8} className='statistic-value'>{monsterXP} xp</Col>
+							<Col span={8} className='right-value'>{monsterXP} xp</Col>
 						</Row>
 					</div>
 					<div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
 						<Row>
 							<Col span={16}>effective xp for {monsterCount} monster(s)</Col>
-							<Col span={8} className='statistic-value'>{adjustedXP} xp</Col>
+							<Col span={8} className='right-value'>{adjustedXP} xp</Col>
 						</Row>
 					</div>
 				</div>
@@ -240,13 +240,13 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 						<div className='section'>
 							<Row>
 								<Col span={16}>difficulty for this party</Col>
-								<Col span={8} className='statistic-value'>{difficulty}</Col>
+								<Col span={8} className='right-value'>{difficulty}</Col>
 							</Row>
 						</div>
 						<div className='section' style={{ display: (adjustedDifficulty === difficulty) ? 'none' : ''}}>
 							<Row>
 								<Col span={16}>effective difficulty for {pcs.length} pc(s)</Col>
-								<Col span={8} className='statistic-value'>{adjustedDifficulty}</Col>
+								<Col span={8} className='right-value'>{adjustedDifficulty}</Col>
 							</Row>
 						</div>
 					</div>

@@ -224,7 +224,7 @@ p,
 		font-weight: normal;
 	}
 
-	.statistic-value {
+	.right-value {
 		vertical-align: middle;
 		font-weight: 600;
 		text-align: right;
@@ -302,4 +302,22 @@ p,
     overflow-x: auto;
 	overflow-y: hidden;
 	margin: 5px 0;
+}
+
+.statistic {
+	text-align: center;
+
+	.statistic-label {
+		font-weight: 600;
+	}
+
+	.statistic-value {
+		font-size: 26px;
+		font-weight: 600;
+	}
+
+	.statistic-prefix,
+	.statistic-suffix {
+		font-size: 10px;
+	}
 }

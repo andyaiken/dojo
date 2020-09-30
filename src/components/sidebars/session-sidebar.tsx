@@ -39,7 +39,7 @@ export class SessionSidebar extends React.Component<Props> {
 			<div>
 				<Note>
 					<p>select a party, then click the 'start' button to allow your players to connect to the game session</p>
-					<p>you can then send messages and share handouts, combat encounters, and map explorations</p>
+					<p>you can then send messages and share content such as handouts, combat encounters, and map explorations</p>
 				</Note>
 				<Dropdown
 					placeholder='select a party...'

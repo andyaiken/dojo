@@ -122,14 +122,14 @@
 	margin: 20px 0 !important;
 }
 
-.combat-top-row .statistic,
-.initiative-list-item .statistic {
+.combat-top-row .information,
+.initiative-list-item .information {
 	font-weight: 600;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
-	.statistic-value {
+	.information-value {
 		font-size: 26px;
 		padding: 0 5px;
 	}

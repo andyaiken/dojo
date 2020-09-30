@@ -1,4 +1,4 @@
-import { Tag } from 'antd';
+import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import { Frankenstein } from '../../utils/frankenstein';
@@ -9,6 +9,7 @@ import { Monster, Trait } from '../../models/monster';
 
 import { AbilityScorePanel } from '../panels/ability-score-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Statistic } from '../panels/statistic';
 import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
@@ -38,26 +39,9 @@ export class MonsterStatblockCard extends React.Component<Props> {
 	}
 
 	private getHP() {
-		const combatant = this.props.monster as Monster & Combatant;
-		if ((combatant.hpCurrent === null) || (combatant.hpCurrent === undefined)) {
-			const hp = Frankenstein.getTypicalHP(this.props.monster);
-			const str = Frankenstein.getTypicalHPString(this.props.monster);
-			return hp + ' (' + str + ')';
-		}
-
-		const currentHP = combatant.hpCurrent ?? 0;
-		const maxHP = combatant.hpMax ?? 0;
-		const tempHP = combatant.hpTemp ?? 0;
-
-		let current = currentHP.toString();
-		if (tempHP > 0) {
-			current += '+' + tempHP;
-		}
-		if ((maxHP > 0) && (currentHP !== maxHP)) {
-			current += ' / ' + maxHP;
-		}
-
-		return current;
+		const hp = Frankenstein.getTypicalHP(this.props.monster);
+		const str = Frankenstein.getTypicalHPString(this.props.monster);
+		return hp + ' (' + str + ')';
 	}
 
 	private statSection(text: string, value: string, showButtons: boolean = false) {
@@ -126,12 +110,39 @@ export class MonsterStatblockCard extends React.Component<Props> {
 	}
 
 	private getStats() {
+		let combatantRow = null;
+		const combatant = this.props.monster as Monster & Combatant;
+		if ((combatant.hpCurrent !== null) && (combatant.hpCurrent !== undefined)) {
+			const currentHP = combatant.hpCurrent ?? 0;
+			const tempHP = combatant.hpTemp ?? 0;
+
+			let current = currentHP.toString();
+			if (tempHP > 0) {
+				current += '+' + tempHP;
+			}
+
+			combatantRow = (
+				<div>
+					<hr/>
+					<Row>
+						<Col span={12}>
+							<Statistic label='armor class' value={this.props.monster.ac} />
+						</Col>
+						<Col span={12}>
+							<Statistic label='hit points' value={current} />
+						</Col>
+					</Row>
+				</div>
+			);
+		}
+
 		return (
 			<div className='stats'>
 				<PortraitPanel source={this.props.monster} />
 				<div className='section centered'>
 					{this.getTags()}
 				</div>
+				{combatantRow}
 				<hr/>
 				<div className='section'>
 					<AbilityScorePanel

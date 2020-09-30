@@ -125,7 +125,7 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 				<div className='section'>
 					<Row>
 						<Col span={16}>number of monsters:</Col>
-						<Col span={8} className='statistic-value'>{monsters.length}</Col>
+						<Col span={8} className='right-value'>{monsters.length}</Col>
 					</Row>
 				</div>
 				<hr/>

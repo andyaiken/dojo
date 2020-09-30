@@ -1,10 +1,11 @@
-import { Tag } from 'antd';
+import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Statistic } from '../panels/statistic';
 
 interface Props {
 	pc: PC | (PC & Combatant);
@@ -51,12 +52,18 @@ export class PCStatblockCard extends React.Component<Props> {
 							<div className='section'>
 								{this.props.pc.languages || '-'}
 							</div>
-							<div className='section subheading'>passive skills</div>
-							<div className='section'>
-								<div><b>insight</b> {this.props.pc.passiveInsight}</div>
-								<div><b>investigation</b> {this.props.pc.passiveInvestigation}</div>
-								<div><b>perception</b> {this.props.pc.passivePerception}</div>
-							</div>
+							<hr/>
+							<Row>
+								<Col span={8}>
+									<Statistic prefix='passive' label='insight' value={this.props.pc.passiveInsight} />
+								</Col>
+								<Col span={8}>
+									<Statistic prefix='passive' label='investigation' value={this.props.pc.passiveInvestigation} />
+								</Col>
+								<Col span={8}>
+									<Statistic prefix='passive' label='perception' value={this.props.pc.passivePerception} />
+								</Col>
+							</Row>
 							<div style={{ display: this.props.pc.companions.length > 0 ? '' : 'none' }}>
 								<div className='section subheading'>companions</div>
 								<div className='section'>

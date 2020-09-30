@@ -817,26 +817,28 @@ export class CombatScreen extends React.Component<Props, State> {
 			);
 
 			let currentSection = null;
-			if (initHolder) {
-				currentSection = (
-					<div>
-						{this.createControls([initHolder])}
-						<hr/>
-						{this.createCard(initHolder)}
-					</div>
-				);
-			} else {
-				currentSection = (
-					<Note>
-						<div className='section'>
-							when you're ready to begin the encounter, press the <b>start combat</b> button
+			if (!this.state.showOptions) {
+				if (initHolder) {
+					currentSection = (
+						<div>
+							{this.createControls([initHolder])}
+							<hr/>
+							{this.createCard(initHolder)}
 						</div>
-						<div className='section'>
-							the current initiative holder will be displayed here
-						</div>
-						<button onClick={() => this.nextTurn()}>start combat</button>
-					</Note>
-				);
+					);
+				} else {
+					currentSection = (
+						<Note>
+							<div className='section'>
+								when you're ready to begin the encounter, press the <b>start combat</b> button
+							</div>
+							<div className='section'>
+								the current initiative holder will be displayed here
+							</div>
+							<button onClick={() => this.nextTurn()}>start combat</button>
+						</Note>
+					);
+				}
 			}
 
 			let notOnMapSection = null;
@@ -944,15 +946,15 @@ export class CombatScreen extends React.Component<Props, State> {
 						<Col span={sideWidth}>
 							<Row>
 								<Col span={12}>
-									<div className='statistic'>
-										<div className='statistic-label'>round</div>
-										<div className='statistic-value'>{this.props.combat.round}</div>
+									<div className='information'>
+										<div>round</div>
+										<div className='information-value'>{this.props.combat.round}</div>
 									</div>
 								</Col>
 								<Col span={12}>
-									<div className='statistic'>
-										<div className='statistic-value'>{Napoleon.getCombatXP(this.props.combat)}</div>
-										<div className='statistic-label'>xp</div>
+									<div className='information'>
+										<div className='information-value'>{Napoleon.getCombatXP(this.props.combat)}</div>
+										<div>xp</div>
 									</div>
 								</Col>
 							</Row>

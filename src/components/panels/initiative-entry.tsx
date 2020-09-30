@@ -60,15 +60,15 @@ export class InitiativeEntry extends React.Component<Props> {
 				<div key='stats'>
 					<Row align='middle'>
 						<Col span={12}>
-							<div className='statistic'>
-								<div className='statistic-label'>ac</div>
-								<div className='statistic-value'>{monster.ac}</div>
+							<div className='information'>
+								<div>ac</div>
+								<div className='information-value'>{monster.ac}</div>
 							</div>
 						</Col>
 						<Col span={12}>
-							<div className='statistic'>
-								<div className='statistic-value'>{hp}</div>
-								<div className='statistic-label'>hp</div>
+							<div className='information'>
+								<div className='information-value'>{hp}</div>
+								<div>hp</div>
 							</div>
 						</Col>
 					</Row>

@@ -121,15 +121,15 @@ export class AboutSidebar extends React.Component<Props, State> {
 							<div className='section'>
 								<Row>
 									<Col span={16}>total</Col>
-									<Col span={8} className='statistic-value'>{Utils.toData(data + images)}</Col>
+									<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
 								</Row>
 								<Row>
 									<Col span={16}>data</Col>
-									<Col span={8} className='statistic-value'>{Utils.toData(data)}</Col>
+									<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
 								</Row>
 								<Row>
 									<Col span={16}>images</Col>
-									<Col span={8} className='statistic-value'>{Utils.toData(images)}</Col>
+									<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
 								</Row>
 							</div>
 						</div>
