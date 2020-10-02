@@ -769,6 +769,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						<TraitsTab
 							monster={this.state.monster}
 							addTrait={type => this.addTrait(type)}
+							copyTrait={trait => this.copyTrait(trait)}
 							moveTrait={(trait, moveBefore) => this.moveTrait(trait, moveBefore)}
 							removeTrait={trait => this.removeTrait(trait)}
 							changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
@@ -1062,14 +1063,6 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 			selectedTraitID: null
 		};
 	}
-
-	public static defaultProps = {
-		addTrait: null,
-		copyTrait: null,
-		removeTrait: null,
-		changeValue: null,
-		swapTraits: null
-	};
 
 	private setSelectedTraitID(id: string | null) {
 		this.setState({

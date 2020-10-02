@@ -44,6 +44,16 @@ If you're using a tactical map for your encounter, you can move tokens around th
 
 If you have a second display, the app can show a separate window including the initiative list (which includes relevant condition information) and a copy of the map, if you're using one.
 
+### For Players
+
+You can use Dojo as a virtual game table, allowing your players to move their own PCs around the map.
+
+![Player App](./public/screenshots/sessioncombat.png)
+
+It's also got built-in chat, die roll sharing, and the ability to show handouts (as images or PDFs) to your players.
+
+![Chat](./public/screenshots/sessionchat.png)
+
 ### DM Tools
 
 Who needs a DM screen, when you have all this at your fingertips?

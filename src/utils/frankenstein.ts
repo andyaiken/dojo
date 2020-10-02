@@ -497,8 +497,9 @@ export class Frankenstein {
 	// Traits
 
 	public static copyTrait(target: Monster, trait: Trait) {
-		const copy = JSON.parse(JSON.stringify(trait));
+		const copy = JSON.parse(JSON.stringify(trait)) as Trait;
 		copy.id = Utils.guid();
+		copy.name += ' copy';
 		target.traits.push(copy);
 	}
 
