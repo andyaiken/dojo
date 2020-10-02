@@ -357,7 +357,7 @@ export class CommsDM {
 		}
 
 		const dmCode = 'dm-' + Utils.guid();
-		Comms.peer = new Peer(dmCode);
+		Comms.peer = new Peer(dmCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
 
 		Comms.peer.on('open', () => {
 			setInterval(() => this.sendPulse(), PULSE_INTERVAL * 1000);
@@ -736,7 +736,7 @@ export class CommsPlayer {
 		}
 
 		const playerCode = 'player-' + Utils.guid();
-		Comms.peer = new Peer(playerCode);
+		Comms.peer = new Peer(playerCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
 
 		Comms.peer.on('open', () => {
 			if (Comms.peer) {

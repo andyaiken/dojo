@@ -5,6 +5,7 @@ import { Shakespeare } from '../../../utils/shakespeare';
 import { Party } from '../../../models/party';
 
 import { Dropdown } from '../../controls/dropdown';
+import { Note } from '../../panels/note';
 
 interface Props {
 	selectedPartyID: string | null;
@@ -99,6 +100,9 @@ export class PartyReference extends React.Component<Props> {
 					</div>
 					{rows}
 				</div>
+				<Note>
+					<p>remember that advantage / disadvantage grants +/- 5 to passive rolls</p>
+				</Note>
 				<div className='section subheading'>
 					average level
 				</div>
