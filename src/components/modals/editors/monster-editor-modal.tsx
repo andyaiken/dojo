@@ -1125,6 +1125,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 				selection = (
 					<TraitEditorPanel
 						trait={selectedTrait}
+						copyTrait={trait => this.props.copyTrait(trait)}
 						removeTrait={trait => this.props.removeTrait(trait)}
 						changeValue={(trait, type, value) => this.props.changeValue(trait, type, value)}
 					/>
@@ -1137,7 +1138,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 
 			return (
 				<Row gutter={10}>
-					<Col span={10}>
+					<Col span={8}>
 						{this.createSection(traitsByType, 'trait')}
 						{this.createSection(traitsByType, 'action')}
 						{this.createSection(traitsByType, 'bonus')}
@@ -1146,7 +1147,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 						{this.createSection(traitsByType, 'mythic')}
 						{this.createSection(traitsByType, 'lair')}
 					</Col>
-					<Col span={12}>
+					<Col span={16}>
 						{selection}
 					</Col>
 				</Row>
@@ -1184,6 +1185,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 
 interface TraitEditorPanelProps {
 	trait: Trait;
+	copyTrait: (trait: Trait) => void;
 	removeTrait: (trait: Trait) => void;
 	changeValue: (trait: Trait, field: string, value: any) => void;
 }
@@ -1211,6 +1213,12 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
 					/>
 					<hr/>
+					<Dropdown
+						placeholder='change trait type...'
+						options={TRAIT_TYPES.map(t => ({ id: t, text: t }))}
+						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
+					/>
+					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this trait</button>
 					<ConfirmButton text='remove this trait' onConfirm={() => this.props.removeTrait(this.props.trait)} />
 				</div>
 			);
