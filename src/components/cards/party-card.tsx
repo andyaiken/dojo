@@ -12,14 +12,14 @@ interface Props {
 	party: Party;
 	encounters: Encounter[];
 	maps: Map[];
-	open: (party: Party) => void;
+	openParty: (party: Party) => void;
 	addPC: () => void;
 	importPC: () => void;
-	runEncounter: (partyID: string, encounterID: string) => void;
-	explore: (partyID: string, mapID: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
-	delete: (party: Party) => void;
+	deleteParty: (party: Party) => void;
 }
 
 export class PartyCard extends React.Component<Props> {
@@ -61,7 +61,7 @@ export class PartyCard extends React.Component<Props> {
 							{this.getPCs()}
 						</div>
 						<hr/>
-						<button onClick={() => this.props.open(this.props.party)}>open party</button>
+						<button onClick={() => this.props.openParty(this.props.party)}>open party</button>
 						<Expander text='more options'>
 							<PartyOptions
 								party={this.props.party}
@@ -69,10 +69,10 @@ export class PartyCard extends React.Component<Props> {
 								maps={this.props.maps}
 								addPC={() => this.props.addPC()}
 								importPC={() => this.props.importPC()}
-								runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
-								explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
+								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+								startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 								showReference={party => this.props.showReference(party)}
-								delete={party => this.props.delete(party)}
+								deleteParty={party => this.props.deleteParty(party)}
 							/>
 						</Expander>
 					</div>

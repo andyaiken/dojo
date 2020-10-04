@@ -15,7 +15,7 @@ interface Props {
 	encounters: Encounter[];
 	viewMonster: (monster: Monster) => void;
 	editMonster: (monster: Monster) => void;
-	removeMonster: (monster: Monster) => void;
+	deleteMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
 	moveToGroup: (monster: Monster, group: string) => void;
 }
@@ -62,7 +62,7 @@ export class MonsterCard extends React.Component<Props> {
 							encounters={this.props.encounters}
 							viewMonster={monster => this.props.viewMonster(monster)}
 							editMonster={monster => this.props.editMonster(monster)}
-							removeMonster={monster => this.props.removeMonster(monster)}
+							deleteMonster={monster => this.props.deleteMonster(monster)}
 							cloneMonster={(monster, name) => this.props.cloneMonster(monster, name)}
 							moveToGroup={(monster, group) => this.props.moveToGroup(monster, group)}
 						/>

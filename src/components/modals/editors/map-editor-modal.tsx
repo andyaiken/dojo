@@ -206,7 +206,7 @@ export class MapEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private removeMapItem(item: MapItem) {
+	private deleteMapItem(item: MapItem) {
 		const index = this.state.map.items.indexOf(item);
 		this.state.map.items.splice(index, 1);
 
@@ -216,7 +216,7 @@ export class MapEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private removeMapArea(area: MapArea) {
+	private deleteMapArea(area: MapArea) {
 		const index = this.state.map.areas.indexOf(area);
 		this.state.map.areas.splice(index, 1);
 
@@ -307,10 +307,10 @@ export class MapEditorModal extends React.Component<Props, State> {
 								toggleImageSelection={() => this.toggleImageSelection()}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
 								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
-								move={(tile, dir) => this.moveMapItem(tile, dir)}
-								clone={tile => this.cloneMapItem(tile)}
-								remove={tile => this.removeMapItem(tile)}
-								rotate={tile => this.rotateMapItem(tile)}
+								moveMapTile={(tile, dir) => this.moveMapItem(tile, dir)}
+								cloneMapTile={tile => this.cloneMapItem(tile)}
+								deleteMapTile={tile => this.deleteMapItem(tile)}
+								rotateMapTile={tile => this.rotateMapItem(tile)}
 								sendToBack={tile => this.sendToBack(tile)}
 								bringToFront={tile => this.bringToFront(tile)}
 							/>
@@ -332,8 +332,8 @@ export class MapEditorModal extends React.Component<Props, State> {
 								area={area}
 								changeValue={(source, field, value) => this.changeValue(source, field, value)}
 								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
-								move={(a, dir) => this.moveMapItem(a, dir)}
-								remove={a => this.removeMapArea(a)}
+								moveMapArea={(a, dir) => this.moveMapItem(a, dir)}
+								deleteMapArea={a => this.deleteMapArea(a)}
 							/>
 							<hr/>
 							<button onClick={() => this.setSelectedAreaID(null)}>

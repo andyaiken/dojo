@@ -7,8 +7,8 @@ import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	exploration: Exploration;
-	resume: (exploration: Exploration) => void;
-	delete: (exploration: Exploration) => void;
+	resumeExploration: (exploration: Exploration) => void;
+	deleteExploration: (exploration: Exploration) => void;
 }
 
 export class ExplorationCard extends React.Component<Props> {
@@ -32,8 +32,8 @@ export class ExplorationCard extends React.Component<Props> {
 						<hr/>
 						<ExplorationOptions
 							exploration={this.props.exploration}
-							resume={exploration => this.props.resume(exploration)}
-							delete={exploration => this.props.delete(exploration)}
+							resumeExploration={exploration => this.props.resumeExploration(exploration)}
+							deleteExploration={exploration => this.props.deleteExploration(exploration)}
 						/>
 					</div>
 				</div>

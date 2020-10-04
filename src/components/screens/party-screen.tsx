@@ -19,14 +19,14 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	goBack: () => void;
-	removeParty: (party: Party) => void;
+	deleteParty: (party: Party) => void;
 	addPC: () => void;
 	importPC: () => void;
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
-	removePC: (pc: PC) => void;
-	runEncounter: (partyID: string, encounterID: string) => void;
-	explore: (partyID: string, mapID: string) => void;
+	deletePC: (pc: PC) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, value: number) => void;
@@ -50,7 +50,7 @@ export class PartyScreen extends React.Component<Props> {
 						changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
 						editPC={pc => this.props.editPC(pc)}
 						updatePC={pc => this.props.updatePC(pc)}
-						removePC={pc => this.props.removePC(pc)}
+						deletePC={pc => this.props.deletePC(pc)}
 					/>
 				);
 			});
@@ -64,7 +64,7 @@ export class PartyScreen extends React.Component<Props> {
 						changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
 						editPC={pc => this.props.editPC(pc)}
 						updatePC={pc => this.props.updatePC(pc)}
-						removePC={pc => this.props.removePC(pc)}
+						deletePC={pc => this.props.deletePC(pc)}
 					/>
 				);
 			});
@@ -93,10 +93,10 @@ export class PartyScreen extends React.Component<Props> {
 							maps={this.props.maps}
 							addPC={() => this.props.addPC()}
 							importPC={() => this.props.importPC()}
-							runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
-							explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
+							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 							showReference={party => this.props.showReference(party)}
-							delete={party => this.props.removeParty(party)}
+							deleteParty={party => this.props.deleteParty(party)}
 						/>
 						<hr/>
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

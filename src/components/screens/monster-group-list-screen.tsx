@@ -15,7 +15,7 @@ interface Props {
 	hasMonsters: boolean;
 	addMonsterGroup: () => void;
 	importMonsterGroup: () => void;
-	selectMonsterGroup: (group: MonsterGroup) => void;
+	openMonsterGroup: (group: MonsterGroup) => void;
 	deleteMonsterGroup: (group: MonsterGroup) => void;
 	addOpenGameContent: () => void;
 	openStatBlock: (monster: Monster) => void;
@@ -50,11 +50,11 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 					key={group.id}
 					group={group}
 					library={this.props.library}
-					open={grp => this.props.selectMonsterGroup(grp)}
+					openMonsterGroup={grp => this.props.openMonsterGroup(grp)}
 					addMonster={monster => this.props.addMonster(monster)}
 					importMonster={() => this.props.importMonster()}
 					openDemographics={grp => this.props.openDemographics(grp)}
-					delete={grp => this.props.deleteMonsterGroup(grp)}
+					deleteMonsterGroup={grp => this.props.deleteMonsterGroup(grp)}
 					openStatBlock={monster => this.props.openStatBlock(monster)}
 				/>
 			));

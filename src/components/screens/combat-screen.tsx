@@ -56,7 +56,7 @@ interface Props {
 	addWave: () => void;
 	addCondition: (combatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
-	removeCondition: (combatant: Combatant, condition: Condition) => void;
+	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string) => void;
 	mapRemove: (ids: string[]) => void;
@@ -635,8 +635,8 @@ export class CombatScreen extends React.Component<Props, State> {
 				return (
 					<MapItemCard
 						item={mapItem}
-						move={(item, dir) => this.props.mapMove([item.id], dir)}
-						remove={item => this.props.mapRemove([item.id])}
+						moveMapItem={(item, dir) => this.props.mapMove([item.id], dir)}
+						deleteMapItem={item => this.props.mapRemove([item.id])}
 						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
 					/>
@@ -675,7 +675,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				// Cond tab
 				addCondition={combatants => this.props.addCondition(combatants)}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
-				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+				deleteCondition={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 				// Map tab
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 				mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}

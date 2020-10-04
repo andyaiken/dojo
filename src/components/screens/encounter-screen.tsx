@@ -19,10 +19,10 @@ showdown.setOption('tables', true);
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
-	edit: (encounter: Encounter) => void;
-	clone: (encounter: Encounter, name: string) => void;
-	delete: (encounter: Encounter) => void;
-	run: (partyID: string, encounterID: string) => void;
+	editEncounter: (encounter: Encounter) => void;
+	cloneEncounter: (encounter: Encounter, name: string) => void;
+	deleteEncounter: (encounter: Encounter) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (encounter: Encounter, field: string, value: string) => void;
 	goBack: () => void;
@@ -80,10 +80,10 @@ export class EncounterScreen extends React.Component<Props> {
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
-							edit={encounter => this.props.edit(encounter)}
-							clone={(encounter, name) => this.props.clone(encounter, name)}
-							run={(partyID, encounterID) => this.props.run(partyID, encounterID)}
-							delete={encounter => this.props.delete(encounter)}
+							editEncounter={encounter => this.props.editEncounter(encounter)}
+							cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
+							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+							deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
 						/>
 						<hr />
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

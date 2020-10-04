@@ -18,12 +18,12 @@ interface Props {
 	maps: Map[];
 	addParty: () => void;
 	importParty: () => void;
-	selectParty: (party: Party) => void;
+	openParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
 	addPC: () => void;
 	importPC: () => void;
-	runEncounter: (partyID: string, encounterID: string) => void;
-	explore: (partyID: string, mapID: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 }
@@ -39,14 +39,14 @@ export class PartyListScreen extends React.Component<Props> {
 					party={p}
 					encounters={this.props.encounters}
 					maps={this.props.maps}
-					open={party => this.props.selectParty(party)}
+					openParty={party => this.props.openParty(party)}
 					addPC={() => this.props.addPC()}
 					importPC={() => this.props.importPC()}
-					runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
-					explore={(partyID, mapID) => this.props.explore(partyID, mapID)}
+					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+					startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 					showReference={party => this.props.showReference(party)}
 					openStatBlock={pc => this.props.openStatBlock(pc)}
-					delete={party => this.props.deleteParty(party)}
+					deleteParty={party => this.props.deleteParty(party)}
 				/>
 			));
 

@@ -20,7 +20,7 @@ interface Props {
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
 	openDemographics: (group: MonsterGroup) => void;
-	removeMonsterGroup: (group: MonsterGroup) => void;
+	deleteMonsterGroup: (group: MonsterGroup) => void;
 }
 
 interface State {
@@ -158,7 +158,7 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 					{this.getGenerator()}
 					<button onClick={() => this.props.openDemographics(this.props.monsterGroup)}>show demographics</button>
 					<button onClick={() => this.export()}>export group</button>
-					<ConfirmButton text='delete group' onConfirm={() => this.props.removeMonsterGroup(this.props.monsterGroup)} />
+					<ConfirmButton text='delete group' onConfirm={() => this.props.deleteMonsterGroup(this.props.monsterGroup)} />
 				</div>
 			);
 		} catch (e) {

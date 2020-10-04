@@ -12,10 +12,10 @@ import { MapPanel } from '../panels/map-panel';
 interface Props {
 	map: Map;
 	parties: Party[];
-	edit: (map: Map) => void;
-	clone: (map: Map, name: string) => void;
-	delete: (map: Map) => void;
-	startCombat: (partyID: string, mapID: string) => void;
+	editMap: (map: Map) => void;
+	cloneMap: (map: Map, name: string) => void;
+	deleteMap: (map: Map) => void;
+	startEncounter: (partyID: string, mapID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	changeValue: (map: Map, field: string, value: string) => void;
 	goBack: () => void;
@@ -69,11 +69,11 @@ export class MapScreen extends React.Component<Props, State> {
 						<MapOptions
 							map={this.props.map}
 							parties={this.props.parties}
-							edit={map => this.props.edit(map)}
-							clone={(map, name) => this.props.clone(map, name)}
-							startCombat={(partyID, mapID) => this.props.startCombat(partyID, mapID)}
+							editMap={map => this.props.editMap(map)}
+							cloneMap={(map, name) => this.props.cloneMap(map, name)}
+							startEncounter={(partyID, mapID) => this.props.startEncounter(partyID, mapID)}
 							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
-							delete={map => this.props.delete(map)}
+							deleteMap={map => this.props.deleteMap(map)}
 						/>
 						<hr />
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

@@ -18,11 +18,11 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	goBack: () => void;
-	removeMonsterGroup: (group: MonsterGroup) => void;
+	deleteMonsterGroup: (group: MonsterGroup) => void;
 	openDemographics: (group: MonsterGroup) => void;
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
-	removeMonster: (monster: Monster) => void;
+	deleteMonster: (monster: Monster) => void;
 	viewMonster: (monster: Monster) => void;
 	editMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
@@ -82,7 +82,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 							library={this.props.library}
 							encounters={this.props.encounters}
 							moveToGroup={(monster, groupID) => this.props.moveToGroup(monster, groupID)}
-							removeMonster={monster => this.props.removeMonster(monster)}
+							deleteMonster={monster => this.props.deleteMonster(monster)}
 							viewMonster={monster => this.props.viewMonster(monster)}
 							editMonster={monster => this.props.editMonster(monster)}
 							cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
@@ -115,7 +115,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 							addMonster={monster => this.props.addMonster(monster)}
 							importMonster={() => this.props.importMonster()}
 							openDemographics={group => this.props.openDemographics(group)}
-							removeMonsterGroup={group => this.props.removeMonsterGroup(group)}
+							deleteMonsterGroup={group => this.props.deleteMonsterGroup(group)}
 						/>
 						<hr/>
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>

@@ -10,8 +10,8 @@ import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	combat: Combat;
-	resume: (combat: Combat) => void;
-	delete: (combat: Combat) => void;
+	resumeCombat: (combat: Combat) => void;
+	deleteCombat: (combat: Combat) => void;
 	openStatBlock: (combatant: Combatant) => void;
 }
 
@@ -80,8 +80,8 @@ export class CombatCard extends React.Component<Props> {
 						<hr/>
 						<CombatOptions
 							combat={this.props.combat}
-							resume={combat => this.props.resume(combat)}
-							delete={combat => this.props.delete(combat)}
+							resumeCombat={combat => this.props.resumeCombat(combat)}
+							deleteCombat={combat => this.props.deleteCombat(combat)}
 						/>
 					</div>
 				</div>

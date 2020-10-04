@@ -38,7 +38,7 @@ interface Props {
 	// Cond tab
 	addCondition: (combatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
-	removeCondition: (combatant: Combatant, condition: Condition) => void;
+	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	// Map tab
 	mapAdd: (combatant: Combatant) => void;
 	mapMove: (combatants: Combatant[], dir: string) => void;
@@ -496,7 +496,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				allCombatants={this.props.allCombatants}
 				addCondition={() => this.props.addCondition(this.props.combatants)}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}
-				removeCondition={(combatant, condition) => this.props.removeCondition(combatant, condition)}
+				deleteCondition={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 				nudgeConditionValue={(condition, type, delta) => this.props.nudgeValue(condition, type, delta)}
 			/>
 		);

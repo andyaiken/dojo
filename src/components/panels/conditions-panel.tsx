@@ -14,7 +14,7 @@ interface Props {
 	nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
 	addCondition: () => void;
 	editCondition: (combatant: Combatant, condition: Condition) => void;
-	removeCondition: (combatant: Combatant, condition: Condition) => void;
+	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 }
 
 export class ConditionsPanel extends React.Component<Props> {
@@ -32,7 +32,7 @@ export class ConditionsPanel extends React.Component<Props> {
 							showCombatantName={this.props.combatants.length > 1}
 							nudgeConditionValue={(c, type, delta) => this.props.nudgeConditionValue(c, type, delta)}
 							editCondition={c => this.props.editCondition(combatant, c)}
-							removeCondition={c => this.props.removeCondition(combatant, c)}
+							deleteCondition={c => this.props.deleteCondition(combatant, c)}
 						/>
 					);
 				});
@@ -58,7 +58,7 @@ interface ConditionPanelProps {
 	showCombatantName: boolean;
 	nudgeConditionValue: (condition: Condition, field: string, delta: number) => void;
 	editCondition: (condition: Condition) => void;
-	removeCondition: (condition: Condition) => void;
+	deleteCondition: (condition: Condition) => void;
 }
 
 class ConditionPanel extends React.Component<ConditionPanelProps> {
@@ -111,7 +111,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 						<div className='condition-name'>{name}</div>
 						<div className='condition-buttons'>
 							<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-							<CloseOutlined title='remove' onClick={() => this.props.removeCondition(this.props.condition)} />
+							<CloseOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
 						</div>
 					</div>
 					{duration}

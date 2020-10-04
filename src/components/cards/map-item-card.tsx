@@ -9,8 +9,8 @@ import { Selector } from '../controls/selector';
 
 interface Props {
 	item: MapItem;
-	move: (item: MapItem, dir: string) => void;
-	remove: (item: MapItem) => void;
+	moveMapItem: (item: MapItem, dir: string) => void;
+	deleteMapItem: (item: MapItem) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 }
@@ -39,7 +39,7 @@ export class MapItemCard extends React.Component<Props> {
 							onSelect={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
 						/>
 						<div className='subheading'>move</div>
-						<Radial onClick={dir => this.props.move(this.props.item, dir)} />
+						<Radial onClick={dir => this.props.moveMapItem(this.props.item, dir)} />
 						<div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
 							<div className='subheading'>size</div>
 							<div className='section'>
@@ -90,7 +90,7 @@ export class MapItemCard extends React.Component<Props> {
 						</div>
 						<hr/>
 						<div className='section'>
-							<button onClick={() => this.props.remove(this.props.item)}>remove from the map</button>
+							<button onClick={() => this.props.deleteMapItem(this.props.item)}>remove from the map</button>
 						</div>
 					</div>
 				</div>

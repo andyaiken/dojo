@@ -13,11 +13,11 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
-	view: (encounter: Encounter) => void;
-	edit: (encounter: Encounter) => void;
-	clone: (encounter: Encounter, name: string) => void;
-	run: (partyID: string, encounterID: string) => void;
-	delete: (encounter: Encounter) => void;
+	openEncounter: (encounter: Encounter) => void;
+	editEncounter: (encounter: Encounter) => void;
+	cloneEncounter: (encounter: Encounter, name: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	deleteEncounter: (encounter: Encounter) => void;
 	openStatBlock: (slot: EncounterSlot) => void;
 	getMonster: (id: string) => Monster | null;
 }
@@ -118,15 +118,15 @@ export class EncounterCard extends React.Component<Props, State> {
 							{Napoleon.getEncounterXP(this.props.encounter, null, this.props.getMonster)}
 						</div>
 						<hr/>
-						<button onClick={() => this.props.view(this.props.encounter)}>open encounter</button>
+						<button onClick={() => this.props.openEncounter(this.props.encounter)}>open encounter</button>
 						<Expander text='more options'>
 							<EncounterOptions
 								encounter={this.props.encounter}
 								parties={this.props.parties}
-								edit={encounter => this.props.edit(encounter)}
-								clone={(encounter, name) => this.props.clone(encounter, name)}
-								run={(partyID, encounterID) => this.props.run(partyID, encounterID)}
-								delete={encounter => this.props.delete(encounter)}
+								editEncounter={encounter => this.props.editEncounter(encounter)}
+								cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
+								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+								deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
 							/>
 						</Expander>
 					</div>

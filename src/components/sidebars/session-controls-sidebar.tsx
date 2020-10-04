@@ -89,7 +89,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 					// Cond tab
 					addCondition={combatants => this.props.addCondition(combatants, allCombatants)}
 					editCondition={(combatant, condition) => this.props.editCondition(combatant, condition, allCombatants)}
-					removeCondition={(combatant, condition) => {
+					deleteCondition={(combatant, condition) => {
 						combatant.conditions = combatant.conditions.filter(cnd => cnd.name !== condition.name);
 						CommsPlayer.sendSharedUpdate();
 						this.props.onUpdated();

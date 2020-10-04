@@ -17,7 +17,7 @@ interface Props {
 	encounters: Encounter[];
 	viewMonster: (monster: Monster) => void;
 	editMonster: (monster: Monster) => void;
-	removeMonster: (monster: Monster) => void;
+	deleteMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
 	moveToGroup: (monster: Monster, group: string) => void;
 }
@@ -78,7 +78,7 @@ export class MonsterOptions extends React.Component<Props, State> {
 					<ConfirmButton
 						text='delete monster'
 						disabled={this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, this.props.monster.id))}
-						onConfirm={() => this.props.removeMonster(this.props.monster)}
+						onConfirm={() => this.props.deleteMonster(this.props.monster)}
 					/>
 				</div>
 			);

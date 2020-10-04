@@ -11,11 +11,11 @@ import { Textbox } from '../controls/textbox';
 interface Props {
 	map: Map;
 	parties: Party[];
-	edit: (map: Map) => void;
-	clone: (map: Map, name: string) => void;
-	startCombat: (partyID: string, mapID: string) => void;
+	editMap: (map: Map) => void;
+	cloneMap: (map: Map, name: string) => void;
+	deleteMap: (map: Map) => void;
+	startEncounter: (partyID: string, mapID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
-	delete: (map: Map) => void;
 }
 
 interface State {
@@ -45,7 +45,7 @@ export class MapOptions extends React.Component<Props, State> {
 					<Dropdown
 						options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
 						placeholder='start combat with...'
-						onSelect={id => this.props.startCombat(id, this.props.map.id)}
+						onSelect={id => this.props.startEncounter(id, this.props.map.id)}
 					/>
 				);
 
@@ -60,18 +60,18 @@ export class MapOptions extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<button onClick={() => this.props.edit(this.props.map)}>edit map</button>
+					<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
 					<Expander text='copy map'>
 						<Textbox
 							text={this.state.cloneName}
 							placeholder='map name'
 							onChange={value => this.setCloneName(value)}
 						/>
-						<button onClick={() => this.props.clone(this.props.map, this.state.cloneName)}>create copy</button>
+						<button onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}>create copy</button>
 					</Expander>
 					{combat}
 					{exploration}
-					<ConfirmButton text='delete map' onConfirm={() => this.props.delete(this.props.map)} />
+					<ConfirmButton text='delete map' onConfirm={() => this.props.deleteMap(this.props.map)} />
 				</div>
 			);
 		} catch (e) {

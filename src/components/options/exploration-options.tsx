@@ -6,16 +6,16 @@ import { ConfirmButton } from '../controls/confirm-button';
 
 interface Props {
 	exploration: Exploration;
-	resume: (exploration: Exploration) => void;
-	delete: (exploration: Exploration) => void;
+	resumeExploration: (exploration: Exploration) => void;
+	deleteExploration: (exploration: Exploration) => void;
 }
 
 export class ExplorationOptions extends React.Component<Props> {
 	public render() {
 		return (
 			<div>
-				<button onClick={() => this.props.resume(this.props.exploration)}>resume exploration</button>
-				<ConfirmButton text='delete exploration' onConfirm={() => this.props.delete(this.props.exploration)} />
+				<button onClick={() => this.props.resumeExploration(this.props.exploration)}>resume exploration</button>
+				<ConfirmButton text='delete exploration' onConfirm={() => this.props.deleteExploration(this.props.exploration)} />
 			</div>
 		);
 	}

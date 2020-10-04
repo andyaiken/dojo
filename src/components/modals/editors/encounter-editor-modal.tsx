@@ -195,7 +195,7 @@ export class EncounterEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private removeEncounterSlot(slot: EncounterSlot, waveID: string | null) {
+	private deleteEncounterSlot(slot: EncounterSlot, waveID: string | null) {
 		if (waveID) {
 			const wave = this.state.encounter.waves.find(w => w.id === waveID);
 			if (wave) {
@@ -332,10 +332,10 @@ export class EncounterEditorModal extends React.Component<Props, State> {
 					library={this.props.library}
 					changeValue={(source, type, value) => this.changeValue(source, type, value)}
 					nudgeValue={(source, type, delta) => this.nudgeValue(source, type, delta)}
-					select={s => this.openSlot(waveID, s.id)}
-					remove={s => this.removeEncounterSlot(s, waveID)}
+					openEncounterSlot={s => this.openSlot(waveID, s.id)}
+					deleteEncounterSlot={s => this.deleteEncounterSlot(s, waveID)}
 					moveToWave={(s, current, id) => this.moveToWave(s, current, id)}
-					viewMonster={m => this.setSelectedMonster(m)}
+					selectMonster={m => this.setSelectedMonster(m)}
 				/>
 			);
 		});

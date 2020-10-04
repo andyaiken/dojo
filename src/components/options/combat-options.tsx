@@ -6,16 +6,16 @@ import { ConfirmButton } from '../controls/confirm-button';
 
 interface Props {
 	combat: Combat;
-	resume: (combat: Combat) => void;
-	delete: (combat: Combat) => void;
+	resumeCombat: (combat: Combat) => void;
+	deleteCombat: (combat: Combat) => void;
 }
 
 export class CombatOptions extends React.Component<Props> {
 	public render() {
 		return (
 			<div>
-				<button onClick={() => this.props.resume(this.props.combat)}>resume combat</button>
-				<ConfirmButton text='delete combat' onConfirm={() => this.props.delete(this.props.combat)} />
+				<button onClick={() => this.props.resumeCombat(this.props.combat)}>resume combat</button>
+				<ConfirmButton text='delete combat' onConfirm={() => this.props.deleteCombat(this.props.combat)} />
 			</div>
 		);
 	}

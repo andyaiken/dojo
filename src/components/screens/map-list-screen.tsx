@@ -19,12 +19,12 @@ interface Props {
 	addMap: () => void;
 	importMap: () => void;
 	generateMap: (type: string) => void;
-	viewMap: (map: Map) => void;
+	openMap: (map: Map) => void;
 	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	deleteMap: (map: Map) => void;
-	runEncounter: (partyID: string, mapID: string) => void;
-	explore: (partyID: string, mapID: string) => void;
+	startEncounter: (partyID: string, mapID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
 	resumeExploration: (exploration: Exploration) => void;
 	deleteExploration: (exploration: Exploration) => void;
 }
@@ -38,8 +38,8 @@ export class MapListScreen extends React.Component<Props> {
 				<ExplorationCard
 					key={exploration.id}
 					exploration={exploration}
-					resume={ex => this.props.resumeExploration(ex)}
-					delete={ex => this.props.deleteExploration(ex)}
+					resumeExploration={ex => this.props.resumeExploration(ex)}
+					deleteExploration={ex => this.props.deleteExploration(ex)}
 				/>
 			));
 
@@ -50,12 +50,12 @@ export class MapListScreen extends React.Component<Props> {
 					key={map.id}
 					map={map}
 					parties={this.props.parties}
-					viewMap={m => this.props.viewMap(m)}
+					openMap={m => this.props.openMap(m)}
 					editMap={m => this.props.editMap(m)}
 					cloneMap={(m, name) => this.props.cloneMap(m, name)}
-					removeMap={m => this.props.deleteMap(m)}
-					runEncounter={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
-					explore={(m, partyID) => this.props.explore(m, partyID)}
+					deleteMap={m => this.props.deleteMap(m)}
+					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
+					startExploration={(m, partyID) => this.props.startExploration(m, partyID)}
 				/>
 			));
 

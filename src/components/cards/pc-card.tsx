@@ -10,7 +10,7 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	pc: PC | (PC & Combatant);
 	changeValue: (pc: any, field: string, value: any) => void;
-	removePC: (pc: PC) => void;
+	deletePC: (pc: PC) => void;
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
 }
@@ -46,7 +46,7 @@ export class PCCard extends React.Component<Props> {
 							pc={this.props.pc}
 							editPC={pc => this.props.editPC(pc)}
 							updatePC={pc => this.props.updatePC(pc)}
-							removePC={pc => this.props.removePC(pc)}
+							removePC={pc => this.props.deletePC(pc)}
 							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						/>
 					</div>

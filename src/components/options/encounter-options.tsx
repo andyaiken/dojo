@@ -11,10 +11,10 @@ import { Textbox } from '../controls/textbox';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
-	edit: (encounter: Encounter) => void;
-	clone: (encounter: Encounter, name: string) => void;
-	run: (partyID: string, encounterID: string) => void;
-	delete: (encounter: Encounter) => void;
+	editEncounter: (encounter: Encounter) => void;
+	cloneEncounter: (encounter: Encounter, name: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	deleteEncounter: (encounter: Encounter) => void;
 }
 
 interface State {
@@ -43,24 +43,24 @@ export class EncounterOptions extends React.Component<Props, State> {
 					<Dropdown
 						options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
 						placeholder='start combat with...'
-						onSelect={partyID => this.props.run(partyID, this.props.encounter.id)}
+						onSelect={partyID => this.props.startEncounter(partyID, this.props.encounter.id)}
 					/>
 				);
 			}
 
 			return (
 				<div>
-					<button onClick={() => this.props.edit(this.props.encounter)}>edit encounter</button>
+					<button onClick={() => this.props.editEncounter(this.props.encounter)}>edit encounter</button>
 					<Expander text='copy encounter'>
 						<Textbox
 							text={this.state.cloneName}
 							placeholder='encounter name'
 							onChange={value => this.setCloneName(value)}
 						/>
-						<button onClick={() => this.props.clone(this.props.encounter, this.state.cloneName)}>create copy</button>
+						<button onClick={() => this.props.cloneEncounter(this.props.encounter, this.state.cloneName)}>create copy</button>
 					</Expander>
 					{run}
-					<ConfirmButton text='delete encounter' onConfirm={() => this.props.delete(this.props.encounter)} />
+					<ConfirmButton text='delete encounter' onConfirm={() => this.props.deleteEncounter(this.props.encounter)} />
 				</div>
 			);
 		} catch (e) {

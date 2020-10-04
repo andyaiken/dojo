@@ -15,10 +15,10 @@ interface Props {
 	maps: Map[];
 	addPC: () => void;
 	importPC: () => void;
-	runEncounter: (partyID: string, encounterID: string) => void;
-	explore: (paryID: string, mapID: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
+	startExploration: (paryID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
-	delete: (party: Party) => void;
+	deleteParty: (party: Party) => void;
 }
 
 export class PartyOptions extends React.Component<Props> {
@@ -35,7 +35,7 @@ export class PartyOptions extends React.Component<Props> {
 					<Dropdown
 						options={this.props.encounters.map(p => ({ id: p.id, text: p.name }))}
 						placeholder='start combat...'
-						onSelect={encounterID => this.props.runEncounter(this.props.party.id, encounterID)}
+						onSelect={encounterID => this.props.startEncounter(this.props.party.id, encounterID)}
 					/>
 				);
 			}
@@ -46,7 +46,7 @@ export class PartyOptions extends React.Component<Props> {
 					<Dropdown
 						options={this.props.maps.map(m => ({ id: m.id, text: m.name }))}
 						placeholder='start exploration...'
-						onSelect={mapID => this.props.explore(this.props.party.id, mapID)}
+						onSelect={mapID => this.props.startExploration(this.props.party.id, mapID)}
 					/>
 				);
 			}
@@ -59,7 +59,7 @@ export class PartyOptions extends React.Component<Props> {
 					{run}
 					{explore}
 					<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
-					<ConfirmButton text='delete party' onConfirm={() => this.props.delete(this.props.party)} />
+					<ConfirmButton text='delete party' onConfirm={() => this.props.deleteParty(this.props.party)} />
 				</div>
 			);
 		} catch (e) {

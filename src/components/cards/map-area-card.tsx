@@ -13,8 +13,8 @@ interface Props {
 	area: MapArea;
 	changeValue: (area: MapArea, field: string, value: any) => void;
 	nudgeValue: (area: MapArea, field: string, delta: number) => void;
-	move: (area: MapArea, dir: string) => void;
-	remove: (area: MapArea) => void;
+	moveMapArea: (area: MapArea, dir: string) => void;
+	deleteMapArea: (area: MapArea) => void;
 }
 
 export class MapAreaCard extends React.Component<Props> {
@@ -48,7 +48,7 @@ export class MapAreaCard extends React.Component<Props> {
 							onChange={value => this.props.changeValue(this.props.area, 'text', value)}
 						/>
 						<div className='subheading'>move</div>
-						<Radial onClick={dir => this.props.move(this.props.area, dir)} />
+						<Radial onClick={dir => this.props.moveMapArea(this.props.area, dir)} />
 						<div className='subheading'>size</div>
 						<div className='section'>{this.props.area.width * 5} ft x {this.props.area.height * 5} ft</div>
 						<div className='section'>
@@ -67,7 +67,7 @@ export class MapAreaCard extends React.Component<Props> {
 						</div>
 						<hr/>
 						<div className='section'>
-							<button onClick={() => this.props.remove(this.props.area)}>remove area</button>
+							<button onClick={() => this.props.deleteMapArea(this.props.area)}>remove area</button>
 						</div>
 					</div>
 				</div>

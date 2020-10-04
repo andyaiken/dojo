@@ -11,11 +11,11 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	group: MonsterGroup;
 	library: MonsterGroup[];
-	open: (group: MonsterGroup) => void;
+	openMonsterGroup: (group: MonsterGroup) => void;
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
 	openDemographics: (group: MonsterGroup) => void;
-	delete: (group: MonsterGroup) => void;
+	deleteMonsterGroup: (group: MonsterGroup) => void;
 	openStatBlock: (monster: Monster) => void;
 }
 
@@ -50,7 +50,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 							{this.getMonsters()}
 						</div>
 						<hr/>
-						<button onClick={() => this.props.open(this.props.group)}>open group</button>
+						<button onClick={() => this.props.openMonsterGroup(this.props.group)}>open group</button>
 						<Expander text='more options'>
 							<MonsterGroupOptions
 								monsterGroup={this.props.group}
@@ -58,7 +58,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 								addMonster={monster => this.props.addMonster(monster)}
 								importMonster={() => this.props.importMonster()}
 								openDemographics={group => this.props.openDemographics(group)}
-								removeMonsterGroup={group => this.props.delete(group)}
+								deleteMonsterGroup={group => this.props.deleteMonsterGroup(group)}
 							/>
 						</Expander>
 					</div>

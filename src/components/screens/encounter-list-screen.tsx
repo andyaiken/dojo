@@ -21,11 +21,11 @@ interface Props {
 	parties: Party[];
 	hasMonsters: boolean;
 	addEncounter: (templateID: string | null) => void;
-	viewEncounter: (encounter: Encounter) => void;
+	openEncounter: (encounter: Encounter) => void;
 	editEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
-	runEncounter: (partyID: string, encounterID: string) => void;
+	startEncounter: (partyID: string, encounterID: string) => void;
 	getMonster: (id: string) => Monster | null;
 	setView: (view: string) => void;
 	openStatBlock: (monster: Monster | Combatant) => void;
@@ -71,8 +71,8 @@ export class EncounterListScreen extends React.Component<Props> {
 				<CombatCard
 					key={c.id}
 					combat={c}
-					resume={combat => this.props.resumeCombat(combat)}
-					delete={combat => this.props.deleteCombat(combat)}
+					resumeCombat={combat => this.props.resumeCombat(combat)}
+					deleteCombat={combat => this.props.deleteCombat(combat)}
 					openStatBlock={combatant => this.props.openStatBlock(combatant)}
 				/>
 			));
@@ -84,11 +84,11 @@ export class EncounterListScreen extends React.Component<Props> {
 					key={e.id}
 					encounter={e}
 					parties={this.props.parties}
-					view={encounter => this.props.viewEncounter(encounter)}
-					edit={encounter => this.props.editEncounter(encounter)}
-					delete={encounter => this.props.deleteEncounter(encounter)}
-					clone={(encounter, name) => this.props.cloneEncounter(encounter, name)}
-					run={(partyID, encounterID) => this.props.runEncounter(partyID, encounterID)}
+					openEncounter={encounter => this.props.openEncounter(encounter)}
+					editEncounter={encounter => this.props.editEncounter(encounter)}
+					deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
+					cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
+					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 					openStatBlock={slot => this.openStatBlock(slot)}
 					getMonster={id => this.props.getMonster(id)}
 				/>

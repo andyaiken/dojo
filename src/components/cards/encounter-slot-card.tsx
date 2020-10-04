@@ -18,10 +18,10 @@ interface Props {
 	library: MonsterGroup[];
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
-	select: (slot: EncounterSlot) => void;
-	remove: (slot: EncounterSlot) => void;
+	openEncounterSlot: (slot: EncounterSlot) => void;
+	deleteEncounterSlot: (slot: EncounterSlot) => void;
 	moveToWave: (slot: EncounterSlot, current: EncounterSlot[], waveID: string) => void;
-	viewMonster: (monster: Monster) => void;
+	selectMonster: (monster: Monster) => void;
 }
 
 export class EncounterSlotCard extends React.Component<Props> {
@@ -55,7 +55,7 @@ export class EncounterSlotCard extends React.Component<Props> {
 				);
 
 				options.push(
-					<button key='view' onClick={() => this.props.viewMonster(this.props.monster as Monster)}>statblock</button>
+					<button key='view' onClick={() => this.props.selectMonster(this.props.monster as Monster)}>statblock</button>
 				);
 			} else {
 				stats = (
@@ -73,7 +73,7 @@ export class EncounterSlotCard extends React.Component<Props> {
 				);
 
 				options.push(
-					<button key='select' onClick={() => this.props.select(this.props.slot)}>choose a monster</button>
+					<button key='select' onClick={() => this.props.openEncounterSlot(this.props.slot)}>choose a monster</button>
 				);
 			}
 
@@ -110,7 +110,7 @@ export class EncounterSlotCard extends React.Component<Props> {
 			);
 
 			options.push(
-				<button key='remove' onClick={() => this.props.remove(this.props.slot)}>remove</button>
+				<button key='remove' onClick={() => this.props.deleteEncounterSlot(this.props.slot)}>remove</button>
 			);
 
 			return (

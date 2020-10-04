@@ -13,10 +13,10 @@ interface Props {
 	toggleImageSelection: () => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
-	move: (tile: MapItem, dir: string) => void;
-	clone: (tile: MapItem) => void;
-	remove: (tile: MapItem) => void;
-	rotate: (tile: MapItem) => void;
+	moveMapTile: (tile: MapItem, dir: string) => void;
+	cloneMapTile: (tile: MapItem) => void;
+	deleteMapTile: (tile: MapItem) => void;
+	rotateMapTile: (tile: MapItem) => void;
 	sendToBack: (tile: MapItem) => void;
 	bringToFront: (tile: MapItem) => void;
 }
@@ -43,7 +43,7 @@ export class MapTileCard extends React.Component<Props, State> {
 		return (
 			<div>
 				<div className='subheading'>move</div>
-				<Radial onClick={dir => this.props.move(this.props.tile, dir)} />
+				<Radial onClick={dir => this.props.moveMapTile(this.props.tile, dir)} />
 				<div className='subheading'>size</div>
 				<div className='section'>{this.props.tile.width * 5} ft x {this.props.tile.height * 5} ft</div>
 				<div className='section'>
@@ -194,9 +194,9 @@ export class MapTileCard extends React.Component<Props, State> {
 						{content}
 						<hr/>
 						<div className='section'>
-							<button onClick={() => this.props.rotate(this.props.tile)}>rotate tile</button>
-							<button onClick={() => this.props.clone(this.props.tile)}>clone tile</button>
-							<button onClick={() => this.props.remove(this.props.tile)}>remove tile</button>
+							<button onClick={() => this.props.rotateMapTile(this.props.tile)}>rotate tile</button>
+							<button onClick={() => this.props.cloneMapTile(this.props.tile)}>clone tile</button>
+							<button onClick={() => this.props.deleteMapTile(this.props.tile)}>remove tile</button>
 						</div>
 					</div>
 				</div>
