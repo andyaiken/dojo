@@ -198,6 +198,7 @@ export class SessionSidebar extends React.Component<Props> {
 						sendLink={(to, url) => CommsDM.sendLink(to, url)}
 						sendImage={(to, image) => CommsDM.sendImage(to, image)}
 						sendRoll={(to, roll) => CommsDM.sendRoll(to, roll)}
+						sendCard={(to, card) => CommsDM.sendCard(to, card)}
 					/>
 				</div>
 			);

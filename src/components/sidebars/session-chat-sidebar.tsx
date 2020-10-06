@@ -33,6 +33,7 @@ export class SessionChatSidebar extends React.Component<Props> {
 						sendLink={(to, url) => CommsPlayer.sendLink(to, url)}
 						sendImage={(to, image) => CommsPlayer.sendImage(to, image)}
 						sendRoll={(to, roll) => CommsPlayer.sendRoll(to, roll)}
+						sendCard={(to, card) => CommsPlayer.sendCard(to, card)}
 					/>
 				</div>
 			);

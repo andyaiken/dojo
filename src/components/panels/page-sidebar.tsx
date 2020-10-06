@@ -3,7 +3,6 @@ import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
 import { Shakespeare } from '../../utils/shakespeare';
-import { Svengali } from '../../utils/svengali';
 import { Comms, CommsPlayer } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
@@ -306,18 +305,16 @@ export class PageSidebar extends React.Component<Props> {
 								});
 							}}
 							draws={this.props.sidebar.draws}
-							drawCards={count => {
-								const deck = Svengali.getCards();
-
+							drawCards={(count, deck) => {
 								const sidebar = this.props.sidebar;
 								sidebar.draws = [];
 								while (sidebar.draws.length < count) {
 									const index = Utils.randomNumber(deck.length);
 									const card = deck[index];
-									if (!sidebar.draws.find(c => c.cardID === card.id)) {
+									if (!sidebar.draws.find(c => c.card.id === card.id)) {
 										sidebar.draws.push({
 											id: Utils.guid(),
-											cardID: card.id,
+											card: card,
 											reversed: Utils.randomBoolean()
 										});
 									}

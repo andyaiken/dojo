@@ -52,13 +52,19 @@
 
 	.message {
 		&.from-me {
-			text-align: right;
 			margin-left: 25%;
+
+			.message-byline {
+				text-align: right;
+			}
 		}
 	
 		&.to-me {
-			text-align: left;
 			margin-right: 25%;
+
+			.message-byline {
+				text-align: left;
+			}
 		}
 	}
 }

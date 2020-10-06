@@ -5,9 +5,12 @@ import Showdown from 'showdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Shakespeare } from '../../utils/shakespeare';
+import { Svengali } from '../../utils/svengali';
 import { Comms, CommsPlayer, Message, Person } from '../../utils/uhura';
+import { Utils } from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
+import { CardDraw, PlayingCard } from '../../models/misc';
 
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
@@ -17,6 +20,7 @@ import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from './die-roll-panel';
 import { DieRollResultPanel } from './die-roll-result-panel';
 import { Note } from './note';
+import { PlayingCardPanel } from './playing-card-panel';
 import { PortraitPanel } from './portrait-panel';
 
 const showdown = new Showdown.Converter();
@@ -318,9 +322,19 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 					);
 					break;
 				case 'roll':
-					const roll = this.props.message.data['roll'];
+					const roll = this.props.message.data['roll'] as DieRollResult;
 					content = (
 						<DieRollResultPanel result={roll} />
+					);
+					break;
+				case 'card':
+					const card = this.props.message.data['card'] as CardDraw;
+					content = (
+						<Row justify='space-around'>
+							<Col span={10}>
+								<PlayingCardPanel card={card.card} reversed={card.reversed} />
+							</Col>
+						</Row>
 					);
 					break;
 			}
@@ -359,6 +373,7 @@ interface SendMessagePanelProps {
 	sendLink: (to: string[], url: string) => void;
 	sendImage: (to: string[], image: string) => void;
 	sendRoll: (to: string[], roll: DieRollResult) => void;
+	sendCard: (to: string[], card: CardDraw) => void;
 }
 
 interface SendMessagePanelState {
@@ -370,6 +385,7 @@ interface SendMessagePanelState {
 	image: string;
 	dice: { [sides: number]: number };
 	constant: number;
+	deck: string;
 	mode: string;
 	recipients: string[];
 }
@@ -391,6 +407,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			image: '',
 			dice: dice,
 			constant: 0,
+			deck: 'tarot deck',
 			mode: 'public',
 			recipients: []
 		};
@@ -458,6 +475,12 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		});
 	}
 
+	private setDeck(deck: string) {
+		this.setState({
+			deck: deck
+		});
+	}
+
 	private resetDice() {
 		const dice = this.state.dice;
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
@@ -518,6 +541,9 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			case 'roll':
 				validContent = true;
 				break;
+			case 'card':
+				validContent = true;
+				break;
 		}
 
 		return validRecipients && validContent;
@@ -566,6 +592,45 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			const rec = [...this.state.recipients];
 			const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
 			this.props.sendRoll(rec, result);
+		}
+	}
+
+	private sendCard() {
+		if (this.canSend()) {
+			const rec = [...this.state.recipients];
+
+			let deck: PlayingCard[] = [];
+			switch (this.state.deck) {
+				case 'tarot deck':
+					deck = Svengali.getTarotDeck();
+					break;
+				case 'tarot deck (major arcana)':
+					deck = Svengali.getTarotMajorArcana();
+					break;
+				case 'tarot deck (minor arcana)':
+					deck = Svengali.getTarotMinorArcana();
+					break;
+				case 'standard deck':
+					deck = Svengali.getStandardDeck();
+					break;
+				case 'standard deck (with jokers)':
+					deck = Svengali.getStandardDeckWithJokers();
+					break;
+				case 'deck of many things':
+					deck = Svengali.getDeckOfManyThings();
+					break;
+				case 'deck of many things (13 cards)':
+					deck = Svengali.getDeckOfManyThingsSmall();
+					break;
+			}
+
+			const card = deck[Utils.randomNumber(deck.length)];
+			const draw: CardDraw = {
+				id: Utils.guid(),
+				card: card,
+				reversed: Utils.randomBoolean()
+			};
+			this.props.sendCard(rec, draw);
 		}
 	}
 
@@ -682,6 +747,25 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 						rollDice={mode => this.sendRoll(mode)}
 					/>
 				);
+			case 'card':
+				return (
+					<div>
+						<Dropdown
+							options={[
+								'tarot deck',
+								'tarot deck (major arcana)',
+								'tarot deck (minor arcana)',
+								'standard deck',
+								'standard deck (with jokers)',
+								'deck of many things',
+								'deck of many things (13 cards)'
+							].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.deck}
+							onSelect={deck => this.setDeck(deck)}
+						/>
+						<button onClick={() => this.sendCard()}>draw a card</button>
+					</div>
+				);
 			case 'settings':
 				return this.getSettingsSection();
 		}
@@ -756,7 +840,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				<div className='send-message-panel'>
 					<div className='message-controls'>
 						<Selector
-							options={['text', 'link', 'image', 'roll'].map(o => ({ id: o, text: o }))}
+							options={['text', 'link', 'image', 'roll', 'card'].map(o => ({ id: o, text: o }))}
 							selectedID={this.state.type}
 							onSelect={type => this.setType(type)}
 						/>

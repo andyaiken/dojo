@@ -11,7 +11,7 @@ import { Utils } from './utils';
 import { Combat } from '../models/combat';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
-import { Handout, SavedImage } from '../models/misc';
+import { CardDraw, Handout, SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
 
@@ -34,7 +34,7 @@ export interface Message {
 	id: string;
 	from: string;
 	to: string[];
-	type: 'text' | 'link' | 'image' | 'roll';
+	type: 'text' | 'link' | 'image' | 'roll' | 'card';
 	data: any;
 }
 
@@ -212,6 +212,21 @@ export class Comms {
 				type: 'roll',
 				data: {
 					roll: roll
+				}
+			}
+		};
+	}
+
+	public static createCardPacket(to: string[], card: CardDraw): Packet {
+		return {
+			type: 'message',
+			payload: {
+				id: Utils.guid(),
+				from: Comms.getID(),
+				to: to,
+				type: 'card',
+				data: {
+					card: card
 				}
 			}
 		};
@@ -567,6 +582,10 @@ export class CommsDM {
 		this.onDataReceived(Comms.createRollPacket(to, roll));
 	}
 
+	public static sendCard(to: string[], card: CardDraw) {
+		this.onDataReceived(Comms.createCardPacket(to, card));
+	}
+
 	public static setParty(party: Party | null) {
 		Comms.data.party = party;
 		if (this.onDataChanged) {
@@ -820,6 +839,10 @@ export class CommsPlayer {
 
 	public static sendRoll(to: string[], roll: DieRollResult) {
 		this.sendPacket(Comms.createRollPacket(to, roll));
+	}
+
+	public static sendCard(to: string[], card: CardDraw) {
+		this.sendPacket(Comms.createCardPacket(to, card));
 	}
 
 	public static sendCharacter(pc: PC) {

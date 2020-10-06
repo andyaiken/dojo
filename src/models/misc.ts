@@ -42,7 +42,7 @@ export interface SavedImage {
 	data: string;
 }
 
-export interface OracleCard {
+export interface PlayingCard {
 	id: string;
 	value: number | string;
 	suit: string | null;
@@ -50,12 +50,12 @@ export interface OracleCard {
 	meanings: {
 		upright: string,
 		reversed: string
-	};
+	} | null;
 }
 
 export interface CardDraw {
 	id: string;
-	cardID: string;
+	card: PlayingCard;
 	reversed: boolean;
 }
 

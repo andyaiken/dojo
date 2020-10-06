@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { DieRollResult } from '../../models/dice';
-import { CardDraw, Handout } from '../../models/misc';
+import { CardDraw, Handout, PlayingCard } from '../../models/misc';
 
 import { Selector } from '../controls/selector';
 import { DieRollerTool } from './tools/die-roller-tool';
@@ -35,7 +35,7 @@ interface Props {
 	generateLanguage: () => void;
 	// Oracle
 	draws: CardDraw[];
-	drawCards: (count: number) => void;
+	drawCards: (count: number, deck: PlayingCard[]) => void;
 	resetDraw: () => void;
 }
 
@@ -103,7 +103,7 @@ export class ToolsSidebar extends React.Component<Props> {
 					content = (
 						<OracleTool
 							draws={this.props.draws}
-							drawCards={count => this.props.drawCards(count)}
+							drawCards={(count, deck) => this.props.drawCards(count, deck)}
 							resetDraw={() => this.props.resetDraw()}
 						/>
 					);
