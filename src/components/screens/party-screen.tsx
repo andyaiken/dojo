@@ -4,7 +4,7 @@ import React from 'react';
 
 import { Comms, CommsDM } from '../../utils/uhura';
 
-import { Encounter } from '../../models/encounter';
+import { Encounter, MonsterFilter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
@@ -25,6 +25,7 @@ interface Props {
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
 	deletePC: (pc: PC) => void;
+	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
@@ -93,6 +94,7 @@ export class PartyScreen extends React.Component<Props> {
 							maps={this.props.maps}
 							addPC={() => this.props.addPC()}
 							importPC={() => this.props.importPC()}
+							createEncounter={(xp, filter) => this.props.createEncounter(xp, filter)}
 							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 							showReference={party => this.props.showReference(party)}

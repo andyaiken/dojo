@@ -5,7 +5,7 @@ import React from 'react';
 import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
-import { Encounter, EncounterSlot } from '../../models/encounter';
+import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -20,9 +20,9 @@ interface Props {
 	combats: Combat[];
 	parties: Party[];
 	hasMonsters: boolean;
+	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	addEncounter: (templateID: string | null) => void;
 	openEncounter: (encounter: Encounter) => void;
-	editEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
@@ -85,7 +85,6 @@ export class EncounterListScreen extends React.Component<Props> {
 					encounter={e}
 					parties={this.props.parties}
 					openEncounter={encounter => this.props.openEncounter(encounter)}
-					editEncounter={encounter => this.props.editEncounter(encounter)}
 					deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
 					cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
@@ -112,6 +111,7 @@ export class EncounterListScreen extends React.Component<Props> {
 							<div className='section'>to start building an encounter, press the <b>create a new encounter</b> button</div>
 						</Note>
 						<EncounterListOptions
+							createEncounter={(xp, filter) => this.props.createEncounter(xp, filter)}
 							addEncounter={templateID => this.props.addEncounter(templateID)}
 						/>
 					</Col>

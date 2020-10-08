@@ -93,9 +93,7 @@ export class Napoleon {
 		return summary;
 	}
 
-	public static buildEncounter(
-		encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[],
-		getMonster: (id: string) => Monster | null) {
+	public static buildEncounter(encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[], getMonster: (id: string) => Monster | null) {
 
 		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) <= xp) {
 			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
@@ -173,6 +171,36 @@ export class Napoleon {
 		}
 
 		return true;
+	}
+
+	public static sortEncounter(encounter: Encounter) {
+		Napoleon.sortEncounterSlots(encounter);
+		encounter.waves.forEach(wave => Napoleon.sortEncounterSlots(wave));
+	}
+
+	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
+		const uniqueSlots: EncounterSlot[] = [];
+		slotContainer.slots.forEach(slot => {
+			let current = uniqueSlots.find(s =>
+				(s.monsterGroupName === slot.monsterGroupName)
+				&& (s.monsterName === slot.monsterName)
+				&& (s.roles.join(',') === slot.roles.join(',')));
+			if (!current) {
+				current = slot;
+				uniqueSlots.push(slot);
+			} else {
+				current.count += slot.count;
+			}
+		});
+		slotContainer.slots = uniqueSlots;
+
+		slotContainer.slots.sort((a, b) => {
+			const aName = a.monsterName.toLowerCase();
+			const bName = b.monsterName.toLowerCase();
+			if (aName < bName) { return -1; }
+			if (aName > bName) { return 1; }
+			return 0;
+		});
 	}
 
 	public static sortCombatants(combat: Combat) {

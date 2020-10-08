@@ -14,7 +14,7 @@ import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Encounter } from '../../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
 import { Exploration, Map, MapItem } from '../../models/map';
 import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
@@ -24,7 +24,6 @@ import { Selector } from '../controls/selector';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
-import { EncounterEditorModal } from '../modals/editors/encounter-editor-modal';
 import { MapEditorModal } from '../modals/editors/map-editor-modal';
 import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
@@ -33,6 +32,7 @@ import { MonsterGroupImportModal } from '../modals/import/monster-group-import-m
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
+import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { ErrorBoundary } from '../panels/error-boundary';
@@ -1009,6 +1009,7 @@ export class Main extends React.Component<Props, State> {
 	private addEncounter(templateName: string | null) {
 		const encounter = Factory.createEncounter();
 		encounter.name = 'new encounter';
+
 		if (templateName) {
 			const template = Napoleon.encounterTemplates().find(t => t.name === templateName);
 			if (template) {
@@ -1023,22 +1024,28 @@ export class Main extends React.Component<Props, State> {
 			}
 		}
 
-		const copy = JSON.parse(JSON.stringify(encounter));
+		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
+		Utils.sort(encounters);
 		this.setState({
-			drawer: {
-				type: 'encounter-edit',
-				encounter: copy
-			}
+			view: 'encounters',
+			encounters: encounters,
+			selectedEncounterID: encounter.id
 		});
 	}
 
-	private editEncounter(encounter: Encounter) {
-		const copy = JSON.parse(JSON.stringify(encounter));
+	private createEncounter(xp: number, filter: MonsterFilter) {
+		const encounter = Factory.createEncounter();
+		encounter.name = 'new encounter';
+
+		Napoleon.buildEncounter(encounter, xp, filter, this.state.library, id => this.getMonster(id));
+		Napoleon.sortEncounter(encounter);
+
+		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
+		Utils.sort(encounters);
 		this.setState({
-			drawer: {
-				type: 'encounter-edit',
-				encounter: copy
-			}
+			view: 'encounters',
+			encounters: encounters,
+			selectedEncounterID: encounter.id
 		});
 	}
 
@@ -1060,23 +1067,6 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private saveEncounter() {
-		const encounters = this.state.encounters;
-		const original = this.state.encounters.find(e => e.id === this.state.drawer.encounter.id);
-		if (original) {
-			const index = this.state.encounters.indexOf(original);
-			encounters[index] = this.state.drawer.encounter;
-		} else {
-			encounters.push(this.state.drawer.encounter);
-		}
-
-		Utils.sort(encounters);
-		this.setState({
-			encounters: encounters,
-			drawer: null
-		});
-	}
-
 	private deleteEncounter(encounter: Encounter) {
 		const index = this.state.encounters.indexOf(encounter);
 		this.state.encounters.splice(index, 1);
@@ -1085,6 +1075,36 @@ export class Main extends React.Component<Props, State> {
 			encounters: this.state.encounters,
 			selectedEncounterID: null
 		});
+	}
+
+	private addToEncounterSlot(encounter: Encounter, wave: EncounterWave, slot: EncounterSlot, monster: Monster, closeDrawer: boolean) {
+		const list = wave ? wave.slots : encounter.slots;
+
+		if (!slot) {
+			slot = Factory.createEncounterSlot();
+			list.push(slot);
+		}
+
+		const group = this.state.library.find(g => g.monsters.includes(monster));
+		if (group) {
+			slot.monsterID = monster.id;
+			slot.monsterName = monster.name;
+			slot.monsterGroupName = group.name;
+
+			Napoleon.sortEncounter(encounter);
+
+			let drawer = this.state.drawer;
+			if (closeDrawer) {
+				drawer = null;
+			} else {
+				drawer.monster = null;
+			}
+
+			this.setState({
+				encounters: this.state.encounters,
+				drawer: drawer
+			});
+		}
 	}
 
 	//#endregion
@@ -2328,6 +2348,7 @@ export class Main extends React.Component<Props, State> {
 							editPC={pc => this.editPC(pc)}
 							updatePC={pc => this.updatePC(pc)}
 							deletePC={pc => this.deletePC(pc)}
+							createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
 							startEncounter={(partyID, encounterID) => {
 								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 								this.createCombat(partyID, encounter);
@@ -2352,6 +2373,7 @@ export class Main extends React.Component<Props, State> {
 						openParty={party => this.selectParty(party)}
 						addPC={() => this.editPC(null)}
 						importPC={() => this.importPC()}
+						createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
 						startEncounter={(partyID, encounterID) => {
 							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 							this.createCombat(partyID, encounter);
@@ -2483,15 +2505,114 @@ export class Main extends React.Component<Props, State> {
 						<EncounterScreen
 							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
 							parties={this.state.parties}
-							editEncounter={encounter => this.editEncounter(encounter)}
 							cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 							deleteEncounter={encounter => this.deleteEncounter(encounter)}
 							startEncounter={(partyID, encounterID) => {
 								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 								this.createCombat(partyID, encounter);
 							}}
+							populateEncounter={encounter => {
+								const monsters: Monster[] = [];
+								this.state.library.forEach(group => {
+									group.monsters.forEach(monster => {
+										const inList = encounter.slots.some(s => (s.monsterID === monster.id) && (s.monsterName === monster.name) && (s.monsterGroupName === group.name));
+										if (!inList) {
+											monsters.push(monster);
+										}
+									});
+								});
+								encounter.slots
+									.filter(slot => slot.roles.length > 0)
+									.forEach(slot => {
+										const candidates = monsters.filter(m => slot.roles.includes(m.role));
+										if (candidates.length > 0) {
+											const index = Utils.randomNumber(candidates.length);
+											const monster = candidates[index];
+											const group = this.state.library.find(g => g.monsters.includes(monster));
+											if (group) {
+												slot.monsterID = monster.id;
+												slot.monsterName = monster.name;
+												slot.monsterGroupName = group.name;
+											}
+										}
+									});
+								Napoleon.sortEncounter(encounter);
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							addWave={encounter => {
+								const wave = Factory.createEncounterWave();
+								wave.name = 'wave ' + (encounter.waves.length + 2);
+								encounter.waves.push(wave);
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							deleteWave={(encounter, wave) => {
+								const index = encounter.waves.indexOf(wave);
+								encounter.waves.splice(index, 1);
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							moveEncounterSlot={(encounter, slot, fromWave, toWave) => {
+								if (fromWave) {
+									const index = fromWave.slots.indexOf(slot);
+									fromWave.slots.splice(index, 1);
+								} else {
+									const index = encounter.slots.indexOf(slot);
+									encounter.slots.splice(index, 1);
+								}
+								if (toWave) {
+									toWave.slots.push(slot);
+								} else {
+									encounter.slots.push(slot);
+								}
+								Napoleon.sortEncounter(encounter);
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							deleteEncounterSlot={(encounter, slot, wave) => {
+								if (wave) {
+									const index = wave.slots.indexOf(slot);
+									wave.slots.splice(index, 1);
+								} else {
+									const n = encounter.slots.indexOf(slot);
+									encounter.slots.splice(n, 1);
+								}
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							chooseMonster={(encounter, slot, wave) => {
+								if (slot) {
+									this.setState({
+										drawer: {
+											type: 'encounter-slot-template',
+											encounter: encounter,
+											slot: slot,
+											wave: wave,
+											monster: null
+										}
+									});
+								} else {
+									this.setState({
+										drawer: {
+											type: 'encounter-slot',
+											encounter: encounter,
+											slot: slot,
+											wave: wave,
+											monster: null
+										}
+									});
+								}
+							}}
+							showStatblock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
+							nudgeValue={(encounter, type, delta) => this.nudgeValue(encounter, type, delta)}
 							goBack={() => this.selectEncounter(null)}
 						/>
 					);
@@ -2502,9 +2623,9 @@ export class Main extends React.Component<Props, State> {
 						combats={this.state.combats}
 						parties={this.state.parties}
 						hasMonsters={hasMonsters}
+						createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
 						addEncounter={templateID => this.addEncounter(templateID)}
 						openEncounter={encounter => this.selectEncounter(encounter)}
-						editEncounter={encounter => this.editEncounter(encounter)}
 						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 						deleteEncounter={encounter => this.deleteEncounter(encounter)}
 						startEncounter={(partyID, encounterID) => {
@@ -2805,25 +2926,68 @@ export class Main extends React.Component<Props, State> {
 					header = 'demographics';
 					closable = true;
 					break;
-				case 'encounter-edit':
+				case 'encounter-slot':
 					content = (
-						<EncounterEditorModal
+						<MonsterSelectionModal
 							encounter={this.state.drawer.encounter}
-							parties={this.state.parties}
+							wave={this.state.drawer.wave}
+							slot={this.state.drawer.slot}
+							monster={this.state.drawer.monster}
 							library={this.state.library}
-							getMonster={id => this.getMonster(id)}
+							setMonster={monster => {
+								const drawer = this.state.drawer;
+								drawer.monster = monster;
+								this.setState({
+									encounters: this.state.encounters,
+									drawer: drawer
+								});
+							}}
 						/>
 					);
-					header = 'encounter editor';
+					header = 'choose a monster';
 					footer = (
-						<Row gutter={20}>
+						<Row gutter={10}>
 							<Col span={12}>
-								<button onClick={() => this.saveEncounter()}>save changes</button>
+								<button
+									className={!this.state.drawer.monster ? 'disabled' : ''}
+									onClick={() => this.addToEncounterSlot(this.state.drawer.encounter, this.state.drawer.wave, this.state.drawer.slot, this.state.drawer.monster, false)}
+								>
+									add this monster to the encounter
+								</button>
 							</Col>
 							<Col span={12}>
-								<button onClick={() => this.closeDrawer()}>discard changes</button>
+								<button onClick={() => this.closeDrawer()}>close</button>
 							</Col>
 						</Row>
+					);
+					width = '75%';
+					break;
+				case 'encounter-slot-template':
+					content = (
+						<MonsterSelectionModal
+							encounter={this.state.drawer.encounter}
+							wave={this.state.drawer.wave}
+							slot={this.state.drawer.slot}
+							monster={this.state.drawer.monster}
+							library={this.state.library}
+							setMonster={monster => {
+								const drawer = this.state.drawer;
+								drawer.monster = monster;
+								this.setState({
+									encounters: this.state.encounters,
+									drawer: drawer
+								});
+							}}
+						/>
+					);
+					header = 'choose a monster';
+					footer = (
+						<button
+							className={!this.state.drawer.monster ? 'disabled' : ''}
+							onClick={() => this.addToEncounterSlot(this.state.drawer.encounter, this.state.drawer.wave, this.state.drawer.slot, this.state.drawer.monster, true)}
+						>
+							add this monster to the encounter
+						</button>
 					);
 					width = '75%';
 					break;

@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Utils } from '../../utils/utils';
 
-import { Encounter } from '../../models/encounter';
+import { Encounter, MonsterFilter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
@@ -22,6 +22,7 @@ interface Props {
 	deleteParty: (party: Party) => void;
 	addPC: () => void;
 	importPC: () => void;
+	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	showReference: (party: Party) => void;
@@ -42,6 +43,7 @@ export class PartyListScreen extends React.Component<Props> {
 					openParty={party => this.props.openParty(party)}
 					addPC={() => this.props.addPC()}
 					importPC={() => this.props.importPC()}
+					createEncounter={(xp, filter) => this.props.createEncounter(xp, filter)}
 					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 					startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 					showReference={party => this.props.showReference(party)}

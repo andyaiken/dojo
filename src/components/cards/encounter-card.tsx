@@ -14,7 +14,6 @@ interface Props {
 	encounter: Encounter;
 	parties: Party[];
 	openEncounter: (encounter: Encounter) => void;
-	editEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
@@ -22,24 +21,7 @@ interface Props {
 	getMonster: (id: string) => Monster | null;
 }
 
-interface State {
-	cloneName: string;
-}
-
-export class EncounterCard extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			cloneName: props.encounter.name + ' copy'
-		};
-	}
-
-	private setCloneName(cloneName: string) {
-		this.setState({
-			cloneName: cloneName
-		});
-	}
-
+export class EncounterCard extends React.Component<Props> {
 	private getText(slot: EncounterSlot) {
 		const name = slot.monsterName || slot.roles.join(', ') || 'unnamed monster';
 		return <div className='name'>{name}</div>;
@@ -123,7 +105,6 @@ export class EncounterCard extends React.Component<Props, State> {
 							<EncounterOptions
 								encounter={this.props.encounter}
 								parties={this.props.parties}
-								editEncounter={encounter => this.props.editEncounter(encounter)}
 								cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								deleteEncounter={encounter => this.props.deleteEncounter(encounter)}

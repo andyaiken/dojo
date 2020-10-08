@@ -11,7 +11,6 @@ import { Textbox } from '../controls/textbox';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
-	editEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
@@ -50,7 +49,6 @@ export class EncounterOptions extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<button onClick={() => this.props.editEncounter(this.props.encounter)}>edit encounter</button>
 					<Expander text='copy encounter'>
 						<Textbox
 							text={this.state.cloneName}

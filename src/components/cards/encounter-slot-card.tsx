@@ -3,9 +3,10 @@ import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
 
-import { Encounter, EncounterSlot } from '../../models/encounter';
-import { Monster, MonsterGroup } from '../../models/monster';
+import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
+import { Monster } from '../../models/monster';
 
+import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Note } from '../panels/note';
@@ -15,13 +16,12 @@ interface Props {
 	slot: EncounterSlot;
 	monster: Monster | null;
 	encounter: Encounter;
-	library: MonsterGroup[];
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
-	openEncounterSlot: (slot: EncounterSlot) => void;
+	chooseMonster: (slot: EncounterSlot) => void;
 	deleteEncounterSlot: (slot: EncounterSlot) => void;
-	moveToWave: (slot: EncounterSlot, current: EncounterSlot[], waveID: string) => void;
-	selectMonster: (monster: Monster) => void;
+	moveToWave: (slot: EncounterSlot, wave: EncounterWave | null) => void;
+	showStatblock: (monster: Monster) => void;
 }
 
 export class EncounterSlotCard extends React.Component<Props> {
@@ -55,7 +55,7 @@ export class EncounterSlotCard extends React.Component<Props> {
 				);
 
 				options.push(
-					<button key='view' onClick={() => this.props.selectMonster(this.props.monster as Monster)}>statblock</button>
+					<button key='view' onClick={() => this.props.showStatblock(this.props.monster as Monster)}>statblock</button>
 				);
 			} else {
 				stats = (
@@ -73,20 +73,17 @@ export class EncounterSlotCard extends React.Component<Props> {
 				);
 
 				options.push(
-					<button key='select' onClick={() => this.props.openEncounterSlot(this.props.slot)}>choose a monster</button>
+					<button key='select' onClick={() => this.props.chooseMonster(this.props.slot)}>choose a monster</button>
 				);
 			}
 
 			if (this.props.encounter.waves.length > 0) {
-				let current = this.props.encounter.slots;
 				const waves = [];
 				if (!this.props.encounter.slots.includes(this.props.slot)) {
 					waves.push({ id: '', text: 'main encounter' });
 				}
 				this.props.encounter.waves.forEach(wave => {
-					if (wave.slots.includes(this.props.slot)) {
-						current = wave.slots;
-					} else {
+					if (!wave.slots.includes(this.props.slot)) {
 						waves.push({ id: wave.id, text: wave.name });
 					}
 				});
@@ -95,23 +92,13 @@ export class EncounterSlotCard extends React.Component<Props> {
 						key='move'
 						placeholder='move to...'
 						options={waves}
-						onSelect={id => this.props.moveToWave(this.props.slot, current, id)}
+						onSelect={id => {
+							const wave = this.props.encounter.waves.find(w => w.id === id) || null;
+							this.props.moveToWave(this.props.slot, wave);
+						}}
 					/>
 				);
 			}
-
-			options.push(
-				<Dropdown
-					key='faction'
-					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
-					selectedID={this.props.slot.faction}
-					onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
-				/>
-			);
-
-			options.push(
-				<button key='remove' onClick={() => this.props.deleteEncounterSlot(this.props.slot)}>remove</button>
-			);
 
 			return (
 				<div className={'card ' + this.props.slot.faction}>
@@ -130,7 +117,15 @@ export class EncounterSlotCard extends React.Component<Props> {
 							onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
 						/>
 						<hr/>
-						<div className='section'>{options}</div>
+						<div className='section'>
+							{options}
+							<Dropdown
+								options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+								selectedID={this.props.slot.faction}
+								onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
+							/>
+							<ConfirmButton text='remove' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
+						</div>
 					</div>
 				</div>
 			);

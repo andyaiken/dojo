@@ -13,6 +13,8 @@ import { Textbox } from '../controls/textbox';
 
 interface Props {
 	filter: MonsterFilter;
+	prefix: string;
+	showName: boolean;
 	showRoles: boolean;
 	changeValue: (type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) => void;
 	resetFilter: () => void;
@@ -20,6 +22,8 @@ interface Props {
 
 export class FilterPanel extends React.Component<Props> {
 	public static defaultProps = {
+		prefix: 'showing',
+		showName: true,
 		showRoles: true
 	};
 
@@ -53,6 +57,19 @@ export class FilterPanel extends React.Component<Props> {
 				monst.text = 'monst.';
 			}
 
+			let nameSection = null;
+			if (this.props.showName) {
+				nameSection = (
+					<Textbox
+						key='search'
+						text={this.props.filter.name}
+						placeholder='filter by name'
+						noMargins={true}
+						onChange={value => this.props.changeValue('name', value)}
+					/>
+				);
+			}
+
 			let roleSection = null;
 			if (this.props.showRoles) {
 				const roles = ['all roles'].concat(ROLE_TYPES);
@@ -70,14 +87,8 @@ export class FilterPanel extends React.Component<Props> {
 
 			return (
 				<div>
-					<Textbox
-						key='search'
-						text={this.props.filter.name}
-						placeholder='filter by name'
-						noMargins={true}
-						onChange={value => this.props.changeValue('name', value)}
-					/>
-					<Expander text={'showing ' + Napoleon.getFilterDescription(this.props.filter)}>
+					{nameSection}
+					<Expander text={this.props.prefix + ' ' + Napoleon.getFilterDescription(this.props.filter)}>
 						<Slider
 							range={true}
 							min={0}
