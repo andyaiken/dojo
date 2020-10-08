@@ -68,7 +68,7 @@ export class MapListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>on the right you will see the maps you have created</div>
 							<hr/>
-							<div className='section'>to design a new map, press the <b>create a new map</b> button</div>
+							<div className='section'>to design a new map, press the <b>add a new map</b> button</div>
 						</Note>
 						<MapListOptions
 							addMap={() => this.props.addMap()}

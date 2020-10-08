@@ -13,6 +13,7 @@ import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { NumberSpin } from '../controls/number-spin';
+import { Note } from '../panels/note';
 
 interface Props {
 	monsterGroup: MonsterGroup;
@@ -57,7 +58,8 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 			group.monsters.forEach(m => {
 				let match = true;
 
-				if (m.challenge !== this.state.cr) {
+				const diff = Math.abs(m.challenge - this.state.cr);
+				if (diff > 1) {
 					match = false;
 				}
 
@@ -81,6 +83,10 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 
 		return (
 			<Expander text='create a random monster'>
+				<Note>
+					<p>create a random monster using existing monsters as templates</p>
+					<p>use the parameters below to specify the sort of monster you want to create</p>
+				</Note>
 				<NumberSpin
 					label='cr'
 					value={Gygax.challenge(this.state.cr)}

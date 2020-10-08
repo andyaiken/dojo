@@ -59,8 +59,8 @@ export class EncounterListOptions extends React.Component<Props, State> {
 		try {
 			return (
 				<div>
-					<button onClick={() => this.props.addEncounter(null)}>create a new encounter</button>
-					<Expander text='build a random encounter'>
+					<button onClick={() => this.props.addEncounter(null)}>add a new encounter</button>
+					<Expander text='create a random encounter'>
 						<p>
 							add random monsters to this encounter until its (effective) xp value is at least the following value
 						</p>

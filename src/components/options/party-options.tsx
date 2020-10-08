@@ -110,7 +110,7 @@ export class PartyOptions extends React.Component<Props, State> {
 			let create = null;
 			if (this.props.party.pcs.length > 0) {
 				create = (
-					<Expander text='build a random encounter'>
+					<Expander text='create a random encounter'>
 						<p>
 							create a random encounter for this party
 						</p>
