@@ -94,8 +94,14 @@ export class Napoleon {
 	}
 
 	public static buildEncounter(encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[], getMonster: (id: string) => Monster | null) {
+		const monsters: { id: string, monsterName: string, groupName: string }[] = [];
+		groups.forEach(group => {
+			group.monsters
+				.filter(monster => Napoleon.matchMonster(monster, filter))
+				.forEach(monster => monsters.push({ id: monster.id, monsterName: monster.name, groupName: group.name }));
+		});
 
-		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) <= xp) {
+		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
 			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
 				// Increment a slot
 				const index = Utils.randomNumber(encounter.slots.length);
@@ -103,13 +109,7 @@ export class Napoleon {
 				slot.count += 1;
 			} else {
 				// Pick a new monster
-				const candidates: { id: string, monsterName: string, groupName: string }[] = [];
-				groups.forEach(group => {
-					group.monsters
-						.filter(monster => Napoleon.matchMonster(monster, filter))
-						.filter(monster => !encounter.slots.find(slot => (slot.monsterGroupName === group.name) && (slot.monsterName === monster.name)))
-						.forEach(monster => candidates.push({ id: monster.id, monsterName: monster.name, groupName: group.name }));
-				});
+				const candidates = monsters.filter(monster => !encounter.slots.find(slot => slot.monsterID === monster.id));
 				if (candidates.length > 0) {
 					const index = Utils.randomNumber(candidates.length);
 					const slot = Factory.createEncounterSlot();

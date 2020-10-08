@@ -11,7 +11,7 @@ import { Party } from '../../models/party';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
-import { Selector } from '../controls/selector';
+import { NumberSpin } from '../controls/number-spin';
 import { FilterPanel } from '../panels/filter-panel';
 
 interface Props {
@@ -114,10 +114,12 @@ export class PartyOptions extends React.Component<Props, State> {
 						<p>
 							create a random encounter for this party
 						</p>
-						<Selector
-							options={['easy', 'medium', 'hard', 'difficult'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.difficulty}
-							onSelect={diff => this.setDifficulty(diff)}
+						<NumberSpin
+							label='difficulty'
+							value={this.state.difficulty}
+							downEnabled={this.state.difficulty !== 'easy'}
+							upEnabled={this.state.difficulty !== 'deadly'}
+							onNudgeValue={delta => this.setDifficulty(Gygax.nudgeDifficulty(this.state.difficulty, delta))}
 						/>
 						<hr/>
 						<FilterPanel

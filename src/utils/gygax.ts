@@ -419,6 +419,18 @@ export class Gygax {
 		return sizes[index];
 	}
 
+	public static nudgeDifficulty(value: string, delta: number): string {
+		const sizes = ['easy', 'medium', 'hard', 'deadly'];
+		let index = sizes.indexOf(value) + delta;
+		if (index < 0) {
+			index = 0;
+		}
+		if (index >= sizes.length) {
+			index = sizes.length - 1;
+		}
+		return sizes[index];
+	}
+
 	public static conditionText(condition: Condition): string[] {
 		switch (condition.name) {
 			case 'blinded':
