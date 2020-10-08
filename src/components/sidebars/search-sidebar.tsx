@@ -4,7 +4,7 @@ import { Sherlock } from '../../utils/sherlock';
 
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
-import { MonsterGroup } from '../../models/monster';
+import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { Textbox } from '../controls/textbox';
@@ -19,6 +19,7 @@ interface Props {
 	openGroup: (id: string) => void;
 	openEncounter: (id: string) => void;
 	openMap: (id: string) => void;
+	getMonster: (id: string) => Monster | null;
 }
 
 interface State {
@@ -96,22 +97,24 @@ export class SearchSidebar extends React.Component<Props, State> {
 					);
 				});
 
-				this.props.encounters.filter(encounter => Sherlock.matchEncounter(this.state.text, encounter)).forEach(encounter => {
+				this.props.encounters.filter(encounter => Sherlock.matchEncounter(this.state.text, encounter, id => this.props.getMonster(id))).forEach(encounter => {
 					const slots: JSX.Element[] = [];
-					encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+					encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot, id => this.props.getMonster(id))).forEach(slot => {
+						const monster = this.props.getMonster(slot.monsterID);
 						slots.push(
 							<div key={slot.id} className='group-panel'>
-								<div className='section'>{slot.monsterName}</div>
+								<div className='section'>{monster ? monster.name : 'monster'}</div>
 							</div>
 						);
 					});
 					const waves: JSX.Element[] = [];
-					encounter.waves.filter(wave => Sherlock.matchEncounterWave(this.state.text, wave)).forEach(wave => {
+					encounter.waves.filter(wave => Sherlock.matchEncounterWave(this.state.text, wave, id => this.props.getMonster(id))).forEach(wave => {
 						const waveSlots: JSX.Element[] = [];
-						wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot)).forEach(slot => {
+						wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot, id => this.props.getMonster(id))).forEach(slot => {
+							const monster = this.props.getMonster(slot.monsterID);
 							waveSlots.push(
 								<div key={slot.id} className='group-panel'>
-									<div className='section'>{slot.monsterName}</div>
+									<div className='section'>{monster ? monster.name : 'monster'}</div>
 								</div>
 							);
 						});

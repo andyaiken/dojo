@@ -599,38 +599,39 @@ export class Gygax {
 	}
 
 	public static getCombatSlotData(encounter: Encounter | EncounterWave | null, library: MonsterGroup[]): CombatSlotInfo[] {
+		const monsters: Monster[] = [];
+		library.forEach(group => {
+			group.monsters.forEach(monster => monsters.push(monster));
+		});
+
 		const data: CombatSlotInfo[] = [];
 		if (encounter) {
 			encounter.slots.forEach(slot => {
-				const group = library.find(g => g.name === slot.monsterGroupName);
-				if (group) {
-					const monster = group.monsters.find(m => m.name === slot.monsterName);
-					if (monster) {
-						const slotInfo = Factory.createCombatSlotInfo();
-						slotInfo.id = slot.id;
+				const monster = monsters.find(m => m.id === slot.monsterID);
+				if (monster) {
+					const slotInfo = Factory.createCombatSlotInfo();
+					slotInfo.id = slot.id;
 
-						// Roll initiative and set default HP
-						slotInfo.init = this.dieRoll() + this.modifierValue(monster.abilityScores.dex);
-						slotInfo.hp = Frankenstein.getTypicalHP(monster);
+					// Roll initiative and set default HP
+					slotInfo.init = this.dieRoll() + this.modifierValue(monster.abilityScores.dex);
+					slotInfo.hp = Frankenstein.getTypicalHP(monster);
 
-						for (let n = 0; n !== slot.count; ++n) {
-							const slotMember = Factory.createCombatSlotMember();
-							slotMember.init = slotInfo.init;
-							slotMember.hp = slotInfo.hp;
-							slotMember.name = slot.monsterName;
-							slotInfo.members.push(slotMember);
-						}
-
-						if (slot.count > 1) {
-							for (let n = 0; n !== slot.count; ++n) {
-								slotInfo.members[n].name = slot.monsterName + ' ' + (n + 1);
-							}
-						}
-
-						data.push(slotInfo);
+					for (let n = 0; n !== slot.count; ++n) {
+						const slotMember = Factory.createCombatSlotMember();
+						slotMember.init = slotInfo.init;
+						slotMember.hp = slotInfo.hp;
+						slotMember.name = monster.name;
+						slotInfo.members.push(slotMember);
 					}
-				}
 
+					if (slot.count > 1) {
+						for (let n = 0; n !== slot.count; ++n) {
+							slotInfo.members[n].name = monster.name + ' ' + (n + 1);
+						}
+					}
+
+					data.push(slotInfo);
+				}
 			});
 		}
 

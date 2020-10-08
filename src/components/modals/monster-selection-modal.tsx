@@ -68,7 +68,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 					const matchRole = this.props.slot ? this.props.slot.roles.includes(monster.role) : true;
 
 					// Ignore monsters that are already in the list
-					const inList = list.some(s => (s.monsterName === monster.name) && (s.monsterGroupName === group.name));
+					const inList = list.some(s => s.monsterID === monster.id);
 
 					if (matchFilter && matchRole && !inList) {
 						monsters.push(monster);

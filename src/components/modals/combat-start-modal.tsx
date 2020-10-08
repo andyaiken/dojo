@@ -226,6 +226,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 							<WaveSection
 								combatSetup={this.state.combatSetup}
 								setWaveID={id => this.setWaveID(id)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 						</div>
 					);
@@ -256,6 +257,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 							<SelectedMonsterSection
 								encounter={this.state.combatSetup.encounter as Encounter}
 								nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 							<OptionsSection
 								type={this.props.type}
@@ -334,7 +336,12 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 		let encounterContent = null;
 		if (this.props.combatSetup.encounter) {
 			const monsterSections = this.props.combatSetup.encounter.slots.map(slot => {
-				let name = slot.monsterName || 'unnamed monster';
+				let name = '';
+				const monster = this.props.getMonster(slot.monsterID);
+				if (monster) {
+					name = monster.name;
+				}
+				name = name || 'unnamed monster';
 				if (slot.count > 1) {
 					name += ' (x' + slot.count + ')';
 				}
@@ -472,6 +479,7 @@ class MapSection extends React.Component<MapSectionProps> {
 interface WaveSectionProps {
 	combatSetup: CombatSetup;
 	setWaveID: (id: string | null) => void;
+	getMonster: (id: string) => Monster | null;
 }
 
 class WaveSection extends React.Component<WaveSectionProps> {
@@ -499,7 +507,12 @@ class WaveSection extends React.Component<WaveSectionProps> {
 				const selectedWave = this.props.combatSetup.encounter.waves.find(w => w.id === this.props.combatSetup.waveID);
 				if (selectedWave) {
 					const monsterSections = selectedWave.slots.map(slot => {
-						let name = slot.monsterName || 'unnamed monster';
+						let name = '';
+						const monster = this.props.getMonster(slot.monsterID);
+						if (monster) {
+							name = monster.name;
+						}
+						name = name || 'unnamed monster';
 						if (slot.count > 1) {
 							name += ' (x' + slot.count + ')';
 						}
@@ -544,12 +557,18 @@ class WaveSection extends React.Component<WaveSectionProps> {
 interface SelectedMonsterSectionProps {
 	encounter: Encounter;
 	nudgeValue: (source: any, field: string, delta: number) => void;
+	getMonster: (id: string) => Monster | null;
 }
 
 class SelectedMonsterSection extends React.Component<SelectedMonsterSectionProps> {
 	public render() {
 		const monsterSections = this.props.encounter.slots.map(slot => {
-			let name = slot.monsterName || 'unnamed monster';
+			let name = '';
+			const monster = this.props.getMonster(slot.monsterID);
+			if (monster) {
+				name = monster.name;
+			}
+			name = name || 'unnamed monster';
 			if (slot.count > 1) {
 				name += ' (x' + slot.count + ')';
 			}
@@ -974,8 +993,9 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 	}
 
 	public render() {
-		let header = this.props.encounterSlot.monsterName;
+		let header = this.props.monster.name || 'unnamed monster';
 		let content = null;
+
 		switch (this.props.view) {
 			case 'initiative':
 				header += ' (1d20 ' + Gygax.modifier(this.props.monster.abilityScores.dex) + ')';

@@ -119,8 +119,6 @@ export class Factory {
 		return {
 			id: Utils.guid(),
 			monsterID: '',
-			monsterGroupName: '',
-			monsterName: '',
 			roles: [],
 			count: 1,
 			faction: 'foe'

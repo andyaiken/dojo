@@ -94,28 +94,29 @@ export class Sherlock {
 		return false;
 	}
 
-	public static matchEncounter(filter: string, encounter: Encounter) {
+	public static matchEncounter(filter: string, encounter: Encounter, getMonster: (id: string) => Monster | null) {
 		if (Sherlock.match(filter, encounter.name)) {
 			return true;
 		}
 
-		if (encounter.waves.some(wave => Sherlock.matchEncounterWave(filter, wave))) {
+		if (encounter.waves.some(wave => Sherlock.matchEncounterWave(filter, wave, id => getMonster(id)))) {
 			return true;
 		}
 
-		return encounter.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot));
+		return encounter.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot, id => getMonster(id)));
 	}
 
-	public static matchEncounterWave(filter: string, wave: EncounterWave) {
+	public static matchEncounterWave(filter: string, wave: EncounterWave, getMonster: (id: string) => Monster | null) {
 		if (Sherlock.match(filter, wave.name)) {
 			return true;
 		}
 
-		return wave.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot));
+		return wave.slots.some(slot => Sherlock.matchEncounterSlot(filter, slot, id => getMonster(id)));
 	}
 
-	public static matchEncounterSlot(filter: string, slot: EncounterSlot) {
-		if (Sherlock.match(filter, slot.monsterName)) {
+	public static matchEncounterSlot(filter: string, slot: EncounterSlot, getMonster: (id: string) => Monster | null) {
+		const monster = getMonster(slot.monsterID);
+		if (monster && Sherlock.match(filter, monster.name)) {
 			return true;
 		}
 

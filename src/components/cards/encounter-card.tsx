@@ -23,7 +23,16 @@ interface Props {
 
 export class EncounterCard extends React.Component<Props> {
 	private getText(slot: EncounterSlot) {
-		const name = slot.monsterName || slot.roles.join(', ') || 'unnamed monster';
+		let name = '';
+		if (slot.monsterID !== '') {
+			const monster = this.props.getMonster(slot.monsterID);
+			if (monster) {
+				name = monster.name;
+			}
+			name = name || 'unnamed monster';
+		} else {
+			name = slot.roles.join(', ');
+		}
 		return <div className='name'>{name}</div>;
 	}
 

@@ -124,15 +124,6 @@ export class Main extends React.Component<Props, State> {
 
 				encounters.forEach(encounter => {
 					encounter.slots.forEach(slot => {
-						if (slot.monsterID === undefined) {
-							const group = library.find(g => g.name === slot.monsterGroupName);
-							if (group) {
-								const monster = group.monsters.find(m => m.name === slot.monsterName);
-								if (monster) {
-									slot.monsterID = monster.id;
-								}
-							}
-						}
 						if (slot.roles === undefined) {
 							slot.roles = [];
 						}
@@ -143,15 +134,6 @@ export class Main extends React.Component<Props, State> {
 
 					encounter.waves.forEach(wave => {
 						wave.slots.forEach(slot => {
-							if (slot.monsterID === undefined) {
-								const group = library.find(g => g.name === slot.monsterGroupName);
-								if (group) {
-									const monster = group.monsters.find(m => m.name === slot.monsterName);
-									if (monster) {
-										slot.monsterID = monster.id;
-									}
-								}
-							}
 							if (slot.roles === undefined) {
 								slot.roles = [];
 							}
@@ -217,15 +199,6 @@ export class Main extends React.Component<Props, State> {
 
 					if (combat.encounter) {
 						combat.encounter.slots.forEach(slot => {
-							if (slot.monsterID === undefined) {
-								const group = library.find(g => g.name === slot.monsterGroupName);
-								if (group) {
-									const monster = group.monsters.find(m => m.name === slot.monsterName);
-									if (monster) {
-										slot.monsterID = monster.id;
-									}
-								}
-							}
 							if (slot.roles === undefined) {
 								slot.roles = [];
 							}
@@ -236,15 +209,6 @@ export class Main extends React.Component<Props, State> {
 
 						combat.encounter.waves.forEach(wave => {
 							wave.slots.forEach(slot => {
-								if (slot.monsterID === undefined) {
-									const group = library.find(g => g.name === slot.monsterGroupName);
-									if (group) {
-										const monster = group.monsters.find(m => m.name === slot.monsterName);
-										if (monster) {
-											slot.monsterID = monster.id;
-										}
-									}
-								}
 								if (slot.roles === undefined) {
 									slot.roles = [];
 								}
@@ -1088,8 +1052,6 @@ export class Main extends React.Component<Props, State> {
 		const group = this.state.library.find(g => g.monsters.includes(monster));
 		if (group) {
 			slot.monsterID = monster.id;
-			slot.monsterName = monster.name;
-			slot.monsterGroupName = group.name;
 
 			Napoleon.sortEncounter(encounter);
 
@@ -1348,7 +1310,7 @@ export class Main extends React.Component<Props, State> {
 						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 					});
 				} else {
-					combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
+					combat.issues.push('unknown monster');
 				}
 			});
 
@@ -1403,7 +1365,7 @@ export class Main extends React.Component<Props, State> {
 							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 						});
 					} else {
-						combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
+						combat.issues.push('unknown monster');
 					}
 				});
 
@@ -1442,8 +1404,6 @@ export class Main extends React.Component<Props, State> {
 			if (group) {
 				const slot = Factory.createEncounterSlot();
 				slot.monsterID = monster.id;
-				slot.monsterName = monster.name;
-				slot.monsterGroupName = group.name;
 				combatSetup.encounter.slots.push(slot);
 
 				combatSetup.slotInfo = Gygax.getCombatSlotData(combatSetup.encounter, this.state.library);
@@ -1467,7 +1427,7 @@ export class Main extends React.Component<Props, State> {
 						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
 					});
 				} else {
-					combat.issues.push('unknown monster: ' + slot.monsterName + ' in group ' + slot.monsterGroupName);
+					combat.issues.push('unknown monster');
 				}
 			});
 
@@ -2515,7 +2475,7 @@ export class Main extends React.Component<Props, State> {
 								const monsters: Monster[] = [];
 								this.state.library.forEach(group => {
 									group.monsters.forEach(monster => {
-										const inList = encounter.slots.some(s => (s.monsterID === monster.id) && (s.monsterName === monster.name) && (s.monsterGroupName === group.name));
+										const inList = encounter.slots.some(s => s.monsterID === monster.id);
 										if (!inList) {
 											monsters.push(monster);
 										}
@@ -2531,8 +2491,6 @@ export class Main extends React.Component<Props, State> {
 											const group = this.state.library.find(g => g.monsters.includes(monster));
 											if (group) {
 												slot.monsterID = monster.id;
-												slot.monsterName = monster.name;
-												slot.monsterGroupName = group.name;
 											}
 										}
 									});
@@ -3200,6 +3158,7 @@ export class Main extends React.Component<Props, State> {
 									options: options
 								});
 							}}
+							getMonster={id => this.getMonster(id)}
 						/>
 					</ErrorBoundary>
 					<ErrorBoundary>

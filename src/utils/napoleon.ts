@@ -114,8 +114,6 @@ export class Napoleon {
 					const index = Utils.randomNumber(candidates.length);
 					const slot = Factory.createEncounterSlot();
 					slot.monsterID = candidates[index].id;
-					slot.monsterName = candidates[index].monsterName;
-					slot.monsterGroupName = candidates[index].groupName;
 					encounter.slots.push(slot);
 				} else {
 					if (encounter.slots.length === 0) {
@@ -181,10 +179,7 @@ export class Napoleon {
 	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
 		const uniqueSlots: EncounterSlot[] = [];
 		slotContainer.slots.forEach(slot => {
-			let current = uniqueSlots.find(s =>
-				(s.monsterGroupName === slot.monsterGroupName)
-				&& (s.monsterName === slot.monsterName)
-				&& (s.roles.join(',') === slot.roles.join(',')));
+			let current = uniqueSlots.find(s => (s.monsterID === slot.monsterID) && (s.roles.join(',') === slot.roles.join(',')));
 			if (!current) {
 				current = slot;
 				uniqueSlots.push(slot);
@@ -195,10 +190,9 @@ export class Napoleon {
 		slotContainer.slots = uniqueSlots;
 
 		slotContainer.slots.sort((a, b) => {
-			const aName = a.monsterName.toLowerCase();
-			const bName = b.monsterName.toLowerCase();
-			if (aName < bName) { return -1; }
-			if (aName > bName) { return 1; }
+			// Prefer to use names here, but we don't know them
+			if (a.monsterID < b.monsterID) { return -1; }
+			if (a.monsterID > b.monsterID) { return 1; }
 			return 0;
 		});
 	}

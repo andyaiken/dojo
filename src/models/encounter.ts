@@ -9,8 +9,6 @@ export interface Encounter {
 export interface EncounterSlot {
 	id: string;
 	monsterID: string;
-	monsterGroupName: string;
-	monsterName: string;
 	roles: string[];
 	count: number;
 	faction: 'foe' | 'neutral' | 'ally';

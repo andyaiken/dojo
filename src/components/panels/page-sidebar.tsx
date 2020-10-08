@@ -49,6 +49,7 @@ interface Props {
 	toggleAddingToMap: () => void;
 	onUpdated: () => void;
 	setOption: (option: string, value: any) => void;
+	getMonster: (id: string) => Monster | null;
 }
 
 export class PageSidebar extends React.Component<Props> {
@@ -71,7 +72,8 @@ export class PageSidebar extends React.Component<Props> {
 		addCondition: null,
 		editCondition: null,
 		toggleAddingToMap: null,
-		onUpdated: null
+		onUpdated: null,
+		getMonster: null
 	};
 
 	public render() {
@@ -440,6 +442,7 @@ export class PageSidebar extends React.Component<Props> {
 							openGroup={id => this.props.selectMonsterGroup(id)}
 							openEncounter={id => this.props.selectEncounter(id)}
 							openMap={id => this.props.selectMap(id)}
+							getMonster={id => this.props.getMonster(id)}
 						/>
 					);
 					break;
