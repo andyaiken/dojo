@@ -56,6 +56,7 @@ interface MapItemStyle {
 	borderRadius: string;
 	backgroundSize: string;
 	backgroundColor?: string;
+	fontSize?: string;
 	opacity?: string;
 }
 
@@ -450,6 +451,7 @@ export class MapPanel extends React.Component<Props, State> {
 							isPC = (combatant.type === 'pc');
 						}
 						const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
+						tokenStyle.fontSize = (miniSize * this.state.size / 4) + 'px';
 						return (
 							<MapToken
 								key={i.id}

@@ -107,14 +107,6 @@
 	position: absolute;
 	border: 1px solid darkgrey;
 	background-color: lightgrey;
-	/*
-	// This causes a compilation error when deploying, for some reason
-	transition:
-		left 0.2s ease-in-out,
-		top 0.2s ease-in-out,
-		width 0.2s ease-in-out,
-		height 0.2s ease-in-out;
-	*/
 
 	&.default {
 		background-image: url("../resources/images/map-tiles/default.jpg");
@@ -226,7 +218,7 @@
 .token {
 	position: absolute;
 	background-color: #000065;
-	border: 1px solid $control-border;
+	border: 2px solid $control-border;
 	box-shadow: inset 0 0 6px 3px rgba(0, 0, 0, 0.1);
 	transition:
 		left 0.2s ease-in-out,
@@ -270,7 +262,6 @@
 	}
 
 	.initials {
-		font-size: 8px;
 		text-transform: uppercase;
 		color: white;
 		position: absolute;
