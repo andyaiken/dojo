@@ -293,8 +293,7 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 				}
 
 				return (
-					<div className='group-panel'>
-						<div className='subheading'>difficulty</div>
+					<div>
 						<Dropdown
 							options={partyOptions}
 							placeholder='select party...'

@@ -9,6 +9,7 @@ import { Monster } from '../../models/monster';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
+import { Selector } from '../controls/selector';
 import { Note } from '../panels/note';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -119,12 +120,12 @@ export class EncounterSlotCard extends React.Component<Props> {
 						<hr/>
 						<div className='section'>
 							{options}
-							<Dropdown
+							<Selector
 								options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
 								selectedID={this.props.slot.faction}
 								onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
 							/>
-							<ConfirmButton text='remove' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
+							<ConfirmButton text='remove from encounter' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
 						</div>
 					</div>
 				</div>

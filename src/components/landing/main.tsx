@@ -653,6 +653,13 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private setPartyLevel(party: Party, level: number) {
+		party.pcs.filter(pc => pc.active).forEach(pc => pc.level = level);
+		this.setState({
+			parties: this.state.parties
+		});
+	}
+
 	private showPartyReference(party: Party) {
 		const sidebar = this.state.sidebar;
 		sidebar.visible = true;
@@ -2317,6 +2324,7 @@ export class Main extends React.Component<Props, State> {
 								const map = this.state.maps.find(m => m.id === mapID) as Map;
 								this.startExploration(map, partyID);
 							}}
+							setLevel={(party, level) => this.setPartyLevel(party, level)}
 							showReference={party => this.showPartyReference(party)}
 							changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
 							nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
@@ -2342,6 +2350,7 @@ export class Main extends React.Component<Props, State> {
 							const map = this.state.maps.find(m => m.id === mapID) as Map;
 							this.startExploration(map, partyID);
 						}}
+						setLevel={(party, level) => this.setPartyLevel(party, level)}
 						showReference={party => this.showPartyReference(party)}
 						deleteParty={party => this.deleteParty(party)}
 						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}

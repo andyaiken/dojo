@@ -6,6 +6,7 @@ import { Svengali } from '../../../utils/svengali';
 import { CardDraw, PlayingCard } from '../../../models/misc';
 
 import { Dropdown } from '../../controls/dropdown';
+import { Note } from '../../panels/note';
 import { PlayingCardPanel } from '../../panels/playing-card-panel';
 
 interface Props {
@@ -59,48 +60,56 @@ export class OracleTool extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			if (this.props.draws.length === 0) {
-				return (
+			let cardSection = null;
+			if (this.props.draws.length > 0) {
+				const cards = this.props.draws.map(draw => {
+					return (
+						<Col span={8} key={draw.id}>
+							<PlayingCardPanel card={draw.card} reversed={draw.reversed} />
+						</Col>
+					);
+				});
+
+				cardSection = (
 					<div>
-						<Dropdown
-							options={[
-								'tarot deck',
-								'tarot deck (major arcana)',
-								'tarot deck (minor arcana)',
-								'standard deck',
-								'standard deck (with jokers)',
-								'deck of many things',
-								'deck of many things (13 cards)'
-							].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.deck}
-							onSelect={id => this.setState({ deck: id })}
-						/>
-						<Row gutter={10}>
-							<Col span={12}>
-								<button onClick={() => this.draw(1)}>draw a card</button>
-							</Col>
-							<Col span={12}>
-								<button onClick={() => this.draw(3)}>draw three cards</button>
-							</Col>
+						<Row gutter={10} justify='space-around'>
+							{cards}
 						</Row>
+						<button onClick={() => this.props.resetDraw()}>reset</button>
 					</div>
+				);
+			} else {
+				cardSection = (
+					<Row gutter={10}>
+						<Col span={12}>
+							<button onClick={() => this.draw(1)}>draw a card</button>
+						</Col>
+						<Col span={12}>
+							<button onClick={() => this.draw(3)}>draw three cards</button>
+						</Col>
+					</Row>
 				);
 			}
 
-			const cards = this.props.draws.map(draw => {
-				return (
-					<Col span={8} key={draw.id}>
-						<PlayingCardPanel card={draw.card} reversed={draw.reversed} />
-					</Col>
-				);
-			});
-
 			return (
 				<div>
-					<Row gutter={10} justify='space-around'>
-						{cards}
-					</Row>
-					<button onClick={() => this.props.resetDraw()}>reset</button>
+					<Note>
+						<p>this tool lets you draw cards from various different decks</p>
+					</Note>
+					<Dropdown
+						options={[
+							'tarot deck',
+							'tarot deck (major arcana)',
+							'tarot deck (minor arcana)',
+							'standard deck',
+							'standard deck (with jokers)',
+							'deck of many things',
+							'deck of many things (13 cards)'
+						].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.deck}
+						onSelect={id => this.setState({ deck: id })}
+					/>
+					{cardSection}
 				</div>
 			);
 		} catch (ex) {

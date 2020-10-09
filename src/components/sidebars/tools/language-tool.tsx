@@ -9,6 +9,7 @@ import { Checkbox } from '../../controls/checkbox';
 import { Expander } from '../../controls/expander';
 import { Selector } from '../../controls/selector';
 import { GridPanel } from '../../panels/grid-panel';
+import { Note } from '../../panels/note';
 
 interface Props {
 	languagePreset: string | null;
@@ -33,6 +34,7 @@ export class LanguageTool extends React.Component<Props> {
 			});
 
 			const allowGenerate = this.props.selectedLanguages.length > 0;
+			const allowReset = allowGenerate || this.props.output.length > 0;
 
 			let custom = null;
 			if (this.props.languagePreset === 'custom') {
@@ -55,7 +57,6 @@ export class LanguageTool extends React.Component<Props> {
 						);
 					});
 
-				const allowReset = allowGenerate || this.props.output.length > 0;
 				custom = (
 					<div className='group-panel'>
 						<Expander text={'selected languages: ' + selectedLanguages}>
@@ -63,14 +64,7 @@ export class LanguageTool extends React.Component<Props> {
 								<GridPanel columns={3} content={languages} />
 							</div>
 						</Expander>
-						<Row gutter={10}>
-							<Col span={12}>
-								<button onClick={() => this.props.selectRandomLanguages()}>random languages</button>
-							</Col>
-							<Col span={12}>
-								<button className={allowReset ? '' : 'disabled'} onClick={() => this.props.resetLanguages()}>reset</button>
-							</Col>
-						</Row>
+						<button onClick={() => this.props.selectRandomLanguages()}>random languages</button>
 					</div>
 				);
 			}
@@ -93,6 +87,9 @@ export class LanguageTool extends React.Component<Props> {
 
 			return (
 				<div>
+					<Note>
+						<p>you can use this tool to generate words and sentences in fantasy languages</p>
+					</Note>
 					<Selector
 						options={presetOptions}
 						selectedID={this.props.languagePreset}
@@ -101,7 +98,15 @@ export class LanguageTool extends React.Component<Props> {
 					/>
 					{custom}
 					<hr/>
-					<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.props.generateLanguage()}>generate text</button>
+					<Row gutter={10}>
+						<Col span={12}>
+							<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.props.generateLanguage()}>generate text</button>
+						</Col>
+						<Col span={12}>
+							<button className={allowReset ? '' : 'disabled'} onClick={() => this.props.resetLanguages()}>reset</button>
+						</Col>
+					</Row>
+
 					{output}
 				</div>
 			);

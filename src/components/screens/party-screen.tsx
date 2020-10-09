@@ -28,6 +28,7 @@ interface Props {
 	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
+	setLevel: (party: Party, level: number) => void;
 	showReference: (party: Party) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, value: number) => void;
@@ -97,6 +98,7 @@ export class PartyScreen extends React.Component<Props> {
 							createEncounter={(xp, filter) => this.props.createEncounter(xp, filter)}
 							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
+							setLevel={(party, level) => this.props.setLevel(party, level)}
 							showReference={party => this.props.showReference(party)}
 							deleteParty={party => this.props.deleteParty(party)}
 						/>

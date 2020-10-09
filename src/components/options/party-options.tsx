@@ -22,7 +22,8 @@ interface Props {
 	importPC: () => void;
 	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
-	startExploration: (paryID: string, mapID: string) => void;
+	startExploration: (partyID: string, mapID: string) => void;
+	setLevel: (party: Party, level: number) => void;
 	showReference: (party: Party) => void;
 	deleteParty: (party: Party) => void;
 }
@@ -85,6 +86,9 @@ export class PartyOptions extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			const pcs = this.props.party.pcs.filter(pc => pc.active);
+			const level = Math.round(pcs.reduce((sum, pc) => sum + pc.level, 0) / pcs.length);
+
 			let run = null;
 			if (this.props.encounters.length > 0) {
 				run = (
@@ -144,6 +148,7 @@ export class PartyOptions extends React.Component<Props, State> {
 					{run}
 					{explore}
 					{create}
+					<button onClick={() => this.props.setLevel(this.props.party, level + 1)}>level up to {level + 1}</button>
 					<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 					<ConfirmButton text='delete party' onConfirm={() => this.props.deleteParty(this.props.party)} />
 				</div>

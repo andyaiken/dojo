@@ -48,7 +48,7 @@ export class PCOptions extends React.Component<Props> {
 					{update}
 					<button key='export' onClick={() => this.export(this.props.pc)}>export pc</button>
 					{active}
-					<ConfirmButton key='remove' text='delete pc' onConfirm={() => this.props.removePC(this.props.pc)} />
+					<ConfirmButton text='delete pc' onConfirm={() => this.props.removePC(this.props.pc)} />
 				</div>
 			);
 		} catch (e) {

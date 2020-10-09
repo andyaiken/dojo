@@ -117,6 +117,7 @@ export class EncounterCard extends React.Component<Props> {
 								cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 						</Expander>
 					</div>

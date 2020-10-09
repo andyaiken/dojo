@@ -12,7 +12,6 @@ import { ConfirmButton } from '../controls/confirm-button';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
-import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -198,18 +197,13 @@ export class EncounterScreen extends React.Component<Props, State> {
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</div>
 						<hr />
-						<DifficultyChartPanel
-							encounter={this.props.encounter}
-							parties={this.props.parties}
-							getMonster={id => this.props.getMonster(id)}
-						/>
-						<hr />
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
 							cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 							deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
+							getMonster={id => this.props.getMonster(id)}
 						/>
 						{templateOptions}
 						<hr />

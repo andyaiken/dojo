@@ -237,7 +237,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		});
 	}
 
-	private removeTrait(trait: Trait) {
+	private deleteTrait(trait: Trait) {
 		Frankenstein.removeTrait(this.state.monster, trait);
 		this.recalculateRole();
 		this.setState({
@@ -771,7 +771,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							addTrait={type => this.addTrait(type)}
 							copyTrait={trait => this.copyTrait(trait)}
 							moveTrait={(trait, moveBefore) => this.moveTrait(trait, moveBefore)}
-							removeTrait={trait => this.removeTrait(trait)}
+							deleteTrait={trait => this.deleteTrait(trait)}
 							changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
 						/>
 					);
@@ -1048,7 +1048,7 @@ interface TraitsTabProps {
 	addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') => void;
 	copyTrait: (trait: Trait) => void;
 	moveTrait: (trait: Trait, moveBefore: Trait) => void;
-	removeTrait: (trait: Trait) => void;
+	deleteTrait: (trait: Trait) => void;
 	changeValue: (trait: Trait, field: string, value: any) => void;
 }
 
@@ -1119,7 +1119,7 @@ class TraitsTab extends React.Component<TraitsTabProps, TraitsTabState> {
 					<TraitEditorPanel
 						trait={selectedTrait}
 						copyTrait={trait => this.props.copyTrait(trait)}
-						removeTrait={trait => this.props.removeTrait(trait)}
+						deleteTrait={trait => this.props.deleteTrait(trait)}
 						changeValue={(trait, type, value) => this.props.changeValue(trait, type, value)}
 					/>
 				);
@@ -1179,7 +1179,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 interface TraitEditorPanelProps {
 	trait: Trait;
 	copyTrait: (trait: Trait) => void;
-	removeTrait: (trait: Trait) => void;
+	deleteTrait: (trait: Trait) => void;
 	changeValue: (trait: Trait, field: string, value: any) => void;
 }
 
@@ -1212,7 +1212,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
 					/>
 					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this trait</button>
-					<ConfirmButton text='remove this trait' onConfirm={() => this.props.removeTrait(this.props.trait)} />
+					<ConfirmButton text='delete this trait' onConfirm={() => this.props.deleteTrait(this.props.trait)} />
 				</div>
 			);
 		} catch (e) {
