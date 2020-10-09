@@ -642,14 +642,14 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					let languages: string[] = [];
 					if (this.props.user === 'dm') {
 						// Show all languages
-						languages = Shakespeare.getSpokenLanguages(Comms.data.party.pcs);
+						languages = Shakespeare.getKnownLanguages(Comms.data.party.pcs);
 						languages.push('(some other language)');
 					} else {
 						// Only show your languages
 						const characterID = Comms.getCharacterID(Comms.getID());
 						const character = Comms.data.party.pcs.find(pc => pc.id === characterID);
 						if (character) {
-							languages = Shakespeare.getSpokenLanguages([character]);
+							languages = Shakespeare.getKnownLanguages([character]);
 						}
 					}
 					languageSection = (

@@ -127,7 +127,7 @@ export class Shakespeare {
 		}
 	}
 
-	public static getAllLanguages(): string[] {
+	public static getSourceLanguages(): string[] {
 		// Note: When adding a language to this list, also check the Ustinov.getLanguageCode() method
 		return [
 			'afrikaans',
@@ -206,12 +206,37 @@ export class Shakespeare {
 		return Shakespeare.shuffle(text);
 	}
 
-	public static getSpokenLanguages(pcs: PC[]) {
+	public static getAllLanguages() {
+		return [
+			'common',
+			'abyssal',
+			'aquan',
+			'auran',
+			'celestial',
+			'deep speech',
+			'dwarvish',
+			'elvish',
+			'giant',
+			'gnomish',
+			'goblin',
+			'halfling',
+			'ignan',
+			'infernal',
+			'orc',
+			'primordial',
+			'sylvan',
+			'terran',
+			'undercommon'
+		];
+	}
+
+	public static getKnownLanguages(pcs: PC[]) {
 		return pcs
 			.map(pc => pc.languages.toLowerCase())
 			.join(', ')
 			.split(/[,;:]+/)
 			.map(val => val.trim())
+			.filter(val => val.length > 0)
 			.reduce((array: string[], value) => {
 				if (array.indexOf(value) === -1) {
 					array.push(value);
@@ -258,9 +283,10 @@ export class Shakespeare {
 	public static capitalise(str: string) {
 		return str
 			.split(' ')
-			.map(token => {
-				const first = token[0].toUpperCase();
-				const rest = token.length > 1 ? token.substring(1) : '';
+			.filter(val => val.length > 0)
+			.map(val => {
+				const first = val[0].toUpperCase();
+				const rest = val.length > 1 ? val.substring(1) : '';
 				return first + rest;
 			})
 			.join(' ');

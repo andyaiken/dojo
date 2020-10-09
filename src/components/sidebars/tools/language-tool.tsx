@@ -43,7 +43,7 @@ export class LanguageTool extends React.Component<Props> {
 					selectedLanguages = 'none';
 				}
 
-				const languages = Shakespeare.getAllLanguages()
+				const languages = Shakespeare.getSourceLanguages()
 					.map(lang => {
 						const isSelected = this.props.selectedLanguages.includes(lang);
 						return (

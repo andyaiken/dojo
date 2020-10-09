@@ -274,7 +274,7 @@ export class PageSidebar extends React.Component<Props> {
 								this.props.onUpdateSidebar(sidebar);
 							}}
 							selectRandomLanguages={() => {
-								const languages = Shakespeare.getAllLanguages();
+								const languages = Shakespeare.getSourceLanguages();
 
 								const sidebar = this.props.sidebar;
 								sidebar.selectedLanguages = [];

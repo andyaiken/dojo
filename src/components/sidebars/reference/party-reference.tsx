@@ -31,18 +31,29 @@ export class PartyReference extends React.Component<Props> {
 
 		const level = Math.round(activePCs.reduce((sum, current) => sum + current.level, 0) / activePCs.length);
 
-		const languages = Shakespeare.getSpokenLanguages(activePCs)
-			.map(lang => {
-				const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang.toLowerCase()));
-				const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name).join(', ');
-				const langName = Shakespeare.capitalise(lang);
-				return (
-					<div key={langName} className='table-row'>
-						<div className='table-cell l'>{langName}</div>
-						<div className='table-cell l'>{pcs}</div>
-					</div>
-				);
-			});
+		const known = Shakespeare.getKnownLanguages(activePCs);
+		const knownLanguages = known.map(lang => {
+			const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang.toLowerCase()));
+			const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name).join(', ');
+			const langName = Shakespeare.capitalise(lang);
+			return (
+				<div key={langName} className='table-row'>
+					<div className='table-cell l'>{langName}</div>
+					<div className='table-cell l'>{pcs}</div>
+				</div>
+			);
+		});
+		const unknown = Shakespeare.getAllLanguages()
+			.map(lang => Shakespeare.capitalise(lang))
+			.filter(lang => !known.includes(lang));
+		let unknownLanguages = null;
+		if (unknown.length > 0) {
+			unknownLanguages = (
+				<div className='section'>
+					unknown languages: {unknown.join(', ')}
+				</div>
+			);
+		}
 
 		const insight: { min: number, max: number } = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
 		const invest: { min: number, max: number } = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
@@ -86,8 +97,10 @@ export class PartyReference extends React.Component<Props> {
 						<div className='table-cell l'><b>language</b></div>
 						<div className='table-cell l'><b>spoken by</b></div>
 					</div>
-					{languages}
+					{knownLanguages}
 				</div>
+				{unknownLanguages}
+				<hr/>
 				<div className='section subheading'>
 					passive skills
 				</div>
@@ -103,6 +116,7 @@ export class PartyReference extends React.Component<Props> {
 				<Note>
 					<p>remember that advantage / disadvantage grants +/- 5 to passive rolls</p>
 				</Note>
+				<hr/>
 				<div className='section subheading'>
 					average level
 				</div>
