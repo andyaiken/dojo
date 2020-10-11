@@ -105,22 +105,20 @@ export class Svengali {
 		return {
 			id: Utils.guid(),
 			value: value,
-			suit: suit,
 			name: value + ' of ' + suit,
-			meanings: {
+			data: {
 				upright: upright,
 				reversed: reversed
 			}
 		};
 	}
 
-	private static createMajorArcana(value: number, name: string, upright: string, reversed: string) {
+	private static createMajorArcana(value: number, name: string, upright: string, reversed: string): PlayingCard {
 		return {
 			id: Utils.guid(),
 			value: value,
-			suit: null,
 			name: name,
-			meanings: {
+			data: {
 				upright: upright,
 				reversed: reversed
 			}
@@ -131,8 +129,23 @@ export class Svengali {
 		const cards: PlayingCard[] = [];
 
 		['hearts', 'diamonds', 'spades', 'clubs'].forEach(suit => {
+			let num = 0;
+			switch (suit) {
+				case 'hearts':
+					num = 9829;
+					break;
+				case 'diamonds':
+					num = 9830;
+					break;
+				case 'spades':
+					num = 9824;
+					break;
+				case 'clubs':
+					num = 9827;
+					break;
+			}
 			['ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'jack', 'queen', 'king'].forEach(pip => {
-				cards.push(Svengali.createCard(pip, suit));
+				cards.push(Svengali.createCard(pip, suit, num));
 			});
 		});
 
@@ -148,13 +161,12 @@ export class Svengali {
 		return cards;
 	}
 
-	private static createCard(value: number | string, suit: string): PlayingCard {
+	private static createCard(value: number | string, suit: string, data: number): PlayingCard {
 		return {
 			id: Utils.guid(),
 			value: value,
-			suit: suit,
 			name: value + ' of ' + suit,
-			meanings: null
+			data: data
 		};
 	}
 
@@ -162,9 +174,8 @@ export class Svengali {
 		return {
 			id: Utils.guid(),
 			value: '',
-			suit: null,
 			name: 'joker',
-			meanings: null
+			data: null
 		};
 	}
 
@@ -213,13 +224,12 @@ export class Svengali {
 		];
 	}
 
-	private static createManyThingsCard(name: string) {
+	private static createManyThingsCard(name: string): PlayingCard {
 		return {
 			id: Utils.guid(),
 			value: '',
-			suit: null,
 			name: name,
-			meanings: null
+			data: 9763
 		};
 	}
 }

@@ -27,11 +27,18 @@ export class PlayingCardPanel extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			let meaning = '';
-			let reversed = '';
-			if (this.props.card.meanings) {
-				meaning = this.props.reversed ? this.props.card.meanings.reversed : this.props.card.meanings.upright;
-				reversed = this.props.reversed ? '(reversed)' : '';
+			let data = '';
+			let dataClass = '';
+			let footer = '';
+			if (this.props.card.data) {
+				if (typeof this.props.card.data === 'number') {
+					data = String.fromCharCode(this.props.card.data);
+					dataClass = 'suit';
+					footer = String.fromCharCode(this.props.card.data);
+				} else {
+					data = this.props.reversed ? this.props.card.data.reversed : this.props.card.data.upright;
+					footer = this.props.reversed ? '(reversed)' : '';
+				}
 			}
 
 			return (
@@ -44,11 +51,11 @@ export class PlayingCardPanel extends React.Component<Props, State> {
 							<div className='oracle-card-name'>
 								<div>{this.props.card.name}</div>
 							</div>
-							<div className='oracle-card-meaning scrollable'>
-								<div>{meaning}</div>
+							<div className={'oracle-card-data scrollable ' + dataClass}>
+								<div>{data}</div>
 							</div>
 							<div className='oracle-card-footer'>
-								<div>{reversed}</div>
+								<div>{footer}</div>
 								<div><b>{typeof this.props.card.value === 'number' ? this.props.card.value : ''}</b></div>
 							</div>
 						</div>

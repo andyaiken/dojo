@@ -45,12 +45,11 @@ export interface SavedImage {
 export interface PlayingCard {
 	id: string;
 	value: number | string;
-	suit: string | null;
 	name: string | null;
-	meanings: {
+	data: {
 		upright: string,
 		reversed: string
-	} | null;
+	} | number | null;
 }
 
 export interface CardDraw {
