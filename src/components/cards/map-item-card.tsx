@@ -44,13 +44,13 @@ export class MapItemCard extends React.Component<Props> {
 							<div className='subheading'>size</div>
 							<div className='section'>
 								<NumberSpin
-									value={this.props.item.width + ' sq'}
+									value={this.props.item.width + ' sq / ' + (this.props.item.width * 5) + ' ft'}
 									label='width'
 									downEnabled={this.props.item.width > 1}
 									onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'width', delta)}
 								/>
 								<NumberSpin
-									value={this.props.item.height + ' sq'}
+									value={this.props.item.height + ' sq / ' + (this.props.item.height * 5) + ' ft'}
 									label='height'
 									downEnabled={this.props.item.height > 1}
 									onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}

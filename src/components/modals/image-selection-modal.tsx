@@ -13,7 +13,6 @@ import { Note } from '../panels/note';
 
 interface Props {
 	select: (id: string) => void;
-	cancel: () => void;
 }
 
 interface State {
@@ -96,29 +95,21 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 			}
 
 			return (
-				<div className='full-height'>
-					<div className='drawer-header'><div className='app-title'>select image</div></div>
-					<div className='drawer-content'>
-						<div className='scrollable'>
-							<div>
-								<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
-									<p className='ant-upload-drag-icon'>
-										<FileOutlined />
-									</p>
-									<p className='ant-upload-text'>
-										click here, or drag a file here, to upload it
-									</p>
-									<p className='ant-upload-text'>
-										try to upload small images if possible
-									</p>
-								</Upload.Dragger>
-							</div>
-							{images}
-						</div>
+				<div className='scrollable'>
+					<div>
+						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+							<p className='ant-upload-drag-icon'>
+								<FileOutlined />
+							</p>
+							<p className='ant-upload-text'>
+								click here, or drag a file here, to upload it
+							</p>
+							<p className='ant-upload-text'>
+								try to upload small images if possible
+							</p>
+						</Upload.Dragger>
 					</div>
-					<div className='drawer-footer'>
-						<button onClick={() => this.props.cancel ? this.props.cancel() : null}>cancel</button>
-					</div>
+					{images}
 				</div>
 			);
 		} catch (ex) {

@@ -1,5 +1,5 @@
 import { DeleteOutlined } from '@ant-design/icons';
-import { Col, Drawer, Row } from 'antd';
+import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../../utils/factory';
@@ -13,7 +13,6 @@ import { Dropdown } from '../../controls/dropdown';
 import { NumberSpin } from '../../controls/number-spin';
 import { Textbox } from '../../controls/textbox';
 import { PortraitPanel } from '../../panels/portrait-panel';
-import { ImageSelectionModal } from '../image-selection-modal';
 
 interface Props {
 	pc: PC;
@@ -22,7 +21,6 @@ interface Props {
 
 interface State {
 	pc: PC;
-	showImageSelection: boolean;
 }
 
 export class PCEditorModal extends React.Component<Props, State> {
@@ -30,15 +28,8 @@ export class PCEditorModal extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
-			pc: props.pc,
-			showImageSelection: false
+			pc: props.pc
 		};
-	}
-
-	private toggleImageSelection() {
-		this.setState({
-			showImageSelection: !this.state.showImageSelection
-		});
 	}
 
 	private addCompanion() {
@@ -62,8 +53,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 		source[field] = value;
 
 		this.setState({
-			pc: this.state.pc,
-			showImageSelection: false
+			pc: this.state.pc
 		});
 	}
 
@@ -204,12 +194,6 @@ export class PCEditorModal extends React.Component<Props, State> {
 						{companions}
 						<button onClick={() => this.addCompanion()}>add a new companion</button>
 					</Col>
-					<Drawer visible={this.state.showImageSelection} closable={false} onClose={() => this.toggleImageSelection()}>
-						<ImageSelectionModal
-							select={id => this.changeValue(this.state.pc, 'portrait', id)}
-							cancel={() => this.toggleImageSelection()}
-						/>
-					</Drawer>
 				</Row>
 			);
 		} catch (e) {

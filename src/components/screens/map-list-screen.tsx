@@ -20,7 +20,6 @@ interface Props {
 	importMap: () => void;
 	generateMap: (type: string) => void;
 	openMap: (map: Map) => void;
-	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	deleteMap: (map: Map) => void;
 	startEncounter: (partyID: string, mapID: string) => void;
@@ -51,7 +50,6 @@ export class MapListScreen extends React.Component<Props> {
 					map={map}
 					parties={this.props.parties}
 					openMap={m => this.props.openMap(m)}
-					editMap={m => this.props.editMap(m)}
 					cloneMap={(m, name) => this.props.cloneMap(m, name)}
 					deleteMap={m => this.props.deleteMap(m)}
 					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}

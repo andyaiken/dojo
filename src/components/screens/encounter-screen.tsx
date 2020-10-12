@@ -9,7 +9,7 @@ import { Party } from '../../models/party';
 
 import { EncounterSlotCard } from '../cards/encounter-slot-card';
 import { ConfirmButton } from '../controls/confirm-button';
-import { Selector } from '../controls/selector';
+import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
 import { GridPanel } from '../panels/grid-panel';
@@ -37,24 +37,7 @@ interface Props {
 	goBack: () => void;
 }
 
-interface State {
-	view: string;
-}
-
-export class EncounterScreen extends React.Component<Props, State> {
-	constructor(props: Props) {
-		super(props);
-		this.state = {
-			view: 'monsters'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
+export class EncounterScreen extends React.Component<Props> {
 	private getMonsterCards(wave: EncounterWave | null) {
 		const cards = [];
 
@@ -133,46 +116,6 @@ export class EncounterScreen extends React.Component<Props, State> {
 				);
 			});
 
-			let content = null;
-			switch (this.state.view) {
-				case 'monsters':
-					content = (
-						<div>
-							<GridPanel
-								heading='encounter'
-								content={this.getMonsterCards(null)}
-								columns={3}
-							/>
-							<Row>
-								<Col span={8}>
-									<button onClick={() => this.props.chooseMonster(this.props.encounter, null, null)}>add monsters to the encounter</button>
-								</Col>
-							</Row>
-							{waveSections}
-						</div>
-					);
-					break;
-				case 'notes':
-					content = (
-						<div>
-							<GridPanel
-								columns={1}
-								content={[
-									<Textbox
-										key='notes'
-										text={this.props.encounter.notes}
-										placeholder='notes'
-										multiLine={true}
-										onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)}
-									/>
-								]}
-								heading='notes'
-							/>
-						</div>
-					);
-					break;
-			}
-
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>
@@ -184,19 +127,24 @@ export class EncounterScreen extends React.Component<Props, State> {
 								onChange={value => this.props.changeValue(this.props.encounter, 'name', value)}
 							/>
 						</div>
-						<hr />
-						<Selector
-							options={['monsters', 'notes'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.view}
-							onSelect={view => this.setView(view)}
-						/>
-						<hr />
+						<Note>
+							<p>add monsters to your encounter, and check the difficulty below</p>
+							<p>if your encounter is large or occurs in stages, you can split it into waves</p>
+						</Note>
 						<div className='section'>
 							<div className='subheading'>waves</div>
 							{waves}
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</div>
 						<hr />
+						<Expander text='notes'>
+							<Textbox
+								text={this.props.encounter.notes}
+								placeholder='notes'
+								multiLine={true}
+								onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)}
+							/>
+						</Expander>
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
@@ -210,7 +158,17 @@ export class EncounterScreen extends React.Component<Props, State> {
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 					</Col>
 					<Col span={18} className='scrollable'>
-						{content}
+						<GridPanel
+							heading='encounter'
+							content={this.getMonsterCards(null)}
+							columns={3}
+						/>
+						<Row>
+							<Col span={8}>
+								<button onClick={() => this.props.chooseMonster(this.props.encounter, null, null)}>add monsters to the encounter</button>
+							</Col>
+						</Row>
+						{waveSections}
 					</Col>
 				</Row>
 			);

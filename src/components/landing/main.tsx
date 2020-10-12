@@ -15,7 +15,7 @@ import { Utils } from '../../utils/utils';
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
-import { Exploration, Map, MapItem } from '../../models/map';
+import { Exploration, Map, MapArea, MapItem } from '../../models/map';
 import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
@@ -24,9 +24,9 @@ import { Selector } from '../controls/selector';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
-import { MapEditorModal } from '../modals/editors/map-editor-modal';
 import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
+import { ImageSelectionModal } from '../modals/image-selection-modal';
 import { MapImportModal } from '../modals/import/map-import-modal';
 import { MonsterGroupImportModal } from '../modals/import/monster-group-import-modal';
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
@@ -1080,6 +1080,17 @@ export class Main extends React.Component<Props, State> {
 
 	//#region Map screen
 
+	private addMap() {
+		const map = Factory.createMap();
+		map.name = 'new map';
+		const maps: Map[] = ([] as Map[]).concat(this.state.maps, [map]);
+		Utils.sort(maps);
+		this.setState({
+			maps: maps,
+			selectedMapID: map.id
+		});
+	}
+
 	private generateMap(type: string) {
 		const map = Factory.createMap();
 		map.name = 'new ' + type;
@@ -1088,21 +1099,6 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			maps: this.state.maps
-		});
-	}
-
-	private editMap(map: Map | null) {
-		if (!map) {
-			map = Factory.createMap();
-			map.name = 'new map';
-		}
-
-		const copy = JSON.parse(JSON.stringify(map));
-		this.setState({
-			drawer: {
-				type: 'map-edit',
-				map: copy
-			}
 		});
 	}
 
@@ -1118,22 +1114,6 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			maps: this.state.maps
-		});
-	}
-
-	private saveMap() {
-		const maps = this.state.maps;
-		const original = this.state.maps.find(m => m.id === this.state.drawer.map.id);
-		if (original) {
-			const index = this.state.maps.indexOf(original);
-			maps[index] = this.state.drawer.map;
-		} else {
-			maps.push(this.state.drawer.map);
-		}
-		Utils.sort(maps);
-		this.setState({
-			maps: maps,
-			drawer: null
 		});
 	}
 
@@ -1170,6 +1150,153 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			maps: this.state.maps,
 			selectedMapID: null
+		});
+	}
+
+	private selectMapTileImage(map: Map, tile: MapItem) {
+		this.setState({
+			drawer: {
+				type: 'select-image',
+				tile: tile
+			}
+		});
+	}
+
+	private cloneMapTile(map: Map, tile: MapItem) {
+		const copy = JSON.parse(JSON.stringify(tile));
+		copy.id = Utils.guid();
+		copy.x += 1;
+		copy.y += 1;
+		map.items.push(copy);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private rotateMapTile(map: Map, tile: MapItem) {
+		const tmp = tile.width;
+		tile.width = tile.height;
+		tile.height = tmp;
+
+		const diff = Math.floor((tile.width - tile.height) / 2);
+		tile.x -= diff;
+		tile.y += diff;
+
+		if (tile.content) {
+			tile.content.orientation = tile.content.orientation === 'horizontal' ? 'vertical' : 'horizontal';
+		}
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private deleteMapTile(map: Map, tile: MapItem) {
+		const index = map.items.indexOf(tile);
+		map.items.splice(index, 1);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private clearMapTiles(map: Map) {
+		map.items = [];
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private bringToFront(map: Map, tile: MapItem) {
+		const index = map.items.indexOf(tile);
+		map.items.splice(index, 1);
+		map.items.push(tile);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private sendToBack(map: Map, tile: MapItem) {
+		const index = map.items.indexOf(tile);
+		map.items.splice(index, 1);
+		map.items.unshift(tile);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private moveMapTileOrArea(map: Map, thing: MapItem | MapArea, dir: string) {
+		switch (dir) {
+			case 'N':
+				thing.y -= 1;
+				break;
+			case 'NE':
+				thing.x += 1;
+				thing.y -= 1;
+				break;
+			case 'E':
+				thing.x += 1;
+				break;
+			case 'SE':
+				thing.x += 1;
+				thing.y += 1;
+				break;
+			case 'S':
+				thing.y += 1;
+				break;
+			case 'SW':
+				thing.x -= 1;
+				thing.y += 1;
+				break;
+			case 'W':
+				thing.x -= 1;
+				break;
+			case 'NW':
+				thing.x -= 1;
+				thing.y -= 1;
+				break;
+		}
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private addMapArea(map: Map, area: MapArea) {
+		map.areas.push(area);
+		Utils.sort(map.areas);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private deleteMapArea(map: Map, area: MapArea) {
+		const index = map.areas.indexOf(area);
+		map.areas.splice(index, 1);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private clearMapAreas(map: Map) {
+		map.areas = [];
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private generateRoom(map: Map) {
+		Mercator.generate('room', map);
+
+		this.setState({
+			maps: this.state.maps
 		});
 	}
 
@@ -2067,6 +2194,7 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			combats: this.state.combats,
+			maps: this.state.maps,
 			explorations: this.state.explorations
 		});
 	}
@@ -2127,6 +2255,7 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			combats: this.state.combats,
+			maps: this.state.maps,
 			explorations: this.state.explorations
 		});
 	}
@@ -2677,9 +2806,23 @@ export class Main extends React.Component<Props, State> {
 						<MapScreen
 							map={this.state.maps.find(m => m.id === this.state.selectedMapID) as Map}
 							parties={this.state.parties}
-							editMap={map => this.editMap(map)}
 							cloneMap={(map, name) => this.cloneMap(map, name)}
+							rotateMap={map => this.rotateMap(map)}
 							deleteMap={map => this.deleteMap(map)}
+							addMapTile={(map, tile) => this.addMapItem(tile, map)}
+							selectMapTileImage={(map, tile) => this.selectMapTileImage(map, tile)}
+							moveMapTile={(map, tile, dir) => this.moveMapTileOrArea(map, tile, dir)}
+							cloneMapTile={(map, tile) => this.cloneMapTile(map, tile)}
+							rotateMapTile={(map, tile) => this.rotateMapTile(map, tile)}
+							deleteMapTile={(map, tile) => this.deleteMapTile(map, tile)}
+							clearMapTiles={map => this.clearMapTiles(map)}
+							bringToFront={(map, tile) => this.bringToFront(map, tile)}
+							sendToBack={(map, tile) => this.sendToBack(map, tile)}
+							addMapArea={(map, area) => this.addMapArea(map, area)}
+							moveMapArea={(map, area, dir) => this.moveMapTileOrArea(map, area, dir)}
+							deleteMapArea={(map, area) => this.deleteMapArea(map, area)}
+							clearMapAreas={map => this.clearMapAreas(map)}
+							generateRoom={map => this.generateRoom(map)}
 							startEncounter={(partyID, mapID) => {
 								const map = this.state.maps.find(m => m.id === mapID) as Map;
 								this.createCombat(partyID, null, map);
@@ -2688,7 +2831,8 @@ export class Main extends React.Component<Props, State> {
 								const map = this.state.maps.find(m => m.id === mapID) as Map;
 								this.startExploration(map, partyID);
 							}}
-							changeValue={(map, type, value) => this.changeValue(map, type, value)}
+							changeValue={(source, field, value) => this.changeValue(source, field, value)}
+							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 							goBack={() => this.selectMap(null)}
 						/>
 					);
@@ -2698,11 +2842,10 @@ export class Main extends React.Component<Props, State> {
 						maps={this.state.maps}
 						parties={this.state.parties}
 						explorations={this.state.explorations}
-						addMap={() => this.editMap(null)}
+						addMap={() => this.addMap()}
 						importMap={() => this.importMap()}
 						generateMap={(type) => this.generateMap(type)}
 						openMap={map => this.selectMap(map)}
-						editMap={map => this.editMap(map)}
 						cloneMap={(map, name) => this.cloneMap(map, name)}
 						deleteMap={map => this.deleteMap(map)}
 						startEncounter={(partyID, mapID) => {
@@ -2958,25 +3101,6 @@ export class Main extends React.Component<Props, State> {
 					);
 					width = '75%';
 					break;
-				case 'map-edit':
-					content = (
-						<MapEditorModal
-							map={this.state.drawer.map}
-						/>
-					);
-					header = 'map editor';
-					footer = (
-						<Row gutter={20}>
-							<Col span={12}>
-								<button onClick={() => this.saveMap()}>save changes</button>
-							</Col>
-							<Col span={12}>
-								<button onClick={() => this.closeDrawer()}>discard changes</button>
-							</Col>
-						</Row>
-					);
-					width = '85%';
-					break;
 				case 'import-map':
 					content = (
 						<MapImportModal
@@ -3098,6 +3222,18 @@ export class Main extends React.Component<Props, State> {
 						</Row>
 					);
 					width = '75%';
+					break;
+				case 'select-image':
+					content = (
+						<ImageSelectionModal
+							select={id => {
+								this.changeValue(this.state.drawer.tile, 'customBackground', id);
+								this.closeDrawer();
+							}}
+						/>
+					);
+					header = 'select image';
+					width = '25%';
 					break;
 			}
 		}

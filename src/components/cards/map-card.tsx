@@ -11,7 +11,6 @@ interface Props {
 	map: Map;
 	parties: Party[];
 	openMap: (map: Map) => void;
-	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	startEncounter: (partyID: string, mapID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
@@ -41,7 +40,6 @@ export class MapCard extends React.Component<Props> {
 							<MapOptions
 								map={this.props.map}
 								parties={this.props.parties}
-								editMap={map => this.props.editMap(map)}
 								cloneMap={(map, name) => this.props.cloneMap(map, name)}
 								startEncounter={(partyID, mapID) => this.props.startEncounter(partyID, mapID)}
 								startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}

@@ -11,7 +11,6 @@ import { Textbox } from '../controls/textbox';
 interface Props {
 	map: Map;
 	parties: Party[];
-	editMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	deleteMap: (map: Map) => void;
 	startEncounter: (partyID: string, mapID: string) => void;
@@ -60,7 +59,6 @@ export class MapOptions extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<button onClick={() => this.props.editMap(this.props.map)}>edit map</button>
 					<Expander text='copy map'>
 						<Textbox
 							text={this.state.cloneName}
