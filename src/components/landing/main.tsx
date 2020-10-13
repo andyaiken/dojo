@@ -251,12 +251,17 @@ export class Main extends React.Component<Props, State> {
 		}
 
 		let options: Options = {
-			showMonsterDieRolls: false
+			showMonsterDieRolls: false,
+			theme: 'light'
 		};
 		try {
 			const str = window.localStorage.getItem('data-options');
 			if (str) {
 				options = JSON.parse(str);
+
+				if (options.theme === undefined) {
+					options.theme = 'light';
+				}
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -3247,7 +3252,7 @@ export class Main extends React.Component<Props, State> {
 			const drawer = this.getDrawer();
 
 			return (
-				<div className='dojo'>
+				<div className={'dojo ' + this.state.options.theme}>
 					<div className={this.state.sidebar.visible ? 'app with-sidebar' : 'app'}>
 						<ErrorBoundary>
 							<PageHeader
@@ -3300,6 +3305,7 @@ export class Main extends React.Component<Props, State> {
 					</ErrorBoundary>
 					<ErrorBoundary>
 						<Drawer
+							className={this.state.options.theme}
 							closable={false}
 							maskClosable={drawer.closable}
 							width={drawer.width}

@@ -66,6 +66,8 @@
 
 		.page-content {
 			height: calc(100% - 100px);
+			background-color: $background;
+			color: $foreground;
 
 			&.no-footer {
 				height: calc(100% - 50px);
@@ -88,7 +90,6 @@
 				height: 50px;
 				line-height: 48px;
 				font-size: 16px;
-				color: $header-foreground;
 
 				&:hover {
 					background-color: $highlight05;
@@ -100,12 +101,6 @@
 					pointer-events: none;
 				}
 			}
-
-			.sidebar-padding {
-				width: 400px;
-				height: 50px;
-				border-left: 1px solid $header-foreground;
-			}
 		}
 	}
 
@@ -113,6 +108,15 @@
 		width: 400px;
 		height: 100%;
 		display: inline-block;
+		background-color: $sidebar-background;
+
+		&.sidebar-left {
+			border-right: 1px solid $control-border;
+		}
+
+		&.sidebar-right {
+			border-left: 1px solid $control-border;
+		}
 
 		.sidebar-icons {
 			background-color: $header-background;
@@ -223,17 +227,5 @@
 			overflow-x: visible;
 			overflow-y: visible;
 		}
-	}
-}
-
-.sidebar {
-	background-color: rgb(240, 240, 240);
-
-	&.sidebar-left {
-		border-right: 1px solid $control-border;
-	}
-
-	&.sidebar-right {
-		border-left: 1px solid $control-border;
 	}
 }

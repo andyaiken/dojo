@@ -5,7 +5,7 @@ b,
 strong,
 .strong {
 	font-weight: 600;
-	color: rgba(0, 0, 0, 0.8);
+	color: rgba(0, 0, 0, 1);
 }
 
 input[type=text],
@@ -49,6 +49,8 @@ textarea {
 
 input[type=text],
 textarea {
+	color: $foreground;
+
 	&::placeholder {
 		opacity: 0.6;
 	}
@@ -100,10 +102,12 @@ table {
 
 	tbody tr:nth-child(odd) {
 		background-color: #E0E5C1;
+		color: $foreground;
 	}
 
 	tbody tr:nth-child(even) {
 		background-color: #FFFFFF;
+		color: $foreground;
 	}
 }
 
@@ -234,7 +238,7 @@ button {
 	padding: 5px 10px;
 	font-weight: 600;
 	line-height: 20px;
-	color: rgba(0, 0, 0, 0.65);
+	color: $foreground;
 
 	.collapse-header-text {
 		width: calc(100% - 22px);
@@ -242,7 +246,7 @@ button {
 }
 
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
-	color: rgba(0, 0, 0, 0.65);
+	color: $foreground;
 }
 
 .ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
@@ -379,6 +383,7 @@ button {
 .ant-carousel {
 	width: 600px;
 	font-size: 15px;
+	color: $foreground;
 
 	.slick-dots li {
 		height: 16px;
@@ -454,7 +459,7 @@ button {
 				font-size: 12px;
 				line-height: unset;
 				width: 100%;
-				color: rgba(0, 0, 0, 0.65);
+				color: $foreground;
 			}
 		}
 
@@ -462,7 +467,7 @@ button {
 			font-size: 20px;
 			position: unset;
 			background-color: white;
-			color: rgba(0, 0, 0, 0.65);
+			color: $foreground;
 
 			&:hover {
 				background-color: $highlight01;

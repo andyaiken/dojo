@@ -93,9 +93,9 @@ export class PartyReference extends React.Component<Props> {
 					languages
 				</div>
 				<div className='table alternating'>
-					<div className='table-row'>
-						<div className='table-cell l'><b>language</b></div>
-						<div className='table-cell l'><b>spoken by</b></div>
+					<div className='table-row table-row-header'>
+						<div className='table-cell l'>language</div>
+						<div className='table-cell l'>spoken by</div>
 					</div>
 					{knownLanguages}
 				</div>
@@ -105,11 +105,11 @@ export class PartyReference extends React.Component<Props> {
 					passive skills
 				</div>
 				<div className='table alternating'>
-					<div className='table-row'>
+					<div className='table-row table-row-header'>
 						<div className='table-cell l small' />
-						<div className='table-cell l'><b>insight</b></div>
-						<div className='table-cell l'><b>investigation</b></div>
-						<div className='table-cell l'><b>perception</b></div>
+						<div className='table-cell l'>insight</div>
+						<div className='table-cell l'>investigation</div>
+						<div className='table-cell l'>perception</div>
 					</div>
 					{rows}
 				</div>

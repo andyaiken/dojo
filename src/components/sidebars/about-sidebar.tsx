@@ -105,6 +105,11 @@ export class AboutSidebar extends React.Component<Props, State> {
 								checked={this.props.options.showMonsterDieRolls}
 								onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
 							/>
+							<Checkbox
+								label='use dark theme'
+								checked={this.props.options.theme === 'dark'}
+								onChecked={checked => this.props.setOption('theme', checked ? 'dark' : 'light')}
+							/>
 							<Note>
 								<div className='section'>
 									the browser has a limited amount of image storage space

@@ -1,6 +1,7 @@
 .card {
 	background-color: $card-background;
 	background-image: radial-gradient($card-background, $card-background-outer);
+	color: $foreground;
 	border: 1px solid #656565;
 	margin: 5px 0;
 

@@ -19,7 +19,8 @@
 			backface-visibility: hidden;
 			border: 1px solid $control-border;
 			border-radius: 15px;
-			background-color: white;
+			background-color: $background;
+			color: $foreground;
 			cursor: pointer;
 
 			&:hover {

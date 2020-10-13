@@ -41,7 +41,7 @@ body,
 	position: fixed;
 	overflow-x: hidden;
 	overflow-y: hidden;
-	color: rgba(0, 0, 0, 0.65);
+	color: $foreground;
 }
 
 .fixed-top {
@@ -86,6 +86,7 @@ hr {
 
 .table {
 	background-color: $background;
+	color: $foreground;
 	border: 1px solid $control-border;
 	margin: 8px 0;
 
@@ -257,6 +258,7 @@ p,
 	padding: 5px 10px;
 	background-color: rgb(255, 250, 245);
 	background-image: radial-gradient(rgb(255, 250, 245), rgb(250, 245, 240));
+	color: $foreground;
 	border: 1px solid $control-border;
 	border-radius: 5px;
 	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
