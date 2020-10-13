@@ -618,7 +618,6 @@ export class Main extends React.Component<Props, State> {
 
 	private addParty() {
 		const party = Factory.createParty();
-		party.name = 'new party';
 		const parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
 		Utils.sort(parties);
 		this.setState({
@@ -686,7 +685,6 @@ export class Main extends React.Component<Props, State> {
 	private editPC(pc: PC | null) {
 		if (!pc) {
 			pc = Factory.createPC();
-			pc.name = 'new pc';
 		}
 
 		const copy = JSON.parse(JSON.stringify(pc));
@@ -754,7 +752,6 @@ export class Main extends React.Component<Props, State> {
 
 	private addMonsterGroup() {
 		const group = Factory.createMonsterGroup();
-		group.name = 'new group';
 		const library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
 		Utils.sort(library);
 		this.setState({
@@ -856,14 +853,13 @@ export class Main extends React.Component<Props, State> {
 			}
 		} else {
 			monster = Factory.createMonster();
-			monster.name = 'new monster';
 
 			const copy = JSON.parse(JSON.stringify(monster));
 			this.setState({
 				drawer: {
 					type: 'monster',
 					monster: copy,
-					monsterEditorSidebar: 'sidebar'
+					monsterEditorSidebar: 'statblock'
 				}
 			});
 		}
@@ -979,12 +975,10 @@ export class Main extends React.Component<Props, State> {
 
 	private addEncounter(templateName: string | null) {
 		const encounter = Factory.createEncounter();
-		encounter.name = 'new encounter';
 
 		if (templateName) {
 			const template = Napoleon.encounterTemplates().find(t => t.name === templateName);
 			if (template) {
-				encounter.name = 'new ' + templateName + ' encounter';
 				encounter.slots = template.slots.map(s => {
 					const slot = Factory.createEncounterSlot();
 					slot.roles = s.roles;
@@ -1006,7 +1000,6 @@ export class Main extends React.Component<Props, State> {
 
 	private createEncounter(xp: number, filter: MonsterFilter) {
 		const encounter = Factory.createEncounter();
-		encounter.name = 'new encounter';
 
 		Napoleon.buildEncounter(encounter, xp, filter, this.state.library, id => this.getMonster(id));
 		Napoleon.sortEncounter(encounter);
@@ -1082,7 +1075,6 @@ export class Main extends React.Component<Props, State> {
 
 	private addMap() {
 		const map = Factory.createMap();
-		map.name = 'new map';
 		const maps: Map[] = ([] as Map[]).concat(this.state.maps, [map]);
 		Utils.sort(maps);
 		this.setState({
@@ -1093,7 +1085,6 @@ export class Main extends React.Component<Props, State> {
 
 	private generateMap(type: string) {
 		const map = Factory.createMap();
-		map.name = 'new ' + type;
 		Mercator.generate(type, map);
 		this.state.maps.push(map);
 
@@ -2510,6 +2501,7 @@ export class Main extends React.Component<Props, State> {
 				return (
 					<MonsterGroupListScreen
 						library={this.state.library}
+						encounters={this.state.encounters}
 						hasMonsters={hasMonsters}
 						addMonsterGroup={() => this.addMonsterGroup()}
 						importMonsterGroup={() => this.importMonsterGroup()}

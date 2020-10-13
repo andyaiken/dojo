@@ -43,7 +43,7 @@ export class EncounterOptions extends React.Component<Props, State> {
 			if (this.props.parties.length > 0) {
 				run = (
 					<Dropdown
-						options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
+						options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
 						placeholder='start combat with...'
 						onSelect={partyID => this.props.startEncounter(partyID, this.props.encounter.id)}
 					/>

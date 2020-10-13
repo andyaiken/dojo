@@ -112,6 +112,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 						<MonsterGroupOptions
 							monsterGroup={this.props.monsterGroup}
 							library={this.props.library}
+							encounters={this.props.encounters}
 							addMonster={monster => this.props.addMonster(monster)}
 							importMonster={() => this.props.importMonster()}
 							openDemographics={group => this.props.openDemographics(group)}

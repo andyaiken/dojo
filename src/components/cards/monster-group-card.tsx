@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
 
+import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { Expander } from '../controls/expander';
@@ -11,6 +12,7 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	group: MonsterGroup;
 	library: MonsterGroup[];
+	encounters: Encounter[];
 	openMonsterGroup: (group: MonsterGroup) => void;
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
@@ -55,6 +57,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 							<MonsterGroupOptions
 								monsterGroup={this.props.group}
 								library={this.props.library}
+								encounters={this.props.encounters}
 								addMonster={monster => this.props.addMonster(monster)}
 								importMonster={() => this.props.importMonster()}
 								openDemographics={group => this.props.openDemographics(group)}

@@ -86,7 +86,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 
 			let left = (
 				<RadioGroup
-					items={monsters.map(m => ({ id: m.id, text: m.name, info: 'cr ' + Gygax.challenge(m.challenge) }))}
+					items={monsters.map(m => ({ id: m.id, text: m.name || 'unnamed monster', info: 'cr ' + Gygax.challenge(m.challenge) }))}
 					selectedItemID={this.props.monster ? this.props.monster.id : null}
 					onSelect={id => this.props.setMonster(monsters.find(m => m.id === id) ?? null)}
 				/>

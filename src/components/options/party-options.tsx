@@ -93,7 +93,7 @@ export class PartyOptions extends React.Component<Props, State> {
 			if (this.props.encounters.length > 0) {
 				run = (
 					<Dropdown
-						options={this.props.encounters.map(p => ({ id: p.id, text: p.name }))}
+						options={this.props.encounters.map(enc => ({ id: enc.id, text: enc.name || 'unnamed encounter' }))}
 						placeholder='start combat...'
 						onSelect={encounterID => this.props.startEncounter(this.props.party.id, encounterID)}
 					/>
@@ -104,7 +104,7 @@ export class PartyOptions extends React.Component<Props, State> {
 			if (this.props.maps.length > 0) {
 				explore = (
 					<Dropdown
-						options={this.props.maps.map(m => ({ id: m.id, text: m.name }))}
+						options={this.props.maps.map(m => ({ id: m.id, text: m.name || 'unnamed map' }))}
 						placeholder='start exploration...'
 						onSelect={mapID => this.props.startExploration(this.props.party.id, mapID)}
 					/>

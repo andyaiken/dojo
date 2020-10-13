@@ -34,7 +34,6 @@ export class PCEditorModal extends React.Component<Props, State> {
 
 	private addCompanion() {
 		const companion = Factory.createCompanion();
-		companion.name = 'new companion';
 		this.state.pc.companions.push(companion);
 		this.setState({
 			pc: this.state.pc

@@ -120,7 +120,6 @@ export class MapScreen extends React.Component<Props, State> {
 
 		if (this.state.addingArea) {
 			const area = Factory.createMapArea();
-			area.name = 'new area';
 			area.x = x1;
 			area.y = y1;
 			area.width = x2 - x1 + 1;

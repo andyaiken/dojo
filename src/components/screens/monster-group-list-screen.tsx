@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Utils } from '../../utils/utils';
 
+import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { MonsterGroupCard } from '../cards/monster-group-card';
@@ -12,6 +13,7 @@ import { Note } from '../panels/note';
 
 interface Props {
 	library: MonsterGroup[];
+	encounters: Encounter[];
 	hasMonsters: boolean;
 	addMonsterGroup: () => void;
 	importMonsterGroup: () => void;
@@ -50,6 +52,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 					key={group.id}
 					group={group}
 					library={this.props.library}
+					encounters={this.props.encounters}
 					openMonsterGroup={grp => this.props.openMonsterGroup(grp)}
 					addMonster={monster => this.props.addMonster(monster)}
 					importMonster={() => this.props.importMonster()}

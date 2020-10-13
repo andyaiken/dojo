@@ -33,7 +33,7 @@ export class EncounterSlotCard extends React.Component<Props> {
 			const options = [];
 
 			if (this.props.monster) {
-				name = this.props.monster.name;
+				name = this.props.monster.name || 'unnamed monster';
 
 				const tags = [];
 				let sizeAndType = (this.props.monster.size + ' ' + this.props.monster.category).toLowerCase();

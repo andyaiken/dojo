@@ -94,8 +94,6 @@ export class CombatStartModal extends React.Component<Props, State> {
 
 	private generateEncounter(diff: string) {
 		const encounter = Factory.createEncounter();
-		encounter.name = 'new encounter';
-
 		const filter = Factory.createMonsterFilter();
 
 		let xp = 0;
@@ -122,10 +120,11 @@ export class CombatStartModal extends React.Component<Props, State> {
 
 	private generateMap(type: string) {
 		const map = Factory.createMap();
-		map.name = 'new map';
 		Mercator.generate(type, map);
+
 		const setup = this.state.combatSetup;
 		setup.map = map;
+
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());

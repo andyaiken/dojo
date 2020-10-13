@@ -506,7 +506,6 @@ export class Frankenstein {
 	public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
 		const trait = Factory.createTrait();
 		trait.type = type;
-		trait.name = 'New ' + Gygax.traitType(type, false).toLowerCase();
 		target.traits.push(trait);
 	}
 
