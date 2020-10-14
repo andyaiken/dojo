@@ -1,5 +1,5 @@
 $background: rgb(255, 255, 255);
-$dark-background: rgb(70, 70, 70);
+$dark-background: rgb(50, 50, 50);
 
 $foreground: rgba(0, 0, 0, 0.65);
 $dark-foreground: rgba(255, 255, 255, 0.9);
@@ -14,7 +14,7 @@ $top-row-background: rgb(240, 240, 240);
 $dark-top-row-background: rgb(50, 50, 50);
 
 $sidebar-background: rgb(240, 240, 240);
-$dark-sidebar-background: rgb(50, 50, 50);
+$dark-sidebar-background: rgb(70, 70, 70);
 
 $highlight: rgb(60, 120, 220);
 $highlight01: rgba(60, 120, 220, 0.1);
@@ -72,6 +72,10 @@ $card-background-outer: rgb(245, 245, 220);
 
 	.group-panel {
 		background-color: $dark-background;
+	}
+
+	.card {
+		border: 1px solid $control-border;
 	}
 
 	.note b,

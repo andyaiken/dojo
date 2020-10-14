@@ -20,7 +20,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 					if ((condition.duration.type === 'saves') || (condition.duration.type === 'rounds')) {
 						// Reduce save by 1
 						condition.duration.count -= 1;
-						this.close(condition.duration.count === 0);
+						this.props.close(this.props.notification, condition.duration.count === 0);
 					}
 				}
 				break;
@@ -28,13 +28,9 @@ export class CombatNotificationPanel extends React.Component<Props> {
 				// Mark trait as recharged
 				const trait = this.props.notification.data as Trait;
 				trait.uses = 0;
-				this.close(false);
+				this.props.close(this.props.notification, false);
 				break;
 		}
-	}
-
-	private close(removeCondition: boolean) {
-		this.props.close(this.props.notification, removeCondition);
 	}
 
 	public render() {
@@ -61,7 +57,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 									<button onClick={() => this.success()}>success</button>
 								</Col>
 								<Col span={12}>
-									<button onClick={() => this.close(false)}>failure</button>
+									<button onClick={() => this.props.close(this.props.notification, false)}>failure</button>
 								</Col>
 							</Row>
 						</div>
@@ -73,7 +69,6 @@ export class CombatNotificationPanel extends React.Component<Props> {
 						<div>
 							<div className='section'>
 								<b>{name}</b> is no longer affected by condition <b>{endConditionName}</b>
-								<button onClick={() => this.close(false)}>close</button>
 							</div>
 						</div>
 					);
@@ -87,14 +82,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 							<div className='section'>
 								{trait.usage}
 							</div>
-							<Row gutter={10}>
-								<Col span={12}>
-									<button onClick={() => this.success()}>recharge</button>
-								</Col>
-								<Col span={12}>
-									<button onClick={() => this.close(false)}>close</button>
-								</Col>
-							</Row>
+							<button onClick={() => this.success()}>recharge</button>
 						</div>
 					);
 			}
