@@ -42,19 +42,19 @@ export class PlayingCardPanel extends React.Component<Props, State> {
 			}
 
 			return (
-				<div className={this.state.flipped ? 'oracle-card flipped' : 'oracle-card'} onClick={() => this.flip()} role='button'>
-					<div className='oracle-card-inner'>
-						<div className='oracle-card-front'>
+				<div className={this.state.flipped ? 'playing-card flipped' : 'playing-card'} onClick={() => this.flip()} role='button'>
+					<div className='playing-card-inner'>
+						<div className='playing-card-front'>
 							?
 						</div>
-						<div className='oracle-card-back'>
-							<div className='oracle-card-name'>
+						<div className='playing-card-back'>
+							<div className='playing-card-name'>
 								<div>{this.props.card.name}</div>
 							</div>
-							<div className={'oracle-card-data scrollable ' + dataClass}>
+							<div className={'playing-card-data scrollable ' + dataClass}>
 								<div>{data}</div>
 							</div>
-							<div className='oracle-card-footer'>
+							<div className='playing-card-footer'>
 								<div>{footer}</div>
 								<div><b>{typeof this.props.card.value === 'number' ? this.props.card.value : ''}</b></div>
 							</div>

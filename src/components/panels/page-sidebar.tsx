@@ -1,4 +1,4 @@
-import { BookOutlined, BulbOutlined, CommentOutlined, ControlOutlined, InfoCircleOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, CommentOutlined, ControlOutlined, InfoCircleOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -12,9 +12,11 @@ import { Encounter } from '../../models/encounter';
 import { Exploration, Map } from '../../models/map';
 import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
-import { Party } from '../../models/party';
+import { Party, PC } from '../../models/party';
 
 import { AboutSidebar } from '../sidebars/about-sidebar';
+import { AwardsPlayerSidebar } from '../sidebars/awards-player-sidebar';
+import { AwardsSidebar } from '../sidebars/awards-sidebar';
 import { GeneratorsSidebar } from '../sidebars/generators-sidebar';
 import { ReferenceSidebar } from '../sidebars/reference-sidebar';
 import { SearchSidebar } from '../sidebars/search-sidebar';
@@ -44,6 +46,8 @@ interface Props {
 	selectMap: (id: string) => void;
 	openImage: (data: string) => void;
 	editPC: (id: string) => void;
+	addAward: (awardID: string, awardee: Party | PC) => void;
+	deleteAward: (awardID: string, awardee: Party | PC) => void;
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
@@ -69,6 +73,8 @@ export class PageSidebar extends React.Component<Props> {
 		openImage: null,
 		openStatBlock: null,
 		editPC: null,
+		addAward: null,
+		deleteAward: null,
 		addCondition: null,
 		editCondition: null,
 		toggleAddingToMap: null,
@@ -85,7 +91,6 @@ export class PageSidebar extends React.Component<Props> {
 			const options = [];
 			switch (this.props.user) {
 				case 'dm':
-					//
 					options.push(
 						<ToolOutlined
 							key='tools'
@@ -116,6 +121,14 @@ export class PageSidebar extends React.Component<Props> {
 							className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
 							title='session'
 							onClick={() => this.props.onSelectSidebar('session')}
+						/>
+					);
+					options.push(
+						<TrophyOutlined
+							key='awards'
+							className={this.props.sidebar.type === 'awards' ? 'sidebar-icon selected' : 'sidebar-icon'}
+							title='awards'
+							onClick={() => this.props.onSelectSidebar('awards')}
 						/>
 					);
 					options.push(
@@ -180,6 +193,14 @@ export class PageSidebar extends React.Component<Props> {
 								className={this.props.sidebar.type === 'session-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
 								title='session'
 								onClick={() => this.props.onSelectSidebar('session-player')}
+							/>
+						);
+						options.push(
+							<TrophyOutlined
+								key='awards-player'
+								className={this.props.sidebar.type === 'awards-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
+								title='awards'
+								onClick={() => this.props.onSelectSidebar('awards-player')}
 							/>
 						);
 					}
@@ -428,6 +449,21 @@ export class PageSidebar extends React.Component<Props> {
 							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.props.toggleAddingToMap()}
 							onUpdated={() => this.props.onUpdated()}
+						/>
+					);
+					break;
+				case 'awards':
+					content = (
+						<AwardsSidebar
+							parties={this.props.parties}
+							addAward={(id, awardee) => this.props.addAward(id, awardee)}
+							deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
+						/>
+					);
+					break;
+				case 'awards-player':
+					content = (
+						<AwardsPlayerSidebar
 						/>
 					);
 					break;

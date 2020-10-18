@@ -2,6 +2,7 @@ export interface Party {
 	id: string;
 	name: string;
 	pcs: PC[];
+	awards: string[];
 }
 
 export interface PC {
@@ -21,10 +22,18 @@ export interface PC {
 	portrait: string;
 	url: string;
 	companions: Companion[];
+	awards: string[];
 }
 
 export interface Companion {
 	id: string;
 	name: string;
 	monsterID: string | null;
+}
+
+export interface Award {
+	id: string;
+	category: string;
+	name: string;
+	description: string;
 }

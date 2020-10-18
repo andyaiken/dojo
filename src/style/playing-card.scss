@@ -1,16 +1,16 @@
-.oracle-card {
+.playing-card {
 	height: 200px;
 	perspective: 1000px;
 	margin: 10px 0;
 
-	.oracle-card-inner {
+	.playing-card-inner {
 		position: relative;
 		height: 100%;
 		transition: transform 0.5s;
 		transform-style: preserve-3d;
 
-		.oracle-card-front,
-		.oracle-card-back {
+		.playing-card-front,
+		.playing-card-back {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -28,7 +28,7 @@
 			}
 		}
 
-		.oracle-card-front {
+		.playing-card-front {
 			text-align: center;
 			font-size: 110px;
 			background-color: $control-border;
@@ -39,13 +39,13 @@
 			}
 		}
 
-		.oracle-card-back {
+		.playing-card-back {
 			transform: rotateY(180deg);
 			display: flex;
 			flex-direction: column;
 			padding: 0 5px;
 
-			.oracle-card-name {
+			.playing-card-name {
 				flex: 0 0 60px;
 				font-weight: 600;
 				font-size: 14px;
@@ -57,7 +57,7 @@
 				text-align: center;
 			}
 
-			.oracle-card-data {
+			.playing-card-data {
 				flex: 1 1 0;
 				font-size: 10px;
 				padding: 5px;
@@ -68,7 +68,7 @@
 				}
 			}
 
-			.oracle-card-footer {
+			.playing-card-footer {
 				flex: 0 0 30px;
 				font-size: 10px;
 				padding: 5px;
@@ -80,7 +80,7 @@
 		}
 	}
 
-	&.flipped .oracle-card-inner {
+	&.flipped .playing-card-inner {
 		transform: rotateY(180deg);
 	}
 }

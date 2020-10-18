@@ -1,9 +1,12 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
+import { Streep } from '../../utils/streep';
+
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
+import { AwardPanel } from '../panels/award-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { Statistic } from '../panels/statistic';
 
@@ -16,9 +19,38 @@ export class PCStatblockCard extends React.Component<Props> {
 		try {
 			let companions = null;
 			if (this.props.pc.companions.length > 0) {
-				companions = this.props.pc.companions.map(companion => (
-					<div key={companion.id}>{companion.name}</div>
+				const list = this.props.pc.companions.map(companion => (
+					<div key={companion.id} className='group-panel'>
+						{companion.name}
+					</div>
 				));
+
+				companions = (
+					<div>
+						<div className='section subheading'>companions</div>
+						{list}
+					</div>
+				);
+			}
+
+			let awards = null;
+			if (this.props.pc.awards.length > 0) {
+				const list = this.props.pc.awards.map(awardID => {
+					const award = Streep.getAward(awardID);
+					if (!award) {
+						return null;
+					}
+					return (
+						<AwardPanel key={award.id} award={award} />
+					);
+				});
+
+				awards = (
+					<div>
+						<div className='section subheading'>awards</div>
+						{list}
+					</div>
+				);
 			}
 
 			const name = (this.props.pc as Combatant ? (this.props.pc as Combatant).displayName : null)
@@ -64,12 +96,8 @@ export class PCStatblockCard extends React.Component<Props> {
 									<Statistic prefix='passive' label='perception' value={this.props.pc.passivePerception} />
 								</Col>
 							</Row>
-							<div style={{ display: this.props.pc.companions.length > 0 ? '' : 'none' }}>
-								<div className='section subheading'>companions</div>
-								<div className='section'>
-									{companions}
-								</div>
-							</div>
+							{companions}
+							{awards}
 						</div>
 					</div>
 				</div>

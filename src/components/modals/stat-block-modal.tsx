@@ -1,11 +1,14 @@
 import React from 'react';
 
+import { Streep } from '../../utils/streep';
+
 import { Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { PCStatblockCard } from '../cards/pc-statblock-card';
+import { AwardPanel } from '../panels/award-panel';
 
 interface Props {
 	source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;
@@ -28,9 +31,30 @@ export class StatBlockModal extends React.Component<Props> {
 					break;
 			}
 
+			let awards = null;
+			if (this.props.source.type === 'pc') {
+				const list = (this.props.source as PC).awards.map(awardID => {
+					const award = Streep.getAward(awardID);
+					if (!award) {
+						return null;
+					}
+					return (
+						<AwardPanel key={award.id} award={award} />
+					);
+				});
+
+				awards = (
+					<div>
+						<div className='subheading'>awards</div>
+						{list}
+					</div>
+				);
+			}
+
 			return (
 				<div className='scrollable padded'>
 					{content}
+					{awards}
 				</div>
 			);
 		} catch (ex) {

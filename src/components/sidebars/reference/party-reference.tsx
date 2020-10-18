@@ -1,10 +1,13 @@
 import React from 'react';
 
 import { Shakespeare } from '../../../utils/shakespeare';
+import { Streep } from '../../../utils/streep';
+import { Utils } from '../../../utils/utils';
 
-import { Party } from '../../../models/party';
+import { Award, Party } from '../../../models/party';
 
 import { Dropdown } from '../../controls/dropdown';
+import { AwardPanel } from '../../panels/award-panel';
 import { Note } from '../../panels/note';
 
 interface Props {
@@ -86,8 +89,34 @@ export class PartyReference extends React.Component<Props> {
 			);
 		}
 
+		const list: Award[] = [];
+		party.awards.forEach(id => list.push(Streep.getAward(id) as Award));
+		activePCs.forEach(pc => {
+			pc.awards.forEach(id => list.push(Streep.getAward(id) as Award));
+		});
+		Utils.sort(list);
+		let awards = (
+			<Note>
+				<p>no awards yet</p>
+			</Note>
+		);
+		if (list.length > 0) {
+			awards = (
+				<div>
+					{list.map(award => <AwardPanel key={award.id} award={award} party={party} />)}
+				</div>
+			);
+		}
+
 		return (
 			<div>
+				<hr/>
+				<div className='section subheading'>
+					average level
+				</div>
+				<div className='section'>
+					{level}
+				</div>
 				<hr/>
 				<div className='section subheading'>
 					languages
@@ -118,11 +147,9 @@ export class PartyReference extends React.Component<Props> {
 				</Note>
 				<hr/>
 				<div className='section subheading'>
-					average level
+					awards
 				</div>
-				<div className='section'>
-					{level}
-				</div>
+				{awards}
 			</div>
 		);
 	}

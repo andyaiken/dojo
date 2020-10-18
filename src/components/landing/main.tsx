@@ -88,6 +88,18 @@ export class Main extends React.Component<Props, State> {
 			const str = window.localStorage.getItem('data-parties');
 			if (str) {
 				parties = JSON.parse(str);
+
+				parties.forEach(party => {
+					if (party.awards === undefined) {
+						party.awards = [];
+					}
+
+					party.pcs.forEach(pc => {
+						if (pc.awards === undefined) {
+							pc.awards = [];
+						}
+					});
+				});
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -3293,6 +3305,18 @@ export class Main extends React.Component<Props, State> {
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
+							addAward={(awardID, awardee) => {
+								awardee.awards.push(awardID);
+								this.setState({
+									parties: this.state.parties
+								});
+							}}
+							deleteAward={(awardID, awardee) => {
+								awardee.awards = awardee.awards.filter(id => id !== awardID);
+								this.setState({
+									parties: this.state.parties
+								});
+							}}
 							setOption={(option, value) => {
 								const options = this.state.options as any;
 								options[option] = value;
