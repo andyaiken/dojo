@@ -475,3 +475,23 @@ button {
 		}
 	}
 }
+
+.ant-progress {
+	.ant-progress-inner {
+		background-color: $control-border-05;
+	}
+
+	.ant-progress-bg {
+		background-color: $highlight;
+	}
+
+	.ant-progress-text {
+		color: $foreground;
+	}
+
+	&.ant-progress-circle {
+		.ant-progress-text {
+			font-size: 15px;
+		}
+	}
+}

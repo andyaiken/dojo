@@ -7,6 +7,7 @@ import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
 import { Napoleon } from '../../utils/napoleon';
+import { Streep } from '../../utils/streep';
 import { Comms, CommsPlayer } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
@@ -24,6 +25,7 @@ import { Textbox } from '../controls/textbox';
 import { ConditionModal } from '../modals/condition-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
+import { AwardPanel } from '../panels/award-panel';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
 import { ErrorBoundary } from '../panels/error-boundary';
@@ -130,7 +132,7 @@ export class Player extends React.Component<Props, State> {
 			Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			this.forceUpdate();
 		};
-		Comms.onPrompt = (type, characterID) => {
+		Comms.onPrompt = (type, data) => {
 			switch (type) {
 				case 'initiative':
 					if (Comms.data.shared.type === 'combat') {
@@ -140,7 +142,7 @@ export class Player extends React.Component<Props, State> {
 
 						const key = Utils.guid();
 						notification.open({
-							key: key,
+							key: Utils.guid(),
 							message: (
 								<RollPrompt type='initiative' notificationKey={key} />
 							),
@@ -149,6 +151,23 @@ export class Player extends React.Component<Props, State> {
 						});
 					}
 					break;
+				case 'award':
+					const awardee = data.awardee || 'someone';
+					const awardID = data.awardID;
+					const award = Streep.getAward(awardID);
+					if (award) {
+						notification.open({
+							key: Utils.guid(),
+							message: (
+								<div>
+									<div>awarded to <b>{awardee}</b>:</div>
+									<AwardPanel award={award} />
+								</div>
+							),
+							closeIcon: <CloseCircleOutlined />,
+							duration: null
+						});
+					}
 			}
 		};
 		Comms.onNewMessage = message => {

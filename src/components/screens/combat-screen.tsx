@@ -784,7 +784,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				let ask = null;
 				if ((CommsDM.getState() === 'started') && (Comms.data.shared.type === 'combat') && (Comms.data.people.some(p => p.characterID !== ''))) {
 					ask = (
-						<button onClick={() => CommsDM.prompt('initiative')}>ask for initiative rolls</button>
+						<button onClick={() => CommsDM.prompt('initiative', null)}>ask for initiative rolls</button>
 					);
 				}
 				pendingList.unshift(

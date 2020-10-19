@@ -6,13 +6,10 @@ import { Monster } from '../../../models/monster';
 
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { Checkbox } from '../../controls/checkbox';
-import { Dropdown } from '../../controls/dropdown';
 import { Popout } from '../../panels/popout';
 
 interface Props {
-	selectedMonsterID: string | null;
-	monsters: Monster[];
-	selectMonsterID: (id: string | null) => void;
+	monster: Monster | null;
 }
 
 interface State {
@@ -34,25 +31,12 @@ export class MonsterReference extends React.Component<Props, State> {
 		});
 	}
 
-	private clear() {
-		if (Comms.data.shared.type === 'monster') {
-			CommsDM.shareNothing();
-		}
-
-		this.setState({
-			playerViewOpen: false
-		}, () => {
-			this.props.selectMonsterID(null);
-		});
-	}
-
 	private getPlayerView() {
-		const monster = this.props.monsters.find(m => m.id === this.props.selectedMonsterID);
-		if (this.state.playerViewOpen && monster) {
+		if (this.state.playerViewOpen && this.props.monster) {
 			return (
 				<Popout title='Monster' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<div className='scrollable'>
-						<MonsterStatblockCard monster={monster} />
+						<MonsterStatblockCard monster={this.props.monster} />
 					</div>
 				</Popout>
 			);
@@ -63,10 +47,8 @@ export class MonsterReference extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const monster = this.props.monsters.find(m => m.id === this.props.selectedMonsterID);
-
 			let statblock = null;
-			if (monster) {
+			if (this.props.monster) {
 				statblock = (
 					<div>
 						<Checkbox
@@ -78,23 +60,16 @@ export class MonsterReference extends React.Component<Props, State> {
 							label='share in session'
 							disabled={CommsDM.getState() !== 'started'}
 							checked={Comms.data.shared.type === 'monster'}
-							onChecked={value => value ? CommsDM.shareMonster(monster) : CommsDM.shareNothing()}
+							onChecked={value => value ? CommsDM.shareMonster(this.props.monster as Monster) : CommsDM.shareNothing()}
 						/>
 						<hr/>
-						<MonsterStatblockCard monster={monster} />
+						<MonsterStatblockCard monster={this.props.monster} />
 					</div>
 				);
 			}
 
 			return (
 				<div>
-					<Dropdown
-						options={this.props.monsters.map(p => ({ id: p.id, text: p.name }))}
-						placeholder='select a monster...'
-						selectedID={this.props.selectedMonsterID}
-						onSelect={id => this.props.selectMonsterID(id)}
-						onClear={() => this.clear()}
-					/>
 					{statblock}
 					{this.getPlayerView()}
 				</div>

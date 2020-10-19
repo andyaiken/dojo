@@ -1,8 +1,11 @@
+import { Progress } from 'antd';
 import React from 'react';
 
 import { Streep } from '../../utils/streep';
 import { Comms } from '../../utils/uhura';
 
+import { Expander } from '../controls/expander';
+import { Selector } from '../controls/selector';
 import { AwardPanel } from '../panels/award-panel';
 import { Note } from '../panels/note';
 
@@ -10,9 +13,23 @@ interface Props {
 }
 
 interface State {
+	selectedCategory: string | null;
 }
 
 export class AwardsPlayerSidebar extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			selectedCategory: null
+		};
+	}
+
+	public setSelectedCategory(category: string | null) {
+		this.setState({
+			selectedCategory: (category === '') ? null : category
+		});
+	}
+
 	public render() {
 		try {
 			if (!Comms.data.party) {
@@ -25,80 +42,81 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 				return null;
 			}
 
-			let forMe = (
+			const categoryOptions = Streep.getCategories().map(o => ({ id: o, text: o }));
+			categoryOptions.unshift({ id: '', text: 'all' });
+
+			const awards = Streep.getAwards().filter(award => (this.state.selectedCategory === null) || (award.category === this.state.selectedCategory));
+
+			const awardsForMe = awards.filter(award => pc.awards.includes(award.id));
+			const awardsForParty = awards.filter(award => Comms.data.party?.awards.includes(award.id));
+			const otherAwards = awards.filter(award => !awardsForMe.includes(award) && !awardsForParty.includes(award));
+
+			let forMeSection = (
 				<Note>
 					<p>no awards</p>
 				</Note>
 			);
-			if (pc.awards.length > 0) {
-				forMe = (
+			if (awardsForMe.length > 0) {
+				forMeSection = (
 					<div>
-						{pc.awards.map(awardID => {
-							const award = Streep.getAward(awardID);
-							if (!award) {
-								return null;
-							}
-							return (
-								<AwardPanel key={award.id} award={award} />
-							);
-						})}
+						{awardsForMe.map(award => <AwardPanel key={award.id} award={award} />)}
 					</div>
 				);
 			}
 
-			let forParty = (
+			let forPartySection = (
 				<Note>
 					<p>no awards</p>
 				</Note>
 			);
-			if (pc.awards.length > 0) {
-				forParty = (
+			if (awardsForParty.length > 0) {
+				forPartySection = (
 					<div>
-						{Comms.data.party.awards.map(awardID => {
-							const award = Streep.getAward(awardID);
-							if (!award) {
-								return null;
-							}
-							return (
-								<AwardPanel key={award.id} award={award} />
-							);
-						})}
+						{awardsForParty.map(award => <AwardPanel key={award.id} award={award} />)}
 					</div>
 				);
 			}
 
-			const otherAwards = Streep.getAwards()
-				.filter(award => !pc.awards.includes(award.id))
-				.filter(award => !Comms.data.party?.awards.includes(award.id));
-			let others = (
+			let otherSection = (
 				<Note>
 					<p>no awards</p>
 				</Note>
 			);
 			if (otherAwards.length > 0) {
-				others = (
+				otherSection = (
 					<div>
-						{otherAwards.map(award => {
-							return (
-								<AwardPanel key={award.id} award={award} />
-							);
-						})}
+						{otherAwards.map(award => <AwardPanel key={award.id} award={award} />)}
 					</div>
 				);
 			}
+
+			const achieved = awardsForMe.length + awardsForParty.length;
+			const total = awards.length;
 
 			return (
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
 						<div className='heading'>awards</div>
+						<Expander text='filter awards'>
+							<Selector
+								options={categoryOptions}
+								selectedID={this.state.selectedCategory ?? ''}
+								itemsPerRow={4}
+								onSelect={category => this.setSelectedCategory(category)}
+							/>
+						</Expander>
 					</div>
 					<div className='sidebar-content'>
+						<div className='section centered'>
+							<Progress percent={100 * achieved / total} type='circle' format={() => achieved + ' / ' + total} />
+						</div>
+						<hr/>
 						<div className='subheading'>your awards</div>
-						{forMe}
+						{forMeSection}
 						<div className='subheading'>party awards</div>
-						{forParty}
+						{forPartySection}
 						<div className='subheading'>still to get</div>
-						{others}
+						{otherSection}
 					</div>
 				</div>
 			);

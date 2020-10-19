@@ -1,6 +1,7 @@
 // This utility file deals with awards
 
 import { Factory } from './factory';
+import { Utils } from './utils';
 
 export class Streep {
 	public static getAward(id: string) {
@@ -8,7 +9,7 @@ export class Streep {
 	}
 
 	public static getAwards() {
-		return [
+		const list = [
 			// Social
 			Streep.createAward('award-003', 'social', 'Peace Sells', 'Reconcile differences between mortal enemies'),
 			Streep.createAward('award-001', 'social', 'I Speak Jive', 'Act as the party translator'),
@@ -149,6 +150,9 @@ export class Streep {
 			Streep.createAward('award-061', 'misc', 'Don\'t You Forget About Me', 'Meet with a recurring villain'),
 			Streep.createAward('award-020', 'misc', 'The Black Wind Howls', 'Correctly predict the death of another PC')
 		];
+
+		Utils.sort(list);
+		return list;
 	}
 
 	public static getCategories() {

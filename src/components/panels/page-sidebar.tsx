@@ -16,7 +16,6 @@ import { Party, PC } from '../../models/party';
 
 import { AboutSidebar } from '../sidebars/about-sidebar';
 import { AwardsPlayerSidebar } from '../sidebars/awards-player-sidebar';
-import { AwardsSidebar } from '../sidebars/awards-sidebar';
 import { GeneratorsSidebar } from '../sidebars/generators-sidebar';
 import { ReferenceSidebar } from '../sidebars/reference-sidebar';
 import { SearchSidebar } from '../sidebars/search-sidebar';
@@ -121,14 +120,6 @@ export class PageSidebar extends React.Component<Props> {
 							className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
 							title='session'
 							onClick={() => this.props.onSelectSidebar('session')}
-						/>
-					);
-					options.push(
-						<TrophyOutlined
-							key='awards'
-							className={this.props.sidebar.type === 'awards' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='awards'
-							onClick={() => this.props.onSelectSidebar('awards')}
 						/>
 					);
 					options.push(
@@ -411,6 +402,9 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.selectedMonsterID = id;
 								this.props.onUpdateSidebar(sidebar);
 							}}
+							showAwards={this.props.user === 'dm'}
+							addAward={(awardID, awardee) => this.props.addAward(awardID, awardee)}
+							deleteAward={(awardID, awardee) => this.props.deleteAward(awardID, awardee)}
 						/>
 					);
 					break;
@@ -449,15 +443,6 @@ export class PageSidebar extends React.Component<Props> {
 							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.props.toggleAddingToMap()}
 							onUpdated={() => this.props.onUpdated()}
-						/>
-					);
-					break;
-				case 'awards':
-					content = (
-						<AwardsSidebar
-							parties={this.props.parties}
-							addAward={(id, awardee) => this.props.addAward(id, awardee)}
-							deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
 						/>
 					);
 					break;

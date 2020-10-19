@@ -3309,12 +3309,20 @@ export class Main extends React.Component<Props, State> {
 								awardee.awards.push(awardID);
 								this.setState({
 									parties: this.state.parties
+								}, () => {
+									CommsDM.sendPartyUpdate();
+									CommsDM.prompt('award', {
+										awardee: awardee.name,
+										awardID: awardID
+									});
 								});
 							}}
 							deleteAward={(awardID, awardee) => {
 								awardee.awards = awardee.awards.filter(id => id !== awardID);
 								this.setState({
 									parties: this.state.parties
+								}, () => {
+									CommsDM.sendPartyUpdate();
 								});
 							}}
 							setOption={(option, value) => {

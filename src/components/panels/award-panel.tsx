@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, TrophyOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, TrophyTwoTone } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
@@ -7,42 +7,24 @@ import { Dropdown } from '../controls/dropdown';
 
 interface AwardPanelProps {
 	award: Award;
-	party: Party | null;
 }
 
 export class AwardPanel extends React.Component<AwardPanelProps> {
-	public static defaultProps = {
-		party: null
-	};
-
 	public render() {
 		try {
-			const list = [];
-			if (this.props.party) {
-				if (this.props.party.awards.includes(this.props.award.id)) {
-					list.push(this.props.party.name || 'unnamed party');
-				}
-				this.props.party.pcs.forEach(pc => {
-					if (pc.awards.includes(this.props.award.id)) {
-						list.push(pc.name || 'unnamed pc');
-					}
-				});
-			}
-			const awarded = (list.length > 0) ? <div className='section'>awarded to: {list.join(', ')}</div> : null;
-
 			return (
 				<div className='group-panel'>
-					<Row align='middle'>
+					<Row gutter={10} align='middle'>
 						<Col span={4}>
-							<TrophyOutlined style={{ fontSize: '40px' }} />
+							<TrophyTwoTone style={{ fontSize: '50px' }} twoToneColor='#d4af37' />
 						</Col>
 						<Col span={20}>
 							<div className='section subheading'>{this.props.award.name.toLowerCase()}</div>
 							<Tag>{this.props.award.category}</Tag>
 							<div className='section'>{this.props.award.description.toLowerCase()}</div>
+							{this.props.children}
 						</Col>
 					</Row>
-					{awarded}
 				</div>
 			);
 		} catch (e) {
@@ -117,11 +99,9 @@ export class AwardManagementPanel extends React.Component<AwardManagementPanelPr
 			}
 
 			return (
-				<div className='group-panel'>
-					<div className='section subheading'>{this.props.award.name.toLowerCase()}</div>
-					<div className='section'>{this.props.award.description.toLowerCase()}</div>
+				<AwardPanel award={this.props.award}>
 					{party}
-				</div>
+				</AwardPanel>
 			);
 		} catch (e) {
 			console.error(e);

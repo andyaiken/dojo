@@ -43,12 +43,15 @@ export class StatBlockModal extends React.Component<Props> {
 					);
 				});
 
-				awards = (
-					<div>
-						<div className='subheading'>awards</div>
-						{list}
-					</div>
-				);
+				if (list.length > 0) {
+					awards = (
+						<div>
+							<hr/>
+							<div className='subheading'>awards</div>
+							{list}
+						</div>
+					);
+				}
 			}
 
 			return (

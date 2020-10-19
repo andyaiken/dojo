@@ -64,7 +64,7 @@ export class Comms {
 	public static previousReceivedSharedState: any = null;
 
 	public static onNewMessage: ((message: Message) => void) | null;
-	public static onPrompt: ((type: string, characterID: string) => void) | null;
+	public static onPrompt: ((type: string, data: any) => void) | null;
 
 	public static getDefaultData() {
 		const shared: SharedExperience = {
@@ -307,8 +307,8 @@ export class Comms {
 			case 'prompt':
 				if (this.onPrompt) {
 					const prompt = packet.payload['prompt'];
-					const characterID = packet.payload['characterID'];
-					this.onPrompt(prompt, characterID);
+					const data = packet.payload['data'];
+					this.onPrompt(prompt, data);
 				}
 				break;
 			case 'roll-result':
@@ -695,12 +695,12 @@ export class CommsDM {
 		this.sendSharedUpdate();
 	}
 
-	public static prompt(type: string, characterID: string = '') {
+	public static prompt(type: string, data: any) {
 		const packet: Packet = {
 			type: 'prompt',
 			payload: {
 				prompt: type,
-				characterID: characterID
+				data: data
 			}
 		};
 		this.broadcast(packet);

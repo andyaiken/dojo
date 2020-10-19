@@ -1,9 +1,16 @@
 import React from 'react';
 
-import { Monster } from '../../models/monster';
-import { Party } from '../../models/party';
+import { Streep } from '../../utils/streep';
 
+import { Monster } from '../../models/monster';
+import { Party, PC } from '../../models/party';
+
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
+import { Note } from '../panels/note';
+import { AwardsReference } from './reference/awards-reference';
 import { MarkdownReference } from './reference/markdown-reference';
 import { MonsterReference } from './reference/monster-reference';
 import { PartyReference } from './reference/party-reference';
@@ -19,9 +26,46 @@ interface Props {
 	selectedMonsterID: string | null;
 	monsters: Monster[];
 	selectMonsterID: (id: string | null) => void;
+	// Awards
+	showAwards: boolean;
+	addAward: (awardID: string, awardee: Party | PC) => void;
+	deleteAward: (awardID: string, awardee: Party | PC) => void;
 }
 
-export class ReferenceSidebar extends React.Component<Props> {
+interface State {
+	awardText: string;
+	awardCategory: string | null;
+	awardPartyID: string | null;
+}
+
+export class ReferenceSidebar extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			awardText: '',
+			awardCategory: null,
+			awardPartyID: null
+		};
+	}
+
+	public setAwardText(text: string) {
+		this.setState({
+			awardText: text
+		});
+	}
+
+	public setAwardCategory(category: string | null) {
+		this.setState({
+			awardCategory: (category === '') ? null : category
+		});
+	}
+
+	public setAwardPartyID(id: string | null) {
+		this.setState({
+			awardPartyID: id
+		});
+	}
+
 	public render() {
 		try {
 			const options = [
@@ -47,6 +91,13 @@ export class ReferenceSidebar extends React.Component<Props> {
 				options.push({ id: 'monster', text: 'monster' });
 			}
 
+			if (this.props.showAwards) {
+				options.push({ id: 'awards', text: 'awards' });
+			}
+
+			const count = options.length === 6 ? 3 : 6;
+
+			let header = null;
 			let content = null;
 			switch (this.props.view) {
 				case 'skills':
@@ -65,20 +116,77 @@ export class ReferenceSidebar extends React.Component<Props> {
 					);
 					break;
 				case 'party':
+					header = (
+						<Dropdown
+							options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
+							placeholder='select a party...'
+							selectedID={this.props.selectedPartyID}
+							onSelect={id => this.props.selectPartyID(id)}
+							onClear={() => this.props.selectPartyID(null)}
+						/>
+					);
 					content = (
 						<PartyReference
-							selectedPartyID={this.props.selectedPartyID}
-							parties={this.props.parties}
-							selectPartyID={id => this.props.selectPartyID(id)}
+							party={this.props.parties.find(p => p.id === this.props.selectedPartyID) ?? null}
 						/>
 					);
 					break;
 				case 'monster':
+					header = (
+						<Dropdown
+							options={this.props.monsters.map(p => ({ id: p.id, text: p.name }))}
+							placeholder='select a monster...'
+							selectedID={this.props.selectedMonsterID}
+							onSelect={id => this.props.selectMonsterID(id)}
+							onClear={() => this.props.selectMonsterID(null)}
+						/>
+					);
 					content = (
 						<MonsterReference
-							selectedMonsterID={this.props.selectedMonsterID}
-							monsters={this.props.monsters}
-							selectMonsterID={id => this.props.selectMonsterID(id)}
+							monster={this.props.monsters.find(m => m.id === this.props.selectedMonsterID) ?? null}
+						/>
+					);
+					break;
+				case 'awards':
+					const categoryOptions = Streep.getCategories().map(o => ({ id: o, text: o }));
+					categoryOptions.unshift({ id: '', text: 'all' });
+					header = (
+						<div>
+							<Expander text='filter awards'>
+								<Textbox
+									text={this.state.awardText}
+									placeholder='search'
+									noMargins={true}
+									onChange={text => this.setAwardText(text)}
+								/>
+								<Selector
+									options={categoryOptions}
+									selectedID={this.state.awardCategory ?? ''}
+									itemsPerRow={4}
+									onSelect={category => this.setAwardCategory(category)}
+								/>
+							</Expander>
+							<Expander text='granting awards'>
+								<Note>
+									<p>to grant any of these awards, you need to select a party</p>
+								</Note>
+								<Dropdown
+									placeholder='select a party...'
+									options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
+									selectedID={this.state.awardPartyID}
+									onSelect={id => this.setAwardPartyID(id)}
+									onClear={() => this.setAwardPartyID(null)}
+								/>
+							</Expander>
+						</div>
+					);
+					content = (
+						<AwardsReference
+							filterText={this.state.awardText}
+							filterCategory={this.state.awardCategory}
+							party={this.props.parties.find(p => p.id === this.state.awardPartyID) ?? null}
+							addAward={(id, awardee) => this.props.addAward(id, awardee)}
+							deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
 						/>
 					);
 					break;
@@ -91,8 +199,10 @@ export class ReferenceSidebar extends React.Component<Props> {
 						<Selector
 							options={options}
 							selectedID={this.props.view}
+							itemsPerRow={count}
 							onSelect={optionID => this.props.setView(optionID)}
 						/>
+						{header}
 					</div>
 					<div className='sidebar-content'>
 						{content}

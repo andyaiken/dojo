@@ -1,12 +1,9 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
-import { Streep } from '../../utils/streep';
-
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
-import { AwardPanel } from '../panels/award-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { Statistic } from '../panels/statistic';
 
@@ -28,26 +25,6 @@ export class PCStatblockCard extends React.Component<Props> {
 				companions = (
 					<div>
 						<div className='section subheading'>companions</div>
-						{list}
-					</div>
-				);
-			}
-
-			let awards = null;
-			if (this.props.pc.awards.length > 0) {
-				const list = this.props.pc.awards.map(awardID => {
-					const award = Streep.getAward(awardID);
-					if (!award) {
-						return null;
-					}
-					return (
-						<AwardPanel key={award.id} award={award} />
-					);
-				});
-
-				awards = (
-					<div>
-						<div className='section subheading'>awards</div>
 						{list}
 					</div>
 				);
@@ -97,7 +74,6 @@ export class PCStatblockCard extends React.Component<Props> {
 								</Col>
 							</Row>
 							{companions}
-							{awards}
 						</div>
 					</div>
 				</div>
