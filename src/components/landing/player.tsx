@@ -345,7 +345,7 @@ export class Player extends React.Component<Props, State> {
 		let pcSection = null;
 		if ((characterID === '') && (Comms.data.party !== null)) {
 			const pcs: JSX.Element[] = [];
-			Comms.data.party.pcs.forEach(pc => {
+			Comms.data.party.pcs.filter(pc => pc.active).forEach(pc => {
 				const claimed = Comms.data.people.some(person => person.characterID === pc.id);
 				if (!claimed) {
 					pcs.push(
