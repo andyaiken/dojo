@@ -23,6 +23,7 @@ export interface MapItem {
 	height: number;															// Used by tiles
 	terrain: string;														// Used by tiles
 	customBackground: string;												// Used by tiles
+	customLink: string;														// Used by tiles
 	content: { type: string, orientation: string, style: string } | null;	// Used by tiles
 	size: string;															// Used by overlays
 	color: string;															// Used by overlays
@@ -60,7 +61,8 @@ export const TERRAIN_TYPES = [
 	'sand',
 	'snow',
 	'water',
-	'custom'
+	'custom',
+	'link'
 ];
 
 export const DOORWAY_TYPES = [

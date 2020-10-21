@@ -9,7 +9,6 @@ import { DOORWAY_TYPES, Map, MapArea, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } f
 import { Party } from '../../models/party';
 
 import { ConfirmButton } from '../controls/confirm-button';
-import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { NumberSpin } from '../controls/number-spin';
 import { Radial } from '../controls/radial';
@@ -308,6 +307,18 @@ class MapTilePanel extends React.Component<MapTileProps> {
 					</div>
 				);
 			}
+			if (this.props.tile.terrain === 'link') {
+				customSection = (
+					<div>
+						<div className='subheading'>link to custom image</div>
+						<Textbox
+							text={this.props.tile.customLink}
+							placeholder='https://...'
+							onChange={value => this.props.changeValue(this.props.tile, 'customLink', value)}
+						/>
+					</div>
+				);
+			}
 
 			return (
 				<div>
@@ -340,10 +351,10 @@ class MapTilePanel extends React.Component<MapTileProps> {
 						<Expander text='advanced options'>
 							<div className='section'>
 								<div className='subheading'>terrain</div>
-								<Dropdown
+								<Selector
 									options={TERRAIN_TYPES.map(t => ({ id: t, text: t }))}
-									placeholder='select terrain'
-									selectedID={this.props.tile.terrain ? this.props.tile.terrain : undefined}
+									selectedID={this.props.tile.terrain}
+									itemsPerRow={4}
 									onSelect={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
 								/>
 								{customSection}

@@ -167,6 +167,11 @@ export class Main extends React.Component<Props, State> {
 				maps = JSON.parse(str);
 
 				maps.forEach(m => {
+					m.items.forEach(item => {
+						if (item.customLink === undefined) {
+							item.customLink = '';
+						}
+					});
 					if (m.areas === undefined) {
 						m.areas = [];
 					}
@@ -232,6 +237,11 @@ export class Main extends React.Component<Props, State> {
 					}
 
 					if (combat.map) {
+						combat.map.items.forEach(item => {
+							if (item.customLink === undefined) {
+								item.customLink = '';
+							}
+						});
 						if (combat.map.areas === undefined) {
 							combat.map.areas = [];
 						}
@@ -253,6 +263,11 @@ export class Main extends React.Component<Props, State> {
 				explorations = JSON.parse(str);
 
 				explorations.forEach(ex => {
+					ex.map.items.forEach(item => {
+						if (item.customLink === undefined) {
+							item.customLink = '';
+						}
+					});
 					if (ex.map.areas === undefined) {
 						ex.map.areas = [];
 					}

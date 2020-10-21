@@ -1,6 +1,6 @@
 {
 	"name": "dojo",
-	"version": "11.1.1",
+	"version": "11.2.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
@@ -31,7 +31,7 @@
 		"@types/uuid": "^8.3.0",
 		"gh-pages": "^2.2.0",
 		"node-sass": "^4.14.0",
-		"react-scripts": "^3.4.3",
+		"react-scripts": "^3.4.4",
 		"tslint": "^5.20.1",
 		"tslint-microsoft-contrib": "^6.2.0",
 		"tslint-react": "^3.6.0",

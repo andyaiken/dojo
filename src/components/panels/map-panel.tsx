@@ -716,6 +716,11 @@ class MapTile extends React.Component<MapTileProps> {
 					);
 				}
 			}
+			if (this.props.tile.terrain === 'link') {
+				customImage = (
+					<img className='custom-image' alt='map tile' src={this.props.tile.customLink} />
+				);
+			}
 
 			let content = null;
 			if (this.props.tile.content) {

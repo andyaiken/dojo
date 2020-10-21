@@ -174,6 +174,7 @@ export class Factory {
 			height: 4,
 			terrain: '',
 			customBackground: '',
+			customLink: '',
 			content: null,
 			size: 'medium',
 			color: '',
