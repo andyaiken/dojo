@@ -540,7 +540,7 @@ export class Gygax {
 				return [
 					'a prone creature’s only movement option is to crawl, unless it stands up (using half its speed) and thereby ends the condition',
 					'the creature has disadvantage on attack rolls',
-					'an attack roll against the creature has advantage if the attacker is Within 5 feet of the creature; otherwise, the attack roll has disadvantage'
+					'an attack roll against the creature has advantage if the attacker is within 5 feet of the creature; otherwise, the attack roll has disadvantage'
 				];
 			case 'restrained':
 				return [

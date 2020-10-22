@@ -1335,7 +1335,7 @@ export class Main extends React.Component<Props, State> {
 			ex.name = party.name + ' in ' + map.name;
 			ex.map = mapCopy;
 			ex.partyID = partyID;
-			party.pcs.forEach(pc => {
+			party.pcs.filter(pc => pc.active).forEach(pc => {
 				const combatant = Napoleon.convertPCToCombatant(pc);
 				ex.combatants.push(combatant);
 			});
