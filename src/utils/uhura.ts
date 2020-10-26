@@ -385,7 +385,11 @@ export class CommsDM {
 			this.shutdown();
 		});
 		Comms.peer.on('disconnected', () => {
-			this.shutdown();
+			if (Comms.peer) {
+				Comms.peer.reconnect();
+			} else {
+				this.shutdown();
+			}
 		});
 		Comms.peer.on('error', err => {
 			console.error(err);
@@ -792,7 +796,11 @@ export class CommsPlayer {
 			this.disconnect();
 		});
 		Comms.peer.on('disconnected', () => {
-			this.disconnect();
+			if (Comms.peer) {
+				Comms.peer.reconnect();
+			} else {
+				this.disconnect();
+			}
 		});
 		Comms.peer.on('error', err => {
 			console.error(err);

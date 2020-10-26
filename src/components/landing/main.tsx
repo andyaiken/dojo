@@ -345,6 +345,11 @@ export class Main extends React.Component<Props, State> {
 			this.setSidebar('search');
 		});
 
+		window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
+			this.save();
+			e.returnValue = '';
+		});
+
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
 		CommsDM.onNewConnection = name => {
