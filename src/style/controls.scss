@@ -354,6 +354,7 @@ button.danger {
 	background-color: $background;
 	color: $foreground;
 	border: 1px solid $control-border;
+	border-left-width: 5px;
 
 	.selector-row {
 		display: flex;

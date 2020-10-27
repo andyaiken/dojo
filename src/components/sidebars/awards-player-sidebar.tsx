@@ -108,7 +108,7 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 					</div>
 					<div className='sidebar-content'>
 						<div className='section centered'>
-							<Progress percent={100 * achieved / total} type='circle' format={() => achieved + ' / ' + total} />
+							<Progress status='normal' percent={100 * achieved / total} type='circle' format={() => achieved + ' / ' + total} />
 						</div>
 						<hr/>
 						<div className='subheading'>your awards</div>
