@@ -982,8 +982,8 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 	public getFactionSection() {
 		return (
 			<div>
-				<Dropdown
-					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: 'faction: ' + o }))}
+				<Selector
+					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
 					selectedID={this.props.encounterSlot.faction}
 					onSelect={id => this.props.changeValue(this.props.encounterSlot, 'faction', id)}
 				/>

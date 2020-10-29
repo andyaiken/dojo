@@ -354,7 +354,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 								<Selector
 									options={TERRAIN_TYPES.map(t => ({ id: t, text: t }))}
 									selectedID={this.props.tile.terrain}
-									itemsPerRow={4}
+									itemsPerRow={3}
 									onSelect={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
 								/>
 								{customSection}
@@ -377,7 +377,6 @@ class MapTilePanel extends React.Component<MapTileProps> {
 												<div><b>style</b></div>
 												<Selector
 													options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
-													itemsPerRow={2}
 													selectedID={this.props.tile.content ? this.props.tile.content.style : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
 												/>

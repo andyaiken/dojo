@@ -105,10 +105,10 @@ export class EncounterScreen extends React.Component<Props> {
 						<GridPanel
 							heading={wave.name || 'unnamed wave'}
 							content={this.getMonsterCards(wave)}
-							columns={3}
+							columns={4}
 						/>
-						<Row>
-							<Col span={8}>
+						<Row gutter={10}>
+							<Col span={6}>
 								<button onClick={() => this.props.chooseMonster(this.props.encounter, null, wave)}>add monsters to this wave</button>
 							</Col>
 						</Row>
@@ -161,10 +161,10 @@ export class EncounterScreen extends React.Component<Props> {
 						<GridPanel
 							heading='encounter'
 							content={this.getMonsterCards(null)}
-							columns={3}
+							columns={4}
 						/>
-						<Row>
-							<Col span={8}>
+						<Row gutter={10}>
+							<Col span={6}>
 								<button onClick={() => this.props.chooseMonster(this.props.encounter, null, null)}>add monsters to the encounter</button>
 							</Col>
 						</Row>

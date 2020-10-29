@@ -87,10 +87,16 @@ export class PartyOptions extends React.Component<Props, State> {
 	public render() {
 		try {
 			const pcs = this.props.party.pcs.filter(pc => pc.active);
-			const level = Math.round(pcs.reduce((sum, pc) => sum + pc.level, 0) / pcs.length);
 
 			let run = null;
-			if (this.props.encounters.length > 0) {
+			if (this.props.encounters.length === 1) {
+				run = (
+					<button onClick={() => this.props.startEncounter(this.props.party.id, this.props.encounters[0].id)}>
+						start combat
+					</button>
+				);
+			}
+			if (this.props.encounters.length > 1) {
 				run = (
 					<Dropdown
 						options={this.props.encounters.map(enc => ({ id: enc.id, text: enc.name || 'unnamed encounter' }))}
@@ -101,7 +107,14 @@ export class PartyOptions extends React.Component<Props, State> {
 			}
 
 			let explore = null;
-			if (this.props.maps.length > 0) {
+			if (this.props.maps.length === 1) {
+				explore = (
+					<button onClick={() => this.props.startExploration(this.props.party.id, this.props.maps[0].id)}>
+						start exploration
+					</button>
+				);
+			}
+			if (this.props.maps.length > 1) {
 				explore = (
 					<Dropdown
 						options={this.props.maps.map(m => ({ id: m.id, text: m.name || 'unnamed map' }))}
@@ -140,6 +153,14 @@ export class PartyOptions extends React.Component<Props, State> {
 				);
 			}
 
+			let levelUp = null;
+			if (this.props.party.pcs.length > 0) {
+				const level = Math.round(pcs.reduce((sum, pc) => sum + pc.level, 0) / pcs.length);
+				levelUp = (
+					<button onClick={() => this.props.setLevel(this.props.party, level + 1)}>level up to {level + 1}</button>
+				);
+			}
+
 			return (
 				<div>
 					<button onClick={() => this.props.addPC()}>add a new pc</button>
@@ -148,7 +169,7 @@ export class PartyOptions extends React.Component<Props, State> {
 					{run}
 					{explore}
 					{create}
-					<button onClick={() => this.props.setLevel(this.props.party, level + 1)}>level up to {level + 1}</button>
+					{levelUp}
 					<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 					<ConfirmButton text='delete party' onConfirm={() => this.props.deleteParty(this.props.party)} />
 				</div>

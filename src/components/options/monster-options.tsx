@@ -19,7 +19,7 @@ interface Props {
 	editMonster: (monster: Monster) => void;
 	deleteMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
-	moveToGroup: (monster: Monster, group: string) => void;
+	moveToGroup: (monster: Monster, groupID: string) => void;
 }
 
 interface State {
@@ -52,7 +52,7 @@ export class MonsterOptions extends React.Component<Props, State> {
 				if (group.monsters.indexOf(this.props.monster) === -1) {
 					groupOptions.push({
 						id: group.id,
-						text: group.name
+						text: group.name || 'unnamed group'
 					});
 				}
 			});

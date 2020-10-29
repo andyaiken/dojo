@@ -13,6 +13,10 @@ interface Props {
 }
 
 export class RadioGroup extends React.Component<Props> {
+	public static defaultProps = {
+		selectedItemID: null
+	};
+
 	public render() {
 		try {
 			const content = this.props.items.map(item => {

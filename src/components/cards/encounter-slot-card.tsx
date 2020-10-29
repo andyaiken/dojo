@@ -34,6 +34,9 @@ export class EncounterSlotCard extends React.Component<Props> {
 
 			if (this.props.monster) {
 				name = this.props.monster.name || 'unnamed monster';
+				if (this.props.slot.count > 1) {
+					name += ' (x' + this.props.slot.count + ')';
+				}
 
 				const tags = [];
 				let sizeAndType = (this.props.monster.size + ' ' + this.props.monster.category).toLowerCase();
@@ -113,18 +116,18 @@ export class EncounterSlotCard extends React.Component<Props> {
 						<hr/>
 						<NumberSpin
 							value={this.props.slot.count}
-							label='count'
+							label='number'
 							downEnabled={this.props.slot.count > 1}
 							onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
+						/>
+						<Selector
+							options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+							selectedID={this.props.slot.faction}
+							onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
 						/>
 						<hr/>
 						<div className='section'>
 							{options}
-							<Selector
-								options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
-								selectedID={this.props.slot.faction}
-								onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
-							/>
 							<ConfirmButton text='remove from encounter' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
 						</div>
 					</div>

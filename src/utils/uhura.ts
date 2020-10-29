@@ -361,7 +361,7 @@ export class CommsDM {
 	public static onDataChanged: (() => void) | null;
 	public static onNewConnection: ((name: string) => void) | null;
 
-	public static init() {
+	public static init(party: Party) {
 		if (this.state !== 'not started') {
 			return;
 		}
@@ -370,6 +370,8 @@ export class CommsDM {
 		if (this.onStateChanged) {
 			this.onStateChanged();
 		}
+
+		Comms.data.party = party;
 
 		const dmCode = 'dm-' + Utils.guid();
 		Comms.peer = new Peer(dmCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
@@ -588,14 +590,6 @@ export class CommsDM {
 
 	public static sendCard(to: string[], card: CardDraw) {
 		this.onDataReceived(Comms.createCardPacket(to, card));
-	}
-
-	public static setParty(party: Party | null) {
-		Comms.data.party = party;
-		if (this.onDataChanged) {
-			this.onDataChanged();
-		}
-		this.sendPartyUpdate();
 	}
 
 	public static shareNothing() {

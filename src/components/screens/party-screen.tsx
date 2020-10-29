@@ -16,6 +16,7 @@ import { Note } from '../panels/note';
 
 interface Props {
 	party: Party;
+	parties: Party[];
 	encounters: Encounter[];
 	maps: Map[];
 	goBack: () => void;
@@ -25,6 +26,8 @@ interface Props {
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
 	deletePC: (pc: PC) => void;
+	clonePC: (pc: PC, name: string) => void;
+	moveToParty: (pc: PC, partyID: string) => void;
 	createEncounter: (xp: number, filter: MonsterFilter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
@@ -49,10 +52,13 @@ export class PartyScreen extends React.Component<Props> {
 				activeCards.push(
 					<PCCard
 						pc={activePC}
+						parties={this.props.parties}
 						changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
 						editPC={pc => this.props.editPC(pc)}
 						updatePC={pc => this.props.updatePC(pc)}
 						deletePC={pc => this.props.deletePC(pc)}
+						clonePC={(pc, name) => this.props.clonePC(pc, name)}
+						moveToParty={(pc, partyID) => this.props.moveToParty(pc, partyID)}
 					/>
 				);
 			});
@@ -63,10 +69,13 @@ export class PartyScreen extends React.Component<Props> {
 				inactiveCards.push(
 					<PCCard
 						pc={inactivePC}
+						parties={this.props.parties}
 						changeValue={(pc, type, value) => this.props.changeValue(pc, type, value)}
 						editPC={pc => this.props.editPC(pc)}
 						updatePC={pc => this.props.updatePC(pc)}
 						deletePC={pc => this.props.deletePC(pc)}
+						clonePC={(pc, name) => this.props.clonePC(pc, name)}
+						moveToParty={(pc, partyID) => this.props.moveToParty(pc, partyID)}
 					/>
 				);
 			});

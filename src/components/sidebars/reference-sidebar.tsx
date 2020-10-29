@@ -46,7 +46,6 @@ interface State {
 	awardCategory: string | null;
 	showPending: boolean;
 	showGranted: boolean;
-	awardPartyID: string | null;
 }
 
 export class ReferenceSidebar extends React.Component<Props, State> {
@@ -56,8 +55,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 			awardText: '',
 			awardCategory: null,
 			showPending: true,
-			showGranted: true,
-			awardPartyID: null
+			showGranted: true
 		};
 	}
 
@@ -82,12 +80,6 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 	private setShowGranted(show: boolean) {
 		this.setState({
 			showGranted: show
-		});
-	}
-
-	private setAwardPartyID(id: string | null) {
-		this.setState({
-			awardPartyID: id
 		});
 	}
 
@@ -120,8 +112,6 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 				options.push({ id: 'awards', text: 'awards' });
 			}
 
-			const count = options.length === 6 ? 3 : 6;
-
 			let header = null;
 			let content = null;
 			switch (this.props.view) {
@@ -141,20 +131,32 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 					);
 					break;
 				case 'party':
-					header = (
-						<Dropdown
-							options={this.props.parties.map(p => ({ id: p.id, text: p.name }))}
-							placeholder='select a party...'
-							selectedID={this.props.selectedPartyID}
-							onSelect={id => this.props.selectPartyID(id)}
-							onClear={() => this.props.selectPartyID(null)}
-						/>
-					);
-					content = (
-						<PartyReference
-							party={this.props.parties.find(p => p.id === this.props.selectedPartyID) ?? null}
-						/>
-					);
+					if (this.props.parties.length > 1) {
+						header = (
+							<Dropdown
+								options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
+								placeholder='select a party...'
+								selectedID={this.props.selectedPartyID}
+								onSelect={id => this.props.selectPartyID(id)}
+							/>
+						);
+						content = (
+							<PartyReference
+								party={this.props.parties.find(p => p.id === this.props.selectedPartyID) ?? null}
+							/>
+						);
+					} else if (this.props.parties.length === 1) {
+						header = (
+							<div className='section heading'>
+								{this.props.parties[0].name || 'unnamed party'}
+							</div>
+						);
+						content = (
+							<PartyReference
+								party={this.props.parties[0]}
+							/>
+						);
+					}
 					break;
 				case 'monster':
 					header = (
@@ -175,73 +177,89 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 				case 'awards':
 					const categoryOptions = Streep.getCategories().map(o => ({ id: o, text: o }));
 					categoryOptions.unshift({ id: '', text: 'all' });
+
 					let awards = Streep.getAwards();
-					let infoSection: JSX.Element | null = (
-						<Note>
-							<p>to grant any of these awards, you need to select a party</p>
-						</Note>
-					);
-					let grantedSection = null;
-					if (this.state.awardPartyID) {
-						const party = this.props.parties.find(p => p.id === this.state.awardPartyID);
-						if (party) {
-							const ids = ([] as string[]).concat(party.awards);
-							party.pcs.forEach(pc => {
-								ids.concat(pc.awards);
-							});
-							awards = awards
-								.filter(award => {
-									const granted = ids.includes(award.id);
-									if (this.state.showGranted && granted) {
-										return true;
-									}
-									if (this.state.showPending && !granted) {
-										return true;
-									}
-									return false;
-								})
-								.filter(award => {
-									if (this.state.awardText !== '') {
-										if (!Sherlock.matchAward(this.state.awardText, award)) {
-											return false;
-										}
-									}
-									if (this.state.awardCategory) {
-										if (award.category !== this.state.awardCategory) {
-											return false;
-										}
-									}
+
+					let optionsSection = null;
+					let selectionSection = null;
+					let gaugeSection = null;
+
+					let party = null;
+					if (this.props.parties.length === 1) {
+						party = this.props.parties[0];
+					}
+					if (this.props.parties.length > 1) {
+						party = this.props.parties.find(p => p.id === this.props.selectedPartyID);
+						selectionSection = (
+							<Expander text='granting awards'>
+								<Note>
+									<p>to grant any of these awards, you need to select a party</p>
+								</Note>
+								<Dropdown
+									placeholder='select a party...'
+									options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
+									selectedID={this.props.selectedPartyID}
+									onSelect={id => this.props.selectPartyID(id)}
+								/>
+							</Expander>
+						);
+					}
+					if (party) {
+						const ids = ([] as string[]).concat(party.awards);
+						party.pcs.forEach(pc => {
+							ids.concat(pc.awards);
+						});
+						awards = awards
+							.filter(award => {
+								const granted = ids.includes(award.id);
+								if (this.state.showGranted && granted) {
 									return true;
-								});
-							if (awards.length > 0) {
-								const achieved = awards.filter(award => ids.includes(award.id));
-								infoSection = (
-									<div className='section centered'>
-										<Progress status='normal' percent={100 * achieved.length / awards.length} type='circle' format={() => achieved.length + ' / ' + awards.length} />
-									</div>
-								);
-							} else {
-								infoSection = null;
-							}
-							grantedSection = (
-								<Row gutter={10}>
-									<Col span={12}>
-										<Checkbox
-											label='pending awards'
-											checked={this.state.showPending}
-											onChecked={value => this.setShowPending(value)}
-										/>
-									</Col>
-									<Col span={12}>
-										<Checkbox
-											label='granted awards'
-											checked={this.state.showGranted}
-											onChecked={value => this.setShowGranted(value)}
-										/>
-									</Col>
-								</Row>
+								}
+								if (this.state.showPending && !granted) {
+									return true;
+								}
+								return false;
+							})
+							.filter(award => {
+								if (this.state.awardText !== '') {
+									if (!Sherlock.matchAward(this.state.awardText, award)) {
+										return false;
+									}
+								}
+								if (this.state.awardCategory) {
+									if (award.category !== this.state.awardCategory) {
+										return false;
+									}
+								}
+								return true;
+							});
+						if (awards.length > 0) {
+							const achieved = awards.filter(award => ids.includes(award.id));
+							gaugeSection = (
+								<div className='section centered'>
+									<Progress status='normal' percent={100 * achieved.length / awards.length} type='circle' format={() => achieved.length + ' / ' + awards.length} />
+									<hr/>
+								</div>
 							);
 						}
+						optionsSection = (
+							<Row gutter={10}>
+								<Col span={12}>
+									<Checkbox
+										label='pending awards'
+										checked={this.state.showPending}
+										onChecked={value => this.setShowPending(value)}
+									/>
+								</Col>
+								<Col span={12}>
+									<Checkbox
+										label='granted awards'
+										checked={this.state.showGranted}
+										onChecked={value => this.setShowGranted(value)}
+									/>
+								</Col>
+							</Row>
+						);
 					}
 					header = (
 						<div>
@@ -258,27 +276,21 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 									itemsPerRow={4}
 									onSelect={category => this.setAwardCategory(category)}
 								/>
-								{grantedSection}
+								{optionsSection}
 							</Expander>
-							<Expander text='granting awards'>
-								{infoSection}
-								<Dropdown
-									placeholder='select a party...'
-									options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
-									selectedID={this.state.awardPartyID}
-									onSelect={id => this.setAwardPartyID(id)}
-									onClear={() => this.setAwardPartyID(null)}
-								/>
-							</Expander>
+							{selectionSection}
 						</div>
 					);
 					content = (
-						<AwardsReference
-							awards={awards}
-							party={this.props.parties.find(p => p.id === this.state.awardPartyID) ?? null}
-							addAward={(id, awardee) => this.props.addAward(id, awardee)}
-							deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
-						/>
+						<div>
+							{gaugeSection}
+							<AwardsReference
+								awards={awards}
+								party={this.props.parties.find(p => p.id === this.props.selectedPartyID) ?? null}
+								addAward={(id, awardee) => this.props.addAward(id, awardee)}
+								deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
+							/>
+						</div>
 					);
 					break;
 			}
@@ -290,7 +302,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 						<Selector
 							options={options}
 							selectedID={this.props.view}
-							itemsPerRow={count}
+							itemsPerRow={options.length === 6 ? 3 : 6}
 							onSelect={optionID => this.props.setView(optionID)}
 						/>
 						{header}

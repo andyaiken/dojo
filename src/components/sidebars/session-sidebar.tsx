@@ -22,7 +22,24 @@ interface Props {
 	openImage: (data: string) => void;
 }
 
-export class SessionSidebar extends React.Component<Props> {
+interface State {
+	selectedPartyID: string | null;
+}
+
+export class SessionSidebar extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			selectedPartyID: this.props.parties.length === 1 ? this.props.parties[0].id : null
+		};
+	}
+
+	private setSelectedPartyID(id: string | null) {
+		this.setState({
+			selectedPartyID: id
+		});
+	}
+
 	private getContent() {
 		switch (CommsDM.getState()) {
 			case 'not started':
@@ -44,13 +61,20 @@ export class SessionSidebar extends React.Component<Props> {
 				<Dropdown
 					placeholder='select a party...'
 					options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
-					selectedID={Comms.getPartyID()}
-					onSelect={id => {
-						const party = this.props.parties.find(p => p.id === id);
-						CommsDM.setParty(party ?? null);
-					}}
+					selectedID={this.state.selectedPartyID}
+					onSelect={id => this.setSelectedPartyID(id)}
 				/>
-				<button className={Comms.getPartyID() === '' ? 'disabled' : ''} onClick={() => CommsDM.init()}>start the session</button>
+				<button
+					className={this.state.selectedPartyID ? '' : 'disabled'}
+					onClick={() => {
+						const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
+						if (party) {
+							CommsDM.init(party);
+						}
+					}}
+				>
+					start the session
+				</button>
 			</div>
 		);
 	}

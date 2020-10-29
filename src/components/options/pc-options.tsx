@@ -2,19 +2,42 @@ import React from 'react';
 
 import { Utils } from '../../utils/utils';
 
-import { PC } from '../../models/party';
+import { Party, PC } from '../../models/party';
 
 import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Textbox } from '../controls/textbox';
 
 interface Props {
 	pc: PC;
+	parties: Party[];
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
 	removePC: (pc: PC) => void;
+	clonePC: (pc: PC, name: string) => void;
+	moveToParty: (pc: PC, partyID: string) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 }
 
-export class PCOptions extends React.Component<Props> {
+interface State {
+	cloneName: string;
+}
+
+export class PCOptions extends React.Component<Props, State> {
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			cloneName: props.pc.name + ' copy'
+		};
+	}
+
+	private setCloneName(cloneName: string) {
+		this.setState({
+			cloneName: cloneName
+		});
+	}
+
 	private export(pc: PC) {
 		const filename = pc.name + '.pc';
 		Utils.saveFile(filename, pc);
@@ -42,12 +65,35 @@ export class PCOptions extends React.Component<Props> {
 				);
 			}
 
+			const partyOptions: { id: string, text: string }[] = [];
+			this.props.parties.forEach(party => {
+				if (party.pcs.indexOf(this.props.pc) === -1) {
+					partyOptions.push({
+						id: party.id,
+						text: party.name || 'unnamed party'
+					});
+				}
+			});
+
 			return (
 				<div>
 					<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>
 					{update}
-					<button key='export' onClick={() => this.export(this.props.pc)}>export pc</button>
 					{active}
+					<button key='export' onClick={() => this.export(this.props.pc)}>export pc</button>
+					<Expander text='copy pc'>
+						<Textbox
+							text={this.state.cloneName}
+							placeholder='pc name'
+							onChange={value => this.setCloneName(value)}
+						/>
+						<button onClick={() => this.props.clonePC(this.props.pc, this.state.cloneName)}>create copy</button>
+					</Expander>
+					<Dropdown
+						options={partyOptions}
+						placeholder='move to party...'
+						onSelect={optionID => this.props.moveToParty(this.props.pc, optionID)}
+					/>
 					<ConfirmButton text='delete pc' onConfirm={() => this.props.removePC(this.props.pc)} />
 				</div>
 			);

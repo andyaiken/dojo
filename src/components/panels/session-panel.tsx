@@ -15,6 +15,7 @@ import { CardDraw, PlayingCard } from '../../models/misc';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from './die-roll-panel';
@@ -127,8 +128,8 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 		if (Comms.data.party) {
 			if (this.state.characterID === '') {
 				pcSection = (
-					<Dropdown
-						options={Comms.data.party.pcs.map(p => {
+					<RadioGroup
+						items={Comms.data.party.pcs.map(p => {
 							const claimed = Comms.data.people.some(person => person.characterID === p.id);
 							return {
 								id: p.id,
@@ -136,7 +137,6 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 								disabled: claimed
 							};
 						})}
-						placeholder={'select your character...'}
 						onSelect={id => this.setPC(id)}
 					/>
 				);

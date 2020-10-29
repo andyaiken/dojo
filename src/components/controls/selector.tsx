@@ -16,35 +16,24 @@ export class Selector extends React.Component<Props> {
 
 	public render() {
 		try {
-			const itemsPerRow = this.props.itemsPerRow ? this.props.itemsPerRow : this.props.options.length;
-			const rowCount = Math.ceil(this.props.options.length / itemsPerRow);
-			const rowContents: JSX.Element[][] = [];
-			for (let n = 0; n !== rowCount; ++n) {
-				rowContents.push([]);
+			if (this.props.options.length === 0) {
+				return null;
 			}
 
-			this.props.options.forEach(option => {
-				const index = this.props.options.indexOf(option);
-				const rowIndex = Math.floor(index / itemsPerRow);
-				const row = rowContents[rowIndex];
-				row.push(
-					<SelectorOption
-						key={option.id}
-						option={option}
-						selected={option.id === this.props.selectedID}
-						onSelect={(optionID: string) => this.props.onSelect(optionID)}
-					/>
-				);
-			});
-
-			const rowSections = rowContents.map(row => {
-				const index = rowContents.indexOf(row);
-				return <div key={index} className='selector-row'>{row}</div>;
-			});
+			const itemsPerRow = this.props.itemsPerRow ?? this.props.options.length;
+			const options = this.props.options.map(option => (
+				<SelectorOption
+					key={option.id}
+					option={option}
+					width={100 / itemsPerRow}
+					selected={option.id === this.props.selectedID}
+					onSelect={(optionID: string) => this.props.onSelect(optionID)}
+				/>
+			));
 
 			return (
 				<div className={(this.props.disabled) ? 'selector disabled' : 'selector'}>
-					{rowSections}
+					{options}
 				</div>
 			);
 		} catch (ex) {
@@ -56,6 +45,7 @@ export class Selector extends React.Component<Props> {
 
 interface SelectorOptionProps {
 	option: { id: string; text: string; disabled?: boolean };
+	width: number;
 	selected: boolean;
 	onSelect: (optionID: string) => void;
 }
@@ -79,7 +69,7 @@ class SelectorOption extends React.Component<SelectorOptionProps> {
 			}
 
 			return (
-				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)} role='button'>
+				<div key={this.props.option.id} className={style} style={{ flex: '0 0 ' + this.props.width + '%' }} title={this.props.option.text} onClick={e => this.click(e)} role='button'>
 					{this.props.option.text}
 				</div>
 			);

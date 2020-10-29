@@ -18,7 +18,6 @@ import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
 import { ConfirmButton } from '../../controls/confirm-button';
-import { Dropdown } from '../../controls/dropdown';
 import { Expander } from '../../controls/expander';
 import { NumberSpin } from '../../controls/number-spin';
 import { Selector } from '../../controls/selector';
@@ -859,14 +858,15 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 								<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
 							</div>
 						</div>
-					</Col>
-					<Col span={12}>
 						<div className='subheading'>type</div>
-						<Dropdown
+						<Selector
 							options={catOptions}
 							selectedID={this.props.monster.category}
+							itemsPerRow={5}
 							onSelect={optionID => this.props.changeValue('category', optionID)}
 						/>
+					</Col>
+					<Col span={12}>
 						<div className='subheading'>subtype</div>
 						<Textbox
 							text={this.props.monster.tag}
@@ -891,13 +891,13 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 							upEnabled={this.props.monster.size !== 'gargantuan'}
 							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
 						/>
-					</Col>
-					<Col span={12}>
 						<div className='subheading'>speed</div>
 						<Textbox
 							text={this.props.monster.speed}
 							onChange={value => this.props.changeValue('speed', value)}
 						/>
+					</Col>
+					<Col span={12}>
 						<div className='subheading'>senses</div>
 						<Textbox
 							text={this.props.monster.senses}
@@ -1163,10 +1163,10 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 		try {
 			return (
 				<div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)} role='button'>
-					<MenuOutlined className='grabber' data-movable-handle={true} />
 					<div className='name'>
 						{this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false)}
 					</div>
+					<MenuOutlined className='grabber' data-movable-handle={true} />
 				</div>
 			);
 		} catch (e) {
@@ -1186,8 +1186,25 @@ interface TraitEditorPanelProps {
 class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 	public render() {
 		try {
+			const typeOptions = TRAIT_TYPES.map(t => ({ id: t, text: t }));
+			typeOptions.forEach(o => {
+				if (o.id === 'reaction') {
+					o.text = 'react';
+				}
+				if (o.id === 'legendary') {
+					o.text = 'legend';
+				}
+			});
+
 			return (
 				<div key={this.props.trait.id} className='section'>
+					<Selector
+						options={typeOptions}
+						selectedID={this.props.trait.type}
+						itemsPerRow={4}
+						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
+					/>
+					<hr/>
 					<div className='subheading'>trait name</div>
 					<Textbox
 						text={this.props.trait.name}
@@ -1206,11 +1223,6 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
 					/>
 					<hr/>
-					<Dropdown
-						placeholder='change trait type...'
-						options={TRAIT_TYPES.map(t => ({ id: t, text: t }))}
-						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
-					/>
 					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this trait</button>
 					<ConfirmButton text='delete this trait' onConfirm={() => this.props.deleteTrait(this.props.trait)} />
 				</div>

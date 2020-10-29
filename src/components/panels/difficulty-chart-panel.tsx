@@ -34,8 +34,16 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
+
+		let party = props.party;
+		if (!party) {
+			if (props.parties.length === 1) {
+				party = props.parties[0];
+			}
+		}
+
 		this.state = {
-			selectedPartyID: props.party ? props.party.id : null,
+			selectedPartyID: party ? party.id : null,
 			selectedWaveID: null,
 			customPartySize: 5,
 			customPartyLevel: 1
@@ -297,9 +305,8 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 						<Dropdown
 							options={partyOptions}
 							placeholder='select party...'
-							selectedID={this.state.selectedPartyID ? this.state.selectedPartyID : undefined}
+							selectedID={this.state.selectedPartyID}
 							onSelect={optionID => this.selectParty(optionID)}
-							onClear={() => this.selectParty(null)}
 						/>
 						{customPartySection}
 						{xpThresholds}

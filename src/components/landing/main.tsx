@@ -708,6 +708,40 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private clonePC(pc: PC, name: string) {
+		const party = this.state.parties.find(p => p.pcs.includes(pc));
+		if (party) {
+			const clone: PC = JSON.parse(JSON.stringify(pc));
+			clone.id = Utils.guid();
+			clone.name = name;
+
+			party.pcs.push(clone);
+			Utils.sort(party.pcs);
+
+			this.setState({
+				parties: this.state.parties
+			});
+		}
+	}
+
+	private moveToParty(pc: PC, partyID: string) {
+		const sourceParty = this.state.parties.find(party => party.pcs.includes(pc));
+		if (sourceParty) {
+			const index = sourceParty.pcs.indexOf(pc);
+			sourceParty.pcs.splice(index, 1);
+
+			const party = this.state.parties.find(p => p.id === partyID);
+			if (party) {
+				party.pcs.push(pc);
+				Utils.sort(party.pcs);
+
+				this.setState({
+					parties: this.state.parties
+				});
+			}
+		}
+	}
+
 	private deletePC(pc: PC) {
 		const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
 		if (party) {
@@ -943,9 +977,9 @@ export class Main extends React.Component<Props, State> {
 		const group = this.state.library.find(g => g.monsters.includes(monster));
 		if (group) {
 			const clone: Monster = JSON.parse(JSON.stringify(monster));
-			monster.id = Utils.guid();
-			monster.traits.forEach(t => t.id = Utils.guid());
-			monster.name = name;
+			clone.id = Utils.guid();
+			clone.name = name;
+			clone.traits.forEach(t => t.id = Utils.guid());
 
 			group.monsters.push(clone);
 			Utils.sort(group.monsters);
@@ -2463,6 +2497,7 @@ export class Main extends React.Component<Props, State> {
 					return (
 						<PartyScreen
 							party={this.state.parties.find(p => p.id === this.state.selectedPartyID) as Party}
+							parties={this.state.parties}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
 							goBack={() => this.selectParty(null)}
@@ -2472,6 +2507,8 @@ export class Main extends React.Component<Props, State> {
 							editPC={pc => this.editPC(pc)}
 							updatePC={pc => this.updatePC(pc)}
 							deletePC={pc => this.deletePC(pc)}
+							clonePC={(pc, name) => this.clonePC(pc, name)}
+							moveToParty={(pc, partyID) => this.moveToParty(pc, partyID)}
 							createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
 							startEncounter={(partyID, encounterID) => {
 								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;

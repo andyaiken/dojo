@@ -134,7 +134,7 @@ button.danger {
 		background-color: $background;
 		border: 1px solid $control-border;
 		border-top: none;
-		max-height: 156px;
+		max-height: 346px;
 		overflow-y: auto;
 		box-shadow: 0 3px 5px 0 rgba(220, 220, 220, 0.5);
 		z-index: 20;
@@ -355,34 +355,26 @@ button.danger {
 	color: $foreground;
 	border: 1px solid $control-border;
 	border-left-width: 5px;
+	display: flex;
+	flex-wrap: wrap;
 
-	.selector-row {
-		display: flex;
-		align-items: center;
+	.option {
+		text-align: center;
 		height: 24px;
+		padding: 3px;
+		overflow-x: hidden;
+		overflow-y: hidden;
+		text-overflow: ellipsis;
+		cursor: pointer;
 
-		.option {
-			flex-basis: 0;
-			flex-grow: 1;
-			flex-shrink: 1;
-			text-align: center;
-			height: 24px;
-			margin: 1px;
-			padding: 3px;
-			overflow-x: hidden;
-			overflow-y: hidden;
-			text-overflow: ellipsis;
-			cursor: pointer;
+		&:hover {
+			background-color: $highlight01;
+		}
 
-			&:hover {
-				background-color: $highlight01;
-			}
-
-			&.selected {
-				cursor: default;
-				background-color: $highlight02;
-				font-weight: 600;
-			}
+		&.selected {
+			cursor: default;
+			background-color: $highlight02;
+			font-weight: 600;
 		}
 	}
 

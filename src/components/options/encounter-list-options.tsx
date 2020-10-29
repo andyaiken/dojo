@@ -88,7 +88,6 @@ export class EncounterListOptions extends React.Component<Props, State> {
 					<Expander text='use an encounter template'>
 						<RadioGroup
 							items={Napoleon.encounterTemplates().map(t => ({ id: t.name, text: t.name }))}
-							selectedItemID={null}
 							onSelect={id => this.props.addEncounter(id)}
 						/>
 					</Expander>

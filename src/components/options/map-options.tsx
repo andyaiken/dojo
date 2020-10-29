@@ -39,7 +39,20 @@ export class MapOptions extends React.Component<Props, State> {
 		try {
 			let combat = null;
 			let exploration = null;
-			if (this.props.parties.length > 0) {
+			if (this.props.parties.length === 1) {
+				combat = (
+					<button onClick={() => this.props.startEncounter(this.props.parties[0].id, this.props.map.id)}>
+						start combat
+					</button>
+				);
+
+				exploration = (
+					<button onClick={() => this.props.startExploration(this.props.parties[0].id, this.props.map.id)}>
+						start exploration
+					</button>
+				);
+			}
+			if (this.props.parties.length > 1) {
 				combat = (
 					<Dropdown
 						options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}

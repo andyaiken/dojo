@@ -2,31 +2,34 @@ import { Tag } from 'antd';
 import React from 'react';
 
 import { Combatant } from '../../models/combat';
-import { PC } from '../../models/party';
+import { Party, PC } from '../../models/party';
 
 import { PCOptions } from '../options/pc-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
 	pc: PC | (PC & Combatant);
+	parties: Party[];
 	changeValue: (pc: any, field: string, value: any) => void;
 	deletePC: (pc: PC) => void;
 	editPC: (pc: PC) => void;
 	updatePC: (pc: PC) => void;
+	clonePC: (pc: PC, name: string) => void;
+	moveToParty: (pc: PC, partyID: string) => void;
 }
 
 export class PCCard extends React.Component<Props> {
 	public render() {
 		try {
-			const name = (this.props.pc as Combatant ? (this.props.pc as Combatant).displayName : null)
+			const pcName = (this.props.pc as Combatant ? (this.props.pc as Combatant).displayName : null)
 				|| this.props.pc.name
 				|| 'unnamed pc';
 
 			return (
 				<div className='card pc'>
 					<div className='heading'>
-						<div className='title' title={name}>
-							{name}
+						<div className='title' title={pcName}>
+							{pcName}
 						</div>
 					</div>
 					<div className='card-content'>
@@ -44,9 +47,12 @@ export class PCCard extends React.Component<Props> {
 						<hr/>
 						<PCOptions
 							pc={this.props.pc}
+							parties={this.props.parties}
 							editPC={pc => this.props.editPC(pc)}
 							updatePC={pc => this.props.updatePC(pc)}
 							removePC={pc => this.props.deletePC(pc)}
+							clonePC={(pc, name) => this.props.clonePC(pc, name)}
+							moveToParty={(pc, partyID) => this.props.moveToParty(pc, partyID)}
 							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						/>
 					</div>
