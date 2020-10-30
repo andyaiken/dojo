@@ -171,12 +171,12 @@ export class Napoleon {
 		return true;
 	}
 
-	public static sortEncounter(encounter: Encounter) {
-		Napoleon.sortEncounterSlots(encounter);
-		encounter.waves.forEach(wave => Napoleon.sortEncounterSlots(wave));
+	public static sortEncounter(encounter: Encounter, getMonster: (id: string) => Monster | null) {
+		Napoleon.sortEncounterSlots(encounter, id => getMonster(id));
+		encounter.waves.forEach(wave => Napoleon.sortEncounterSlots(wave, id => getMonster(id)));
 	}
 
-	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }) {
+	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }, getMonster: (id: string) => Monster | null) {
 		const uniqueSlots: EncounterSlot[] = [];
 		slotContainer.slots.forEach(slot => {
 			let current = uniqueSlots.find(s => (s.monsterID === slot.monsterID) && (s.roles.join(',') === slot.roles.join(',')));
@@ -190,9 +190,18 @@ export class Napoleon {
 		slotContainer.slots = uniqueSlots;
 
 		slotContainer.slots.sort((a, b) => {
-			// Prefer to use names here, but we don't know them
-			if (a.monsterID < b.monsterID) { return -1; }
-			if (a.monsterID > b.monsterID) { return 1; }
+			let nameA = a.monsterID;
+			const monsterA = getMonster(a.monsterID);
+			if (monsterA && monsterA.name) {
+				nameA = monsterA.name;
+			}
+			let nameB = b.monsterID;
+			const monsterB = getMonster(b.monsterID);
+			if (monsterB && monsterB.name) {
+				nameB = monsterB.name;
+			}
+			if (nameA < nameB) { return -1; }
+			if (nameA > nameB) { return 1; }
 			return 0;
 		});
 	}

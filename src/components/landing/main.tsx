@@ -1073,7 +1073,7 @@ export class Main extends React.Component<Props, State> {
 		const encounter = Factory.createEncounter();
 
 		Napoleon.buildEncounter(encounter, xp, filter, this.state.library, id => this.getMonster(id));
-		Napoleon.sortEncounter(encounter);
+		Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
 		Utils.sort(encounters);
@@ -1124,7 +1124,7 @@ export class Main extends React.Component<Props, State> {
 		if (group) {
 			slot.monsterID = monster.id;
 
-			Napoleon.sortEncounter(encounter);
+			Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 			let drawer = this.state.drawer;
 			if (closeDrawer) {
@@ -2698,7 +2698,7 @@ export class Main extends React.Component<Props, State> {
 											}
 										}
 									});
-								Napoleon.sortEncounter(encounter);
+								Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 								this.setState({
 									encounters: this.state.encounters
 								});
@@ -2718,20 +2718,33 @@ export class Main extends React.Component<Props, State> {
 									encounters: this.state.encounters
 								});
 							}}
-							moveEncounterSlot={(encounter, slot, fromWave, toWave) => {
-								if (fromWave) {
-									const index = fromWave.slots.indexOf(slot);
-									fromWave.slots.splice(index, 1);
-								} else {
-									const index = encounter.slots.indexOf(slot);
-									encounter.slots.splice(index, 1);
+							moveEncounterSlot={(encounter, slot, count, fromWave, toWave) => {
+								slot.count = Math.max(slot.count - count, 0);
+								if (slot.count === 0) {
+									if (fromWave) {
+										const index = fromWave.slots.indexOf(slot);
+										fromWave.slots.splice(index, 1);
+									} else {
+										const index = encounter.slots.indexOf(slot);
+										encounter.slots.splice(index, 1);
+									}
 								}
-								if (toWave) {
-									toWave.slots.push(slot);
+								const toSlot = (toWave ? toWave.slots : encounter.slots).find(s => s.monsterID === slot.monsterID);
+								if (toSlot) {
+									toSlot.count += count;
 								} else {
-									encounter.slots.push(slot);
+									const newSlot = Factory.createEncounterSlot();
+									newSlot.monsterID = slot.monsterID;
+									newSlot.roles = [...slot.roles];
+									newSlot.count = count;
+									newSlot.faction = slot.faction;
+									if (toWave) {
+										toWave.slots.push(newSlot);
+									} else {
+										encounter.slots.push(newSlot);
+									}
 								}
-								Napoleon.sortEncounter(encounter);
+								Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 								this.setState({
 									encounters: this.state.encounters
 								});
@@ -3038,19 +3051,19 @@ export class Main extends React.Component<Props, State> {
 					closable = true;
 					break;
 				case 'import-group':
-						content = (
-							<MonsterGroupImportModal
-								group={this.state.drawer.group}
-							/>
-						);
-						header = 'import monster group';
-						footer = (
-							<button onClick={() => this.acceptImportedGroup()}>
-								accept group
-							</button>
-						);
-						closable = true;
-						break;
+					content = (
+						<MonsterGroupImportModal
+							group={this.state.drawer.group}
+						/>
+					);
+					header = 'import monster group';
+					footer = (
+						<button onClick={() => this.acceptImportedGroup()}>
+							accept group
+						</button>
+					);
+					closable = true;
+					break;
 				case 'monster':
 					content = (
 						<MonsterEditorModal
@@ -3166,6 +3179,7 @@ export class Main extends React.Component<Props, State> {
 						</button>
 					);
 					width = '75%';
+					closable = true;
 					break;
 				case 'import-map':
 					content = (

@@ -3,12 +3,15 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
+import { Utils } from '../../utils/utils';
+
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { EncounterSlotCard } from '../cards/encounter-slot-card';
 import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
@@ -27,7 +30,7 @@ interface Props {
 	populateEncounter: (encounter: Encounter) => void;
 	addWave: (encounter: Encounter) => void;
 	deleteWave: (encounter: Encounter, wave: EncounterWave) => void;
-	moveEncounterSlot: (encounter: Encounter, slot: EncounterSlot, fromWave: EncounterWave | null, toWave: EncounterWave | null) => void;
+	moveEncounterSlot: (encounter: Encounter, slot: EncounterSlot, count: number, fromWave: EncounterWave | null, toWave: EncounterWave | null) => void;
 	deleteEncounterSlot: (encounter: Encounter, slot: EncounterSlot, wave: EncounterWave | null) => void;
 	chooseMonster: (encounter: Encounter, slot: EncounterSlot | null, wave: EncounterWave | null) => void;
 	showStatblock: (monster: Monster) => void;
@@ -52,25 +55,18 @@ export class EncounterScreen extends React.Component<Props> {
 					nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
 					chooseMonster={s => this.props.chooseMonster(this.props.encounter, s, wave)}
 					deleteEncounterSlot={s => this.props.deleteEncounterSlot(this.props.encounter, s, wave)}
-					moveToWave={(s, id) => this.props.moveEncounterSlot(this.props.encounter, s, wave, id)}
+					moveToWave={(s, count, toWave) => this.props.moveEncounterSlot(this.props.encounter, s, count, wave, toWave)}
 					showStatblock={monster => this.props.showStatblock(monster)}
 				/>
 			);
 		});
 
 		if (slots.length === 0) {
-			if (wave) {
-				cards.push(
-					<Note>there are no monsters in this wave</Note>
-				);
-			} else {
-				cards.push(
-					<Note>
-						<p>there are no monsters in this encounter</p>
-						<p>click the button below to add monsters</p>
-					</Note>
-				);
-			}
+			cards.push(
+				<Note>
+					<p>there are no monsters in this {wave ? 'wave' : 'encounter'}</p>
+				</Note>
+			);
 		}
 
 		return cards;
@@ -101,20 +97,42 @@ export class EncounterScreen extends React.Component<Props> {
 
 			const waveSections = this.props.encounter.waves.map(wave => {
 				return (
-					<div key={wave.id}>
-						<GridPanel
-							heading={wave.name || 'unnamed wave'}
-							content={this.getMonsterCards(wave)}
-							columns={4}
-						/>
-						<Row gutter={10}>
-							<Col span={6}>
-								<button onClick={() => this.props.chooseMonster(this.props.encounter, null, wave)}>add monsters to this wave</button>
-							</Col>
-						</Row>
-					</div>
+					<GridPanel
+						key={wave.id}
+						heading={wave.name || 'unnamed wave'}
+						content={this.getMonsterCards(wave)}
+						columns={4}
+					/>
 				);
 			});
+
+			let add = null;
+			if (this.props.encounter.waves.length === 0) {
+				add = (
+					<button onClick={() => this.props.chooseMonster(this.props.encounter, null, null)}>add monsters</button>
+				);
+			} else {
+				const waveOptions = [{
+					id: Utils.guid(),
+					text: 'encounter'
+				}];
+				this.props.encounter.waves.forEach(wave => {
+					waveOptions.push({
+						id: wave.id,
+						text: wave.name || 'unnamed wave'
+					});
+				});
+				add = (
+					<Dropdown
+						placeholder='add monsters to...'
+						options={waveOptions}
+						onSelect={id => {
+							const wave = this.props.encounter.waves.find(w => w.id === id) ?? null;
+							this.props.chooseMonster(this.props.encounter, null, wave);
+						}}
+					/>
+				);
+			}
 
 			return (
 				<Row className='full-height'>
@@ -127,16 +145,15 @@ export class EncounterScreen extends React.Component<Props> {
 								onChange={value => this.props.changeValue(this.props.encounter, 'name', value)}
 							/>
 						</div>
-						<Note>
-							<p>add monsters to your encounter, and check the difficulty below</p>
-							<p>if your encounter is large or occurs in stages, you can split it into waves</p>
-						</Note>
-						<div className='section'>
-							<div className='subheading'>waves</div>
+						<hr />
+						{add}
+						<Expander text='waves'>
+							<Note>
+								<p>if your encounter is large or occurs in stages, you can split it into waves</p>
+							</Note>
 							{waves}
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
-						</div>
-						<hr />
+						</Expander>
 						<Expander text='notes'>
 							<Textbox
 								text={this.props.encounter.notes}
@@ -163,11 +180,6 @@ export class EncounterScreen extends React.Component<Props> {
 							content={this.getMonsterCards(null)}
 							columns={4}
 						/>
-						<Row gutter={10}>
-							<Col span={6}>
-								<button onClick={() => this.props.chooseMonster(this.props.encounter, null, null)}>add monsters to the encounter</button>
-							</Col>
-						</Row>
 						{waveSections}
 					</Col>
 				</Row>
