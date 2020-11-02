@@ -417,10 +417,7 @@ class MapSection extends React.Component<MapSectionProps> {
 				const options = this.props.maps.map(map => {
 					return {
 						id: map.id,
-						text: map.name || 'unnamed map',
-						display: (
-							<MapPanel map={map} />
-						)
+						text: map.name || 'unnamed map'
 					};
 				});
 				selector = (

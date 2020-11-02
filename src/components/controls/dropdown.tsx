@@ -6,7 +6,7 @@ import { Sherlock } from '../../utils/sherlock';
 import { Textbox } from './textbox';
 
 interface Props {
-	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
+	options: { id: string; text: string; disabled?: boolean }[];
 	selectedID: string | null;
 	placeholder: string;
 	disabled: boolean;
@@ -24,8 +24,7 @@ export class Dropdown extends React.Component<Props, State> {
 		selectedID: null,
 		placeholder: 'select...',
 		disabled: false,
-		onClear: null,
-		onDisplay: null
+		onClear: null
 	};
 
 	constructor(props: Props) {
@@ -71,7 +70,7 @@ export class Dropdown extends React.Component<Props, State> {
 			let style = this.props.disabled ? 'dropdown disabled' : 'dropdown';
 			const content = [];
 
-			let option: { id: string; text: string; disabled?: boolean, display?: JSX.Element } | undefined;
+			let option: { id: string; text: string; disabled?: boolean } | undefined;
 			if (this.props.selectedID) {
 				option = this.props.options.find(o => o.id === this.props.selectedID);
 			}
@@ -79,7 +78,6 @@ export class Dropdown extends React.Component<Props, State> {
 			const canClear = option && this.props.onClear;
 			content.push(
 				<div key='selection' className='dropdown-top' title={option ? option.text : this.props.placeholder}>
-					{option ? option.display : null}
 					<div className='item-text'>{option ? option.text : this.props.placeholder}</div>
 					{canClear ? <CloseCircleOutlined onClick={e => this.clear(e)} /> : <EllipsisOutlined className='ellipsis' />}
 				</div>
@@ -142,7 +140,7 @@ export class Dropdown extends React.Component<Props, State> {
 }
 
 interface DropdownOptionProps {
-	option: { id: string; text: string; disabled?: boolean, display?: JSX.Element };
+	option: { id: string; text: string; disabled?: boolean };
 	selected: boolean;
 	select: (optionID: string) => void;
 }
@@ -167,7 +165,6 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 
 			return (
 				<div className={style} onClick={e => this.click(e)} role='button'>
-					{this.props.option.display}
 					{this.props.option.text}
 				</div>
 			);
