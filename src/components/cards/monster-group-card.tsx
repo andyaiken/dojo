@@ -19,6 +19,7 @@ interface Props {
 	openDemographics: (group: MonsterGroup) => void;
 	deleteMonsterGroup: (group: MonsterGroup) => void;
 	openStatBlock: (monster: Monster) => void;
+	createEncounter: (monsterIDs: string[]) => void;
 }
 
 export class MonsterGroupCard extends React.Component<Props> {
@@ -61,6 +62,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 								addMonster={monster => this.props.addMonster(monster)}
 								importMonster={() => this.props.importMonster()}
 								openDemographics={group => this.props.openDemographics(group)}
+								createEncounter={monsterIDs => this.props.createEncounter(monsterIDs)}
 								deleteMonsterGroup={group => this.props.deleteMonsterGroup(group)}
 							/>
 						</Expander>

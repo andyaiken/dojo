@@ -1140,6 +1140,21 @@ export class Main extends React.Component<Props, State> {
 		}
 	}
 
+	private createEncounterFromMonsters(monsterIDs: string[]) {
+		const enc = Factory.createEncounter();
+		monsterIDs.forEach(monsterID => {
+			const slot = Factory.createEncounterSlot();
+			slot.monsterID = monsterID;
+			enc.slots.push(slot);
+		});
+		this.state.encounters.push(enc);
+		this.setState({
+			view: 'encounters',
+			encounters: this.state.encounters,
+			selectedEncounterID: enc.id
+		});
+	}
+
 	//#endregion
 
 	//#region Map screen
@@ -2569,6 +2584,7 @@ export class Main extends React.Component<Props, State> {
 							editMonster={monster => this.editMonster(monster)}
 							cloneMonster={(monster, name) => this.cloneMonster(monster, name)}
 							moveToGroup={(monster, groupID) => this.moveToGroup(monster, groupID)}
+							createEncounter={monsterIDs => this.createEncounterFromMonsters(monsterIDs)}
 						/>
 					);
 				}
@@ -2586,6 +2602,7 @@ export class Main extends React.Component<Props, State> {
 						openDemographics={group => this.openDemographics(group)}
 						addMonster={monster => this.addMonster(monster)}
 						importMonster={() => this.importMonster()}
+						createEncounter={monsterIDs => this.createEncounterFromMonsters(monsterIDs)}
 					/>
 				);
 			case 'encounters':

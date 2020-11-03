@@ -877,7 +877,7 @@ class CharacterPanel extends React.Component<CharacterPanelProps> {
 				return (
 					<div className='character-panel'>
 						<PortraitPanel source={pc} inline={true} />
-						<div className='name'>{pc.name}</div>
+						<div className='name pc'>{pc.name}</div>
 					</div>
 				);
 			}

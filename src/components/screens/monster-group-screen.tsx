@@ -27,6 +27,7 @@ interface Props {
 	editMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
 	moveToGroup: (monster: Monster, groupID: string) => void;
+	createEncounter: (monsterIDs: string[]) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, value: number) => void;
 }
@@ -86,6 +87,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 							viewMonster={monster => this.props.viewMonster(monster)}
 							editMonster={monster => this.props.editMonster(monster)}
 							cloneMonster={(monster, monsterName) => this.props.cloneMonster(monster, monsterName)}
+							createEncounter={monsterID => this.props.createEncounter([monsterID])}
 						/>
 					);
 				});
@@ -116,6 +118,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 							addMonster={monster => this.props.addMonster(monster)}
 							importMonster={() => this.props.importMonster()}
 							openDemographics={group => this.props.openDemographics(group)}
+							createEncounter={monsterIDs => this.props.createEncounter(monsterIDs)}
 							deleteMonsterGroup={group => this.props.deleteMonsterGroup(group)}
 						/>
 						<hr/>

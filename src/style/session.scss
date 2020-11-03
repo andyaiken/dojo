@@ -12,10 +12,6 @@
 			flex-grow: 1;
 			flex-shrink: 1;
 			flex-basis: 0;
-
-			.name {
-				font-weight: 600;
-			}
 		}
 
 		.person-icon {
@@ -44,6 +40,10 @@
 .character-panel {
 	.name {
 		display: inline-block;
+
+		&.pc {
+			font-weight: 600;
+		}
 	}
 }
 

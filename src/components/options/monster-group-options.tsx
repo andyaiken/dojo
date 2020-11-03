@@ -24,6 +24,7 @@ interface Props {
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
 	openDemographics: (group: MonsterGroup) => void;
+	createEncounter: (monsterIDs: string[]) => void;
 	deleteMonsterGroup: (group: MonsterGroup) => void;
 }
 
@@ -161,6 +162,7 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 					</Expander>
 					<button onClick={() => this.props.openDemographics(this.props.monsterGroup)}>show demographics</button>
 					<button onClick={() => this.export()}>export group</button>
+					<button onClick={() => this.props.createEncounter(this.props.monsterGroup.monsters.map(m => m.id))}>create an encounter</button>
 					<ConfirmButton
 						text='delete group'
 						disabled={this.props.monsterGroup.monsters.some(monster => this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, monster.id)))}

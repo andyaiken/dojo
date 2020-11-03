@@ -556,24 +556,20 @@ export class Player extends React.Component<Props, State> {
 				);
 			case 'connected':
 				let shared = null;
-				if (Comms.data.shared.type === 'nothing') {
+				if ((Comms.getCharacterID(Comms.getID()) === '') || (Comms.data.shared.type === 'nothing')) {
 					shared = this.getNothingSection();
-				}
-				if (Comms.data.shared.type === 'combat') {
+				} else if (Comms.data.shared.type === 'combat') {
 					const combat = Comms.data.shared.data as Combat;
 					const additional = Comms.data.shared.additional;
 					shared = this.getCombatSection(combat, additional);
-				}
-				if (Comms.data.shared.type === 'exploration') {
+				} else if (Comms.data.shared.type === 'exploration') {
 					const exploration = Comms.data.shared.data as Exploration;
 					const additional = Comms.data.shared.additional;
 					shared = this.getExplorationSection(exploration, additional);
-				}
-				if (Comms.data.shared.type === 'handout') {
+				} else if (Comms.data.shared.type === 'handout') {
 					const handout = Comms.data.shared.data as Handout;
 					shared = this.getHandoutSection(handout);
-				}
-				if (Comms.data.shared.type === 'monster') {
+				} else if (Comms.data.shared.type === 'monster') {
 					const monster = Comms.data.shared.data as Monster;
 					shared = this.getMonsterSection(monster);
 				}

@@ -22,6 +22,7 @@ interface Props {
 	addOpenGameContent: () => void;
 	openStatBlock: (monster: Monster) => void;
 	openDemographics: (group: MonsterGroup | null) => void;
+	createEncounter: (monsterIDs: string[]) => void;
 	addMonster: (monster: Monster | null) => void;
 	importMonster: () => void;
 }
@@ -59,6 +60,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 					openDemographics={grp => this.props.openDemographics(grp)}
 					deleteMonsterGroup={grp => this.props.deleteMonsterGroup(grp)}
 					openStatBlock={monster => this.props.openStatBlock(monster)}
+					createEncounter={monsterIDs => this.props.createEncounter(monsterIDs)}
 				/>
 			));
 

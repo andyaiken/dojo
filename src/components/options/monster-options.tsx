@@ -20,6 +20,7 @@ interface Props {
 	deleteMonster: (monster: Monster) => void;
 	cloneMonster: (monster: Monster, name: string) => void;
 	moveToGroup: (monster: Monster, groupID: string) => void;
+	createEncounter: (monsterID: string) => void;
 }
 
 interface State {
@@ -75,6 +76,7 @@ export class MonsterOptions extends React.Component<Props, State> {
 						placeholder='move to group...'
 						onSelect={optionID => this.props.moveToGroup(this.props.monster, optionID)}
 					/>
+					<button onClick={() => this.props.createEncounter(this.props.monster.id)}>create an encounter</button>
 					<ConfirmButton
 						text='delete monster'
 						disabled={this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, this.props.monster.id))}
