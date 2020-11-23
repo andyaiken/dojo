@@ -1,18 +1,18 @@
 {
 	"name": "dojo",
-	"version": "11.5.0",
+	"version": "11.5.1",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.2.2",
-		"antd": "^4.8.0",
+		"antd": "^4.8.5",
 		"lz-string": "^1.4.4",
 		"mousetrap": "^1.6.5",
 		"peerjs": "^1.3.1",
-		"react": "^16.14.0",
+		"react": "^17.0.1",
 		"react-debounce-input": "^3.2.3",
-		"react-dom": "^16.14.0",
+		"react-dom": "^17.0.1",
 		"react-movable": "^2.5.3",
 		"react-pdf": "^5.0.0",
 		"react-router-dom": "^5.2.0",
@@ -23,8 +23,8 @@
 	"devDependencies": {
 		"@types/lz-string": "^1.3.34",
 		"@types/mousetrap": "^1.6.4",
-		"@types/react": "^16.9.55",
-		"@types/react-dom": "^16.9.9",
+		"@types/react": "^16.14.1",
+		"@types/react-dom": "^16.9.10",
 		"@types/react-pdf": "^4.0.6",
 		"@types/react-router-dom": "^5.1.6",
 		"@types/showdown": "^1.9.3",
@@ -35,7 +35,7 @@
 		"tslint": "^5.20.1",
 		"tslint-microsoft-contrib": "^6.2.0",
 		"tslint-react": "^3.6.0",
-		"typescript": "^3.9.7"
+		"typescript": "^4.1.2"
 	},
 	"scripts": {
 		"update": "npm update && npm update --save-dev && npm audit fix",

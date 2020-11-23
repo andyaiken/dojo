@@ -302,7 +302,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 						<Selector
 							options={options}
 							selectedID={this.props.view}
-							itemsPerRow={options.length === 6 ? 3 : 6}
+							itemsPerRow={options.length === 6 ? 3 : options.length}
 							onSelect={optionID => this.props.setView(optionID)}
 						/>
 						{header}

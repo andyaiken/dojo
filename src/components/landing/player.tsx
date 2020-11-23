@@ -193,6 +193,7 @@ export class Player extends React.Component<Props, State> {
 		CommsPlayer.onStateChanged = null;
 		CommsPlayer.onDataChanged = null;
 		Comms.onPrompt = null;
+		Comms.onNewMessage = null;
 
 		CommsPlayer.disconnect();
 	}
