@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
@@ -42,7 +42,7 @@ interface Props {
 	changeValue: (source: any, field: string, value: any) => void;
 	addCompanion: (companion: Companion) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
-	mapMove: (ids: string[], dir: string) => void;
+	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
 	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
@@ -331,13 +331,13 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			return null;
 		}
 
-		const options = (
-			<div>
-				<div className='subheading'>exploration</div>
+		return (
+			<div className='scrollable'>
+				<div className='heading'>exploration</div>
 				<button onClick={() => this.props.startCombat(this.props.exploration)}>stop exploring and start combat</button>
 				<button onClick={() => this.props.pauseExploration()}>pause exploration</button>
 				<ConfirmButton text='end exploration' onConfirm={() => this.props.endExploration(this.props.exploration)} />
-				<div className='subheading'>map</div>
+				<div className='heading'>map</div>
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 				<div className='group-panel' style={{ display: this.state.addingOverlay ? '' : 'none' }}>
 					<Note>
@@ -365,7 +365,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					</button>
 				</div>
 				<button onClick={() => this.props.rotateMap()}>rotate map</button>
-				<div className='subheading'>sharing</div>
+				<div className='heading'>sharing</div>
 				<Checkbox
 					label='share in player view'
 					checked={this.state.playerViewOpen}
@@ -378,14 +378,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
 				/>
 			</div>
-		);
-
-		return (
-			<GridPanel
-				heading='options'
-				content={[options]}
-				columns={1}
-			/>
 		);
 	}
 
@@ -477,7 +469,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				return (
 					<MapItemCard
 						item={mapItem}
-						moveMapItem={(item, dir) => this.props.mapMove([item.id], dir)}
+						moveMapItem={(item, dir, step) => this.props.mapMove([item.id], dir, step)}
 						deleteMapItem={item => this.props.mapRemove([item.id])}
 						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
@@ -521,7 +513,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				deleteCondition={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 				// Map tab
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
-				mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
+				mapMove={(combatants, dir, step) => this.props.mapMove(combatants.map(c => c.id), dir, step)}
 				mapRemove={combatants => this.mapRemove(combatants)}
 				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
 				// Adv tab
@@ -632,15 +624,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				);
 			}
 
-			let options = null;
-			if (this.state.showOptions) {
-				options = (
-					<Col span={6} className='scrollable'>
-						{this.getOptions()}
-					</Col>
-				);
-			}
-
 			return (
 				<div className='full-height'>
 					<Row align='middle' className='combat-top-row'>
@@ -653,8 +636,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 						<Col span={18} />
 					</Row>
 					<Row className='combat-main'>
-						{options}
-						<Col span={this.state.showOptions ? 12 : 18} className='scrollable both-ways'>
+						<Col span={18} className='scrollable both-ways'>
 							{this.getMap(false)}
 						</Col>
 						<Col span={6} className='scrollable'>
@@ -670,8 +652,21 @@ export class ExplorationScreen extends React.Component<Props, State> {
 								columns={1}
 							/>
 						</Col>
-						{this.getPlayerView()}
 					</Row>
+					{this.getPlayerView()}
+					<Drawer
+						className={this.props.options.theme}
+						placement='left'
+						closable={false}
+						maskClosable={true}
+						width='33%'
+						visible={this.state.showOptions}
+						onClose={() => this.toggleShowOptions()}
+					>
+						<div className='drawer-header'><div className='app-title'>options</div></div>
+						<div className='drawer-content'>{this.getOptions()}</div>
+						<div className='drawer-footer'>{null}</div>
+					</Drawer>
 				</div>
 			);
 		} catch (ex) {

@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -58,7 +58,7 @@ interface Props {
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
-	mapMove: (ids: string[], dir: string) => void;
+	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
 	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	endTurn: (combatant: Combatant) => void;
@@ -470,7 +470,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		if (this.props.combat.map) {
 			map = (
 				<div>
-					<div className='subheading'>map</div>
+					<div className='heading'>map</div>
 					<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 					<div className='group-panel' style={{ display: this.state.addingOverlay ? '' : 'none' }}>
 						<Note>
@@ -510,17 +510,17 @@ export class CombatScreen extends React.Component<Props, State> {
 			);
 		}
 
-		const options = (
-			<div key='options'>
+		return (
+			<div className='scrollable'>
 				<div>
-					<div className='subheading'>encounter</div>
+					<div className='heading'>combat</div>
 					{notes}
 					<button onClick={() => this.props.pauseCombat()}>pause combat</button>
 					<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
 					{exitToMap}
 				</div>
 				<div>
-					<div className='subheading'>combatants</div>
+					<div className='heading'>combatants</div>
 					<button onClick={() => this.props.addCombatants()}>add combatants</button>
 					{addPCs}
 					{addWave}
@@ -528,7 +528,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				</div>
 				{map}
 				<div>
-					<div className='subheading'>sharing</div>
+					<div className='heading'>sharing</div>
 					<Checkbox
 						label='share in player view'
 						checked={this.state.playerViewOpen}
@@ -542,7 +542,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					/>
 				</div>
 				<div>
-					<div className='subheading'>layout</div>
+					<div className='heading'>layout</div>
 					<Checkbox
 						label='show defeated combatants'
 						checked={this.state.showDefeatedCombatants}
@@ -556,14 +556,6 @@ export class CombatScreen extends React.Component<Props, State> {
 					/>
 				</div>
 			</div>
-		);
-
-		return (
-			<GridPanel
-				heading='options'
-				content={[options]}
-				columns={1}
-			/>
 		);
 	}
 
@@ -635,7 +627,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				return (
 					<MapItemCard
 						item={mapItem}
-						moveMapItem={(item, dir) => this.props.mapMove([item.id], dir)}
+						moveMapItem={(item, dir, step) => this.props.mapMove([item.id], dir, step)}
 						deleteMapItem={item => this.props.mapRemove([item.id])}
 						changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
@@ -678,7 +670,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				deleteCondition={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 				// Map tab
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
-				mapMove={(combatants, dir) => this.props.mapMove(combatants.map(c => c.id), dir)}
+				mapMove={(combatants, dir, step) => this.props.mapMove(combatants.map(c => c.id), dir, step)}
 				mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
 				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
 				// Adv tab
@@ -962,7 +954,6 @@ export class CombatScreen extends React.Component<Props, State> {
 					</Row>
 					<Row className='combat-main'>
 						<Col span={sideWidth} className='scrollable'>
-							{this.getOptions()}
 							<GridPanel
 								heading='initiative holder'
 								content={[currentSection]}
@@ -1011,6 +1002,19 @@ export class CombatScreen extends React.Component<Props, State> {
 						</Col>
 					</Row>
 					{this.getPlayerView()}
+					<Drawer
+						className={this.props.options.theme}
+						placement='left'
+						closable={false}
+						maskClosable={true}
+						width='33%'
+						visible={this.state.showOptions}
+						onClose={() => this.toggleShowOptions()}
+					>
+						<div className='drawer-header'><div className='app-title'>options</div></div>
+						<div className='drawer-content'>{this.getOptions()}</div>
+						<div className='drawer-footer'>{null}</div>
+					</Drawer>
 				</div>
 			);
 		} catch (e) {

@@ -312,6 +312,7 @@ export class Main extends React.Component<Props, State> {
 				languagePreset: null,
 				selectedLanguages: [],
 				languageOutput: [],
+				surge: '',
 				draws: [],
 				npc: null,
 				selectedPartyID: null,
@@ -1306,37 +1307,8 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private moveMapTileOrArea(map: Map, thing: MapItem | MapArea, dir: string) {
-		switch (dir) {
-			case 'N':
-				thing.y -= 1;
-				break;
-			case 'NE':
-				thing.x += 1;
-				thing.y -= 1;
-				break;
-			case 'E':
-				thing.x += 1;
-				break;
-			case 'SE':
-				thing.x += 1;
-				thing.y += 1;
-				break;
-			case 'S':
-				thing.y += 1;
-				break;
-			case 'SW':
-				thing.x -= 1;
-				thing.y += 1;
-				break;
-			case 'W':
-				thing.x -= 1;
-				break;
-			case 'NW':
-				thing.x -= 1;
-				thing.y -= 1;
-				break;
-		}
+	private moveMapTileOrArea(map: Map, thing: MapItem | MapArea, dir: string, step: number) {
+		Mercator.move(map, thing.id, dir, step);
 
 		this.setState({
 			maps: this.state.maps
@@ -2286,14 +2258,14 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map) {
+	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map, step: number) {
 		const list = Napoleon.getMountsAndRiders(ids, combatants).map(c => c.id);
 		ids.forEach(id => {
 			if (!list.includes(id)) {
 				list.push(id);
 			}
 		});
-		list.forEach(id => Mercator.move(map, id, dir));
+		list.forEach(id => Mercator.move(map, id, dir, step));
 		Napoleon.setMountPositions(combatants, map);
 
 		this.setState({
@@ -2641,9 +2613,9 @@ export class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.mapAdd(combatant, x, y, combat.combatants, combat.map as Map);
 							}}
-							mapMove={(ids, dir) => {
+							mapMove={(ids, dir, step) => {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
-								this.mapMove(ids, dir, combat.combatants, combat.map as Map);
+								this.mapMove(ids, dir, combat.combatants, combat.map as Map, step);
 							}}
 							mapRemove={ids => {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
@@ -2857,9 +2829,9 @@ export class Main extends React.Component<Props, State> {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.mapAdd(combatant, x, y, ex.combatants, ex.map);
 							}}
-							mapMove={(ids, dir) => {
+							mapMove={(ids, dir, step) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
-								this.mapMove(ids, dir, ex.combatants, ex.map);
+								this.mapMove(ids, dir, ex.combatants, ex.map, step);
 							}}
 							mapRemove={ids => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
@@ -2907,7 +2879,7 @@ export class Main extends React.Component<Props, State> {
 							deleteMap={map => this.deleteMap(map)}
 							addMapTile={(map, tile) => this.addMapItem(tile, map)}
 							selectMapTileImage={(map, tile) => this.selectMapTileImage(map, tile)}
-							moveMapTile={(map, tile, dir) => this.moveMapTileOrArea(map, tile, dir)}
+							moveMapTile={(map, tile, dir, step) => this.moveMapTileOrArea(map, tile, dir, step)}
 							cloneMapTile={(map, tile) => this.cloneMapTile(map, tile)}
 							rotateMapTile={(map, tile) => this.rotateMapTile(map, tile)}
 							deleteMapTile={(map, tile) => this.deleteMapTile(map, tile)}
@@ -2915,7 +2887,7 @@ export class Main extends React.Component<Props, State> {
 							bringToFront={(map, tile) => this.bringToFront(map, tile)}
 							sendToBack={(map, tile) => this.sendToBack(map, tile)}
 							addMapArea={(map, area) => this.addMapArea(map, area)}
-							moveMapArea={(map, area, dir) => this.moveMapTileOrArea(map, area, dir)}
+							moveMapArea={(map, area, dir, step) => this.moveMapTileOrArea(map, area, dir, step)}
 							deleteMapArea={(map, area) => this.deleteMapArea(map, area)}
 							clearMapAreas={map => this.clearMapAreas(map)}
 							generateRoom={map => this.generateRoom(map)}

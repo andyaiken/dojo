@@ -27,7 +27,7 @@ interface Props {
 	deleteMap: (map: Map) => void;
 	addMapTile: (map: Map, tile: MapItem) => void;
 	selectMapTileImage: (map: Map, tile: MapItem) => void;
-	moveMapTile: (map: Map, tile: MapItem, dir: string) => void;
+	moveMapTile: (map: Map, tile: MapItem, dir: string, step: number) => void;
 	cloneMapTile: (map: Map, tile: MapItem) => void;
 	rotateMapTile: (map: Map, tile: MapItem) => void;
 	deleteMapTile: (map: Map, tile: MapItem) => void;
@@ -35,7 +35,7 @@ interface Props {
 	bringToFront: (map: Map, tile: MapItem) => void;
 	sendToBack: (map: Map, tile: MapItem) => void;
 	addMapArea: (map: Map, area: MapArea) => void;
-	moveMapArea: (map: Map, area: MapArea, dir: string) => void;
+	moveMapArea: (map: Map, area: MapArea, dir: string, step: number) => void;
 	deleteMapArea: (map: Map, area: MapArea) => void;
 	clearMapAreas: (map: Map) => void;
 	generateRoom: (map: Map) => void;
@@ -149,7 +149,7 @@ export class MapScreen extends React.Component<Props, State> {
 								toggleImageSelection={() => this.props.selectMapTileImage(this.props.map, item)}
 								changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 								nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-								moveMapTile={(tile, dir) => this.props.moveMapTile(this.props.map, tile, dir)}
+								moveMapTile={(tile, dir, step) => this.props.moveMapTile(this.props.map, tile, dir, step)}
 								cloneMapTile={tile => this.props.cloneMapTile(this.props.map, tile)}
 								deleteMapTile={tile => this.props.deleteMapTile(this.props.map, tile)}
 								rotateMapTile={tile => this.props.rotateMapTile(this.props.map, tile)}
@@ -174,7 +174,7 @@ export class MapScreen extends React.Component<Props, State> {
 								area={area}
 								changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 								nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-								moveMapArea={(a, dir) => this.props.moveMapArea(this.props.map, a, dir)}
+								moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
 								deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
 							/>
 							<hr/>
@@ -286,7 +286,7 @@ interface MapTileProps {
 	toggleImageSelection: () => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
-	moveMapTile: (tile: MapItem, dir: string) => void;
+	moveMapTile: (tile: MapItem, dir: string, step: number) => void;
 	cloneMapTile: (tile: MapItem) => void;
 	deleteMapTile: (tile: MapItem) => void;
 	rotateMapTile: (tile: MapItem) => void;
@@ -328,7 +328,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 					<div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onClick={dir => this.props.moveMapTile(this.props.tile, dir)} />
+							<Radial onClick={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>
@@ -447,7 +447,7 @@ interface MapAreaProps {
 	area: MapArea;
 	changeValue: (area: MapArea, field: string, value: any) => void;
 	nudgeValue: (area: MapArea, field: string, delta: number) => void;
-	moveMapArea: (area: MapArea, dir: string) => void;
+	moveMapArea: (area: MapArea, dir: string, step: number) => void;
 	deleteMapArea: (area: MapArea) => void;
 }
 
@@ -479,7 +479,7 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 						</div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onClick={dir => this.props.moveMapArea(this.props.area, dir)} />
+							<Radial onClick={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>

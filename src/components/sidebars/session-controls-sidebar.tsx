@@ -96,7 +96,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 					}}
 					// Map tab
 					mapAdd={combatant => this.props.toggleAddingToMap()}
-					mapMove={(combatants, dir) => {
+					mapMove={(combatants, dir, step) => {
 						const ids = combatants.map(c => c.id);
 						const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
 						ids.forEach(id => {
@@ -104,7 +104,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 								list.push(id);
 							}
 						});
-						list.forEach(id => Mercator.move(map as Map, id, dir));
+						list.forEach(id => Mercator.move(map as Map, id, dir, step));
 						Napoleon.setMountPositions(allCombatants, map as Map);
 						CommsPlayer.sendSharedUpdate();
 						this.props.onUpdated();

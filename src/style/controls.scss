@@ -251,30 +251,23 @@ button.danger {
 	background-color: $background;
 	color: $foreground;
 	border: 1px solid $control-border;
-	border-radius: 50%;
+	border-radius: 30%;
 	box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
 	margin: 5px auto;
 
-	&.eight {
-		border-radius: 30%;
-	}
-
-	.cell {
+	.radial-cell {
 		display: inline-block;
-		height: 40px;
-		width: 40px;
 		vertical-align: middle;
 
-		.arrow {
+		.radial-arrow,
+		.radial-toggle {
 			height: 40px;
 			width: 40px;
 			line-height: 40px;
 			font-size: 40px;
-			border-radius: 50%;
-			vertical-align: middle;
-			text-align: center;
+			border-radius: 30%;
 
-			&.diag {
+			&.radial-arrow-diag {
 				font-size: 20px;
 				margin: 10px;
 				height: 20px;
@@ -285,6 +278,16 @@ button.danger {
 			&:hover {
 				background-color: $highlight02;
 			}
+		}
+
+		.radial-toggle {
+			font-size: 12px;
+			border: 1px solid $control-border;
+			margin: 5px;
+			height: 30px;
+			width: 30px;
+			line-height: 28px;
+			text-align: center;
 		}
 	}
 }

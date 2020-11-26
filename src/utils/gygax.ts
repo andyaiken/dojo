@@ -435,17 +435,17 @@ export class Gygax {
 		switch (condition.name) {
 			case 'blinded':
 				return [
-					'a blinded creature can’t see and automatically fails any ability check that requires sight',
-					'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage'
+					'a blinded creature can\'t see and automatically fails any ability check that requires sight',
+					'attack rolls against the creature have advantage, and the creature\'s attack rolls have disadvantage'
 				];
 			case 'charmed':
 				return [
-					'a charmed creature can’t attack the charmer or target the charmer with harmful abilities or magical effects',
+					'a charmed creature can\'t attack the charmer or target the charmer with harmful abilities or magical effects',
 					'the charmer has advantage on any ability check to interact socially with the creature'
 				];
 			case 'deafened':
 				return [
-					'a deafened creature can’t hear and automatically fails any ability check that requires hearing.'
+					'a deafened creature can\'t hear and automatically fails any ability check that requires hearing.'
 				];
 			case 'exhaustion': {
 				switch (condition.level) {
@@ -495,29 +495,29 @@ export class Gygax {
 			case 'frightened':
 				return [
 					'a frightened creature has disadvantage on ability checks and attack rolls while the source of its fear is within line of sight',
-					'the creature can’t willingly move closer to the source of its fear'
+					'the creature can\'t willingly move closer to the source of its fear'
 				];
 			case 'grappled':
 				return [
-					'a grappled creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
+					'a grappled creature\'s speed becomes 0, and it can\'t benefit from any bonus to its speed',
 					'the condition ends if the grappler is incapacitated',
 					'the condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect'
 				];
 			case 'incapacitated':
 				return [
-					'an incapacitated creature can’t take actions or reactions',
+					'an incapacitated creature can\'t take actions or reactions',
 					'being incapacitated breaks concentration'
 				];
 			case 'invisible':
 				return [
 					'an invisible creature is impossible to see without the aid of magic or a special sense',
 					'for the purpose of hiding, the creature is heavily obscured',
-					'the creature’s location can be detected by any noise it makes or any tracks it leaves',
-					'attack rolls against the creature have disadvantage, and the creature’s attack rolls have advantage'
+					'the creature\'s location can be detected by any noise it makes or any tracks it leaves',
+					'attack rolls against the creature have disadvantage, and the creature\'s attack rolls have advantage'
 				];
 			case 'paralyzed':
 				return [
-					'a paralyzed creature is incapacitated (can’t take actions or reactions) and can’t move or speak',
+					'a paralyzed creature is incapacitated (can\'t take actions or reactions) and can\'t move or speak',
 					'the creature automatically fails strength and dexterity saving throws',
 					'attack rolls against the creature have advantage',
 					'any attack that hits the creature is a critical hit if the attacker is within 5 feet of the creature'
@@ -526,7 +526,7 @@ export class Gygax {
 				return [
 					'a petrified creature is transformed, along with any nonmagical objects it is wearing or carrying, into a solid inanimate substance (usually stone)',
 					'its weight increases by a factor of ten, and it ceases aging',
-					'the creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
+					'the creature is incapacitated (can\'t take actions or reactions), can\'t move or speak, and is unaware of its surroundings',
 					'attack rolls against the creature have advantage',
 					'the creature automatically fails strength and dexterity saving throws',
 					'the creature has resistance to all damage',
@@ -538,25 +538,25 @@ export class Gygax {
 				];
 			case 'prone':
 				return [
-					'a prone creature’s only movement option is to crawl, unless it stands up (using half its speed) and thereby ends the condition',
+					'a prone creature\'s only movement option is to crawl, unless it stands up (using half its speed) and thereby ends the condition',
 					'the creature has disadvantage on attack rolls',
 					'an attack roll against the creature has advantage if the attacker is within 5 feet of the creature; otherwise, the attack roll has disadvantage'
 				];
 			case 'restrained':
 				return [
-					'a restrained creature’s speed becomes 0, and it can’t benefit from any bonus to its speed',
-					'attack rolls against the creature have advantage, and the creature’s attack rolls have disadvantage',
+					'a restrained creature\'s speed becomes 0, and it can\'t benefit from any bonus to its speed',
+					'attack rolls against the creature have advantage, and the creature\'s attack rolls have disadvantage',
 					'the creature has disadvantage on dexterity saving throws'
 				];
 			case 'stunned':
 				return [
-					'a stunned creature is incapacitated (can’t take actions or reactions), can’t move, and can speak only falteringly',
+					'a stunned creature is incapacitated (can\'t take actions or reactions), can\'t move, and can speak only falteringly',
 					'the creature automatically fails strength and dexterity saving throws',
 					'attack rolls against the creature have advantage'
 				];
 			case 'unconscious':
 				return [
-					'an unconscious creature is incapacitated (can’t take actions or reactions), can’t move or speak, and is unaware of its surroundings',
+					'an unconscious creature is incapacitated (can\'t take actions or reactions), can\'t move or speak, and is unaware of its surroundings',
 					'the creature drops whatever its holding and falls prone',
 					'the creature automatically fails strength and dexterity saving throws',
 					'attack rolls against the creature have advantage',
@@ -671,5 +671,114 @@ export class Gygax {
 			default:
 				return tag;
 		}
+	}
+
+	public static getWildSurge() {
+		// tslint:disable: max-line-length
+		const list = [
+			'Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls.',
+			'For the next minute, you can see any invisible creature if you have line of sight to it.',
+			'A modron chosen and controlled by the DM appears in an unoccupied space within 5 feet of you, then disappears 1 minute later.',
+			'You cast fireball as a 3rd-level spell centered on yourself.',
+			'You cast magic missile as a 5th-level spell.',
+			'Roll a d10. Your height changes by a number of inches equal to the roll. If the roll is odd, you shrink. If the roll is even, you grow.',
+			'You cast confusion centered on yourself.',
+			'For the next minute, you regain 5 hit points at the start of each of your turns.',
+			'You grow a long beard made of feathers that remains until you sneeze, at which point the feathers explode out from your face.',
+			'You cast grease centered on yourself.',
+			'Creatures have disadvantage on saving throws against the next spell you cast in the next minute that involves a saving throw.',
+			'Your skin turns a vibrant shade of blue. A remove curse spell can end this effect.',
+			'An eye appears on your forehead for the next minute. During that time, you have advantage on Wisdom (Perception) checks that rely on sight.',
+			'For the next minute, all your spells with a casting time of 1 action have a casting time of 1 bonus action.',
+			'You teleport up to 60 feet to an unoccupied space of your choice that you can see.',
+			'You are transported to the Astral Plane until the end of your next turn, after which time you return to the space you previously occupied or the nearest unoccupied space if that space is occupied.',
+			'Maximize the damage of the next damaging spell you cast within the next minute.',
+			'Roll a d10. Your age changes by a number of years equal to the roll. If the roll is odd, you get younger (minimum 1 year old). If the roll is even, you get older.',
+			'1d6 flumphs controlled by the DM appear in unoccupied spaces within 60 feet of you and are frightened of you. They vanish after 1 minute.',
+			'You regain 2d10 hit points.',
+			'You turn into a potted plant until the start of your next turn. While a plant, you are incapacitated and have vulnerability to all damage. If you drop to 0 hit points, your pot breaks, and your form reverts.',
+			'For the next minute, you can teleport up to 20 feet as a bonus action on each of your turns.',
+			'You cast levitate on yourself.',
+			'A unicorn controlled by the DM appears in a space within 5 feet of you, then disappears 1 minute later.',
+			'You can\'t speak for the next minute. Whenever you try, pink bubbles float out of your mouth.',
+			'A spectral shield hovers near you for the next minute, granting you a +2 bonus to AC and immunity to magic missile.',
+			'You are immune to being intoxicated by alcohol for the next 5d6 days.',
+			'Your hair falls out but grows back within 24 hours.',
+			'For the next minute, any flammable object you touch that isn\'t being worn or carried by another creature bursts into flame.',
+			'You regain your lowest-level expended spell slot.',
+			'For the next minute, you must shout when you speak.',
+			'You cast fog cloud centered on yourself.',
+			'Up to three creatures you choose within 30 feet of you take 4d10 lightning damage.',
+			'You are frightened by the nearest creature until the end of your next turn.',
+			'Each creature within 30 feet of you becomes invisible for the next minute. The invisibility ends on a creature when it attacks or casts a spell.',
+			'You gain resistance to all damage for the next minute.',
+			'A random creature within 60 feet of you becomes poisoned for 1d4 hours.',
+			'You glow with bright light in a 30-foot radius for the next minute. Any creature that ends its turn within 5 feet of you is blinded until the end of its next turn.',
+			'You cast polymorph on yourself. If you fail the saving throw, you turn into a sheep for the spell\'s duration.',
+			'Illusory butterflies and flower petals flutter in the air within 10 feet of you for the next minute.',
+			'You can take one additional action immediately.',
+			'Each creature within 30 feet of you takes 1d10 necrotic damage. You regain hit points equal to the sum of the necrotic damage dealt.',
+			'You cast mirror image.',
+			'You cast fly on a random creature within 60 feet of you.',
+			'You become invisible for the next minute. During that time, other creatures can\'t hear you. The invisibility ends if you attack or cast a spell.',
+			'If you die within the next minute, you immediately come back to life as if by the reincarnate spell.',
+			'Your size increases by one size category for the next minute.',
+			'You and all creatures within 30 feet of you gain vulnerability to piercing damage for the next minute.',
+			'You are surrounded by faint, ethereal music for the next minute.',
+			'You regain all expended sorcery points.',
+			'You cast speak with animals',
+			'A mephit chosen and controlled by the DM appears in an unoccupied space within 5 feet of you, then disappears 1 minute later.',
+			'You cast ice storm as a 4th-level spell centered on yourself.',
+			'You cast scorching ray as a 5th-level spell.',
+			'For the next hour, your eyes and veins shed bright light in a 20 foot radius, and dim light for an additional 20 feet.',
+			'You cast plant growth centered on yourself.',
+			'You cast aura of life.',
+			'A daisy sprouts from your head. It may be pruned without harm.',
+			'You cast faerie fire centered on yourself.',
+			'You have a brief vision of the future. Roll a d20 and record the number rolled. Once in the next hour, you can replace any attack roll, saving throw, or ability check made by you or a creature that you can see with the foretelling roll. You must choose to do so before the roll, and you can replace a roll in this way only once per turn.',
+			'You become unable to turn left. A remove curse spell can end this effect.',
+			'A glimpse of the future gives you advantage on the next saving throw you make.',
+			'You cast haste on yourself.',
+			'You cast thunder step as a 3rd-level spell.',
+			'You switch positions with the target immediately after the effects of the spell occur. If the spell had multiple targets, you switch places with the closest one to you.',
+			'For the next minute, roll an extra die of damage for each spell you cast.',
+			'You take no action on your next turn. Instead, you vomit 1d100 gold pieces.',
+			'A pseudodragon controlled by the DM appears in an unoccupied space within 60 feet of you. It vanishes after 1 minute.',
+			'You cast healing word as a 2nd-level spell.',
+			'You turn into a harmless creature for 1d4 rounds. While in this form, you have a movement speed of 15 feet and vulnerability to all damage. If you drop to 0 hit points your form reverts.',
+			'Spider legs sprout from your back, giving you a climbing speed of 20 feet. The legs remain in place for one hour.',
+			'You cast freedom of movement on yourself.',
+			'A couatl controlled by the DM appears in a space within 5 feet of you, then disappears 1 minute later.',
+			'You\'re deafened for the next minute. For this duration, green smoke pours out from your ears.',
+			'A wall of fire encircles you as a 4th-level spell. You are on the side that takes no damage.',
+			'You cast create food and water.',
+			'You shoot eight non-venomous snakes from your fingertips.',
+			'For the next minute, any organic object you touch decays. Food spoils, plants wilt, etc. Your unarmed strikes deal an additional 1d4 necrotic damage.',
+			'All silver you are carrying becomes gold.',
+			'An illusory image of you is left in your space. It can be dispelled with dispel magic.',
+			'You cast darkness centered on yourself.',
+			'You breathe a cone of dragon\'s breath as a 2nd-level spell the next time you try to speak.',
+			'You are entombed in crystal, which shatters at the end of your next turn. You gain 50 temporary hit points and are considered petrified. All these effects, incuding any remaining temporary hit points, end when the crystal shatters.',
+			'For the next minute, creatures within 30 feet of you can\'t see further than 30 feet away.',
+			'You cast warding wind.',
+			'A random creature within 60 feet of you falls asleep for 1d4 turns or until it takes damage. While asleep they are unconscious. A creature is not affected if they cannot be put to sleep by magic.',
+			'You cast color spray as a 1st-level spell.',
+			'You cast flesh to stone on yourself.',
+			'Illusory rain and autumn leaves fall to the ground within 10 feet of you for the next minute.',
+			'If the spell requires concentration, it automatically lasts for its maximum duration; if not, its duration is doubled. If it is instantaneous, it is immediately recast on the same target.',
+			'You cast thunderwave as a 1st-level spell.',
+			'You cast blur.',
+			'You cast reverse gravity centered on yourself.',
+			'You cast blink.',
+			'You regain all expended hit dice.',
+			'Your size decreases by one size category for the next minute.',
+			'All weapons within 30 feet of you turn into food for the next minute.',
+			'A gentle gust of wind blows outward from you.',
+			'For one minute, an illusory duplicate of yourself appears in an empty space adjacent to you. The duplicate is under your control and shares your initiative, hit points, sorcery points, and spell slots. Any resources spent by the duplicate are also expended by you.'
+		];
+		// tslint:enable: max-line-length
+
+		const index = Utils.randomNumber(list.length);
+		return list[index].toLowerCase();
 	}
 }

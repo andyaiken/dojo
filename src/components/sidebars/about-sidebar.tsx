@@ -96,7 +96,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 					content = (
 						<div>
 							<Note>
-							<div className='section'>
+								<div className='section'>
 									turn this setting on to add die roll buttons to monster stat blocks
 								</div>
 							</Note>
@@ -105,6 +105,11 @@ export class AboutSidebar extends React.Component<Props, State> {
 								checked={this.props.options.showMonsterDieRolls}
 								onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
 							/>
+							<Note>
+								<div className='section'>
+									you can switch the app between light theme and dark theme
+								</div>
+							</Note>
 							<Checkbox
 								label='use dark theme'
 								checked={this.props.options.theme === 'dark'}

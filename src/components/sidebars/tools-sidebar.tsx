@@ -46,6 +46,9 @@ interface Props {
 	selectRandomLanguages: () => void;
 	resetLanguages: () => void;
 	generateLanguage: () => void;
+	// Wild Surge
+	surge: string;
+	rollSurge: () => void;
 	// Oracle
 	draws: CardDraw[];
 	drawCards: (count: number, deck: PlayingCard[]) => void;
@@ -67,6 +70,10 @@ export class ToolsSidebar extends React.Component<Props> {
 				{
 					id: 'language',
 					text: 'language'
+				},
+				{
+					id: 'wild',
+					text: 'wild surge'
 				},
 				{
 					id: 'oracle',
@@ -109,6 +116,14 @@ export class ToolsSidebar extends React.Component<Props> {
 							selectRandomLanguages={() => this.props.selectRandomLanguages()}
 							resetLanguages={() => this.props.resetLanguages()}
 							generateLanguage={() => this.props.generateLanguage()}
+						/>
+					);
+					break;
+				case 'wild':
+					content = (
+						<WildSurgeTool
+							surge={this.props.surge}
+							rollSurge={() => this.props.rollSurge()}
 						/>
 					);
 					break;
@@ -506,6 +521,42 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 			console.error(ex);
 			return <div className='render-error'/>;
 		}
+	}
+}
+
+interface WildSurgeProps {
+	surge: string;
+	rollSurge: () => void;
+}
+
+class WildSurgeTool extends React.Component<WildSurgeProps> {
+	public render() {
+		let content = null;
+		if (this.props.surge) {
+			content = (
+				<div>
+					<hr/>
+					<div className='generated-item group-panel'>
+						<div className='text-section'>
+							<p>{this.props.surge}</p>
+						</div>
+						<div className='icon-section'>
+							<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
+						</div>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<Note>
+					<p>this tool randomly chooses wild magic surge effects</p>
+				</Note>
+				<button onClick={() => this.props.rollSurge()}>surge</button>
+				{content}
+			</div>
+		);
 	}
 }
 

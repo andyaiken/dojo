@@ -318,6 +318,12 @@ export class PageSidebar extends React.Component<Props> {
 									});
 								});
 							}}
+							surge={this.props.sidebar.surge}
+							rollSurge={() => {
+								const sidebar = this.props.sidebar;
+								sidebar.surge = Gygax.getWildSurge();
+								this.props.onUpdateSidebar(sidebar);
+							}}
 							draws={this.props.sidebar.draws}
 							drawCards={(count, deck) => {
 								const sidebar = this.props.sidebar;

@@ -6,7 +6,7 @@ import { Shakespeare } from './shakespeare';
 import { Utils } from './utils';
 
 import { Combatant } from '../models/combat';
-import { DOORWAY_TYPES, Map, MapItem } from '../models/map';
+import { DOORWAY_TYPES, Map, MapArea, MapItem } from '../models/map';
 
 export class Mercator {
 	public static scatterCombatants(map: Map, combatants: Combatant[], areaID: string | null) {
@@ -519,37 +519,42 @@ export class Mercator {
 		item.y = y;
 	}
 
-	public static move(map: Map, id: string, dir: string) {
-		const item = map.items.find(i => i.id === id);
+	public static move(map: Map, id: string, dir: string, step: number) {
+		let item: MapItem | MapArea | null = null;
+		item = map.items.find(i => i.id === id) || null;
+		if (!item) {
+			item = map.areas.find(a => a.id === id) || null;
+		}
+
 		if (item) {
 			switch (dir) {
 				case 'N':
-					item.y -= 1;
+					item.y -= step;
 					break;
 				case 'NE':
-					item.x += 1;
-					item.y -= 1;
+					item.x += step;
+					item.y -= step;
 					break;
 				case 'E':
-					item.x += 1;
+					item.x += step;
 					break;
 				case 'SE':
-					item.x += 1;
-					item.y += 1;
+					item.x += step;
+					item.y += step;
 					break;
 				case 'S':
-					item.y += 1;
+					item.y += step;
 					break;
 				case 'SW':
-					item.x -= 1;
-					item.y += 1;
+					item.x -= step;
+					item.y += step;
 					break;
 				case 'W':
-					item.x -= 1;
+					item.x -= step;
 					break;
 				case 'NW':
-					item.x -= 1;
-					item.y -= 1;
+					item.x -= step;
+					item.y -= step;
 					break;
 			}
 		}

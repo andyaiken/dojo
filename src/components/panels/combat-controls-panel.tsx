@@ -41,7 +41,7 @@ interface Props {
 	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	// Map tab
 	mapAdd: (combatant: Combatant) => void;
-	mapMove: (combatants: Combatant[], dir: string) => void;
+	mapMove: (combatants: Combatant[], dir: string, step: number) => void;
 	mapRemove: (combatants: Combatant[]) => void;
 	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	// Adv tab
@@ -580,7 +580,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<Radial onClick={dir => this.props.mapMove(this.props.combatants, dir)} />
+					<Radial showToggle={true} onClick={(dir, step) => this.props.mapMove(this.props.combatants, dir, step)} />
 					<hr/>
 					{altitude}
 					{aura}

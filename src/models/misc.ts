@@ -16,6 +16,7 @@ export interface Sidebar {
 	languagePreset: string | null;
 	selectedLanguages: string[];
 	languageOutput: string[];
+	surge: string;
 	draws: CardDraw[];
 	npc: NPC | null;
 	selectedPartyID: string | null;
