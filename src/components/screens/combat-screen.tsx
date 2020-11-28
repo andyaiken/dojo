@@ -73,6 +73,7 @@ interface Props {
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
 	onRollDice: (count: number, sides: number, constant: number) => void;
+	onOpenSession: () => void;
 }
 
 interface State {
@@ -510,6 +511,31 @@ export class CombatScreen extends React.Component<Props, State> {
 			);
 		}
 
+		let session = null;
+		if (CommsDM.getState() === 'started') {
+			session = (
+				<Checkbox
+					label='share in session'
+					checked={Comms.data.shared.type === 'combat'}
+					onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
+				/>
+			);
+		} else {
+			session = (
+				<button
+					onClick={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.onOpenSession();
+						});
+					}}
+				>
+					start a session
+				</button>
+			);
+		}
+
 		return (
 			<div className='scrollable'>
 				<div>
@@ -534,12 +560,7 @@ export class CombatScreen extends React.Component<Props, State> {
 						checked={this.state.playerViewOpen}
 						onChecked={value => this.setPlayerViewOpen(value)}
 					/>
-					<Checkbox
-						label='share in session'
-						disabled={CommsDM.getState() !== 'started'}
-						checked={Comms.data.shared.type === 'combat'}
-						onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
-					/>
+					{session}
 				</div>
 				<div>
 					<div className='heading'>layout</div>

@@ -548,6 +548,17 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private openSession() {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = 'session';
+		sidebar.subtype = 'management';
+
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
 	// This is an internal dictionary to speed up monster lookup
 	private monsterIdToGroup: { [id: string]: Monster } = {};
 
@@ -2650,6 +2661,7 @@ export class Main extends React.Component<Props, State> {
 								this.addMapItem(overlay, combat.map as Map);
 							}}
 							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
+							onOpenSession={() => this.openSession()}
 						/>
 					);
 				}
@@ -2864,6 +2876,7 @@ export class Main extends React.Component<Props, State> {
 								this.addMapItem(overlay, ex.map);
 							}}
 							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
+							onOpenSession={() => this.openSession()}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}
 						/>

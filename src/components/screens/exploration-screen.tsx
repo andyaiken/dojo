@@ -53,6 +53,7 @@ interface Props {
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
 	onRollDice: (count: number, sides: number, constant: number) => void;
+	onOpenSession: () => void;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
 }
@@ -331,6 +332,31 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			return null;
 		}
 
+		let session = null;
+		if (CommsDM.getState() === 'started') {
+			session = (
+				<Checkbox
+					label='share in session'
+					checked={Comms.data.shared.type === 'exploration'}
+					onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
+				/>
+			);
+		} else {
+			session = (
+				<button
+					onClick={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.onOpenSession();
+						});
+					}}
+				>
+					start a session
+				</button>
+			);
+		}
+
 		return (
 			<div className='scrollable'>
 				<div className='heading'>exploration</div>
@@ -371,12 +397,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					checked={this.state.playerViewOpen}
 					onChecked={value => this.setPlayerViewOpen(value)}
 				/>
-				<Checkbox
-					label='share in session'
-					disabled={CommsDM.getState() !== 'started'}
-					checked={Comms.data.shared.type === 'exploration'}
-					onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
-				/>
+				{session}
 			</div>
 		);
 	}
