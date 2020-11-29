@@ -44,7 +44,6 @@ interface Props {
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
 	openImage: (data: string) => void;
-	editPC: (id: string) => void;
 	addAward: (awardID: string, awardee: Party | PC) => void;
 	deleteAward: (awardID: string, awardee: Party | PC) => void;
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
@@ -71,7 +70,6 @@ export class PageSidebar extends React.Component<Props> {
 		selectMap: null,
 		openImage: null,
 		openStatBlock: null,
-		editPC: null,
 		addAward: null,
 		deleteAward: null,
 		addCondition: null,
@@ -431,7 +429,6 @@ export class PageSidebar extends React.Component<Props> {
 				case 'session-player':
 					content = (
 						<SessionPlayerSidebar
-							editPC={id => this.props.editPC(id)}
 						/>
 					);
 					break;

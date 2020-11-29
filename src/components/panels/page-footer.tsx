@@ -4,28 +4,29 @@ interface Props {
 	tabs: {
 		id: string,
 		text: string,
-		selected: boolean
+		selected: boolean,
+		onSelect: () => void
 	}[];
-	onSelectView: (view: string) => void;
+	shortcuts: JSX.Element[];
 }
 
 export class PageFooter extends React.Component<Props> {
 	public static defaultProps = {
 		tabs: [],
-		onSelectView: null
+		shortcuts: []
 	};
 
 	public render() {
 		try {
-			const tabs = this.props.tabs.map(tab => (
-				<div key={tab.id} className={tab.selected ? 'navigator-item selected' : 'navigator-item'} onClick={() => this.props.onSelectView(tab.id)} role='button'>
+			const content = this.props.shortcuts.concat(this.props.tabs.map(tab => (
+				<div key={tab.id} className={tab.selected ? 'navigator-item selected' : 'navigator-item'} onClick={() => tab.onSelect()} role='button'>
 					{tab.text}
 				</div>
-			));
+			)));
 
 			return (
 				<div className='page-footer'>
-					{tabs}
+					{content}
 				</div>
 			);
 		} catch (e) {

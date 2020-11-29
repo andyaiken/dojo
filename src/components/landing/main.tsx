@@ -2950,19 +2950,23 @@ export class Main extends React.Component<Props, State> {
 		return [{
 			id: 'parties',
 			text: 'pcs',
-			selected: (this.state.view === 'parties')
+			selected: (this.state.view === 'parties'),
+			onSelect: () => this.setView('parties')
 		}, {
 			id: 'library',
 			text: 'monsters',
-			selected: (this.state.view === 'library')
+			selected: (this.state.view === 'library'),
+			onSelect: () => this.setView('library')
 		}, {
 			id: 'encounters',
 			text: 'encounters',
-			selected: (this.state.view === 'encounters')
+			selected: (this.state.view === 'encounters'),
+			onSelect: () => this.setView('encounters')
 		}, {
 			id: 'maps',
 			text: 'maps',
-			selected: (this.state.view === 'maps')
+			selected: (this.state.view === 'maps'),
+			onSelect: () => this.setView('maps')
 		}];
 	}
 
@@ -3354,7 +3358,6 @@ export class Main extends React.Component<Props, State> {
 						<ErrorBoundary>
 							<PageFooter
 								tabs={tabs}
-								onSelectView={view => this.setView(view)}
 							/>
 						</ErrorBoundary>
 					</div>

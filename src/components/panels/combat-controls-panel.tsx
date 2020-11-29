@@ -784,21 +784,18 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 						{views.includes('hp') ? (
 							<div>
 								<hr/>
-								<div className='subheading'>hit points</div>
 								{this.getHPSection()}
 							</div>
 						) : null}
 						{views.includes('cond') ? (
 							<div>
 								<hr/>
-								<div className='subheading'>conditions</div>
 								{this.getConditionSection()}
 							</div>
 						) : null}
 						{views.includes('map') ? (
 							<div>
 								<hr/>
-								<div className='subheading'>map</div>
 								{this.getMapSection()}
 							</div>
 						) : null}

@@ -1,4 +1,4 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
 import React from 'react';
 
@@ -33,6 +33,7 @@ import { GridPanel } from '../panels/grid-panel';
 import { InitiativeOrder } from '../panels/initiative-order';
 import { MapPanel } from '../panels/map-panel';
 import { Note } from '../panels/note';
+import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
 import { PDF } from '../panels/pdf';
@@ -244,8 +245,9 @@ export class Player extends React.Component<Props, State> {
 		});
 	}
 
-	private editPC(id: string) {
+	private editPC() {
 		if (Comms.data.party) {
+			const id = Comms.getCharacterID(Comms.getID());
 			const pc = Comms.data.party.pcs.find(p => p.id === id);
 			if (pc) {
 				const copy = JSON.parse(JSON.stringify(pc));
@@ -530,14 +532,6 @@ export class Player extends React.Component<Props, State> {
 
 	//#region Rendering
 
-	private getBeadcrumbs() {
-		return [{
-			id: 'home',
-			text: 'dojo - player',
-			onClick: () => null
-		}];
-	}
-
 	private getContent() {
 		switch (CommsPlayer.getState()) {
 			case 'not connected':
@@ -676,9 +670,66 @@ export class Player extends React.Component<Props, State> {
 		};
 	}
 
+	private getShortcuts() {
+		const shortcuts = [];
+
+		const id = Comms.getCharacterID(Comms.getID());
+		if (id !== '') {
+			shortcuts.push(
+				<UserOutlined
+					key='stats'
+					title='update your stats'
+					onClick={() => {
+						this.editPC();
+					}}
+				/>
+			);
+
+			if (Comms.data.options.allowChat) {
+				shortcuts.push(
+					<CommentOutlined
+						key='chat'
+						title='open chat'
+						onClick={() => {
+							const sidebar = this.state.sidebar;
+							sidebar.type = 'session-chat';
+							sidebar.subtype = '';
+							sidebar.visible = true;
+							this.setState({
+								sidebar: sidebar
+							});
+						}}
+					/>
+				);
+			}
+
+			if (Comms.data.options.allowControls) {
+				if ((Comms.data.shared.type === 'combat') || (Comms.data.shared.type === 'exploration')) {
+					shortcuts.push(
+						<ControlOutlined
+							key='controls'
+							title='open character controls'
+							onClick={() => {
+								const sidebar = this.state.sidebar;
+								sidebar.type = 'session-controls';
+								sidebar.subtype = '';
+								sidebar.visible = true;
+								this.setState({
+									sidebar: sidebar
+								});
+							}}
+						/>
+					);
+				}
+			}
+		}
+
+		return shortcuts;
+	}
+
 	public render() {
 		try {
-			const breadcrumbs = this.getBeadcrumbs();
+			const shortcuts = this.getShortcuts();
 			const content = this.getContent();
 			const drawer = this.getDrawer();
 
@@ -687,15 +738,26 @@ export class Player extends React.Component<Props, State> {
 					<div className={this.state.sidebar.visible ? 'app with-sidebar' : 'app'}>
 						<ErrorBoundary>
 							<PageHeader
-								breadcrumbs={breadcrumbs}
+								breadcrumbs={[
+									{
+										id: 'home',
+										text: 'dojo - player',
+										onClick: () => null
+									}
+								]}
 								sidebarVisible={this.state.sidebar.visible}
 								onToggleSidebar={() => this.toggleSidebar()}
 							/>
 						</ErrorBoundary>
 						<ErrorBoundary>
-							<div className='page-content no-footer'>
+							<div className='page-content'>
 								{content}
 							</div>
+						</ErrorBoundary>
+						<ErrorBoundary>
+							<PageFooter
+								shortcuts={shortcuts}
+							/>
 						</ErrorBoundary>
 					</div>
 					<ErrorBoundary>
@@ -705,7 +767,6 @@ export class Player extends React.Component<Props, State> {
 							options={this.state.options}
 							onSelectSidebar={type => this.setSidebar(type)}
 							onUpdateSidebar={sidebar => this.setState({ sidebar: sidebar })}
-							editPC={id => this.editPC(id)}
 							addCondition={(combatants, allCombatants) => this.addCondition(combatants, allCombatants)}
 							editCondition={(combatant, condition, allCombatants) => this.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.setAddingToMap(!this.state.addingToMap)}

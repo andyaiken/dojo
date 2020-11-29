@@ -15,7 +15,6 @@ import { CardDraw, PlayingCard } from '../../models/misc';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
-import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from './die-roll-panel';
@@ -88,20 +87,21 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 //#region PlayerStatusPanel
 
 interface PlayerStatusPanelProps {
-	editPC: (id: string) => void;
 }
 
 interface PlayerStatusPanelState {
 	status: string;
-	characterID: string;
 }
 
 export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, PlayerStatusPanelState> {
 	constructor(props: PlayerStatusPanelProps) {
 		super(props);
+
+		const id = Comms.getID();
+		const person = Comms.data.people.find(p => p.id === id);
+
 		this.state = {
-			status: '',
-			characterID: Comms.getCharacterID(Comms.getID())
+			status: person ? person.status : ''
 		};
 	}
 
@@ -111,44 +111,15 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 		});
 	}
 
-	private setPC(id: string) {
-		this.setState({
-			characterID: id
-		}, () => {
-			this.sendPlayerUpdate();
-		});
-	}
-
 	private sendPlayerUpdate() {
-		CommsPlayer.sendUpdate(this.state.status, this.state.characterID);
+		const id = Comms.getID();
+		const person = Comms.data.people.find(p => p.id === id);
+		if (person) {
+			CommsPlayer.sendUpdate(this.state.status, person.characterID);
+		}
 	}
 
 	public render() {
-		let pcSection = null;
-		if (Comms.data.party) {
-			if (this.state.characterID === '') {
-				pcSection = (
-					<RadioGroup
-						items={Comms.data.party.pcs.map(p => {
-							const claimed = Comms.data.people.some(person => person.characterID === p.id);
-							return {
-								id: p.id,
-								text: p.name,
-								disabled: claimed
-							};
-						})}
-						onSelect={id => this.setPC(id)}
-					/>
-				);
-			} else {
-				pcSection = (
-					<div>
-						<button onClick={() => this.props.editPC(this.state.characterID)}>update character stats</button>
-					</div>
-				);
-			}
-		}
-
 		return (
 			<div className='player-status-panel'>
 				<div className='control-with-icons'>
@@ -166,7 +137,6 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 						/>
 					</div>
 				</div>
-				{pcSection}
 				<ConfirmButton text='disconnect' onConfirm={() => CommsPlayer.disconnect()} />
 			</div>
 		);
