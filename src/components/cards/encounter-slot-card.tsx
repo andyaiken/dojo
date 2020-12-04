@@ -45,6 +45,10 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 	}
 
 	private getMoveControl() {
+		if (this.props.encounter.waves.length === 0) {
+			return null;
+		}
+
 		let count = null;
 		if (this.props.slot.count > 1) {
 			count = (

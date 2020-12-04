@@ -14,7 +14,7 @@ import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Exploration, Map, MapArea, MapItem } from '../../models/map';
 import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
@@ -33,6 +33,7 @@ import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
+import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { ErrorBoundary } from '../panels/error-boundary';
@@ -1081,16 +1082,33 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private createEncounter(xp: number, filter: MonsterFilter) {
+	private createEncounter(partyID: string | null) {
+		this.setState({
+			drawer: {
+				type: 'random-encounter',
+				data: {
+					type: (partyID === null) ? 'xp' : 'party',
+					xp: 1000,
+					partyID: partyID,
+					difficulty: 'medium',
+					filter: Factory.createMonsterFilter()
+				}
+			}
+		});
+	}
+
+	private createEncounterFromModal() {
 		const encounter = Factory.createEncounter();
 
-		Napoleon.buildEncounter(encounter, xp, filter, this.state.library, id => this.getMonster(id));
+		Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
 		Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
 		Utils.sort(encounters);
+
 		this.setState({
 			view: 'encounters',
+			drawer: null,
 			encounters: encounters,
 			selectedEncounterID: encounter.id
 		});
@@ -2507,7 +2525,7 @@ export class Main extends React.Component<Props, State> {
 							deletePC={pc => this.deletePC(pc)}
 							clonePC={(pc, name) => this.clonePC(pc, name)}
 							moveToParty={(pc, partyID) => this.moveToParty(pc, partyID)}
-							createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
+							createEncounter={partyID => this.createEncounter(partyID)}
 							startEncounter={(partyID, encounterID) => {
 								const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 								this.createCombat(partyID, encounter);
@@ -2533,7 +2551,7 @@ export class Main extends React.Component<Props, State> {
 						openParty={party => this.selectParty(party)}
 						addPC={() => this.editPC(null)}
 						importPC={() => this.importPC()}
-						createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
+						createEncounter={partyID => this.createEncounter(partyID)}
 						startEncounter={(partyID, encounterID) => {
 							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
 							this.createCombat(partyID, encounter);
@@ -2799,7 +2817,7 @@ export class Main extends React.Component<Props, State> {
 						combats={this.state.combats}
 						parties={this.state.parties}
 						hasMonsters={hasMonsters}
-						createEncounter={(xp, filter) => this.createEncounter(xp, filter)}
+						createEncounter={() => this.createEncounter(null)}
 						addEncounter={templateID => this.addEncounter(templateID)}
 						openEncounter={encounter => this.selectEncounter(encounter)}
 						cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
@@ -3119,6 +3137,25 @@ export class Main extends React.Component<Props, State> {
 						/>
 					);
 					header = 'demographics';
+					closable = true;
+					break;
+				case 'random-encounter':
+					content = (
+						<RandomEncounterModal
+							parties={this.state.parties}
+							data={this.state.drawer.data}
+							onUpdated={() => this.forceUpdate()}
+						/>
+					);
+					header = 'create a random encounter';
+					footer = (
+						<button
+							className={(this.state.drawer.data.type === 'party') && (this.state.drawer.data.partyID === null) ? 'disabled' : ''}
+							onClick={() => this.createEncounterFromModal()}
+						>
+							create the encounter
+						</button>
+					);
 					closable = true;
 					break;
 				case 'encounter-slot':

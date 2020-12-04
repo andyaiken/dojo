@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Encounter, MonsterFilter } from '../../models/encounter';
+import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
@@ -15,7 +15,7 @@ interface Props {
 	openParty: (party: Party) => void;
 	addPC: () => void;
 	importPC: () => void;
-	createEncounter: (xp: number, filter: MonsterFilter) => void;
+	createEncounter: (partyID: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	setLevel: (party: Party, level: number) => void;
@@ -71,7 +71,7 @@ export class PartyCard extends React.Component<Props> {
 								maps={this.props.maps}
 								addPC={() => this.props.addPC()}
 								importPC={() => this.props.importPC()}
-								createEncounter={(xp, filter) => this.props.createEncounter(xp, filter)}
+								createEncounter={partyID => this.props.createEncounter(partyID)}
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 								setLevel={(party, level) => this.props.setLevel(party, level)}

@@ -59,7 +59,7 @@ export class PCStatblockCard extends React.Component<Props> {
 							</div>
 							<div className='section subheading'>languages</div>
 							<div className='section'>
-								{this.props.pc.languages || '-'}
+								{this.props.pc.languages || 'none listed'}
 							</div>
 							<hr/>
 							<Row>
