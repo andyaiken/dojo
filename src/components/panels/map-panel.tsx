@@ -1,5 +1,5 @@
 import { DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Progress, Tooltip } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -13,7 +13,6 @@ import { PC } from '../../models/party';
 
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
-import { HitPointGauge } from './hit-point-gauge';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -458,6 +457,7 @@ export class MapPanel extends React.Component<Props, State> {
 								token={i}
 								combatant={combatant || null}
 								style={tokenStyle}
+								width={miniSize * this.state.size}
 								simple={this.props.mode === 'thumbnail'}
 								showGauge={this.props.mode === 'combat'}
 								showHidden={(this.props.mode === 'combat') || isPC}
@@ -949,6 +949,7 @@ interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
 	style: MapItemStyle;
+	width: number;
 	simple: boolean;
 	showGauge: boolean;
 	showHidden: boolean;
@@ -1057,8 +1058,21 @@ class MapToken extends React.Component<MapTokenProps> {
 					const current = this.props.combatant.hpCurrent || 0;
 					const max = this.props.combatant.hpMax || 0;
 					if (current < max) {
+						let color = 'orange';
+						if (current >= max) {
+							color = 'green';
+						} else if (current <= (max / 2)) {
+							color = 'crimson';
+						}
 						hpGauge = (
-							<HitPointGauge combatant={this.props.combatant} />
+							<Progress
+								type='circle'
+								status='normal'
+								strokeColor={color}
+								showInfo={false}
+								percent={100 * current / max}
+								width={this.props.width - 3}
+							/>
 						);
 					}
 				}

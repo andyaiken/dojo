@@ -16,13 +16,11 @@ export class HitPointGauge extends React.Component<Props> {
 			const hpBloodied = hpMax / 2;
 			const hpWidth = 100 * Math.max(hpCurrent, 0) / (hpMax + hpTemp);
 
-			let style = '';
+			let style = 'bar injured';
 			if (hpCurrent >= hpMax) {
 				style = 'bar unhurt';
 			} else if (hpCurrent <= hpBloodied) {
 				style = 'bar bloodied';
-			} else {
-				style = 'bar injured';
 			}
 
 			let hpTempBar = null;
