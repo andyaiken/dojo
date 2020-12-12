@@ -1,7 +1,18 @@
 import { v4 as uuid4 } from 'uuid';
 
 export class Utils {
-	public static guid(): string {
+	public static guid(short: boolean = false): string {
+		if (short) {
+			const letters = 'abcdefghijklmnopqrstuvwxyz';
+			let str = '';
+			while (str.length < 6) {
+				const n = Utils.randomNumber(letters.length);
+				str += letters[n];
+			}
+
+			return str;
+		}
+
 		return uuid4();
 	}
 

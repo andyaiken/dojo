@@ -88,8 +88,6 @@ export class SessionSidebar extends React.Component<Props, State> {
 	}
 
 	private getStartedContent() {
-		const playerURL = window.location + (window.location.toString().endsWith('/') ? '' : '/') + 'player';
-
 		switch (this.props.view) {
 			case 'messages':
 				return (
@@ -111,6 +109,11 @@ export class SessionSidebar extends React.Component<Props, State> {
 					/>
 				);
 			case 'management':
+				let playerURL = 'https://andyaiken.github.io/dojo/#/player/' + Comms.getID();
+				if (window.location.hostname === 'localhost') {
+					playerURL = 'http://localhost:3000/dojo/#/player/' + Comms.getID();
+				}
+
 				let sharing = null;
 				switch (Comms.data.shared.type) {
 					case 'nothing':
@@ -144,20 +147,11 @@ export class SessionSidebar extends React.Component<Props, State> {
 				return (
 					<div>
 						<Note>
-							<p>give your dm code to your players, and ask them to open the player app in their browser</p>
+							<p>give the following link to your players, and ask them to open the player app in their browser</p>
 						</Note>
 						<div className='generated-item group-panel'>
 							<div className='text-section'>
-								<p className='smallest'>your dm code for this session:</p>
-								<p className='smallest strong'>{Comms.getID()}</p>
-							</div>
-							<div className='icon-section'>
-								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
-							</div>
-						</div>
-						<div className='generated-item group-panel'>
-							<div className='text-section'>
-								<p className='smallest'>player app url:</p>
+								<p className='smallest'>player app link:</p>
 								<p className='smallest strong'>{playerURL}</p>
 							</div>
 							<div className='icon-section'>

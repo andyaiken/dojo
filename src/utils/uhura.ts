@@ -373,7 +373,7 @@ export class CommsDM {
 
 		Comms.data.party = party;
 
-		const dmCode = 'dm-' + Utils.guid();
+		const dmCode = Utils.guid(true);
 		Comms.peer = new Peer(dmCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
 
 		Comms.peer.on('open', () => {

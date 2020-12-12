@@ -41,6 +41,7 @@ import { PortraitPanel } from '../panels/portrait-panel';
 import { MessagePanel } from '../panels/session-panel';
 
 interface Props {
+	dmcode: string;
 }
 
 interface State {
@@ -537,7 +538,7 @@ export class Player extends React.Component<Props, State> {
 			case 'not connected':
 				return (
 					<Row align='middle' justify='center' className='full-height'>
-						<ConnectPanel />
+						<ConnectPanel dmcode={this.props.dmcode} />
 					</Row>
 				);
 			case 'connecting':
@@ -808,49 +809,56 @@ export class Player extends React.Component<Props, State> {
 //#region ConnectPanel
 
 interface ConnectPanelProps {
+	dmcode: string;
 }
 
 interface ConnectPanelState {
-	code: string;
 	name: string;
 }
 
 class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState> {
 	constructor(props: ConnectPanelProps) {
 		super(props);
-		this.state = {
-			code: '',
-			name: ''
-		};
-	}
 
-	private setCode(code: string) {
-		this.setState({
-			code: code
-		});
+		// Load player name
+		const str = window.localStorage.getItem('connect-as-player') || '';
+
+		this.state = {
+			name: str
+		};
 	}
 
 	private setName(name: string) {
 		this.setState({
 			name: name
+		}, () => {
+			// Save player name
+			window.localStorage.setItem('connect-as-player', name);
 		});
 	}
 
 	private canConnect() {
-		return (this.state.code !== '') && (this.state.name !== '');
+		return this.state.name !== '';
 	}
 
 	private connect() {
 		if (this.canConnect()) {
-			CommsPlayer.connect(this.state.code, this.state.name);
+			CommsPlayer.connect(this.props.dmcode, this.state.name);
 		}
 	}
 
 	public render() {
+		if (this.props.dmcode === '') {
+			return (
+				<Note>
+					<p>this url isn't a valid dojo player url - there's no 6-letter dm code at the end</p>
+				</Note>
+			);
+		}
+
 		return (
 			<div className='connection-panel'>
 				<div className='heading'>connect</div>
-				<Textbox placeholder='dm code' debounce={false} text={this.state.code} onChange={code => this.setCode(code)} />
 				<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
 				<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
 			</div>

@@ -9,12 +9,17 @@ export class App extends React.Component {
 		return (
 			<HashRouter>
 				<Switch>
-					<Route path='/player'>
-						<Player />
-					</Route>
-					<Route>
-						<Main />
-					</Route>
+					<Route
+						path='/player/:dmcode'
+						render={({ match }) => <Player dmcode={match.params['dmcode']} />}
+					/>
+					<Route
+						path='/player'
+						render={() => <Player dmcode='' />}
+					/>
+					<Route
+						render={() => <Main/>}
+					/>
 				</Switch>
 			</HashRouter>
 		);
