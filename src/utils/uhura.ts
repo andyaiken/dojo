@@ -59,7 +59,6 @@ export interface CommsData {
 export class Comms {
 	public static peer: Peer | null = null;
 	public static data: CommsData = Comms.getDefaultData();
-	public static sentImageIDs: string[] = [];
 	public static previousSentSharedState: any = null;
 	public static previousReceivedSharedState: any = null;
 
@@ -615,9 +614,7 @@ export class CommsDM {
 				.forEach(mi => {
 					const img = Matisse.getImage(mi.customBackground);
 					if (img) {
-						if (!Comms.sentImageIDs.includes(img.id)) {
-							images.push(img);
-						}
+						images.push(img);
 					}
 				});
 		}
@@ -633,7 +630,6 @@ export class CommsDM {
 			this.onDataChanged();
 		}
 		this.sendSharedUpdate();
-		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
 	public static shareExploration(exploration: Exploration) {
@@ -643,9 +639,7 @@ export class CommsDM {
 			.forEach(mi => {
 				const img = Matisse.getImage(mi.customBackground);
 				if (img) {
-					if (!Comms.sentImageIDs.includes(img.id)) {
-						images.push(img);
-					}
+					images.push(img);
 				}
 			});
 		Comms.previousSentSharedState = null;
@@ -660,7 +654,6 @@ export class CommsDM {
 			this.onDataChanged();
 		}
 		this.sendSharedUpdate();
-		images.forEach(img => Comms.sentImageIDs.push(img.id));
 	}
 
 	public static shareHandout(handout: Handout) {
