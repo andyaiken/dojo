@@ -96,6 +96,10 @@ export class Main extends React.Component<Props, State> {
 					}
 
 					party.pcs.forEach(pc => {
+						if (pc.darkvision === undefined) {
+							pc.darkvision = 0;
+						}
+
 						if (pc.awards === undefined) {
 							pc.awards = [];
 						}

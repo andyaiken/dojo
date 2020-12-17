@@ -61,6 +61,10 @@ export class PCStatblockCard extends React.Component<Props> {
 							<div className='section'>
 								{this.props.pc.languages || 'none listed'}
 							</div>
+							<div className='section subheading'>darkvision</div>
+							<div className='section'>
+								{this.props.pc.darkvision > 0 ? this.props.pc.darkvision + ' ft' : 'none'}
+							</div>
 							<hr/>
 							<Row>
 								<Col span={8}>

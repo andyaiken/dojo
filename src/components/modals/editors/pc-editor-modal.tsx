@@ -170,6 +170,13 @@ export class PCEditorModal extends React.Component<Props, State> {
 							downEnabled={this.state.pc.passivePerception > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
 						/>
+						<div className='subheading'>senses:</div>
+						<NumberSpin
+							value={this.state.pc.darkvision + ' ft'}
+							label='darkvision'
+							downEnabled={this.state.pc.darkvision > 0}
+							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'darkvision', delta * 10)}
+						/>
 					</Col>
 					<Col span={12} className='scrollable padded'>
 						<div className='subheading'>languages:</div>

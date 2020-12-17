@@ -385,7 +385,7 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 			const level = Math.round(activePCs.reduce((sum, current) => sum + current.level, 0) / activePCs.length);
 
 			const known = Shakespeare.getKnownLanguages(activePCs);
-			const knownLanguages = known.map(lang => {
+			const knownRows = known.map(lang => {
 				const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang.toLowerCase()));
 				const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name).join(', ');
 				const langName = Shakespeare.capitalise(lang);
@@ -399,14 +399,34 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 			const unknown = Shakespeare.getAllLanguages()
 				.map(lang => Shakespeare.capitalise(lang))
 				.filter(lang => !known.includes(lang));
-			let unknownLanguages = null;
+			let unknownRow = null;
 			if (unknown.length > 0) {
-				unknownLanguages = (
+				unknownRow = (
 					<div className='section'>
 						<b>unknown languages</b>: {unknown.join(', ')}
 					</div>
 				);
 			}
+
+			const dvRanges = activePCs
+				.map(pc => pc.darkvision)
+				.reduce((array: number[], value) => {
+					if (array.indexOf(value) === -1) {
+						array.push(value);
+					}
+					return array;
+				}, [])
+				.sort();
+			const dvRows = dvRanges.map(range => {
+				const rangePCs = activePCs.filter(pc => pc.darkvision === range);
+				const pcs = rangePCs.length === activePCs.length ? 'all pcs' : rangePCs.map(pc => pc.name).join(', ');
+				return (
+					<div key={range} className='table-row'>
+						<div className='table-cell l small'>{range > 0 ? range + ' ft' : 'none'}</div>
+						<div className='table-cell l'>{pcs}</div>
+					</div>
+				);
+			});
 
 			const insight: { min: number, max: number } = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
 			const invest: { min: number, max: number } = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
@@ -511,9 +531,20 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 							<div className='table-cell l'>language</div>
 							<div className='table-cell l'>spoken by</div>
 						</div>
-						{knownLanguages}
+						{knownRows}
 					</div>
-					{unknownLanguages}
+					{unknownRow}
+					<hr/>
+					<div className='section subheading'>
+						darkvision
+					</div>
+					<div className='table alternating'>
+						<div className='table-row table-row-header'>
+							<div className='table-cell l small'>range</div>
+							<div className='table-cell l'>pcs</div>
+						</div>
+						{dvRows}
+					</div>
 					<hr/>
 					<div className='section subheading'>
 						passive skills

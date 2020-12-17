@@ -19,6 +19,7 @@ export interface PC {
 	passiveInsight: number;
 	passiveInvestigation: number;
 	passivePerception: number;
+	darkvision: number;
 	portrait: string;
 	url: string;
 	companions: Companion[];

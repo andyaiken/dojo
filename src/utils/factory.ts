@@ -33,6 +33,7 @@ export class Factory {
 			passiveInsight: 10,
 			passiveInvestigation: 10,
 			passivePerception: 10,
+			darkvision: 0,
 			portrait: '',
 			url: '',
 			companions: [],
