@@ -26,16 +26,19 @@ export class SessionControlsSidebar extends React.Component<Props> {
 		if (CommsPlayer.getState() === 'connected') {
 			let allCombatants: Combatant[] = [];
 			let map: Map | null = null;
+			let lighting: 'bright light' | 'dim light' | 'darkness' = 'bright light';
 
 			if (Comms.data.shared.type === 'combat') {
 				const combat = Comms.data.shared.data as Combat;
 				allCombatants = combat.combatants;
 				map = combat.map;
+				lighting = combat.lighting;
 			}
 			if (Comms.data.shared.type === 'exploration') {
 				const exploration = Comms.data.shared.data as Exploration;
 				allCombatants = exploration.combatants;
 				map = exploration.map;
+				lighting = exploration.lighting;
 			}
 
 			const characterID = Comms.getCharacterID(Comms.getID());
@@ -53,6 +56,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 					combatants={[current]}
 					allCombatants={allCombatants}
 					map={map}
+					lighting={lighting}
 					showTabs={false}
 					// Main tab
 					toggleTag={(combatants, tag) => {

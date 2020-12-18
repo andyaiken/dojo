@@ -263,7 +263,7 @@ export class Main extends React.Component<Props, State> {
 					}
 
 					if (combat.lighting === undefined) {
-						combat.lighting = 'bright';
+						combat.lighting = 'bright light';
 					}
 				});
 			}
@@ -296,7 +296,7 @@ export class Main extends React.Component<Props, State> {
 					});
 
 					if (ex.lighting === undefined) {
-						ex.lighting = 'bright';
+						ex.lighting = 'bright light';
 					}
 				});
 			}
@@ -1484,7 +1484,7 @@ export class Main extends React.Component<Props, State> {
 		encounter: Encounter | null,
 		map: Map | null = null,
 		fog: { x: number, y: number }[] = [],
-		lighting: 'bright' | 'dim' | 'dark' = 'bright',
+		lighting: 'bright light' | 'dim light' | 'darkness' = 'bright light',
 		combatants: Combatant[] = []
 		) {
 		let party = this.state.parties.length === 1 ? this.state.parties[0] : null;

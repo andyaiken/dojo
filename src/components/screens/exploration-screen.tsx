@@ -419,7 +419,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 				areaSelected={id => this.setSelectedAreaID(id)}
-				changeLight={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
+				changeLighting={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
 			/>
 		);
 	}
@@ -520,6 +520,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				combatants={selectedCombatants}
 				allCombatants={this.props.exploration.combatants}
 				map={this.props.exploration.map}
+				lighting={this.props.exploration.lighting}
 				defaultTab='map'
 				// Main tab
 				makeCurrent={combatant => null}

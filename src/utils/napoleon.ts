@@ -468,4 +468,23 @@ export class Napoleon {
 			}
 		});
 	}
+
+	public static getVisionRadius(combatant: Combatant) {
+		let dv = 0;
+
+		if (combatant.type === 'pc') {
+			const pc = combatant as Combatant & PC;
+			dv = pc.darkvision;
+		}
+
+		if (combatant.type === 'monster') {
+			const monster = combatant as Combatant & Monster;
+			const exp = monster.senses.match(/dark\s?vision\s+(\d+)\s?ft/i);
+			if (exp) {
+				dv = parseInt(exp[1], 10);
+			}
+		}
+
+		return dv;
+	}
 }

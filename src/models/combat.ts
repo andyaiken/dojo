@@ -10,7 +10,7 @@ export interface CombatSetup {
 	waveID: string | null;
 	map: Map | null;
 	fog: { x: number, y: number }[];
-	lighting: 'bright' | 'dim' | 'dark';
+	lighting: 'bright light' | 'dim light' | 'darkness';
 	combatants: Combatant[];
 	slotInfo: CombatSlotInfo[];
 }
@@ -38,7 +38,7 @@ export interface Combat {
 	combatants: Combatant[];
 	map: Map | null;
 	fog: { x: number, y: number }[];
-	lighting: 'bright' | 'dim' | 'dark';
+	lighting: 'bright light' | 'dim light' | 'darkness';
 	round: number;
 	issues: string[];
 }

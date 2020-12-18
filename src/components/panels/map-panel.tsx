@@ -5,14 +5,17 @@ import Showdown from 'showdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
+import { Napoleon } from '../../utils/napoleon';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
+import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
+import { Selector } from '../controls/selector';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -27,18 +30,19 @@ interface Props {
 	showAreaNames: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
-	lighting: 'bright' | 'dim' | 'dark';
+	lighting: 'bright light' | 'dim light' | 'darkness';
 	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
 	areaSelected: (areaID: string | null) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
-	changeLight: (light: string) => void;
+	changeLighting: (light: string) => void;
 }
 
 interface State {
 	size: number;
+	lightOverlay: boolean;
 	selectionStartSquare: {
 		x: number,
 		y: number
@@ -71,7 +75,7 @@ export class MapPanel extends React.Component<Props, State> {
 		showAreaNames: false,
 		selectedItemIDs: [],
 		fog: [],
-		lighting: 'bright',
+		lighting: 'bright light',
 		focussedSquare: null,
 		itemSelected: null,
 		areaSelected: null,
@@ -79,7 +83,7 @@ export class MapPanel extends React.Component<Props, State> {
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
 		gridRectangleSelected: null,
-		changeLight: null
+		changeLighting: null
 	};
 
 	constructor(props: Props) {
@@ -87,9 +91,16 @@ export class MapPanel extends React.Component<Props, State> {
 
 		this.state = {
 			size: (props.mode === 'thumbnail') ? 15 : 45,
+			lightOverlay: (props.mode === 'combat-player'),
 			selectionStartSquare: null,
 			selectionEndSquare: null
 		};
+	}
+
+	private setLightOverlay(show: boolean) {
+		this.setState({
+			lightOverlay: show
+		});
 	}
 
 	private gridSquareMouseDown(x: number, y: number) {
@@ -299,12 +310,14 @@ export class MapPanel extends React.Component<Props, State> {
 					<Controls
 						mapSize={this.state.size}
 						setMapSize={size => this.setState({ size: size })}
-						showAreas={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
+						showAreasControl={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
 						areas={this.props.map.areas}
 						selectArea={id => this.props.areaSelected(id)}
-						showLight={this.props.mode === 'combat'}
-						light={this.props.lighting}
-						selectLight={light => this.props.changeLight(light)}
+						showLightControl={this.props.mode === 'combat'}
+						lighting={this.props.lighting}
+						selectLighting={light => this.props.changeLighting(light)}
+						lightOverlay={this.state.lightOverlay}
+						setLightOverlay={show => this.setLightOverlay(show)}
 					/>
 				);
 			}
@@ -370,7 +383,7 @@ export class MapPanel extends React.Component<Props, State> {
 						const fogStyle = this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions);
 						return (
 							<GridSquare
-								key={f.x + ',' + f.y}
+								key={'fog ' + f.x + ',' + f.y}
 								x={f.x}
 								y={f.y}
 								style={fogStyle}
@@ -378,6 +391,63 @@ export class MapPanel extends React.Component<Props, State> {
 							/>
 						);
 					});
+			}
+
+			// Draw lighting
+			const lighting: JSX.Element[] = [];
+			if (this.state.lightOverlay && (this.props.lighting !== 'bright light')) {
+				const actors: Combatant[] = [];
+				if (this.props.mode === 'combat') {
+					this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
+				}
+				if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+					this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+				}
+				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
+					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
+						let visible = false;
+						actors.forEach(a => {
+							// Can this actor see this square?
+							const dv = Napoleon.getVisionRadius(a);
+							if (dv > 0) {
+								const item = this.props.map.items.find(i => i.id === a.id);
+								if (item) {
+									const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
+									let dx = 0;
+									if ((item.x) > x) {
+										dx = item.x - x;
+									}
+									if ((item.x + miniSize - 1) < x) {
+										dx = x - (item.x + miniSize - 1);
+									}
+									let dy = 0;
+									if (item.y > y) {
+										dy = item.y - y;
+									}
+									if ((item.y + miniSize - 1) < y) {
+										dy = y - (item.y + miniSize - 1);
+									}
+									const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+									if (dv >= dist) {
+										visible = true;
+									}
+								}
+							}
+						});
+						if (!visible) {
+							const lightStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
+							lighting.push(
+								<GridSquare
+									key={'light ' + x + ',' + y}
+									x={x}
+									y={y}
+									style={lightStyle}
+									mode='fog'
+								/>
+							);
+						}
+					}
+				}
 			}
 
 			// Draw overlays
@@ -528,6 +598,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{tiles}
 						{areaNames}
 						{fog}
+						{lighting}
 						{overlays}
 						{auras}
 						{tokens}
@@ -546,15 +617,34 @@ export class MapPanel extends React.Component<Props, State> {
 interface ControlsProps {
 	mapSize: number;
 	setMapSize: (size: number) => void;
-	showAreas: boolean;
+	showAreasControl: boolean;
 	areas: MapArea[];
 	selectArea: (id: string | null) => void;
-	showLight: boolean;
-	light: 'bright' | 'dim' | 'dark';
-	selectLight: (light: string) => void;
+	showLightControl: boolean;
+	lighting: 'bright light' | 'dim light' | 'darkness';
+	selectLighting: (light: string) => void;
+	lightOverlay: boolean;
+	setLightOverlay: (show: boolean) => void;
 }
 
-class Controls extends React.Component<ControlsProps> {
+interface ControlsState {
+	mode: string;
+}
+
+class Controls extends React.Component<ControlsProps, ControlsState> {
+	constructor(props: ControlsProps) {
+		super(props);
+		this.state = {
+			mode: 'view'
+		};
+	}
+
+	private setMode(mode: string) {
+		this.setState({
+			mode: mode
+		});
+	}
+
 	private nudgeSize(delta: number) {
 		const value = Math.max(this.props.mapSize + delta, 3);
 		this.props.setMapSize(value);
@@ -564,40 +654,62 @@ class Controls extends React.Component<ControlsProps> {
 		try {
 			const controls = [];
 
-			controls.push(
-				<NumberSpin
-					key='zoom'
-					value='zoom'
-					downEnabled={this.props.mapSize > 3}
-					onNudgeValue={delta => this.nudgeSize(delta * 3)}
-				/>
-			);
-
-			if (this.props.showAreas) {
-				const areas = [{ id: '', text: 'whole map' }];
-				this.props.areas.forEach(a => {
-					areas.push({ id: a.id, text: a.name });
-				});
+			if (this.props.showLightControl) {
 				controls.push(
-					<Dropdown
-						key='areas'
-						options={areas}
-						placeholder='select a map area...'
-						onSelect={id => this.props.selectArea(id)}
+					<Selector
+						key='mode'
+						options={['view', 'light'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.mode}
+						onSelect={id => this.setMode(id)}
 					/>
 				);
 			}
 
-			if (this.props.showLight) {
-				controls.push(
-					<Dropdown
-						key='light'
-						options={['bright', 'dim', 'dark'].map(o => ({ id: o, text: o }))}
-						placeholder='light level...'
-						selectedID={this.props.light}
-						onSelect={id => this.props.selectLight(id)}
-					/>
-				);
+			switch (this.state.mode) {
+				case 'view':
+					controls.push(
+						<NumberSpin
+							key='zoom'
+							value='zoom'
+							downEnabled={this.props.mapSize > 3}
+							onNudgeValue={delta => this.nudgeSize(delta * 3)}
+						/>
+					);
+					if (this.props.showAreasControl) {
+						const areas = [{ id: '', text: 'whole map' }];
+						this.props.areas.forEach(a => {
+							areas.push({ id: a.id, text: a.name });
+						});
+						controls.push(
+							<Dropdown
+								key='areas'
+								options={areas}
+								placeholder='show map area...'
+								onSelect={id => this.props.selectArea(id)}
+							/>
+						);
+					}
+					break;
+				case 'light':
+					controls.push(
+						<Dropdown
+							key='light level'
+							options={['bright light', 'dim light', 'darkness'].map(o => ({ id: o, text: o }))}
+							placeholder='light level...'
+							selectedID={this.props.lighting}
+							onSelect={id => this.props.selectLighting(id)}
+						/>
+					);
+					controls.push(
+						<Checkbox
+							key='show lighting'
+							label='show lighting'
+							checked={this.props.lightOverlay}
+							disabled={this.props.lighting === 'bright light'}
+							onChecked={checked => this.props.setLightOverlay(checked)}
+						/>
+					);
+					break;
 			}
 
 			return (

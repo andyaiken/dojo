@@ -8,11 +8,13 @@
 		align-items: flex-start;
 
 		.number-spin,
-		.dropdown {
+		.checkbox,
+		.dropdown,
+		.selector {
 			margin: 5px;
 			flex-grow: 0;
 			flex-shrink: 0;
-			flex-basis: 160px;
+			flex-basis: 145px;
 		}
 	}
 

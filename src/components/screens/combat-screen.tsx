@@ -676,6 +676,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				combatants={selectedCombatants}
 				allCombatants={this.props.combat.combatants}
 				map={this.props.combat.map}
+				lighting={this.props.combat.lighting}
 				// Main tab
 				makeCurrent={combatant => this.props.makeCurrent(combatant)}
 				makeActive={combatants => this.props.makeActive(combatants)}
@@ -905,7 +906,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
-							changeLight={light => this.props.changeValue(this.props.combat, 'lighting', light)}
+							changeLighting={light => this.props.changeValue(this.props.combat, 'lighting', light)}
 						/>
 					</div>
 				);

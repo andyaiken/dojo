@@ -1,6 +1,7 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
+import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -24,6 +25,7 @@ interface Props {
 	combatants: Combatant[];
 	allCombatants: Combatant[];
 	map: Map | null;
+	lighting: 'bright light' | 'dim light' | 'darkness';
 	showTabs: boolean;
 	defaultTab: string;
 	// Main tab
@@ -178,8 +180,9 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 	}
 
 	private getMainSection() {
-		const actions = [];
+		const actions: JSX.Element[] = [];
 		const engaged: JSX.Element[] = [];
+		const notes: JSX.Element[] = [];
 
 		if (this.props.combatants.every(c => c.active)) {
 			if (this.props.makeCurrent && this.props.makeDefeated) {
@@ -210,6 +213,20 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 						</Tag.CheckableTag>
 					);
 				});
+			}
+		}
+
+		if (this.props.combatants.length === 1) {
+			if (this.props.lighting !== 'bright light') {
+				const c = this.props.combatants[0];
+				const dv = Napoleon.getVisionRadius(c);
+				if (dv === 0) {
+					notes.push(
+						<Note key='light'>
+							<p>{c.displayName} is in {this.props.lighting}, and has no darkvision</p>
+						</Note>
+					);
+				}
 			}
 		}
 
@@ -283,6 +300,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					</Tag.CheckableTag>
 				</div>
 				{engagedSection}
+				{notes}
 			</div>
 		);
 	}
@@ -624,7 +642,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		if (this.props.combatants.length === 1) {
 			const combatant = this.props.combatants[0];
 			changeName = (
-				<Expander text='change name'>
+				<Expander text='name'>
 					<Textbox
 						text={combatant.displayName}
 						onChange={value => this.props.changeValue(combatant, 'displayName', value)}
@@ -633,7 +651,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			);
 
 			changeSize = (
-				<Expander text='change size'>
+				<Expander text='size'>
 					<NumberSpin
 						value={combatant.displaySize}
 						label='size'
@@ -646,7 +664,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			if (!combatant.pending) {
 				changeInit = (
-					<Expander text='change initiative score'>
+					<Expander text='initiative score'>
 						<NumberSpin
 							value={combatant.initiative ?? 0}
 							label='initiative'
@@ -657,7 +675,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			}
 
 			changeFaction = (
-				<Expander text='change faction'>
+				<Expander text='faction'>
 					<Selector
 						options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
 						selectedID={combatant.faction}
@@ -669,7 +687,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			if (combatant.type === 'pc') {
 				const pc = combatant as Combatant & PC;
 				changeDarkvision = (
-					<Expander text='change darkvision'>
+					<Expander text='vision'>
 						<NumberSpin
 							value={pc.darkvision + ' ft'}
 							label='darkvision'

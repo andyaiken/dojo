@@ -47,7 +47,7 @@ export interface Exploration {
 	map: Map;
 	partyID: string;
 	fog: { x: number, y: number }[];
-	lighting: 'bright' | 'dim' | 'dark';
+	lighting: 'bright light' | 'dim light' | 'darkness';
 	combatants: Combatant[];
 }
 
