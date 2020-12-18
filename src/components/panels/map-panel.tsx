@@ -12,7 +12,6 @@ import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
@@ -42,7 +41,6 @@ interface Props {
 
 interface State {
 	size: number;
-	lightOverlay: boolean;
 	selectionStartSquare: {
 		x: number,
 		y: number
@@ -91,16 +89,9 @@ export class MapPanel extends React.Component<Props, State> {
 
 		this.state = {
 			size: (props.mode === 'thumbnail') ? 15 : 45,
-			lightOverlay: (props.mode === 'combat-player'),
 			selectionStartSquare: null,
 			selectionEndSquare: null
 		};
-	}
-
-	private setLightOverlay(show: boolean) {
-		this.setState({
-			lightOverlay: show
-		});
 	}
 
 	private gridSquareMouseDown(x: number, y: number) {
@@ -295,8 +286,8 @@ export class MapPanel extends React.Component<Props, State> {
 		return {
 			left: 'calc(' + this.state.size + 'px * ' + (x + offsetX - dim.minX) + ')',
 			top: 'calc(' + this.state.size + 'px * ' + (y + offsetY - dim.minY) + ')',
-			width: 'calc((' + this.state.size + 'px * ' + width + ') + 1px)',
-			height: 'calc((' + this.state.size + 'px * ' + height + ') + 1px)',
+			width: 'calc(' + this.state.size + 'px * ' + width + ')',
+			height: 'calc(' + this.state.size + 'px * ' + height + ')',
 			borderRadius: radius,
 			backgroundSize: this.state.size + 'px'
 		};
@@ -316,8 +307,6 @@ export class MapPanel extends React.Component<Props, State> {
 						showLightControl={this.props.mode === 'combat'}
 						lighting={this.props.lighting}
 						selectLighting={light => this.props.changeLighting(light)}
-						lightOverlay={this.state.lightOverlay}
-						setLightOverlay={show => this.setLightOverlay(show)}
 					/>
 				);
 			}
@@ -373,81 +362,6 @@ export class MapPanel extends React.Component<Props, State> {
 						</div>
 					);
 				});
-			}
-
-			// Draw fog of war
-			let fog: JSX.Element[] = [];
-			if (this.props.mode !== 'edit') {
-				fog = this.props.fog
-					.map(f => {
-						const fogStyle = this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions);
-						return (
-							<GridSquare
-								key={'fog ' + f.x + ',' + f.y}
-								x={f.x}
-								y={f.y}
-								style={fogStyle}
-								mode='fog'
-							/>
-						);
-					});
-			}
-
-			// Draw lighting
-			const lighting: JSX.Element[] = [];
-			if (this.state.lightOverlay && (this.props.lighting !== 'bright light')) {
-				const actors: Combatant[] = [];
-				if (this.props.mode === 'combat') {
-					this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
-				}
-				if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
-					this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-				}
-				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
-					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
-						let visible = false;
-						actors.forEach(a => {
-							// Can this actor see this square?
-							const dv = Napoleon.getVisionRadius(a);
-							if (dv > 0) {
-								const item = this.props.map.items.find(i => i.id === a.id);
-								if (item) {
-									const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
-									let dx = 0;
-									if ((item.x) > x) {
-										dx = item.x - x;
-									}
-									if ((item.x + miniSize - 1) < x) {
-										dx = x - (item.x + miniSize - 1);
-									}
-									let dy = 0;
-									if (item.y > y) {
-										dy = item.y - y;
-									}
-									if ((item.y + miniSize - 1) < y) {
-										dy = y - (item.y + miniSize - 1);
-									}
-									const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
-									if (dv >= dist) {
-										visible = true;
-									}
-								}
-							}
-						});
-						if (!visible) {
-							const lightStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
-							lighting.push(
-								<GridSquare
-									key={'light ' + x + ',' + y}
-									x={x}
-									y={y}
-									style={lightStyle}
-									mode='fog'
-								/>
-							);
-						}
-					}
-				}
 			}
 
 			// Draw overlays
@@ -546,6 +460,82 @@ export class MapPanel extends React.Component<Props, State> {
 					});
 			}
 
+			// Draw fog of war
+			let fog: JSX.Element[] = [];
+			if (this.props.mode !== 'edit') {
+				fog = this.props.fog
+					.map(f => {
+						const fogStyle = this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions);
+						return (
+							<GridSquare
+								key={'fog ' + f.x + ',' + f.y}
+								x={f.x}
+								y={f.y}
+								style={fogStyle}
+								mode='fog'
+							/>
+						);
+					});
+			}
+
+			// Draw lighting
+			const lighting: JSX.Element[] = [];
+			if (this.props.lighting !== 'bright light') {
+				const actors: Combatant[] = [];
+				if (this.props.mode === 'combat') {
+					this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
+					this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+				}
+				if (this.props.mode === 'combat-player') {
+					this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+				}
+				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
+					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
+						let visible = false;
+						actors.forEach(a => {
+							// Can this actor see this square?
+							const dv = Napoleon.getVisionRadius(a);
+							if (dv > 0) {
+								const item = this.props.map.items.find(i => i.id === a.id);
+								if (item) {
+									const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
+									let dx = 0;
+									if ((item.x) > x) {
+										dx = item.x - x;
+									}
+									if ((item.x + miniSize - 1) < x) {
+										dx = x - (item.x + miniSize - 1);
+									}
+									let dy = 0;
+									if (item.y > y) {
+										dy = item.y - y;
+									}
+									if ((item.y + miniSize - 1) < y) {
+										dy = y - (item.y + miniSize - 1);
+									}
+									const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+									if (dv >= dist) {
+										visible = true;
+									}
+								}
+							}
+						});
+						if (!visible) {
+							const lightStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
+							lighting.push(
+								<GridSquare
+									key={'light ' + x + ',' + y}
+									x={x}
+									y={y}
+									style={lightStyle}
+									mode={'light ' + this.props.lighting.replaceAll(' ', '-')}
+								/>
+							);
+						}
+					}
+				}
+			}
+
 			// Draw the grid
 			const grid = [];
 			if (this.props.showGrid) {
@@ -558,7 +548,6 @@ export class MapPanel extends React.Component<Props, State> {
 								x={xGrid}
 								y={yGrid}
 								style={overlayStyle}
-								mode={'cell'}
 								selected={this.isSelected(xGrid, yGrid)}
 								onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
 								onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
@@ -597,11 +586,11 @@ export class MapPanel extends React.Component<Props, State> {
 						{areas}
 						{tiles}
 						{areaNames}
-						{fog}
-						{lighting}
 						{overlays}
 						{auras}
 						{tokens}
+						{fog}
+						{lighting}
 						{grid}
 						{focus}
 					</div>
@@ -623,8 +612,6 @@ interface ControlsProps {
 	showLightControl: boolean;
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	selectLighting: (light: string) => void;
-	lightOverlay: boolean;
-	setLightOverlay: (show: boolean) => void;
 }
 
 interface ControlsState {
@@ -700,15 +687,6 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 							onSelect={id => this.props.selectLighting(id)}
 						/>
 					);
-					controls.push(
-						<Checkbox
-							key='show lighting'
-							label='show lighting'
-							checked={this.props.lightOverlay}
-							disabled={this.props.lighting === 'bright light'}
-							onChecked={checked => this.props.setLightOverlay(checked)}
-						/>
-					);
 					break;
 			}
 
@@ -753,7 +731,7 @@ interface GridSquareProps {
 	x: number;
 	y: number;
 	style: MapItemStyle;
-	mode: 'cell' | 'fog';
+	mode: string;
 	selected: boolean;
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
@@ -763,6 +741,7 @@ interface GridSquareProps {
 
 class GridSquare extends React.Component<GridSquareProps> {
 	public static defaultProps = {
+		mode: 'cell',
 		selected: false,
 		onMouseDown: null,
 		onMouseUp: null,

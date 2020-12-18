@@ -43,6 +43,20 @@
 				box-shadow: 0 0 10px 2px black;
 				pointer-events: none;
 			}
+
+			&.light {
+				pointer-events: none;
+
+				&.dim-light {
+					background-color: rgba(0, 0, 0, 0.5);
+					box-shadow: 0 0 10px 2px  rgba(0, 0, 0, 0.5);
+				}
+
+				&.darkness {
+					background-color: black;
+					box-shadow: 0 0 10px 2px black;
+				}
+			}
 		}
 
 		.grid-focus {
@@ -54,14 +68,12 @@
 	}
 
 	&.thumbnail {
-
 		.grid {
 			height: 100%;
 		}
 	}
 
 	&.edit {
-
 		.tile:hover {
 			border-color: $highlight;
 		}
@@ -69,7 +81,6 @@
 
 	&.combat,
 	&.combat-player {
-
 		.overlay:hover,
 		.token:hover {
 			border-color: $highlight;
@@ -77,8 +88,9 @@
 	}
 
 	&.combat {
-
-		.fog {
+		.fog,
+		.light.dim-light,
+		.light.darkness {
 			opacity: 0.5;
 			box-shadow: none !important;
 		}

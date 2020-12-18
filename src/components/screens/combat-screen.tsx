@@ -391,6 +391,7 @@ export class CombatScreen extends React.Component<Props, State> {
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
 								fog={this.props.combat.fog}
+								lighting={this.props.combat.lighting}
 								focussedSquare={this.state.highlightedSquare}
 								itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							/>
