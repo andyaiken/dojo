@@ -618,6 +618,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		let changeSize = null;
 		let changeInit = null;
 		let changeFaction = null;
+		let changeDarkvision = null;
 		let mountedCombat = null;
 		let notes = null;
 		if (this.props.combatants.length === 1) {
@@ -664,6 +665,20 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					/>
 				</Expander>
 			);
+
+			if (combatant.type === 'pc') {
+				const pc = combatant as Combatant & PC;
+				changeDarkvision = (
+					<Expander text='change darkvision'>
+						<NumberSpin
+							value={pc.darkvision + ' ft'}
+							label='darkvision'
+							downEnabled={pc.darkvision > 0}
+							onNudgeValue={delta => this.props.nudgeValue(pc, 'darkvision', delta * 10)}
+						/>
+					</Expander>
+				);
+			}
 
 			const rider = this.props.allCombatants.find(c => c.mountID === combatant.id);
 			if (!rider) {
@@ -752,6 +767,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				{changeSize}
 				{changeInit}
 				{changeFaction}
+				{changeDarkvision}
 				{mountedCombat}
 				{companions}
 				{notes}

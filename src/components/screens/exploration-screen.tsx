@@ -412,12 +412,14 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedItemIDs}
 				fog={this.props.exploration.fog}
+				lighting={this.props.exploration.lighting}
 				focussedSquare={this.state.highlightedSquare}
 				gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y, playerView)}
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 				areaSelected={id => this.setSelectedAreaID(id)}
+				changeLight={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
 			/>
 		);
 	}

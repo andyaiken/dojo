@@ -217,6 +217,12 @@ export class Main extends React.Component<Props, State> {
 						if (c.mountType === undefined) {
 							c.mountType = 'controlled';
 						}
+						if (c.type === 'pc') {
+							const pc = c as Combatant & PC;
+							if (pc.darkvision === undefined) {
+								pc.darkvision = 0;
+							}
+						}
 					});
 
 					if (combat.encounter) {
@@ -255,6 +261,10 @@ export class Main extends React.Component<Props, State> {
 					if (combat.fog === undefined) {
 						combat.fog = [];
 					}
+
+					if (combat.lighting === undefined) {
+						combat.lighting = 'bright';
+					}
 				});
 			}
 		} catch (ex) {
@@ -275,6 +285,18 @@ export class Main extends React.Component<Props, State> {
 					});
 					if (ex.map.areas === undefined) {
 						ex.map.areas = [];
+					}
+					ex.combatants.forEach(c => {
+						if (c.type === 'pc') {
+							const pc = c as Combatant & PC;
+							if (pc.darkvision === undefined) {
+								pc.darkvision = 0;
+							}
+						}
+					});
+
+					if (ex.lighting === undefined) {
+						ex.lighting = 'bright';
 					}
 				});
 			}
@@ -1462,6 +1484,7 @@ export class Main extends React.Component<Props, State> {
 		encounter: Encounter | null,
 		map: Map | null = null,
 		fog: { x: number, y: number }[] = [],
+		lighting: 'bright' | 'dim' | 'dark' = 'bright',
 		combatants: Combatant[] = []
 		) {
 		let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
@@ -1486,6 +1509,7 @@ export class Main extends React.Component<Props, State> {
 			setup.map = map;
 		}
 		setup.fog = fog;
+		setup.lighting = lighting;
 		setup.combatants = combatants;
 
 		this.setState({
@@ -1538,6 +1562,7 @@ export class Main extends React.Component<Props, State> {
 			if (combatSetup.map) {
 				combat.map = JSON.parse(JSON.stringify(combatSetup.map));
 				combat.fog = combatSetup.fog;
+				combat.lighting = combatSetup.lighting;
 			}
 
 			this.setState({
@@ -1762,6 +1787,7 @@ export class Main extends React.Component<Props, State> {
 					}
 					exploration.map = combat.map;
 					exploration.fog = combat.fog;
+					exploration.lighting = combat.lighting;
 					exploration.combatants = combatants;
 
 					// Clear the map of any monsters
@@ -2844,7 +2870,7 @@ export class Main extends React.Component<Props, State> {
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
 							library={this.state.library}
 							options={this.state.options}
-							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.fog, ex.combatants)}
+							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.fog, ex.lighting, ex.combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}

@@ -27,12 +27,14 @@ interface Props {
 	showAreaNames: boolean;
 	selectedItemIDs: string[];
 	fog: { x: number, y: number }[];
+	lighting: 'bright' | 'dim' | 'dark';
 	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
 	areaSelected: (areaID: string | null) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
+	changeLight: (light: string) => void;
 }
 
 interface State {
@@ -69,13 +71,15 @@ export class MapPanel extends React.Component<Props, State> {
 		showAreaNames: false,
 		selectedItemIDs: [],
 		fog: [],
+		lighting: 'bright',
 		focussedSquare: null,
 		itemSelected: null,
 		areaSelected: null,
 		gridSquareEntered: null,
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
-		gridRectangleSelected: null
+		gridRectangleSelected: null,
+		changeLight: null
 	};
 
 	constructor(props: Props) {
@@ -298,6 +302,9 @@ export class MapPanel extends React.Component<Props, State> {
 						showAreas={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
 						areas={this.props.map.areas}
 						selectArea={id => this.props.areaSelected(id)}
+						showLight={this.props.mode === 'combat'}
+						light={this.props.lighting}
+						selectLight={light => this.props.changeLight(light)}
 					/>
 				);
 			}
@@ -542,6 +549,9 @@ interface ControlsProps {
 	showAreas: boolean;
 	areas: MapArea[];
 	selectArea: (id: string | null) => void;
+	showLight: boolean;
+	light: 'bright' | 'dim' | 'dark';
+	selectLight: (light: string) => void;
 }
 
 class Controls extends React.Component<ControlsProps> {
@@ -574,6 +584,18 @@ class Controls extends React.Component<ControlsProps> {
 						options={areas}
 						placeholder='select a map area...'
 						onSelect={id => this.props.selectArea(id)}
+					/>
+				);
+			}
+
+			if (this.props.showLight) {
+				controls.push(
+					<Dropdown
+						key='light'
+						options={['bright', 'dim', 'dark'].map(o => ({ id: o, text: o }))}
+						placeholder='light level...'
+						selectedID={this.props.light}
+						onSelect={id => this.props.selectLight(id)}
 					/>
 				);
 			}

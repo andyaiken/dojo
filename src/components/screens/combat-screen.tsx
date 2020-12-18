@@ -898,12 +898,14 @@ export class CombatScreen extends React.Component<Props, State> {
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}
 							fog={this.props.combat.fog}
+							lighting={this.props.combat.lighting}
 							focussedSquare={this.state.highlightedSquare}
 							itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
 							areaSelected={id => this.setSelectedAreaID(id)}
 							gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
+							changeLight={light => this.props.changeValue(this.props.combat, 'lighting', light)}
 						/>
 					</div>
 				);

@@ -203,6 +203,7 @@ export class Factory {
 			map: this.createMap(),
 			partyID: '',
 			fog: [],
+			lighting: 'bright',
 			combatants: []
 		};
 	}
@@ -214,6 +215,7 @@ export class Factory {
 			waveID: null,
 			map: null,
 			fog: [],
+			lighting: 'bright',
 			combatants: [],
 			slotInfo: []
 		};
@@ -247,6 +249,7 @@ export class Factory {
 			combatants: [],
 			map: null,
 			fog: [],
+			lighting: 'bright',
 			round: 1,
 			issues: []
 		};
