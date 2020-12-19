@@ -70,6 +70,7 @@ export interface Combatant {
 	mountID: string | null;
 	mountType: 'controlled' | 'independent';
 	darkvision: number;
+	lightSource: { bright: number, dim: number } | null;
 }
 
 export interface Notification {

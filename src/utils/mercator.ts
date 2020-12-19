@@ -93,6 +93,24 @@ export class Mercator {
 		}
 	}
 
+	public static calculateDistance(item: MapItem, x: number, y: number) {
+		let dx = 0;
+		if ((item.x) > x) {
+			dx = item.x - x;
+		}
+		if ((item.x + item.width - 1) < x) {
+			dx = x - (item.x + item.width - 1);
+		}
+		let dy = 0;
+		if (item.y > y) {
+			dy = item.y - y;
+		}
+		if ((item.y + item.height - 1) < y) {
+			dy = y - (item.y + item.height - 1);
+		}
+		return Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+	}
+
 	public static canAddTileHere(map: Map, x: number, y: number, width: number, height: number, minGapX: number, minGapY: number) {
 		const coveredSquares: boolean[] = [];
 

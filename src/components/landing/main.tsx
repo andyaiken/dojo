@@ -217,11 +217,11 @@ export class Main extends React.Component<Props, State> {
 						if (c.mountType === undefined) {
 							c.mountType = 'controlled';
 						}
-						if (c.type === 'pc') {
-							const pc = c as Combatant & PC;
-							if (pc.darkvision === undefined) {
-								pc.darkvision = 0;
-							}
+						if (c.darkvision === undefined) {
+							c.darkvision = 0;
+						}
+						if (c.lightSource === undefined) {
+							c.lightSource = null;
 						}
 					});
 
@@ -287,11 +287,11 @@ export class Main extends React.Component<Props, State> {
 						ex.map.areas = [];
 					}
 					ex.combatants.forEach(c => {
-						if (c.type === 'pc') {
-							const pc = c as Combatant & PC;
-							if (pc.darkvision === undefined) {
-								pc.darkvision = 0;
-							}
+						if (c.darkvision === undefined) {
+							c.darkvision = 0;
+						}
+						if (c.lightSource === undefined) {
+							c.lightSource = null;
 						}
 					});
 

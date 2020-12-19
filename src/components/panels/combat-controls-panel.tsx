@@ -635,6 +635,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		let changeInit = null;
 		let changeFaction = null;
 		let changeDarkvision = null;
+		let changeLight = null;
 		let mountedCombat = null;
 		let notes = null;
 		if (this.props.combatants.length === 1) {
@@ -689,6 +690,43 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 						label='darkvision'
 						downEnabled={combatant.darkvision > 0}
 						onNudgeValue={delta => this.props.nudgeValue(combatant, 'darkvision', delta * 10)}
+					/>
+				</Expander>
+			);
+
+			let source = 'none';
+			if (combatant.lightSource) {
+				if ((combatant.lightSource.bright === 5) && (combatant.lightSource.dim === 10)) {
+					source = 'candle';
+				}
+				if ((combatant.lightSource.bright === 20) && (combatant.lightSource.dim === 40)) {
+					source = 'torch';
+				}
+				if ((combatant.lightSource.bright === 30) && (combatant.lightSource.dim === 60)) {
+					source = 'lantern';
+				}
+			}
+			changeLight = (
+				<Expander text='light source'>
+					<Selector
+						options={['none', 'candle', 'torch', 'lantern'].map(o => ({ id: o, text: o }))}
+						selectedID={source}
+						onSelect={id => {
+							switch (id) {
+								case 'none':
+									this.props.changeValue(combatant, 'lightSource', null);
+									break;
+								case 'candle':
+									this.props.changeValue(combatant, 'lightSource', { bright: 5, dim: 10 });
+									break;
+								case 'torch':
+									this.props.changeValue(combatant, 'lightSource', { bright: 20, dim: 40 });
+									break;
+								case 'lantern':
+									this.props.changeValue(combatant, 'lightSource', { bright: 30, dim: 60 });
+									break;
+							}
+						}}
 					/>
 				</Expander>
 			);
@@ -781,6 +819,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				{changeInit}
 				{changeFaction}
 				{changeDarkvision}
+				{changeLight}
 				{mountedCombat}
 				{companions}
 				{notes}

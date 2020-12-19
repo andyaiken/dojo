@@ -5,6 +5,7 @@ import Showdown from 'showdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
+import { Mercator } from '../../utils/mercator';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
@@ -488,27 +489,26 @@ export class MapPanel extends React.Component<Props, State> {
 				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
 					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
 						let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
-						actors.filter(a => a.darkvision > 0).forEach(a => {
-							// Can this actor see this square?
-							const item = this.props.map.items.find(i => i.id === a.id);
+						this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
+							const item = this.props.map.items.find(i => i.id === combatant.id);
 							if (item) {
-								const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
-								let dx = 0;
-								if ((item.x) > x) {
-									dx = item.x - x;
+								const dist = Mercator.calculateDistance(item, x, y);
+								if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
+									if (level === 'darkness') {
+										level = 'dim light';
+									}
 								}
-								if ((item.x + miniSize - 1) < x) {
-									dx = x - (item.x + miniSize - 1);
+								if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
+									level = 'bright light';
 								}
-								let dy = 0;
-								if (item.y > y) {
-									dy = item.y - y;
-								}
-								if ((item.y + miniSize - 1) < y) {
-									dy = y - (item.y + miniSize - 1);
-								}
-								const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
-								if (a.darkvision >= dist) {
+							}
+						});
+						actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
+							// Can this actor see this square?
+							const item = this.props.map.items.find(i => i.id === combatant.id);
+							if (item) {
+								const dist = Mercator.calculateDistance(item, x, y);
+								if (combatant.darkvision >= dist) {
 									if (level === 'dim light') {
 										level = 'bright light';
 									} else if (level === 'darkness') {

@@ -266,6 +266,7 @@ export class Napoleon {
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = pc.darkvision;
+		combatant.lightSource = null;
 
 		return combatant;
 	}
@@ -296,6 +297,7 @@ export class Napoleon {
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = Frankenstein.getVisionRadius(monster);
+		combatant.lightSource = null;
 
 		return combatant;
 	}
@@ -327,6 +329,7 @@ export class Napoleon {
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = 0;
+		combatant.lightSource = null;
 
 		return combatant;
 	}
@@ -356,7 +359,8 @@ export class Napoleon {
 			aura: { radius: 0, style: 'rounded', color: '#005080' },
 			mountID: null,
 			mountType: 'controlled',
-			darkvision: 0
+			darkvision: 0,
+			lightSource: null
 		};
 	}
 
