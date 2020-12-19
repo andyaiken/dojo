@@ -1,7 +1,6 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
-import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -219,8 +218,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		if (this.props.combatants.length === 1) {
 			if (this.props.lighting !== 'bright light') {
 				const c = this.props.combatants[0];
-				const dv = Napoleon.getVisionRadius(c);
-				if (dv === 0) {
+				if (c.darkvision === 0) {
 					notes.push(
 						<Note key='light'>
 							<p>{c.displayName} is in {this.props.lighting}, and has no darkvision</p>
@@ -256,6 +254,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 		return (
 			<div>
+				{notes}
 				{actionSection}
 				<div className='section'>
 					<b>quick tags: </b>
@@ -300,7 +299,6 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					</Tag.CheckableTag>
 				</div>
 				{engagedSection}
-				{notes}
 			</div>
 		);
 	}
@@ -684,19 +682,16 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				</Expander>
 			);
 
-			if (combatant.type === 'pc') {
-				const pc = combatant as Combatant & PC;
-				changeDarkvision = (
-					<Expander text='vision'>
-						<NumberSpin
-							value={pc.darkvision + ' ft'}
-							label='darkvision'
-							downEnabled={pc.darkvision > 0}
-							onNudgeValue={delta => this.props.nudgeValue(pc, 'darkvision', delta * 10)}
-						/>
-					</Expander>
-				);
-			}
+			changeDarkvision = (
+				<Expander text='vision'>
+					<NumberSpin
+						value={combatant.darkvision + ' ft'}
+						label='darkvision'
+						downEnabled={combatant.darkvision > 0}
+						onNudgeValue={delta => this.props.nudgeValue(combatant, 'darkvision', delta * 10)}
+					/>
+				</Expander>
+			);
 
 			const rider = this.props.allCombatants.find(c => c.mountID === combatant.id);
 			if (!rider) {

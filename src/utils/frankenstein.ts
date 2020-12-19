@@ -29,6 +29,17 @@ export class Frankenstein {
 		return monster.hitDice + 'd' + die + conModStr;
 	}
 
+	public static getVisionRadius(monster: Monster) {
+		let dv = 0;
+
+		const exp = monster.senses.match(/dark\s?vision\s+(\d+)\s?ft/i);
+		if (exp) {
+			dv = parseInt(exp[1], 10);
+		}
+
+		return dv;
+	}
+
 	public static nudgeValue(target: Monster, field: string, delta: number) {
 		let source: any = target;
 		let value: any = null;

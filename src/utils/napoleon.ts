@@ -1,6 +1,7 @@
 // This utility file deals with encounters and combat
 
 import { Factory } from './factory';
+import { Frankenstein } from './frankenstein';
 import { Gygax } from './gygax';
 import { Sherlock } from './sherlock';
 import { Utils } from './utils';
@@ -264,6 +265,7 @@ export class Napoleon {
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
+		combatant.darkvision = pc.darkvision;
 
 		return combatant;
 	}
@@ -293,6 +295,7 @@ export class Napoleon {
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
+		combatant.darkvision = Frankenstein.getVisionRadius(monster);
 
 		return combatant;
 	}
@@ -323,6 +326,7 @@ export class Napoleon {
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
+		combatant.darkvision = 0;
 
 		return combatant;
 	}
@@ -351,8 +355,26 @@ export class Napoleon {
 			altitude: 0,
 			aura: { radius: 0, style: 'rounded', color: '#005080' },
 			mountID: null,
-			mountType: 'controlled'
+			mountType: 'controlled',
+			darkvision: 0
 		};
+	}
+
+	public static updateCombatant(combatant: Combatant & PC, pc: PC) {
+		combatant.player = pc.player;
+		combatant.name = pc.name;
+		combatant.displayName = pc.name;
+		combatant.size = pc.size;
+		combatant.race = pc.race;
+		combatant.classes = pc.classes;
+		combatant.level = pc.level;
+		combatant.languages = pc.languages;
+		combatant.passiveInsight = pc.passiveInsight;
+		combatant.passiveInvestigation = pc.passiveInvestigation;
+		combatant.passivePerception = pc.passivePerception;
+		combatant.darkvision = pc.darkvision;
+		combatant.portrait = pc.portrait;
+		combatant.url = pc.url;
 	}
 
 	public static encounterTemplates() {
@@ -467,24 +489,5 @@ export class Napoleon {
 				}
 			}
 		});
-	}
-
-	public static getVisionRadius(combatant: Combatant) {
-		let dv = 0;
-
-		if (combatant.type === 'pc') {
-			const pc = combatant as Combatant & PC;
-			dv = pc.darkvision;
-		}
-
-		if (combatant.type === 'monster') {
-			const monster = combatant as Combatant & Monster;
-			const exp = monster.senses.match(/dark\s?vision\s+(\d+)\s?ft/i);
-			if (exp) {
-				dv = parseInt(exp[1], 10);
-			}
-		}
-
-		return dv;
 	}
 }

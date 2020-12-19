@@ -8,7 +8,7 @@ import { Matisse } from './matisse';
 import { Napoleon } from './napoleon';
 import { Utils } from './utils';
 
-import { Combat } from '../models/combat';
+import { Combat, Combatant } from '../models/combat';
 import { DieRollResult } from '../models/dice';
 import { Exploration } from '../models/map';
 import { CardDraw, Handout, SavedImage } from '../models/misc';
@@ -273,12 +273,24 @@ export class Comms {
 				break;
 			case 'character-info':
 				if (Comms.data.party) {
-					const pc = packet.payload['pc'];
+					const pc = packet.payload['pc'] as PC;
 					const original = Comms.data.party.pcs.find(p => p.id === pc.id);
 					if (original) {
 						const index = Comms.data.party.pcs.indexOf(original);
 						if (index !== -1) {
 							Comms.data.party.pcs[index] = pc;
+							let combatant = null;
+							if (Comms.data.shared.type === 'combat') {
+								const combat = Comms.data.shared.data as Combat;
+								combatant = combat.combatants.find(c => c.id === pc.id);
+							}
+							if (Comms.data.shared.type === 'exploration') {
+								const exploration = Comms.data.shared.data as Exploration;
+								combatant = exploration.combatants.find(c => c.id === pc.id);
+							}
+							if (combatant) {
+								Napoleon.updateCombatant(combatant as Combatant & PC, pc);
+							}
 						}
 					} else {
 						Comms.data.party.pcs.push(pc);
@@ -704,9 +716,12 @@ export class CommsDM {
 		}
 
 		// If it's a player shared content update, we've incorporated it into our shared content, so just send an update
+		// If it's a character update, same
 		// Otherwise, broadcast it
 		if (packet.type === 'player-shared-update') {
-		this.sendSharedDiffUpdate();
+			this.sendSharedDiffUpdate();
+		} else if (packet.type === 'character-info') {
+			this.sendSharedDiffUpdate();
 		} else {
 			this.broadcast(packet);
 		}

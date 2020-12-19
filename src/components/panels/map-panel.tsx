@@ -5,7 +5,6 @@ import Showdown from 'showdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
-import { Napoleon } from '../../utils/napoleon';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
@@ -464,18 +463,15 @@ export class MapPanel extends React.Component<Props, State> {
 			let fog: JSX.Element[] = [];
 			if (this.props.mode !== 'edit') {
 				fog = this.props.fog
-					.map(f => {
-						const fogStyle = this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions);
-						return (
-							<GridSquare
-								key={'fog ' + f.x + ',' + f.y}
-								x={f.x}
-								y={f.y}
-								style={fogStyle}
-								mode='fog'
-							/>
-						);
-					});
+					.map(f => (
+						<GridSquare
+							key={'fog ' + f.x + ',' + f.y}
+							x={f.x}
+							y={f.y}
+							style={this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions)}
+							mode='fog'
+						/>
+					));
 			}
 
 			// Draw lighting
@@ -491,44 +487,44 @@ export class MapPanel extends React.Component<Props, State> {
 				}
 				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
 					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
-						let visible = false;
-						actors.forEach(a => {
+						let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
+						actors.filter(a => a.darkvision > 0).forEach(a => {
 							// Can this actor see this square?
-							const dv = Napoleon.getVisionRadius(a);
-							if (dv > 0) {
-								const item = this.props.map.items.find(i => i.id === a.id);
-								if (item) {
-									const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
-									let dx = 0;
-									if ((item.x) > x) {
-										dx = item.x - x;
-									}
-									if ((item.x + miniSize - 1) < x) {
-										dx = x - (item.x + miniSize - 1);
-									}
-									let dy = 0;
-									if (item.y > y) {
-										dy = item.y - y;
-									}
-									if ((item.y + miniSize - 1) < y) {
-										dy = y - (item.y + miniSize - 1);
-									}
-									const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
-									if (dv >= dist) {
-										visible = true;
+							const item = this.props.map.items.find(i => i.id === a.id);
+							if (item) {
+								const miniSize = Math.max(Gygax.miniSize(a.displaySize), 1);
+								let dx = 0;
+								if ((item.x) > x) {
+									dx = item.x - x;
+								}
+								if ((item.x + miniSize - 1) < x) {
+									dx = x - (item.x + miniSize - 1);
+								}
+								let dy = 0;
+								if (item.y > y) {
+									dy = item.y - y;
+								}
+								if ((item.y + miniSize - 1) < y) {
+									dy = y - (item.y + miniSize - 1);
+								}
+								const dist = Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+								if (a.darkvision >= dist) {
+									if (level === 'dim light') {
+										level = 'bright light';
+									} else if (level === 'darkness') {
+										level = 'dim light';
 									}
 								}
 							}
 						});
-						if (!visible) {
-							const lightStyle = this.getStyle(x, y, 1, 1, 'square', mapDimensions);
+						if (level !== 'bright light') {
 							lighting.push(
 								<GridSquare
 									key={'light ' + x + ',' + y}
 									x={x}
 									y={y}
-									style={lightStyle}
-									mode={'light ' + this.props.lighting.replaceAll(' ', '-')}
+									style={this.getStyle(x, y, 1, 1, 'square', mapDimensions)}
+									mode={'light ' + level.replaceAll(' ', '-')}
 								/>
 							);
 						}
@@ -541,13 +537,12 @@ export class MapPanel extends React.Component<Props, State> {
 			if (this.props.showGrid) {
 				for (let yGrid = mapDimensions.minY; yGrid !== mapDimensions.maxY + 1; ++yGrid) {
 					for (let xGrid = mapDimensions.minX; xGrid !== mapDimensions.maxX + 1; ++xGrid) {
-						const overlayStyle = this.getStyle(xGrid, yGrid, 1, 1, 'square', mapDimensions);
 						grid.push(
 							<GridSquare
 								key={xGrid + ',' + yGrid}
 								x={xGrid}
 								y={yGrid}
-								style={overlayStyle}
+								style={this.getStyle(xGrid, yGrid, 1, 1, 'square', mapDimensions)}
 								selected={this.isSelected(xGrid, yGrid)}
 								onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
 								onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
@@ -679,12 +674,12 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 					break;
 				case 'light':
 					controls.push(
-						<Dropdown
-							key='light level'
-							options={['bright light', 'dim light', 'darkness'].map(o => ({ id: o, text: o }))}
-							placeholder='light level...'
-							selectedID={this.props.lighting}
-							onSelect={id => this.props.selectLighting(id)}
+						<NumberSpin
+							key='light'
+							value={this.props.lighting}
+							downEnabled={this.props.lighting !== 'darkness'}
+							upEnabled={this.props.lighting !== 'bright light'}
+							onNudgeValue={delta => this.props.selectLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
 						/>
 					);
 					break;
