@@ -8,6 +8,7 @@ import { Utils } from '../../../utils/utils';
 import { Map } from '../../../models/map';
 
 import { NumberSpin } from '../../controls/number-spin';
+import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { MapPanel } from '../../panels/map-panel';
 import { Note } from '../../panels/note';
@@ -17,7 +18,9 @@ interface Props {
 }
 
 interface State {
+	mode: string;
 	map: Map;
+	imageLink: string | null;
 	imageID: string | null;
 	size: number;
 	square: number;
@@ -36,7 +39,9 @@ export class MapImportModal extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
+			mode: 'link',
 			map: props.map,
+			imageLink: null,
 			imageID: null,
 			size: 0,
 			square: 0,
@@ -45,8 +50,8 @@ export class MapImportModal extends React.Component<Props, State> {
 				height: 0
 			},
 			mapDimensions: {
-				width: 0,
-				height: 0
+				width: 10,
+				height: 10
 			}
 		};
 	}
@@ -150,7 +155,17 @@ export class MapImportModal extends React.Component<Props, State> {
 		if (name) {
 			map.name = name;
 		}
-		if (this.state.imageID) {
+
+		if (this.state.imageLink) {
+			const tile = Factory.createMapItem();
+			tile.type = 'tile';
+			tile.terrain = 'link';
+			tile.customLink = this.state.imageLink;
+			tile.width = this.state.mapDimensions.width;
+			tile.height = this.state.mapDimensions.height;
+
+			map.items = [tile];
+		} else if (this.state.imageID) {
 			const tile = Factory.createMapItem();
 			tile.type = 'tile';
 			tile.terrain = 'custom';
@@ -171,78 +186,119 @@ export class MapImportModal extends React.Component<Props, State> {
 	public render() {
 		try {
 			let content = null;
-			if (this.state.imageID && this.state.imageDimensions) {
-				content = (
-					<div>
-						<Note>
-							<div className='section'>
-								this image is {Utils.toData(this.state.size)}
+			switch (this.state.mode) {
+				case 'link':
+					content = (
+						<div>
+							<Note>
+								<div className='section'>
+									enter the address, name, and dimensions of the image you want to use
+								</div>
+							</Note>
+							<div className='subheading'>address</div>
+							<Textbox
+								text={this.state.imageLink ?? ''}
+								placeholder='https://...'
+								onChange={value => this.setState({ imageLink: value }, () => this.updateMap(this.state.map.name))}
+							/>
+							<div className='subheading'>map name</div>
+							<Textbox
+								text={this.state.map.name}
+								placeholder='map name'
+								onChange={value => this.updateMap(value)}
+							/>
+							<div className='subheading'>map dimensions</div>
+							<NumberSpin
+								value={this.state.mapDimensions.width + ' sq'}
+								label='width'
+								downEnabled={this.state.mapDimensions.width > 1}
+								onNudgeValue={delta => this.nudgeWidth(delta)}
+							/>
+							<NumberSpin
+								value={this.state.mapDimensions.height + ' sq'}
+								label='height'
+								downEnabled={this.state.mapDimensions.height > 1}
+								onNudgeValue={delta => this.nudgeHeight(delta)}
+							/>
+						</div>
+					);
+					break;
+				case 'upload':
+					if (this.state.imageID) {
+						content = (
+							<div>
+								<Note>
+									<div className='section'>
+										this image is {Utils.toData(this.state.size)}
+									</div>
+									<div className='section'>
+										set the name and dimensions of this map image
+									</div>
+									<div className='section'>
+										changing the size of a map square, in pixels, will change the map's dimensions
+									</div>
+									<div className='section'>
+										you can then fine-tune the exact width and height of the map
+									</div>
+								</Note>
+								<div className='subheading'>map name</div>
+								<Textbox
+									text={this.state.map.name}
+									placeholder='map name'
+									onChange={value => this.updateMap(value)}
+								/>
+								<div className='subheading'>map square size</div>
+								<NumberSpin
+									value={this.state.square + ' px'}
+									label='square size'
+									factors={[1, 10]}
+									downEnabled={this.state.square > 1}
+									onNudgeValue={delta => this.nudgeSquare(delta)}
+								/>
+								<div className='subheading'>map dimensions</div>
+								<NumberSpin
+									value={this.state.mapDimensions.width + ' sq'}
+									label='width'
+									downEnabled={this.state.mapDimensions.width > 1}
+									onNudgeValue={delta => this.nudgeWidth(delta)}
+								/>
+								<NumberSpin
+									value={this.state.mapDimensions.height + ' sq'}
+									label='height'
+									downEnabled={this.state.mapDimensions.height > 1}
+									onNudgeValue={delta => this.nudgeHeight(delta)}
+								/>
 							</div>
-							<div className='section'>
-								set the name and dimensions of this map image
+						);
+					} else {
+						content = (
+							<div>
+								<Note>
+									<div className='section'>
+										select the file you want to upload
+									</div>
+								</Note>
+								<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+									<p className='ant-upload-drag-icon'>
+										<FileOutlined />
+									</p>
+									<p className='ant-upload-text'>
+										click here, or drag a file here, to upload it
+									</p>
+									<p className='ant-upload-text'>
+										try to upload small images if possible
+									</p>
+								</Upload.Dragger>
 							</div>
-							<div className='section'>
-								changing the size of a map square, in pixels, will change the map's dimensions
-							</div>
-							<div className='section'>
-								you can then fine-tune the exact width and height of the map
-							</div>
-						</Note>
-						<div className='subheading'>map name</div>
-						<Textbox
-							text={this.state.map.name}
-							placeholder='map name'
-							onChange={value => this.updateMap(value)}
-						/>
-						<div className='subheading'>map square size</div>
-						<NumberSpin
-							value={this.state.square + ' px'}
-							label='square size'
-							factors={[1, 10]}
-							downEnabled={this.state.square > 1}
-							onNudgeValue={delta => this.nudgeSquare(delta)}
-						/>
-						<div className='subheading'>map dimensions</div>
-						<NumberSpin
-							value={this.state.mapDimensions.width + ' sq'}
-							label='width'
-							downEnabled={this.state.mapDimensions.width > 1}
-							onNudgeValue={delta => this.nudgeWidth(delta)}
-						/>
-						<NumberSpin
-							value={this.state.mapDimensions.height + ' sq'}
-							label='height'
-							downEnabled={this.state.mapDimensions.height > 1}
-							onNudgeValue={delta => this.nudgeHeight(delta)}
-						/>
-					</div>
-				);
-			} else {
-				content = (
-					<div>
-						<Note>
-							<div className='section'>
-								select the file you want to upload
-							</div>
-						</Note>
-						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
-							<p className='ant-upload-drag-icon'>
-								<FileOutlined />
-							</p>
-							<p className='ant-upload-text'>
-								click here, or drag a file here, to upload it
-							</p>
-							<p className='ant-upload-text'>
-								try to upload small images if possible
-							</p>
-						</Upload.Dragger>
-					</div>
-				);
+						);
+					}
+					break;
 			}
 
 			return (
 				<Row className='full-height'>
 					<Col span={8} className='scrollable'>
+						<Tabs options={['link', 'upload'].map(o => ({ id: o, text: o }))} selectedID={this.state.mode} onSelect={mode => this.setState({ mode: mode })} />
 						{content}
 					</Col>
 					<Col span={16} className='scrollable both-ways'>
