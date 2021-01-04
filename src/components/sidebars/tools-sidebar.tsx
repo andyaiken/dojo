@@ -1,4 +1,4 @@
-import { CopyOutlined, FileOutlined, SoundOutlined } from '@ant-design/icons';
+import { CopyOutlined, FileOutlined, ReloadOutlined, SoundOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
@@ -37,14 +37,15 @@ interface Props {
 	handout: Handout | null;
 	setHandout: (handout: Handout | null) => void;
 	// Language
-	languagePreset: string | null;
+	languageMode: string;
+	setLanguageMode: (mode: string) => void;
+	selectedLanguagePreset: string | null;
 	selectedLanguages: string[];
 	languageOutput: string[];
 	selectLanguagePreset: (language: string) => void;
 	addLanguage: (language: string) => void;
 	removeLanguage: (language: string) => void;
 	selectRandomLanguages: () => void;
-	resetLanguages: () => void;
 	generateLanguage: () => void;
 	// Wild Surge
 	surge: string;
@@ -107,14 +108,15 @@ export class ToolsSidebar extends React.Component<Props> {
 				case 'language':
 					content = (
 						<LanguageTool
-							languagePreset={this.props.languagePreset}
+							mode={this.props.languageMode}
+							setMode={mode => this.props.setLanguageMode(mode)}
+							selectedLanguagePreset={this.props.selectedLanguagePreset}
 							selectedLanguages={this.props.selectedLanguages}
 							output={this.props.languageOutput}
 							selectLanguagePreset={preset => this.props.selectLanguagePreset(preset)}
 							addLanguage={language => this.props.addLanguage(language)}
 							removeLanguage={language => this.props.removeLanguage(language)}
 							selectRandomLanguages={() => this.props.selectRandomLanguages()}
-							resetLanguages={() => this.props.resetLanguages()}
 							generateLanguage={() => this.props.generateLanguage()}
 						/>
 					);
@@ -197,61 +199,91 @@ class DieRollerTool extends React.Component<DieRollerToolProps> {
 }
 
 interface LanguageToolProps {
-	languagePreset: string | null;
+	mode: string;
+	setMode: (mode: string) => void;
+	selectedLanguagePreset: string | null;
 	selectedLanguages: string[];
 	output: string[];
 	selectLanguagePreset: (preset: string) => void;
 	addLanguage: (language: string) => void;
 	removeLanguage: (language: string) => void;
 	selectRandomLanguages: () => void;
-	resetLanguages: () => void;
 	generateLanguage: () => void;
 }
 
 class LanguageTool extends React.Component<LanguageToolProps> {
 	public render() {
 		try {
-			const presetOptions = ['draconic', 'dwarvish', 'elvish', 'goblin', 'orc', 'custom'].map(p => {
-				return {
-					id: p,
-					text: p
-				};
-			});
-
-			const allowGenerate = this.props.selectedLanguages.length > 0;
-			const allowReset = allowGenerate || this.props.output.length > 0;
-
-			let custom = null;
-			if (this.props.languagePreset === 'custom') {
-				let selectedLanguages = this.props.selectedLanguages.join(', ');
-				if (selectedLanguages === '') {
-					selectedLanguages = 'none';
-				}
-
-				const languages = Shakespeare.getSourceLanguages()
-					.map(lang => {
-						const isSelected = this.props.selectedLanguages.includes(lang);
-						return (
-							<Checkbox
-								key={lang}
-								label={lang}
-								checked={isSelected}
-								display='button'
-								onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
-							/>
-						);
+			let content = null;
+			switch (this.props.mode) {
+				case 'common':
+					const presetOptions = Shakespeare.getLanguagePresets().map(p => {
+						return {
+							id: p.name,
+							text: p.name
+						};
 					});
 
-				custom = (
-					<div className='group-panel'>
-						<Expander text={'selected languages: ' + selectedLanguages}>
-							<div className='language-options'>
-								<GridPanel columns={3} content={languages} />
+					content = (
+						<div id='common'>
+							<Selector
+								options={presetOptions}
+								selectedID={this.props.selectedLanguagePreset}
+								itemsPerRow={4}
+								onSelect={optionID => this.props.selectLanguagePreset(optionID)}
+							/>
+						</div>
+					);
+					break;
+				case 'custom':
+					let selectedLanguages = this.props.selectedLanguages.join(', ');
+					if (selectedLanguages === '') {
+						selectedLanguages = 'none';
+					}
+
+					const languages = Shakespeare.getSourceLanguages()
+						.map(lang => {
+							const isSelected = this.props.selectedLanguages.includes(lang);
+							return (
+								<Checkbox
+									key={lang}
+									label={lang}
+									checked={isSelected}
+									display='button'
+									onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
+								/>
+							);
+						});
+
+					content = (
+						<div id='custom'>
+							<div className='generated-item group-panel'>
+								<div className='text-section small'>
+									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+								</div>
 							</div>
-						</Expander>
-						<button onClick={() => this.props.selectRandomLanguages()}>random languages</button>
-					</div>
-				);
+							<Expander text='languages'>
+								<div className='language-options'>
+									<GridPanel columns={3} content={languages} />
+								</div>
+							</Expander>
+						</div>
+					);
+					break;
+				case 'random':
+					content = (
+						<div id='random'>
+							<div className='generated-item group-panel'>
+								<div className='text-section small'>
+									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+								</div>
+								<div className='icon-section'>
+									<ReloadOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
+								</div>
+							</div>
+						</div>
+					);
+					break;
 			}
 
 			const output = [];
@@ -276,22 +308,13 @@ class LanguageTool extends React.Component<LanguageToolProps> {
 						<p>you can use this tool to generate words and sentences in fantasy languages</p>
 					</Note>
 					<Selector
-						options={presetOptions}
-						selectedID={this.props.languagePreset}
-						itemsPerRow={3}
-						onSelect={optionID => this.props.selectLanguagePreset(optionID)}
+						options={['common', 'custom', 'random'].map(o => ({ id: o, text: o }))}
+						selectedID={this.props.mode}
+						onSelect={mode => this.props.setMode(mode)}
 					/>
-					{custom}
+					{content}
 					<hr/>
-					<Row gutter={10}>
-						<Col span={12}>
-							<button className={allowGenerate ? '' : 'disabled'} onClick={() => this.props.generateLanguage()}>generate text</button>
-						</Col>
-						<Col span={12}>
-							<button className={allowReset ? '' : 'disabled'} onClick={() => this.props.resetLanguages()}>reset</button>
-						</Col>
-					</Row>
-
+					<button className={this.props.selectedLanguages.length > 0 ? '' : 'disabled'} onClick={() => this.props.generateLanguage()}>generate text</button>
 					{output}
 				</div>
 			);

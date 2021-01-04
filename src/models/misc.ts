@@ -13,6 +13,7 @@ export interface Sidebar {
 	constant: number;
 	dieRolls: DieRollResult[];
 	handout: Handout | null;
+	languageMode: string;
 	languagePreset: string | null;
 	selectedLanguages: string[];
 	languageOutput: string[];

@@ -90,6 +90,7 @@ export class Player extends React.Component<Props, State> {
 				constant: 0,
 				dieRolls: [],
 				handout: null,
+				languageMode: 'common',
 				languagePreset: null,
 				selectedLanguages: [],
 				languageOutput: [],

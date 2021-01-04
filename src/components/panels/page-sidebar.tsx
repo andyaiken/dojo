@@ -246,30 +246,38 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.handout = handout;
 								this.props.onUpdateSidebar(sidebar);
 							}}
-							languagePreset={this.props.sidebar.languagePreset}
+							languageMode={this.props.sidebar.languageMode}
+							setLanguageMode={mode => {
+								const sidebar = this.props.sidebar;
+								sidebar.languageMode = mode;
+								switch (mode) {
+									case 'common':
+										sidebar.languagePreset = Shakespeare.getLanguagePresets()[0].name;
+										sidebar.selectedLanguages = Shakespeare.getLanguagePresets()[0].languages;
+										break;
+									case 'random':
+										sidebar.languagePreset = null;
+										sidebar.selectedLanguages = Shakespeare.getRandomLanguages();
+										break;
+									case 'custom':
+										sidebar.languagePreset = null;
+										sidebar.selectedLanguages = [];
+										break;
+								}
+								this.props.onUpdateSidebar(sidebar);
+							}}
+							selectedLanguagePreset={this.props.sidebar.languagePreset}
 							selectedLanguages={this.props.sidebar.selectedLanguages}
 							languageOutput={this.props.sidebar.languageOutput}
 							selectLanguagePreset={preset => {
 								const sidebar = this.props.sidebar;
-								sidebar.languagePreset = preset;
-								switch (preset) {
-									case 'draconic':
-										sidebar.selectedLanguages = ['armenian', 'irish', 'maltese'];
-										break;
-									case 'dwarvish':
-										sidebar.selectedLanguages = ['czech', 'german', 'yiddish'];
-										break;
-									case 'elvish':
-										sidebar.selectedLanguages = ['finnish', 'spanish', 'welsh'];
-										break;
-									case 'goblin':
-										sidebar.selectedLanguages = ['hawaiian', 'kyrgyz', 'somali'];
-										break;
-									case 'orc':
-										sidebar.selectedLanguages = ['macedonian', 'russian', 'turkish'];
-										break;
+								sidebar.languagePreset = null;
+								sidebar.selectedLanguages = [];
+								const presetInfo = Shakespeare.getLanguagePresets().find(p => p.name === preset);
+								if (presetInfo) {
+									sidebar.languagePreset = presetInfo.name;
+									sidebar.selectedLanguages = presetInfo.languages;
 								}
-								sidebar.languageOutput = [];
 								this.props.onUpdateSidebar(sidebar);
 							}}
 							addLanguage={language => {
@@ -284,24 +292,8 @@ export class PageSidebar extends React.Component<Props> {
 								this.props.onUpdateSidebar(sidebar);
 							}}
 							selectRandomLanguages={() => {
-								const languages = Shakespeare.getSourceLanguages();
-
 								const sidebar = this.props.sidebar;
-								sidebar.selectedLanguages = [];
-								while (sidebar.selectedLanguages.length !== 3) {
-									const n = Utils.randomNumber(languages.length);
-									const lang = languages[n];
-									if (!sidebar.selectedLanguages.includes(lang)) {
-										sidebar.selectedLanguages.push(lang);
-									}
-								}
-								this.props.onUpdateSidebar(sidebar);
-							}}
-							resetLanguages={() => {
-								const sidebar = this.props.sidebar;
-								sidebar.languagePreset = null;
-								sidebar.selectedLanguages = [];
-								sidebar.languageOutput = [];
+								sidebar.selectedLanguages = Shakespeare.getRandomLanguages();
 								this.props.onUpdateSidebar(sidebar);
 							}}
 							generateLanguage={() => {

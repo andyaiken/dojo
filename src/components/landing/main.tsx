@@ -9,6 +9,7 @@ import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
 import { Napoleon } from '../../utils/napoleon';
+import { Shakespeare } from '../../utils/shakespeare';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
@@ -336,8 +337,9 @@ export class Main extends React.Component<Props, State> {
 				constant: 0,
 				dieRolls: [],
 				handout: null,
-				languagePreset: null,
-				selectedLanguages: [],
+				languageMode: 'common',
+				languagePreset: Shakespeare.getLanguagePresets()[0].name,
+				selectedLanguages: Shakespeare.getLanguagePresets()[0].languages,
 				languageOutput: [],
 				surge: '',
 				draws: [],

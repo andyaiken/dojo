@@ -200,12 +200,9 @@
 				flex-shrink: 0;
 				flex-basis: 0;
 
-				.smaller {
-					font-size: 15px;
-				}
-
-				.smallest {
+				&.small {
 					font-size: 12px;
+					margin: 5px 0;
 				}
 			}
 

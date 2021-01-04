@@ -187,6 +187,58 @@ export class Shakespeare {
 		];
 	}
 
+	public static getLanguagePresets() {
+		return [
+			{
+				name: 'draconic',
+				languages: ['armenian', 'irish', 'maltese']
+			},
+			{
+				name: 'dwarvish',
+				languages: ['czech', 'german', 'kazakh']
+			},
+			{
+				name: 'elvish',
+				languages: ['finnish', 'spanish', 'welsh']
+			},
+			{
+				name: 'giant',
+				languages: ['amharic', 'hungarian', 'polish']
+			},
+			{
+				name: 'gnomish',
+				languages: ['chichewa', 'korean', 'yiddish']
+			},
+			{
+				name: 'goblin',
+				languages: ['hawaiian', 'kyrgyz', 'somali']
+			},
+			{
+				name: 'halfling',
+				languages: ['english', 'maori', 'samoan']
+			},
+			{
+				name: 'orc',
+				languages: ['macedonian', 'russian', 'turkish']
+			}
+		];
+	}
+
+	public static getRandomLanguages() {
+		const languages = Shakespeare.getSourceLanguages();
+
+		const selected: string[] = [];
+		while (selected.length !== 3) {
+			const n = Utils.randomNumber(languages.length);
+			const lang = languages[n];
+			if (!selected.includes(lang)) {
+				selected.push(lang);
+			}
+		}
+
+		return selected.sort();
+	}
+
 	//#endregion
 
 	public static generateTranslation(original: string) {

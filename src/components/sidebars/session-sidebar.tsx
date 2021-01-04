@@ -150,9 +150,9 @@ export class SessionSidebar extends React.Component<Props, State> {
 							<p>give the following link to your players, and ask them to open the player app in their browser</p>
 						</Note>
 						<div className='generated-item group-panel'>
-							<div className='text-section'>
-								<p className='smallest'>player app link:</p>
-								<p className='smallest strong'>{playerURL}</p>
+							<div className='text-section small'>
+								<p>player app link:</p>
+								<p><b>{playerURL}</b></p>
 							</div>
 							<div className='icon-section'>
 								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
