@@ -1,8 +1,9 @@
-import { CopyOutlined, FileOutlined, ReloadOutlined, SoundOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CopyOutlined, FileOutlined, ReloadOutlined, SoundOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
 import { Shakespeare } from '../../utils/shakespeare';
+import { Sherlock } from '../../utils/sherlock';
 import { Svengali } from '../../utils/svengali';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Ustinov } from '../../utils/ustinov';
@@ -14,9 +15,9 @@ import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
-import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 import { PDF } from '../panels/pdf';
 import { PlayingCardPanel } from '../panels/playing-card-panel';
@@ -45,6 +46,7 @@ interface Props {
 	selectLanguagePreset: (language: string) => void;
 	addLanguage: (language: string) => void;
 	removeLanguage: (language: string) => void;
+	clearLanguages: () => void;
 	selectRandomLanguages: () => void;
 	generateLanguage: () => void;
 	// Wild Surge
@@ -116,6 +118,7 @@ export class ToolsSidebar extends React.Component<Props> {
 							selectLanguagePreset={preset => this.props.selectLanguagePreset(preset)}
 							addLanguage={language => this.props.addLanguage(language)}
 							removeLanguage={language => this.props.removeLanguage(language)}
+							clearLanguages={() => this.props.clearLanguages()}
 							selectRandomLanguages={() => this.props.selectRandomLanguages()}
 							generateLanguage={() => this.props.generateLanguage()}
 						/>
@@ -207,11 +210,29 @@ interface LanguageToolProps {
 	selectLanguagePreset: (preset: string) => void;
 	addLanguage: (language: string) => void;
 	removeLanguage: (language: string) => void;
+	clearLanguages: () => void;
 	selectRandomLanguages: () => void;
 	generateLanguage: () => void;
 }
 
-class LanguageTool extends React.Component<LanguageToolProps> {
+interface LanguageToolState {
+	search: string;
+}
+
+class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState> {
+	constructor(props: LanguageToolProps) {
+		super(props);
+		this.state = {
+			search: ''
+		};
+	}
+
+	private setSearch(value: string) {
+		this.setState({
+			search: value
+		});
+	}
+
 	public render() {
 		try {
 			let content = null;
@@ -242,18 +263,24 @@ class LanguageTool extends React.Component<LanguageToolProps> {
 					}
 
 					const languages = Shakespeare.getSourceLanguages()
+						.filter(lang => Sherlock.match(this.state.search, lang))
 						.map(lang => {
-							const isSelected = this.props.selectedLanguages.includes(lang);
 							return (
 								<Checkbox
 									key={lang}
 									label={lang}
-									checked={isSelected}
-									display='button'
+									checked={this.props.selectedLanguages.includes(lang)}
 									onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
 								/>
 							);
 						});
+
+					languages.unshift(
+						<div key='search'>
+							<Textbox placeholder='filter languages...' text={this.state.search} onChange={value => this.setSearch(value)}/>
+							<hr/>
+						</div>
+					);
 
 					content = (
 						<div id='custom'>
@@ -261,11 +288,12 @@ class LanguageTool extends React.Component<LanguageToolProps> {
 								<div className='text-section small'>
 									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
 								</div>
+								<div className='icon-section'>
+									<CloseCircleOutlined title='clear languages' onClick={() => this.props.clearLanguages()} />
+								</div>
 							</div>
 							<Expander text='languages'>
-								<div className='language-options'>
-									<GridPanel columns={3} content={languages} />
-								</div>
+								{languages}
 							</Expander>
 						</div>
 					);

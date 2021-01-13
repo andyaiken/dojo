@@ -19,17 +19,10 @@
 		min-height: 20px;
 		line-height: 20px;
 		font-weight: 600;
-	}
-
-	&:hover {
-		border-color: $highlight;
-	}
-
-	&.switch .checkbox-label {
 		width: calc(100% - 40px);
 	}
 
-	&.switch .toggle-container {
+	.toggle-container {
 		display: inline-block;
 		vertical-align: middle;
 		height: 20px;
@@ -46,7 +39,7 @@
 		}
 	}
 
-	&.switch.checked .toggle-container {
+	&.checked .toggle-container {
 		background-color: $highlight;
 
 		.toggle {
@@ -54,9 +47,8 @@
 		}
 	}
 
-	&.button.checked {
+	&:hover {
 		border-color: $highlight;
-		background-color: $highlight01;
 	}
 }
 

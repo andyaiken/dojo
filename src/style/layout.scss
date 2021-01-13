@@ -130,7 +130,6 @@
 		.sidebar-icons {
 			background-color: $header-background;
 			color: $header-foreground;
-			width: 400px;
 			display: flex;
 			align-items: center;
 
@@ -180,12 +179,6 @@
 				flex-shrink: 0;
 				flex-basis: auto;
 				padding: 5px 10px;
-			}
-		}
-
-		.language-options {
-			.checkbox {
-				margin: 1px -4px;
 			}
 		}
 

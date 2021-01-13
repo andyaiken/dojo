@@ -291,6 +291,11 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.selectedLanguages.splice(index, 1);
 								this.props.onUpdateSidebar(sidebar);
 							}}
+							clearLanguages={() => {
+								const sidebar = this.props.sidebar;
+								sidebar.selectedLanguages = [];
+								this.props.onUpdateSidebar(sidebar);
+							}}
 							selectRandomLanguages={() => {
 								const sidebar = this.props.sidebar;
 								sidebar.selectedLanguages = Shakespeare.getRandomLanguages();

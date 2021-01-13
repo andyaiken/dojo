@@ -102,28 +102,6 @@ export class Player extends React.Component<Props, State> {
 			},
 			options: options
 		};
-
-		let maps: Map[] = [];
-		let combats: Combat[] = [];
-		let explorations: Exploration[] = [];
-		try {
-			const str1 = window.localStorage.getItem('data-maps');
-			if (str1) {
-				maps = JSON.parse(str1);
-			}
-			const str2 = window.localStorage.getItem('data-combats');
-			if (str2) {
-				combats = JSON.parse(str2);
-			}
-			const str3 = window.localStorage.getItem('data-explorations');
-			if (str3) {
-				explorations = JSON.parse(str3);
-			}
-
-			Matisse.clearUnusedImages(maps, combats, explorations);
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
 	}
 
 	//#endregion
