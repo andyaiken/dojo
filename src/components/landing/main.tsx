@@ -21,7 +21,6 @@ import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
-import { Selector } from '../controls/selector';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
@@ -970,8 +969,7 @@ export class Main extends React.Component<Props, State> {
 			this.setState({
 				drawer: {
 					type: 'monster',
-					monster: copy,
-					monsterEditorSidebar: 'statblock'
+					monster: copy
 				}
 			});
 		}
@@ -982,8 +980,7 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			drawer: {
 				type: 'monster',
-				monster: copy,
-				monsterEditorSidebar: 'statblock'
+				monster: copy
 			}
 		});
 	}
@@ -1004,14 +1001,6 @@ export class Main extends React.Component<Props, State> {
 				drawer: null
 			});
 		}
-	}
-
-	private setMonsterEditorSidebar(sidebar: string) {
-		const drawer = this.state.drawer;
-		drawer.monsterEditorSidebar = sidebar;
-		this.setState({
-			drawer: drawer
-		});
 	}
 
 	private cloneMonster(monster: Monster, name: string) {
@@ -3125,24 +3114,17 @@ export class Main extends React.Component<Props, State> {
 						<MonsterEditorModal
 							monster={this.state.drawer.monster}
 							library={this.state.library}
-							sidebar={this.state.drawer.monsterEditorSidebar}
+							options={this.state.options}
 						/>
 					);
 					header = 'monster editor';
 					footer = (
 						<Row gutter={20}>
-							<Col span={6}>
+							<Col span={12}>
 								<button onClick={() => this.saveMonster()}>save changes</button>
 							</Col>
-							<Col span={6}>
-								<button onClick={() => this.closeDrawer()}>discard changes</button>
-							</Col>
 							<Col span={12}>
-								<Selector
-									options={['statblock', 'guidelines', 'advanced'].map(o => ({ id: o, text: o }))}
-									selectedID={this.state.drawer.monsterEditorSidebar}
-									onSelect={id => this.setMonsterEditorSidebar(id)}
-								/>
+								<button onClick={() => this.closeDrawer()}>discard changes</button>
 							</Col>
 						</Row>
 					);

@@ -16,6 +16,7 @@ interface Props {
 	section: string;
 	copyTrait: (trait: Trait) => void;
 	deselectMonster: (monster: Monster) => void;
+	showMonster: (monster: Monster) => void;
 }
 
 export class MonsterTemplateCard extends React.Component<Props> {
@@ -67,7 +68,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 		switch (this.props.section) {
 			case 'overview':
 				return (
-					<div className='stats'>
+					<div>
 						<PortraitPanel source={this.props.monster} />
 						<div className='section centered'>
 							{this.getTags()}
@@ -81,7 +82,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 				);
 			case 'abilities':
 				return (
-					<div className='stats'>
+					<div>
 						<div className='section'>
 							<AbilityScorePanel combatant={this.props.monster} />
 						</div>
@@ -91,7 +92,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 				);
 			case 'cbt-stats':
 				return (
-					<div className='stats'>
+					<div>
 						{this.statSection('ac', this.getAC())}
 						{this.statSection('hp', this.getHP())}
 						{this.statSection('damage resistances', this.props.monster.damage.resist)}
@@ -125,6 +126,8 @@ export class MonsterTemplateCard extends React.Component<Props> {
 					</div>
 					<div className='card-content'>
 						{this.getStats()}
+						<hr/>
+						<button onClick={() => this.props.showMonster(this.props.monster)}>show full statblock</button>
 					</div>
 				</div>
 			);

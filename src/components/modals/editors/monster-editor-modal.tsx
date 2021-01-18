@@ -1,5 +1,5 @@
 import { MenuOutlined, PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
 
@@ -11,6 +11,7 @@ import { Shakespeare } from '../../../utils/shakespeare';
 import { Utils } from '../../../utils/utils';
 
 import { MonsterFilter } from '../../../models/encounter';
+import { Options } from '../../../models/misc';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
 import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
@@ -31,7 +32,7 @@ import { PortraitPanel } from '../../panels/portrait-panel';
 interface Props {
 	monster: Monster;
 	library: MonsterGroup[];
-	sidebar: string;
+	options: Options;
 }
 
 interface State {
@@ -39,7 +40,6 @@ interface State {
 	page: 'overview' | 'abilities' | 'cbt-stats' | 'actions';
 	showFilter: boolean;
 	helpSection: string;
-	sidebar: 'similar' | 'all';
 	similarFilter: {
 		size: boolean,
 		type: boolean,
@@ -48,8 +48,13 @@ interface State {
 		alignment: boolean,
 		challenge: boolean
 	};
+	sidebarView: string;
+	addingToScratchpad: boolean;
+	scratchpadView: string;
+	scratchpadAddMode: string;
 	scratchpadFilter: MonsterFilter;
 	scratchpadList: Monster[];
+	inspectedMonster: Monster | null;
 }
 
 export class MonsterEditorModal extends React.Component<Props, State> {
@@ -59,8 +64,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			monster: props.monster,
 			page: 'overview',
 			showFilter: false,
-			helpSection: 'speed',
-			sidebar: 'similar',
+			helpSection: 'type',
 			similarFilter: {
 				size: true,
 				type: true,
@@ -69,8 +73,13 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				alignment: false,
 				challenge: true
 			},
+			sidebarView: 'statblock',
+			addingToScratchpad: false,
+			scratchpadView: 'list',
+			scratchpadAddMode: 'similar',
 			scratchpadFilter: Factory.createMonsterFilter(),
-			scratchpadList: []
+			scratchpadList: [],
+			inspectedMonster: null
 		};
 	}
 
@@ -134,7 +143,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getHelpOptionsForPage(page: 'overview' | 'abilities' | 'cbt-stats' | 'actions') {
 		switch (page) {
 			case 'overview':
-				return ['speed', 'senses', 'languages', 'equipment'];
+				return ['type', 'subtype', 'align', 'challenge', 'size', 'speed', 'senses', 'languages', 'equip'];
 			case 'abilities':
 				return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
 			case 'cbt-stats':
@@ -304,13 +313,23 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 
 	private getHelpSection(monsters: Monster[]) {
 		switch (this.state.helpSection) {
+			case 'type':
+				return this.getValueSection('category', 'text', monsters);
+			case 'subtype':
+				return this.getValueSection('tag', 'text', monsters);
+			case 'align':
+				return this.getValueSection('alignment', 'text', monsters);
+			case 'challenge':
+				return this.getValueSection('challenge', 'number', monsters);
+			case 'size':
+				return this.getValueSection('size', 'text', monsters);
 			case 'speed':
 				return this.getValueSection('speed', 'text', monsters);
 			case 'senses':
 				return this.getValueSection('senses', 'text', monsters);
 			case 'languages':
 				return this.getValueSection('languages', 'text', monsters);
-			case 'equipment':
+			case 'equip':
 				return this.getValueSection('equipment', 'text', monsters);
 			case 'str':
 				return this.getValueSection('abilityScores.str', 'number', monsters);
@@ -507,181 +526,125 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getSidebar() {
 		let sidebar = null;
 
-		switch (this.props.sidebar) {
+		switch (this.state.sidebarView) {
 			case 'statblock':
 				sidebar = (
-					<Col span={12} className='scrollable sidebar sidebar-right' style={{ padding: '5px 10px' }}>
+					<div>
 						<MonsterStatblockCard monster={this.state.monster} />
-					</Col>
+					</div>
 				);
 				break;
 			case 'guidelines':
 				sidebar = (
-					<Col span={12} className='scrollable sidebar sidebar-right'>
+					<div>
 						<GuidelinesPanel monster={this.state.monster} />
-					</Col>
+					</div>
 				);
 				break;
-			case 'advanced':
-				let monsters: Monster[] = [];
-				switch (this.state.sidebar) {
-					case 'similar':
-						monsters = this.getSimilarMonsters();
-						break;
-					case 'all':
-						this.props.library.forEach(group => {
-							group.monsters.forEach(m => {
-								if (!monsters.includes(m) && this.matchMonster(m)) {
-									monsters.push(m);
-								}
-							});
-						});
-						break;
-				}
-				monsters = monsters.filter(m => !this.state.scratchpadList.find(lm => lm.id === m.id));
-				Utils.sort(monsters);
-
-				let sidebarContent = null;
-				switch (this.state.sidebar) {
-					case 'similar':
-						sidebarContent = (
-							<Expander text='similarity criteria'>
-								<Checkbox
-									label={'size ' + this.state.monster.size}
-									checked={this.state.similarFilter.size}
-									onChecked={value => this.toggleMatch('size')}
-								/>
-								<Checkbox
-									label={'type ' + this.state.monster.category}
-									checked={this.state.similarFilter.type}
-									onChecked={value => this.toggleMatch('type')}
-								/>
-								<Checkbox
-									label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
-									checked={this.state.similarFilter.subtype}
-									disabled={!this.state.monster.tag}
-									onChecked={value => this.toggleMatch('subtype')}
-								/>
-								<Checkbox
-									label={this.state.monster.role ? 'role ' + this.state.monster.role : 'role'}
-									checked={this.state.similarFilter.role}
-									disabled={!this.state.monster.role}
-									onChecked={value => this.toggleMatch('role')}
-								/>
-								<Checkbox
-									label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
-									checked={this.state.similarFilter.alignment}
-									disabled={!this.state.monster.alignment}
-									onChecked={value => this.toggleMatch('alignment')}
-								/>
-								<Checkbox
-									label={'challenge rating ' + Gygax.challenge(this.state.monster.challenge)}
-									checked={this.state.similarFilter.challenge}
-									onChecked={value => this.toggleMatch('challenge')}
-								/>
-							</Expander>
+			case 'scratchpad':
+				let scratchpad = null;
+				switch (this.state.scratchpadView) {
+					case 'list':
+						let list = null;
+						if (this.state.scratchpadList.length > 0) {
+							list = this.getMonsterCards(this.state.scratchpadList, true);
+						} else {
+							list = (
+								<Note>
+									<div className='section'>
+										there are no monsters in your scratchpad
+									</div>
+								</Note>
+							);
+						}
+						scratchpad = (
+							<div>
+								<Row gutter={10}>
+									<Col span={12}>
+										<button
+											onClick={() => this.setState({ addingToScratchpad: true })}
+										>
+											add monsters to list
+										</button>
+									</Col>
+									<Col span={12}>
+										<button
+											className={this.state.scratchpadList.length === 0 ? 'disabled' : ''}
+											onClick={() => this.clearScratchpad()}
+										>
+											clear list
+										</button>
+									</Col>
+								</Row>
+								{list}
+							</div>
 						);
 						break;
-					case 'all':
-						sidebarContent = (
-							<FilterPanel
-								filter={this.state.scratchpadFilter}
-								changeValue={(type, value) => this.changeFilterValue(type, value)}
-								resetFilter={() => this.resetFilter()}
-							/>
-						);
+					case 'statistics':
+						if (this.state.scratchpadList.length > 0) {
+							let selector = null;
+							if (this.getHelpOptionsForPage(this.state.page).length > 1) {
+								selector = (
+									<Selector
+										options={this.getHelpOptionsForPage(this.state.page).map(s => ({ id: s, text: s }))}
+										selectedID={this.state.helpSection}
+										onSelect={optionID => this.setHelpSection(optionID)}
+									/>
+								);
+							}
+
+							scratchpad = (
+								<div className='monster-help'>
+									{selector}
+									{this.getHelpSection(this.state.scratchpadList)}
+								</div>
+							);
+						} else {
+							scratchpad = (
+								<Note>
+									<div className='section'>
+										when there are monsters in your scratchpad, their combined stats will be shown here
+									</div>
+								</Note>
+							);
+						}
 						break;
 				}
 
-				const sidebarOptions = [
-					{
-						id: 'similar',
-						text: 'similar'
-					},
-					{
-						id: 'all',
-						text: 'all'
-					}
-				];
-
-				let emptyScratchpadNote = null;
-				if (this.state.scratchpadList.length === 0) {
-					emptyScratchpadNote = (
-						<Note>
-							<div className='section'>
-								this is your <b>scratchpad</b> list; you can add monsters to it from the list to the right
-							</div>
-							<div className='section'>
-								when there are monsters in this list, their combined stats will be shown on the left
-							</div>
-							<div className='section'>
-								you might find this useful if you're creating a monster and want it to have similar abilities to other monsters
-							</div>
-							<div className='section'>
-								you can also quickly blend together all the monters in this list to create a new monster by clicking the <b>generate hybrid monster</b> button above
-							</div>
-						</Note>
-					);
-				}
-				let emptyListNote = null;
-				if (monsters.length === 0) {
-					emptyListNote = (
-						<Note>
-							<div className='section'>
-								there are no monsters in your library which match the above criteria (or they are all in your scratchpad already)
-							</div>
-						</Note>
-					);
-				}
 				sidebar = (
-					<Col span={12} className='scrollable sidebar sidebar-right'>
-						<Row gutter={5}>
-							<Col span={12}>
-								<Tabs
-									options={[{ id: 'scratch', text: 'scratchpad' }]}
-									selectedID={'scratch'}
-									onSelect={() => null}
-								/>
-								<button
-									className={this.state.scratchpadList.length < 2 ? 'disabled' : ''}
-									onClick={() => this.spliceMonsters(this.state.scratchpadList)}
-								>
-									generate hybrid monster
-								</button>
-								<button
-									className={this.state.scratchpadList.length === 0 ? 'disabled' : ''}
-									onClick={() => this.clearScratchpad()}
-								>
-									clear scratchpad
-								</button>
-								<hr/>
-								{this.getMonsterCards(this.state.scratchpadList, true)}
-								{emptyScratchpadNote}
-							</Col>
-							<Col span={12}>
-								<Tabs
-									options={sidebarOptions}
-									selectedID={this.state.sidebar}
-									onSelect={optionID => this.setState({sidebar: optionID as 'similar' | 'all'})}
-								/>
-								{sidebarContent}
-								<button
-									className={monsters.length === 0 ? 'disabled' : ''}
-									onClick={() => this.addAllToScratchpad(monsters)}
-								>
-									add all to scratchpad
-								</button>
-								<hr/>
-								{this.getMonsterCards(monsters, false)}
-								{emptyListNote}
-							</Col>
-						</Row>
-					</Col>
+					<div>
+						<Note>
+							<div className='section'>
+								this is your scratchpad list; you can add monsters to it to see their combined statistics
+							</div>
+							<div className='section'>
+								you might find this useful if, for example, you want your monster to have similar abilities to other monsters
+							</div>
+							<div className='section' style={{ display: this.state.scratchpadList.length < 2 ? 'none' : '' }}>
+								or you can <button className='link' onClick={() => this.spliceMonsters(this.state.scratchpadList)}>splice these monsters together</button> to create a unique hyrid monster
+							</div>
+						</Note>
+						<Tabs
+							options={['list', 'statistics'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.scratchpadView}
+							onSelect={view => this.setState({ scratchpadView : view })}
+						/>
+						{scratchpad}
+					</div>
 				);
 				break;
 		}
 
-		return sidebar;
+		return (
+			<Col span={12} className='scrollable'>
+				<Tabs
+					options={['statblock', 'guidelines', 'scratchpad'].map(o => ({ id: o, text: o }))}
+					selectedID={this.state.sidebarView}
+					onSelect={option => this.setState({ sidebarView: option })}
+				/>
+				{sidebar}
+			</Col>
+		);
 	}
 
 	private getMonsterCards(monsters: Monster[], selected: boolean) {
@@ -695,6 +658,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							section={this.state.page}
 							copyTrait={trait => this.copyTrait(trait)}
 							deselectMonster={monster => this.removeFromScratchpad(monster)}
+							showMonster={monster => this.setState({ inspectedMonster: monster })}
 						/>
 					</div>
 				);
@@ -780,32 +744,160 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					break;
 			}
 
-			let help = null;
-			if ((this.props.sidebar === 'advanced') && (this.state.scratchpadList.length > 0)) {
-				let selector = null;
-				if (this.getHelpOptionsForPage(this.state.page).length > 1) {
-					const options = this.getHelpOptionsForPage(this.state.page).map(s => {
-						return {
-							id: s,
-							text: s
-						};
+			const drawer: {
+				visible: boolean,
+				title: string
+				content: JSX.Element | null,
+				footer: JSX.Element | null,
+				onClose: () => void
+			} = {
+				visible: false,
+				title: 'drawer',
+				content: null,
+				footer: null,
+				onClose: () => null
+			};
+
+			if (this.state.inspectedMonster) {
+				drawer.visible = true;
+				drawer.title = 'monster';
+				drawer.content = (
+					<div className='scrollable padded'>
+						<MonsterStatblockCard monster={this.state.inspectedMonster as Monster} />
+					</div>
+				);
+				drawer.footer = (
+					<button onClick={() => this.setState({ inspectedMonster: null })}>close</button>
+				);
+				drawer.onClose = () => {
+					this.setState({
+						inspectedMonster: null
 					});
-					selector = (
-						<Selector
-							options={options}
-							selectedID={this.state.helpSection}
-							onSelect={optionID => this.setHelpSection(optionID)}
-						/>
+				};
+			}
+
+			if (this.state.addingToScratchpad) {
+				const sidebarOptions = [
+					{
+						id: 'similar',
+						text: 'similar monsters'
+					},
+					{
+						id: 'all',
+						text: 'all monsters'
+					}
+				];
+
+				let sidebarContent = null;
+				switch (this.state.scratchpadAddMode) {
+					case 'similar':
+						sidebarContent = (
+							<Expander text='similarity criteria'>
+								<Checkbox
+									label={'size ' + this.state.monster.size}
+									checked={this.state.similarFilter.size}
+									onChecked={value => this.toggleMatch('size')}
+								/>
+								<Checkbox
+									label={'type ' + this.state.monster.category}
+									checked={this.state.similarFilter.type}
+									onChecked={value => this.toggleMatch('type')}
+								/>
+								<Checkbox
+									label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
+									checked={this.state.similarFilter.subtype}
+									disabled={!this.state.monster.tag}
+									onChecked={value => this.toggleMatch('subtype')}
+								/>
+								<Checkbox
+									label={this.state.monster.role ? 'role ' + this.state.monster.role : 'role'}
+									checked={this.state.similarFilter.role}
+									disabled={!this.state.monster.role}
+									onChecked={value => this.toggleMatch('role')}
+								/>
+								<Checkbox
+									label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
+									checked={this.state.similarFilter.alignment}
+									disabled={!this.state.monster.alignment}
+									onChecked={value => this.toggleMatch('alignment')}
+								/>
+								<Checkbox
+									label={'challenge rating ' + Gygax.challenge(this.state.monster.challenge)}
+									checked={this.state.similarFilter.challenge}
+									onChecked={value => this.toggleMatch('challenge')}
+								/>
+							</Expander>
+						);
+						break;
+					case 'all':
+						sidebarContent = (
+							<FilterPanel
+								filter={this.state.scratchpadFilter}
+								changeValue={(type, value) => this.changeFilterValue(type, value)}
+								resetFilter={() => this.resetFilter()}
+							/>
+						);
+						break;
+				}
+
+				let monsters: Monster[] = [];
+				switch (this.state.scratchpadAddMode) {
+					case 'similar':
+						monsters = this.getSimilarMonsters();
+						break;
+					case 'all':
+						this.props.library.forEach(group => {
+							group.monsters.forEach(m => {
+								if (!monsters.includes(m) && this.matchMonster(m)) {
+									monsters.push(m);
+								}
+							});
+						});
+						break;
+				}
+				monsters = monsters.filter(m => !this.state.scratchpadList.find(lm => lm.id === m.id));
+				Utils.sort(monsters);
+
+				let emptyListNote = null;
+				if (monsters.length === 0) {
+					emptyListNote = (
+						<Note>
+							<div className='section'>
+								there are no monsters in your library which match the above criteria (or they are all in your scratchpad already)
+							</div>
+						</Note>
 					);
 				}
 
-				help = (
-					<div className='monster-help group-panel'>
-						<div className='heading'>information from scratchpad monsters</div>
-						{selector}
-						{this.getHelpSection(this.state.scratchpadList)}
+				drawer.visible = true;
+				drawer.title = 'add to scratchpad';
+				drawer.content = (
+					<div className='scrollable padded'>
+						<Tabs
+							options={sidebarOptions}
+							selectedID={this.state.scratchpadAddMode}
+							onSelect={optionID => this.setState({scratchpadAddMode: optionID})}
+						/>
+						{sidebarContent}
+						<button
+							className={monsters.length === 0 ? 'disabled' : ''}
+							onClick={() => this.addAllToScratchpad(monsters)}
+						>
+							add all to scratchpad
+						</button>
+						<hr/>
+						{this.getMonsterCards(monsters, false)}
+						{emptyListNote}
 					</div>
 				);
+				drawer.footer = (
+					<button onClick={() => this.setState({ addingToScratchpad: false })}>close</button>
+				);
+				drawer.onClose = () => {
+					this.setState({
+						addingToScratchpad: false
+					});
+				};
 			}
 
 			return (
@@ -817,9 +909,20 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							onSelect={optionID => this.setPage(optionID as 'overview' | 'abilities' | 'cbt-stats' | 'actions')}
 						/>
 						{content}
-						{help}
 					</Col>
 					{this.getSidebar()}
+					<Drawer
+						className={this.props.options.theme}
+						closable={false}
+						maskClosable={true}
+						width='30%'
+						visible={drawer.visible}
+						onClose={() => drawer.onClose()}
+					>
+						<div className='drawer-header'><div className='app-title'>{drawer.title}</div></div>
+						<div className='drawer-content'>{drawer.content}</div>
+						<div className='drawer-footer'>{drawer.footer}</div>
+					</Drawer>
 				</Row>
 			);
 		} catch (e) {
@@ -998,13 +1101,12 @@ class CombatTab extends React.Component<CombatTabProps> {
 							downEnabled={this.props.monster.hitDice > 1}
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 						/>
-						<div className='subheading'>hit points</div>
 						<Note>
 							<p>to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier</p>
+							<div className='hp-value'>
+								{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
+							</div>
 						</Note>
-						<div className='hp-value'>
-							{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
-						</div>
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>damage resistances</div>
