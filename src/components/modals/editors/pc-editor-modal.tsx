@@ -117,12 +117,12 @@ export class PCEditorModal extends React.Component<Props, State> {
 			return (
 				<Row className='full-height'>
 					<Col span={12} className='scrollable padded'>
-						<div className='subheading'>character name:</div>
+						<div className='subheading'>character name</div>
 						<Textbox
 							text={this.state.pc.name}
 							onChange={value => this.changeValue(this.state.pc, 'name', value)}
 						/>
-						<div className='subheading'>player name:</div>
+						<div className='subheading'>player name</div>
 						<Textbox
 							text={this.state.pc.player}
 							onChange={value => this.changeValue(this.state.pc, 'player', value)}
@@ -134,17 +134,17 @@ export class PCEditorModal extends React.Component<Props, State> {
 							upEnabled={this.state.pc.size !== 'gargantuan'}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'size', delta)}
 						/>
-						<div className='subheading'>race:</div>
+						<div className='subheading'>race</div>
 						<Textbox
 							text={this.state.pc.race}
 							onChange={value => this.changeValue(this.state.pc, 'race', value)}
 						/>
-						<div className='subheading'>class:</div>
+						<div className='subheading'>class</div>
 						<Textbox
 							text={this.state.pc.classes}
 							onChange={value => this.changeValue(this.state.pc, 'classes', value)}
 						/>
-						<div className='subheading'>level:</div>
+						<div className='subheading'>level</div>
 						<NumberSpin
 							value={this.state.pc.level}
 							downEnabled={this.state.pc.level > 1}
@@ -170,21 +170,20 @@ export class PCEditorModal extends React.Component<Props, State> {
 							downEnabled={this.state.pc.passivePerception > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'passivePerception', delta)}
 						/>
-						<div className='subheading'>senses:</div>
+					</Col>
+					<Col span={12} className='scrollable padded'>
+						<div className='subheading'>darkvision</div>
 						<NumberSpin
 							value={this.state.pc.darkvision + ' ft'}
-							label='darkvision'
 							downEnabled={this.state.pc.darkvision > 0}
 							onNudgeValue={delta => this.nudgeValue(this.state.pc, 'darkvision', delta * 10)}
 						/>
-					</Col>
-					<Col span={12} className='scrollable padded'>
-						<div className='subheading'>languages:</div>
+						<div className='subheading'>languages</div>
 						<Textbox
 							text={this.state.pc.languages}
 							onChange={value => this.changeValue(this.state.pc, 'languages', value)}
 						/>
-						<div className='subheading'>d&d beyond link:</div>
+						<div className='subheading'>d&d beyond link</div>
 						<Textbox
 							text={this.state.pc.url}
 							placeholder='https://ddb.ac/characters/...'
@@ -196,7 +195,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 							setPortrait={data => this.changeValue(this.state.pc, 'portrait', data)}
 							clear={() => this.changeValue(this.state.pc, 'portrait', '')}
 						/>
-						<div className='subheading'>companions:</div>
+						<div className='subheading'>companions</div>
 						{companions}
 						<button onClick={() => this.addCompanion()}>add a new companion</button>
 					</Col>

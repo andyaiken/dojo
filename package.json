@@ -1,11 +1,11 @@
 {
 	"name": "dojo",
-	"version": "11.13.0",
+	"version": "11.14.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
-		"@ant-design/icons": "^4.2.2",
+		"@ant-design/icons": "^4.4.0",
 		"antd": "^4.10.3",
 		"lz-string": "^1.4.4",
 		"mousetrap": "^1.6.5",

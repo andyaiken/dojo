@@ -90,7 +90,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 						{this.statSection('skills', this.props.monster.skills)}
 					</div>
 				);
-			case 'cbt-stats':
+			case 'combat':
 				return (
 					<div>
 						{this.statSection('ac', this.getAC())}
@@ -101,7 +101,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 						{this.statSection('condition immunities', this.props.monster.conditionImmunities)}
 					</div>
 				);
-			case 'actions':
+			case 'features':
 				return (
 					<TraitsPanel
 						combatant={this.props.monster}

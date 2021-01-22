@@ -1,4 +1,4 @@
-import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { StarFilled, StarOutlined, ToTopOutlined } from '@ant-design/icons';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -222,7 +222,16 @@ interface TraitPanelProps {
 	onRollDice: (count: number, sides: number, constant: number) => void;
 }
 
-class TraitPanel extends React.Component<TraitPanelProps> {
+export class TraitPanel extends React.Component<TraitPanelProps> {
+	public static defaultProps = {
+		mode: 'view',
+		showRollButtons: false,
+		copyTrait: null,
+		useTrait: null,
+		rechargeTrait: null,
+		onRollDice: null
+	};
+
 	public render() {
 		try {
 			let maxUses = 0;
@@ -257,13 +266,14 @@ class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'view':
 					return (
 						<div key={this.props.trait.id} className='section trait'>
-							<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+							<div className='trait-content' dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
 						</div>
 					);
 				case 'template':
 					return (
-						<div key={this.props.trait.id} className='section trait trait-template' onClick={() => this.props.copyTrait(this.props.trait)} role='button'>
-							<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+						<div key={this.props.trait.id} className='section trait trait-template'>
+							<ToTopOutlined className='copy-trait-button' rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
+							<div className='trait-content' dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
 						</div>
 					);
 				case 'combat':
