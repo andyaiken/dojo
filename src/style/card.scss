@@ -207,12 +207,12 @@
 
 .trait-template {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	padding-right: 5px;
 
 	.copy-trait-button {
 		flex: 0 0 auto;
-		margin: 5px;
+		margin: 2px 5px;
 		padding: 3px;
 		cursor: pointer;
 		font-size: 18px;

@@ -548,7 +548,17 @@ export class CombatScreen extends React.Component<Props, State> {
 				</div>
 				<div>
 					<div className='heading'>combatants</div>
-					<button onClick={() => this.props.addCombatants()}>add combatants</button>
+					<button
+						onClick={() => {
+							this.setState({
+								showOptions: false
+							}, () => {
+								this.props.addCombatants();
+							});
+						}}
+					>
+						add combatants
+					</button>
 					{addPCs}
 					{addWave}
 					<button onClick={() => this.props.addCompanion(null)}>add a companion</button>

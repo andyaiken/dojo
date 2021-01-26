@@ -50,7 +50,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 					return (
 						<div>
 							<div className='section'>
-							<b>{name}</b> (<i>{saveConditionName}</i>) must make a {saveType} save against dc {saveConditionDuration.saveDC}
+								<b>{name}</b> (<i>{saveConditionName}</i>) must make a {saveType} save against dc {saveConditionDuration.saveDC}
 							</div>
 							<Row gutter={10}>
 								<Col span={12}>

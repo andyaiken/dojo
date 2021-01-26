@@ -15,6 +15,7 @@ import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
+import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -101,7 +102,7 @@ export class EncounterScreen extends React.Component<Props> {
 						key={wave.id}
 						heading={wave.name || 'unnamed wave'}
 						content={this.getMonsterCards(wave)}
-						columns={4}
+						columns={3}
 					/>
 				);
 			});
@@ -168,19 +169,32 @@ export class EncounterScreen extends React.Component<Props> {
 							cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 							deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
-							getMonster={id => this.props.getMonster(id)}
 						/>
 						{templateOptions}
 						<hr />
 						<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 					</Col>
-					<Col span={18} className='scrollable'>
+					<Col span={12} className='scrollable'>
 						<GridPanel
 							heading='encounter'
 							content={this.getMonsterCards(null)}
-							columns={4}
+							columns={3}
 						/>
 						{waveSections}
+					</Col>
+					<Col span={6} className='scrollable'>
+						<GridPanel
+							heading='difficulty'
+							content={[
+								<DifficultyChartPanel
+									key='diff'
+									encounter={this.props.encounter}
+									parties={this.props.parties}
+									getMonster={id => this.props.getMonster(id)}
+								/>
+							]}
+							columns={1}
+						/>
 					</Col>
 				</Row>
 			);

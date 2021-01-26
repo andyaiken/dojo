@@ -682,7 +682,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return this.getScratchpad();
 			case 'features':
 				return (
-					<FeatureBrowser library={this.props.library} copyTrait={t => this.copyTrait(t)} />
+					<FeatureBrowser monster={this.state.monster} library={this.props.library} copyTrait={t => this.copyTrait(t)} />
 				);
 		}
 
@@ -1068,6 +1068,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 						/>
 						<Note>
 							<p>to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier</p>
+							<hr/>
 							<div className='hp-value'>
 								{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
 							</div>
@@ -1410,32 +1411,64 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 }
 
 interface FeatureBrowserProps {
+	monster: Monster;
 	library: MonsterGroup[];
 	copyTrait: (trait: Trait) => void;
 }
 
 interface FeatureBrowserState {
+	mode: string;
 	query: string;
+	randomTraits: Trait[];
 }
 
 class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowserState> {
 	constructor(props: FeatureBrowserProps) {
 		super(props);
 		this.state = {
-			query: ''
+			mode: 'search',
+			query: '',
+			randomTraits: []
 		};
 	}
 
-	public render() {
+	private chooseRandomTraits() {
+		const traits: Trait[] = [];
+		this.props.library.forEach(group => {
+			group.monsters.forEach(m => {
+				if (m.id !== this.props.monster.id) {
+					m.traits.forEach(t => {
+						traits.push(t);
+					});
+				}
+			});
+		});
+
+		const selected = [];
+		while (selected.length < 10) {
+			const index = Utils.randomNumber(traits.length);
+			selected.push(traits[index]);
+			traits.splice(index, 1);
+		}
+		Utils.sort(selected);
+
+		this.setState({
+			randomTraits: selected
+		});
+	}
+
+	private getSearchSection() {
 		const traits: Trait[] = [];
 		if (this.state.query.length >= 2) {
 			this.props.library.forEach(group => {
 				group.monsters.forEach(m => {
-					m.traits.forEach(t => {
-						if (Sherlock.matchTrait(this.state.query, t)) {
-							traits.push(t);
-						}
-					});
+					if (m.id !== this.props.monster.id) {
+						m.traits.forEach(t => {
+							if (Sherlock.matchTrait(this.state.query, t)) {
+								traits.push(t);
+							}
+						});
+					}
 				});
 			});
 
@@ -1443,49 +1476,104 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 		}
 
 		let featuresSection = null;
-		if (traits.length === 0) {
-			if (this.state.query === '') {
+		if (this.state.query !== '') {
+			if (traits.length === 0) {
 				featuresSection = (
 					<Note>
-						<p>enter a search term above to find features</p>
+						<p>no features found</p>
 					</Note>
 				);
 			} else {
-				featuresSection = (
-					<Note>
-						<p>no features</p>
-					</Note>
-				);
-			}
-		} else {
-			const traitsByType: { [id: string]: JSX.Element[] } = {};
-			TRAIT_TYPES.forEach(type => {
-				traitsByType[type] = traits.filter(t => t.type === type).map(trait => (
-					<div className='card monster' key={trait.id}>
-						<TraitPanel trait={trait} mode='template' copyTrait={t => this.props.copyTrait(t)} />
-					</div>
-				));
-			});
-
-			featuresSection = TRAIT_TYPES.map(type => {
-				if (traitsByType[type].length > 0) {
-					return (
-						<div key={type}>
-							<div className='subheading'>{Gygax.traitType(type, true)}</div>
-							{traitsByType[type]}
+				const traitsByType: { [id: string]: JSX.Element[] } = {};
+				TRAIT_TYPES.forEach(type => {
+					traitsByType[type] = traits.filter(t => t.type === type).map(trait => (
+						<div className='card monster' key={trait.id}>
+							<TraitPanel trait={trait} mode='template' copyTrait={t => this.props.copyTrait(t)} />
 						</div>
-					);
-				} else {
-					return null;
-				}
-			});
+					));
+				});
+
+				featuresSection = TRAIT_TYPES.map(type => {
+					if (traitsByType[type].length > 0) {
+						return (
+							<div key={type}>
+								<div className='subheading'>{Gygax.traitType(type, true)}</div>
+								{traitsByType[type]}
+							</div>
+						);
+					} else {
+						return null;
+					}
+				});
+			}
 		}
 
 		return (
 			<div>
-				<Textbox text={this.state.query} placeholder='search for features...' onChange={text => this.setState({ query: text })}/>
-				<hr/>
+				<Textbox
+					text={this.state.query}
+					placeholder='search for features...'
+					onChange={text => this.setState({ query: text })}
+				/>
+				{featuresSection ? <hr/> : null}
 				{featuresSection}
+			</div>
+		);
+	}
+
+	private getRandomSection() {
+		const traitsByType: { [id: string]: JSX.Element[] } = {};
+		TRAIT_TYPES.forEach(type => {
+			traitsByType[type] = this.state.randomTraits.filter(t => t.type === type).map(trait => (
+				<div className='card monster' key={trait.id}>
+					<TraitPanel trait={trait} mode='template' copyTrait={t => this.props.copyTrait(t)} />
+				</div>
+			));
+		});
+
+		const featuresSection = TRAIT_TYPES.map(type => {
+			if (traitsByType[type].length > 0) {
+				return (
+					<div key={type}>
+						<div className='subheading'>{Gygax.traitType(type, true)}</div>
+						{traitsByType[type]}
+					</div>
+				);
+			} else {
+				return null;
+			}
+		});
+
+		return (
+			<div>
+				<button onClick={() => this.chooseRandomTraits()}>select random features</button>
+				{featuresSection}
+			</div>
+		);
+	}
+
+	public render() {
+		let content = null;
+		switch (this.state.mode) {
+			case 'search':
+				content = this.getSearchSection();
+				break;
+			case 'random':
+				content = this.getRandomSection();
+				break;
+		}
+
+		return (
+			<div>
+				<Note>
+					<p>here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster</p>
+				</Note>
+				<Selector
+					options={['search', 'random'].map(o => ({ id: o, text: o }))}
+					selectedID={this.state.mode}
+					onSelect={mode => this.setState({ mode: mode })}
+				/>
+				{content}
 			</div>
 		);
 	}

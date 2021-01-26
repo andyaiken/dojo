@@ -102,7 +102,9 @@ export class InitiativeEntry extends React.Component<Props> {
 				}
 				notes.push(
 					<Note key='mount'>
-						<div> mounted on: {btn}</div>
+						<div className='note-heading'>
+							mounted on: {btn}
+						</div>
 						{info}
 						<div className='note-details'>
 							if you’re knocked prone, or an effect moves your mount against its will, you must succeed on a dex save (dc 10) or land prone in a space within 5 feet of your mount
@@ -236,13 +238,19 @@ export class InitiativeEntry extends React.Component<Props> {
 				portrait = <PortraitPanel source={pcOrMonster} inline={true} />;
 			}
 
+			let name = this.props.combatant.displayName || 'combatant';
+			if (!!this.props.combatant.mountID) {
+				const mount = this.props.combat.combatants.find(c => c.id === this.props.combatant.mountID);
+				if (mount) {
+					name += ' on ' + (mount.displayName || 'unnamed mount');
+				}
+			}
+
 			return (
 				<div className={style} onClick={e => this.onClick(e)} role='button'>
 					<div className='header'>
 						{portrait}
-						<div className='name'>
-							{this.props.combatant.displayName || 'combatant'}
-						</div>
+						<div className='name'>{name}</div>
 						{this.getInformationTag()}
 					</div>
 					<div className='init-entry-content'>
