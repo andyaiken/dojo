@@ -469,6 +469,21 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private openDice() {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = 'tools';
+		sidebar.subtype = 'die';
+
+		sidebar.dice = {};
+		[4, 6, 8, 10, 12, 20, 100].forEach(n => sidebar.dice[n] = 0);
+		sidebar.dice[6] = 1;
+
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
 	private toggleSidebar() {
 		const sidebar = this.state.sidebar;
 		sidebar.visible = !sidebar.visible;
@@ -1908,6 +1923,7 @@ export class Main extends React.Component<Props, State> {
 							message: (
 								<CombatNotificationPanel
 									notification={n}
+									openSidebar={() => this.openDice()}
 									close={(note, removeCondition) => this.closeNotification(note, removeCondition)}
 								/>
 							),

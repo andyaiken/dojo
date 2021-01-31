@@ -7,10 +7,15 @@ import { Monster, Trait } from '../../models/monster';
 
 interface Props {
 	notification: Notification;
+	openSidebar: () => void;
 	close: (notification: Notification, removeCondition: boolean) => void;
 }
 
 export class CombatNotificationPanel extends React.Component<Props> {
+	public static defaultProps = {
+		openSidebar: null
+	};
+
 	private success() {
 		switch (this.props.notification.type) {
 			case 'condition-save':
@@ -82,7 +87,14 @@ export class CombatNotificationPanel extends React.Component<Props> {
 							<div className='section'>
 								{trait.usage}
 							</div>
-							<button onClick={() => this.success()}>recharge</button>
+							<Row gutter={10}>
+								<Col span={12}>
+									<button onClick={() => this.success()}>recharge</button>
+								</Col>
+								<Col span={12}>
+									<button onClick={() => this.props.openSidebar()}>roll 1d6</button>
+								</Col>
+							</Row>
 						</div>
 					);
 			}
