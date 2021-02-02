@@ -9,6 +9,7 @@ import { InitiativeEntry } from './initiative-entry';
 interface Props {
 	combat: Combat;
 	playerView: boolean;
+	selectedText: string;
 	showDefeated: boolean;
 	help: JSX.Element | null;
 	selectedItemIDs: string[];
@@ -47,9 +48,10 @@ export class InitiativeOrder extends React.Component<Props> {
 			<InitiativeEntry
 				key={combatant.id}
 				combatant={combatant}
+				playerView={this.props.playerView}
+				selectedText={this.props.selectedText}
 				combat={this.props.combat}
 				selected={selected}
-				minimal={this.props.playerView}
 				select={(c, ctrl) => this.props.toggleItemSelection(c.id, ctrl)}
 			/>
 		);

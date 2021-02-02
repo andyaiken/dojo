@@ -371,6 +371,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			<InitiativeOrder
 				combat={this.props.combat}
 				playerView={true}
+				selectedText='selected'
 				showDefeated={false}
 				help={null}
 				selectedItemIDs={this.state.selectedItemIDs}
@@ -834,6 +835,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				<InitiativeOrder
 					combat={this.props.combat}
 					playerView={false}
+					selectedText='selected'
 					showDefeated={this.state.showDefeatedCombatants}
 					help={initHelp}
 					selectedItemIDs={this.state.selectedItemIDs}

@@ -382,6 +382,7 @@ export class Player extends React.Component<Props, State> {
 			<InitiativeOrder
 				combat={combat}
 				playerView={true}
+				selectedText='you'
 				showDefeated={false}
 				help={null}
 				selectedItemIDs={[characterID]}

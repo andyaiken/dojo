@@ -18,7 +18,8 @@ showdown.setOption('tables', true);
 
 interface Props {
 	combatant: Combatant;
-	minimal: boolean;
+	playerView: boolean;
+	selectedText: string;
 	combat: Combat;
 	selected: boolean;
 	select: (combatant: Combatant, ctrl: boolean) => void;
@@ -31,7 +32,7 @@ export class InitiativeEntry extends React.Component<Props> {
 		}
 
 		if (this.props.selected) {
-			return <Tag className='info'>selected</Tag>;
+			return <Tag className='info'>{this.props.selectedText}</Tag>;
 		}
 
 		return null;
@@ -48,7 +49,7 @@ export class InitiativeEntry extends React.Component<Props> {
 		const notes = [];
 
 		// HP, AC stats
-		if ((this.props.combatant.type === 'monster') && !this.props.minimal) {
+		if ((this.props.combatant.type === 'monster') && !this.props.playerView) {
 			const monster = this.props.combatant as (Combatant & Monster);
 
 			let hp = (this.props.combatant.hpCurrent ?? 0).toString();
