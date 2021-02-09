@@ -17,6 +17,8 @@ object-assign
  * @license  MIT
  */
 
+/*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
+
 /*! showdown v 1.9.1 - 02-11-2019 */
 
 /**
