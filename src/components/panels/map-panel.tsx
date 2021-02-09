@@ -9,6 +9,7 @@ import { Mercator } from '../../utils/mercator';
 
 import { Combatant } from '../../models/combat';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
+import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
@@ -22,6 +23,7 @@ showdown.setOption('tables', true);
 interface Props {
 	map: Map;
 	mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
+	options: Options | null;
 	viewport: MapDimensions | null;
 	paddingSquares: number;
 	combatants: Combatant[];
@@ -66,6 +68,7 @@ interface MapItemStyle {
 export class MapPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		mode: 'thumbnail',
+		options: null,
 		viewport: null,
 		paddingSquares: 0,
 		combatants: [],
@@ -412,10 +415,11 @@ export class MapPanel extends React.Component<Props, State> {
 			}
 
 			// Draw the tokens
-			let tokens: JSX.Element[] = [];
+			const tokens: JSX.Element[] = [];
+			const steps: JSX.Element[] = [];
 			if (this.props.mode !== 'edit') {
 				const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
-				tokens = this.props.map.items
+				this.props.map.items
 					.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
 					.filter(i => !mountIDs.includes(i.id))
 					.sort((a, b) => {
@@ -425,7 +429,7 @@ export class MapPanel extends React.Component<Props, State> {
 						const sizeB = combatantB ? combatantB.displaySize : b.size;
 						return Gygax.miniSize(sizeB) - Gygax.miniSize(sizeA);
 					})
-					.map(i => {
+					.forEach(i => {
 						let miniSize = Gygax.miniSize(i.size);
 						let isPC = false;
 						const combatant = this.props.combatants.find(c => c.id === i.id);
@@ -439,10 +443,36 @@ export class MapPanel extends React.Component<Props, State> {
 							}
 							miniSize = Gygax.miniSize(s);
 							isPC = (combatant.type === 'pc');
+							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+								if (combatant.path && combatant.path.length > 0) {
+									let distance = 0;
+									combatant.path.forEach((step, index) => {
+										let next: { x: number, y: number, z: number } = { x: i.x, y: i.y, z: i.z };
+										if ((combatant.path) && (index !== combatant.path.length - 1)) {
+											next = combatant.path[index + 1];
+										}
+										distance += Mercator.getStepDistance(step, next, this.props.options ? this.props.options.diagonals : '');
+									});
+									combatant.path.forEach((step, index) => {
+										const stepStyle = this.getStyle(step.x, step.y, miniSize, miniSize, 'square', mapDimensions);
+										stepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
+										steps.push(
+											<GridSquare
+												key={combatant.id + '-step-' + index}
+												x={step.x}
+												y={step.y}
+												style={stepStyle}
+												mode='step'
+												content={index === 0 ? (distance * 5) + ' ft' : null}
+											/>
+										);
+									});
+								}
+							}
 						}
 						const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
 						tokenStyle.fontSize = (miniSize * this.state.size / 4) + 'px';
-						return (
+						tokens.push(
 							<MapToken
 								key={i.id}
 								token={i}
@@ -583,6 +613,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{areaNames}
 						{overlays}
 						{auras}
+						{steps}
 						{tokens}
 						{fog}
 						{lighting}
@@ -728,6 +759,7 @@ interface GridSquareProps {
 	style: MapItemStyle;
 	mode: string;
 	selected: boolean;
+	content: string | JSX.Element | null;
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
 	onMouseEnter: (x: number, y: number) => void;
@@ -738,6 +770,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 	public static defaultProps = {
 		mode: 'cell',
 		selected: false,
+		content: null,
 		onMouseDown: null,
 		onMouseUp: null,
 		onMouseEnter: null,
@@ -774,6 +807,13 @@ class GridSquare extends React.Component<GridSquareProps> {
 
 	public render() {
 		try {
+			let content = null;
+			if (this.props.content) {
+				content = (
+					<div className='content' style={{ fontSize: this.props.style.fontSize }}>{this.props.content}</div>
+				);
+			}
+
 			return (
 				<div
 					className={'grid-square ' + this.props.mode + (this.props.selected ? ' selected' : '')}
@@ -783,7 +823,9 @@ class GridSquare extends React.Component<GridSquareProps> {
 					onMouseEnter={e => this.mouseEnter(e)}
 					onDoubleClick={e => this.doubleClick(e)}
 					role='button'
-				/>
+				>
+					{content}
+				</div>
 			);
 		} catch (ex) {
 			console.error(ex);
@@ -1083,9 +1125,9 @@ class MapToken extends React.Component<MapTokenProps> {
 				noteText += '**hidden**';
 			}
 
-			if (this.props.combatant.altitude !== 0) {
+			if (this.props.token.z !== 0) {
 				noteText += '\n\n';
-				noteText += '**altitude**: ' + Math.abs(this.props.combatant.altitude) + ' ft ' + (this.props.combatant.altitude > 0 ? 'up' : 'down');
+				noteText += '**altitude**: ' + Math.abs(this.props.token.z * 5) + ' ft ' + (this.props.token.z > 0 ? 'up' : 'down');
 			}
 
 			this.props.combatant.tags.forEach(tag => {
@@ -1185,7 +1227,7 @@ class MapToken extends React.Component<MapTokenProps> {
 					}
 				}
 
-				if (this.props.combatant.altitude > 0) {
+				if (this.props.token.z > 0) {
 					altitudeBadge = (
 						<div className='badge'>
 							<UpSquareTwoTone twoToneColor='#3c78dc' />
@@ -1193,7 +1235,7 @@ class MapToken extends React.Component<MapTokenProps> {
 					);
 				}
 
-				if (this.props.combatant.altitude < 0) {
+				if (this.props.token.z < 0) {
 					altitudeBadge = (
 						<div className='badge'>
 							<DownSquareTwoTone twoToneColor='#3c78dc' />

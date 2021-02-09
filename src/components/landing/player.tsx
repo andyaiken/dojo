@@ -60,7 +60,8 @@ export class Player extends React.Component<Props, State> {
 
 		let options: Options = {
 			showMonsterDieRolls: false,
-			theme: 'light'
+			theme: 'light',
+			diagonals: 'onepointfive'
 		};
 		try {
 			const str = window.localStorage.getItem('data-options');
@@ -69,6 +70,9 @@ export class Player extends React.Component<Props, State> {
 
 				if (options.theme === undefined) {
 					options.theme = 'light';
+				}
+				if (options.diagonals === undefined) {
+					options.diagonals = 'onepointfive';
 				}
 			}
 		} catch (ex) {
@@ -397,6 +401,7 @@ export class Player extends React.Component<Props, State> {
 					<MapPanel
 						map={combat.map}
 						mode='combat-player'
+						options={this.state.options}
 						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
 						showGrid={this.state.addingToMap}
 						combatants={combat.combatants}
@@ -447,6 +452,7 @@ export class Player extends React.Component<Props, State> {
 				<MapPanel
 					map={exploration.map}
 					mode='combat-player'
+					options={this.state.options}
 					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
 					showGrid={this.state.addingToMap}
 					combatants={exploration.combatants}

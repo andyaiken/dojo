@@ -44,7 +44,7 @@ interface Props {
 	mapAdd: (combatant: Combatant) => void;
 	mapMove: (combatants: Combatant[], dir: string, step: number) => void;
 	mapRemove: (combatants: Combatant[]) => void;
-	onChangeAltitude: (combatant: Combatant, value: number) => void;
+	undoStep: (combatant: Combatant) => void;
 	// Adv tab
 	removeCombatants: ((combatants: Combatant[]) => void) | null;
 	addCompanion: (companion: Companion) => void;
@@ -534,18 +534,17 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return this.props.map && this.props.map.items.find(i => i.id === c.id);
 		});
 		if (allOnMap) {
-			let altitude = null;
+			let undo: { enabled: boolean, onUndo: () => void } | null = null;
 			let aura = null;
 			let place = null;
 			if (this.props.combatants.length === 1) {
 				const combatant = this.props.combatants[0];
-				altitude = (
-					<NumberSpin
-						value={combatant.altitude + ' ft.'}
-						label='altitude'
-						onNudgeValue={delta => this.props.onChangeAltitude(combatant, combatant.altitude + (delta * 5))}
-					/>
-				);
+				if (combatant.path) {
+					undo = {
+						enabled: combatant.path.length > 0,
+						onUndo: () => this.props.undoStep(combatant)
+					};
+				}
 				let auraDetails = null;
 				if (combatant.aura.radius > 0) {
 					const auraStyleOptions = [
@@ -590,15 +589,14 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					</Expander>
 				);
 				place = (
-					<button key='mapPlace' onClick={() => this.props.mapAdd(combatant)}>place on a different square</button>
+					<button onClick={() => this.props.mapAdd(combatant)}>place on a different square</button>
 				);
 			}
 
 			return (
 				<div>
-					<Radial showToggle={true} onClick={(dir, step) => this.props.mapMove(this.props.combatants, dir, step)} />
+					<Radial showToggle={true} showAltitude={true} undo={undo} onClick={(dir, step) => this.props.mapMove(this.props.combatants, dir, step)} />
 					<hr/>
-					{altitude}
 					{aura}
 					{place}
 					<button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from map</button>
@@ -904,7 +902,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			}
 
 			return (
-				<div>
+				<div className='combat-controls'>
 					<Tabs
 						options={views.map(v => ({ id: v, text: v }))}
 						selectedID={currentView}

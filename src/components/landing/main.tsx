@@ -176,10 +176,24 @@ export class Main extends React.Component<Props, State> {
 						if (item.customLink === undefined) {
 							item.customLink = '';
 						}
+						if (item.z === undefined) {
+							item.z = 0;
+						}
+						if (item.depth === undefined) {
+							item.depth = 1;
+						}
 					});
 					if (m.areas === undefined) {
 						m.areas = [];
 					}
+					m.areas.forEach(area => {
+						if (area.z === undefined) {
+							area.z = 0;
+						}
+						if (area.depth === undefined) {
+							area.depth = 1;
+						}
+					});
 				});
 			}
 		} catch (ex) {
@@ -223,6 +237,9 @@ export class Main extends React.Component<Props, State> {
 						if (c.lightSource === undefined) {
 							c.lightSource = null;
 						}
+						if (c.path === undefined) {
+							c.path = null;
+						}
 					});
 
 					if (combat.encounter) {
@@ -252,10 +269,24 @@ export class Main extends React.Component<Props, State> {
 							if (item.customLink === undefined) {
 								item.customLink = '';
 							}
+							if (item.z === undefined) {
+								item.z = 0;
+							}
+							if (item.depth === undefined) {
+								item.depth = 1;
+							}
 						});
 						if (combat.map.areas === undefined) {
 							combat.map.areas = [];
 						}
+						combat.map.areas.forEach(area => {
+							if (area.z === undefined) {
+								area.z = 0;
+							}
+							if (area.depth === undefined) {
+								area.depth = 1;
+							}
+						});
 					}
 
 					if (combat.fog === undefined) {
@@ -293,6 +324,9 @@ export class Main extends React.Component<Props, State> {
 						if (c.lightSource === undefined) {
 							c.lightSource = null;
 						}
+						if (c.path === undefined) {
+							c.path = null;
+						}
 					});
 
 					if (ex.lighting === undefined) {
@@ -306,7 +340,8 @@ export class Main extends React.Component<Props, State> {
 
 		let options: Options = {
 			showMonsterDieRolls: false,
-			theme: 'light'
+			theme: 'light',
+			diagonals: 'onepointfive'
 		};
 		try {
 			const str = window.localStorage.getItem('data-options');
@@ -315,6 +350,9 @@ export class Main extends React.Component<Props, State> {
 
 				if (options.theme === undefined) {
 					options.theme = 'light';
+				}
+				if (options.diagonals === undefined) {
+					options.diagonals = 'onepointfive';
 				}
 			}
 		} catch (ex) {
@@ -1940,9 +1978,11 @@ export class Main extends React.Component<Props, State> {
 
 			combat.combatants.forEach(c => {
 				c.current = false;
+				c.path = null;
 			});
 			if (combatant) {
 				combatant.current = true;
+				combatant.path = [];
 			}
 
 			if (newRound) {
@@ -2331,6 +2371,20 @@ export class Main extends React.Component<Props, State> {
 				list.push(id);
 			}
 		});
+		list.forEach(id => {
+			const combatant = combatants.find(c => c.id === id);
+			if (combatant && combatant.path) {
+				// Find map item
+				const item = map.items.find(i => i.id === id);
+				if (item) {
+					combatant.path.push({
+						x: item.x,
+						y: item.y,
+						z: item.z
+					});
+				}
+			}
+		});
 		list.forEach(id => Mercator.move(map, id, dir, step));
 		Napoleon.setMountPositions(combatants, map);
 
@@ -2348,16 +2402,6 @@ export class Main extends React.Component<Props, State> {
 			}
 		});
 		list.forEach(id => Mercator.remove(map, id));
-
-		this.setState({
-			combats: this.state.combats,
-			explorations: this.state.explorations
-		});
-	}
-
-	private setAltitude(combatant: Combatant, value: number, combatants: Combatant[]) {
-		const list = Napoleon.getMountsAndRiders([combatant.id], combatants);
-		list.forEach(c => c.altitude = value);
 
 		this.setState({
 			combats: this.state.combats,
@@ -2687,9 +2731,21 @@ export class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.mapRemove(ids, combat.combatants, combat.map as Map);
 							}}
-							onChangeAltitude={(combatant, value) => {
-								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
-								this.setAltitude(combatant, value, combat.combatants);
+							undoStep={combatant => {
+								if (combatant.path && (combatant.path.length > 0)) {
+									const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
+									const item = (combat.map as Map).items.find(i => i.id === combatant.id);
+									if (item) {
+										const prev = combatant.path[combatant.path.length - 1];
+										item.x = prev.x;
+										item.y = prev.y;
+										item.z = prev.z;
+										combatant.path.splice(combatant.path.length - 1, 1);
+										this.setState({
+											combats: this.state.combats
+										});
+									}
+								}
 							}}
 							endTurn={combatant => this.endTurn(combatant)}
 							changeHP={values => this.changeHP(values)}
@@ -2903,10 +2959,6 @@ export class Main extends React.Component<Props, State> {
 							mapRemove={ids => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.mapRemove(ids, ex.combatants, ex.map);
-							}}
-							onChangeAltitude={(combatant, value) => {
-								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
-								this.setAltitude(combatant, value, ex.combatants);
 							}}
 							scatterCombatants={(combatants, areaID) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;

@@ -102,6 +102,16 @@ export class SessionControlsSidebar extends React.Component<Props> {
 						// Map tab
 						mapAdd={combatant => this.props.toggleAddingToMap()}
 						mapMove={(combatants, dir, step) => {
+							combatants.filter(c => c.path !== null).forEach(c => {
+								const item = (map as Map).items.find(i => i.id === c.id);
+								if (item && c.path) {
+									c.path.push({
+										x: item.x,
+										y: item.y,
+										z: item.z
+									});
+								}
+							});
 							const ids = combatants.map(c => c.id);
 							const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
 							ids.forEach(id => {
@@ -126,11 +136,19 @@ export class SessionControlsSidebar extends React.Component<Props> {
 							CommsPlayer.sendSharedUpdate();
 							this.props.onUpdated();
 						}}
-						onChangeAltitude={(combatant, value) => {
-							const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
-							list.forEach(c => c.altitude = value);
-							CommsPlayer.sendSharedUpdate();
-							this.props.onUpdated();
+						undoStep={combatant => {
+							if (combatant.path && (combatant.path.length > 0)) {
+								const item = (map as Map).items.find(i => i.id === combatant.id);
+								if (item) {
+									const prev = combatant.path[combatant.path.length - 1];
+									item.x = prev.x;
+									item.y = prev.y;
+									item.z = prev.z;
+									combatant.path.splice(combatant.path.length - 1, 1);
+									CommsPlayer.sendSharedUpdate();
+									this.props.onUpdated();
+								}
+							}
 						}}
 						// Adv tab
 						addCompanion={companion => {

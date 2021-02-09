@@ -239,50 +239,72 @@ button.danger {
 // Radial
 
 .radial {
-	width: 122px;
-	height: 122px;
-	background-color: $background;
-	color: $foreground;
-	border: 1px solid $control-border;
-	border-radius: 30%;
-	box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
 	margin: 5px auto;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
 
-	.radial-cell {
-		display: inline-block;
-		vertical-align: middle;
-		height: 40px;
-		width: 40px;
+	.dial {
+		flex: 0 0 122px;
+		height: 122px;
+		background-color: $background;
+		color: $foreground;
+		border: 1px solid $control-border;
+		border-radius: 30%;
+		box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.1);
 
-		.radial-arrow,
-		.radial-toggle {
+		.radial-cell {
+			display: inline-block;
+			vertical-align: middle;
 			height: 40px;
 			width: 40px;
-			line-height: 40px;
-			font-size: 40px;
-			border-radius: 30%;
 
-			&.radial-arrow-diag {
-				font-size: 20px;
-				margin: 10px;
-				height: 20px;
-				width: 20px;
-				line-height: 20px;
+			.radial-arrow,
+			.radial-toggle {
+				height: 40px;
+				width: 40px;
+				line-height: 40px;
+				font-size: 40px;
+				border-radius: 30%;
+
+				&.radial-arrow-diag {
+					font-size: 20px;
+					margin: 10px;
+					height: 20px;
+					width: 20px;
+					line-height: 20px;
+				}
+
+				&:hover {
+					background-color: $highlight02;
+				}
 			}
+
+			.radial-toggle {
+				font-size: 12px;
+				border: 1px solid $control-border;
+				margin: 5px;
+				height: 30px;
+				width: 30px;
+				line-height: 28px;
+				text-align: center;
+			}
+		}
+	}
+
+	.undo, .altitude {
+		flex: 0 0 40px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		.anticon {
+			padding: 5px;
+			font-size: 30px;
 
 			&:hover {
 				background-color: $highlight02;
 			}
-		}
-
-		.radial-toggle {
-			font-size: 12px;
-			border: 1px solid $control-border;
-			margin: 5px;
-			height: 30px;
-			width: 30px;
-			line-height: 28px;
-			text-align: center;
 		}
 	}
 }

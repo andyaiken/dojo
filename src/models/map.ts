@@ -19,8 +19,10 @@ export interface MapItem {
 	type: 'tile' | 'pc' | 'monster' | 'companion' | 'overlay' | 'token';
 	x: number;
 	y: number;
+	z: number;
 	width: number;															// Used by tiles
 	height: number;															// Used by tiles
+	depth: number;															// Used by tiles
 	terrain: string;														// Used by tiles
 	customBackground: string;												// Used by tiles
 	customLink: string;														// Used by tiles
@@ -37,8 +39,10 @@ export interface MapArea {
 	text: string;
 	x: number;
 	y: number;
+	z: number;
 	width: number;
 	height: number;
+	depth: number;
 }
 
 export interface Exploration {

@@ -60,7 +60,7 @@ interface Props {
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
-	onChangeAltitude: (combatant: Combatant, value: number) => void;
+	undoStep: (combatant: Combatant) => void;
 	endTurn: (combatant: Combatant) => void;
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
 	changeValue: (source: any, type: string, value: any) => void;
@@ -388,6 +388,7 @@ export class CombatScreen extends React.Component<Props, State> {
 								key='map'
 								map={this.props.combat.map}
 								mode='combat-player'
+								options={this.props.options}
 								viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
@@ -706,7 +707,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 				mapMove={(combatants, dir, step) => this.props.mapMove(combatants.map(c => c.id), dir, step)}
 				mapRemove={combatants => this.props.mapRemove(combatants.map(c => c.id))}
-				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
+				undoStep={combatant => this.props.undoStep(combatant)}
 				// Adv tab
 				removeCombatants={combatants => this.removeCombatants(combatants)}
 				addCompanion={companion => this.props.addCompanion(companion)}
@@ -907,6 +908,7 @@ export class CombatScreen extends React.Component<Props, State> {
 						<MapPanel
 							map={this.props.combat.map}
 							mode='combat'
+							options={this.props.options}
 							viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
 							combatants={this.props.combat.combatants}

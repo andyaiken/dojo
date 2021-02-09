@@ -574,6 +574,12 @@ export class Mercator {
 					item.x -= step;
 					item.y -= step;
 					break;
+				case 'UP':
+					item.z += step;
+					break;
+				case 'DOWN':
+					item.z -= step;
+					break;
 			}
 		}
 	}
@@ -584,5 +590,24 @@ export class Mercator {
 			const index = map.items.indexOf(item);
 			map.items.splice(index, 1);
 		}
+	}
+
+	public static getStepDistance(a: { x: number, y: number, z: number }, b: { x: number, y: number, z: number }, diagonalMode: string) {
+		const dx = Math.abs(a.x - b.x);
+		const dy = Math.abs(a.y - b.y);
+		const dz = Math.abs(a.z - b.z);
+		const diagonal = ((dx > 0) && (dy > 0)) || ((dx > 0) && (dz > 0)) || ((dy > 0) && (dz > 0));
+		if (diagonal) {
+			switch (diagonalMode) {
+				case 'one':
+					return dx;
+				case 'two':
+					return dx * 2;
+				default:
+					return dx * 1.5;
+			}
+		}
+
+		return Math.max(dx, dy, dz);
 	}
 }

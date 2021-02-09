@@ -34,7 +34,7 @@
 
 				&:hover,
 				&.selected {
-					background-color: $highlight02
+					background-color: $highlight02;
 				}
 			}
 
@@ -55,6 +55,20 @@
 				&.darkness {
 					background-color: black;
 					box-shadow: 0 0 10px 2px black;
+				}
+			}
+
+			&.step {
+				background-color: rgba(0, 0, 0, 0.5);
+				border: 1px solid white;
+				pointer-events: none;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				.content {
+					color: white;
+					font-weight: 600;
 				}
 			}
 		}

@@ -44,7 +44,6 @@ interface Props {
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
-	onChangeAltitude: (combatant: Combatant, value: number) => void;
 	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
 	rotateMap: () => void;
 	getMonster: (id: string) => Monster | null;
@@ -407,6 +406,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			<MapPanel
 				map={this.props.exploration.map}
 				mode={playerView ? 'combat-player' : 'combat'}
+				options={this.props.options}
 				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}
 				combatants={this.props.exploration.combatants}
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
@@ -539,7 +539,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 				mapMove={(combatants, dir, step) => this.props.mapMove(combatants.map(c => c.id), dir, step)}
 				mapRemove={combatants => this.mapRemove(combatants)}
-				onChangeAltitude={(combatant, value) => this.props.onChangeAltitude(combatant, value)}
+				undoStep={combatant => null}
 				// Adv tab
 				removeCombatants={null}
 				addCompanion={companion => this.addCompanion(companion)}

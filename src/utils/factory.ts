@@ -171,8 +171,10 @@ export class Factory {
 			type: 'tile',
 			x: 0,
 			y: 0,
+			z: 0,
 			width: 4,
 			height: 4,
+			depth: 1,
 			terrain: '',
 			customBackground: '',
 			customLink: '',
@@ -191,8 +193,10 @@ export class Factory {
 			text: '',
 			x: 0,
 			y: 0,
+			z: 0,
 			width: 1,
-			height: 1
+			height: 1,
+			depth: 1
 		};
 	}
 

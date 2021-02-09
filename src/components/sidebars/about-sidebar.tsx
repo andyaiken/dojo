@@ -15,6 +15,7 @@ import { Selector } from '../controls/selector';
 import { Note } from '../panels/note';
 
 import pkg from '../../../package.json';
+import { Dropdown } from '../controls/dropdown';
 
 interface Props {
 	parties: Party[];
@@ -114,6 +115,27 @@ export class AboutSidebar extends React.Component<Props, State> {
 								label='use dark theme'
 								checked={this.props.options.theme === 'dark'}
 								onChecked={checked => this.props.setOption('theme', checked ? 'dark' : 'light')}
+							/>
+							<Note>
+								<div className='section'>
+									this setting controls how diagonal movement is calculated
+								</div>
+							</Note>
+							<Dropdown
+								options={[
+									{
+										id: 'one',
+										text: 'diagonals count as one square (5 ft)'
+									}, {
+										id: 'onepointfive',
+										text: 'diagonals count as 1½ squares (7.5 ft)'
+									}, {
+										id: 'two',
+										text: 'diagonals count as two squares (10 ft)'
+									}
+								]}
+								selectedID={this.props.options.diagonals}
+								onSelect={value => this.props.setOption('diagonals', value)}
 							/>
 							<Note>
 								<div className='section'>

@@ -261,12 +261,12 @@ export class Napoleon {
 		combatant.conditions = [];
 		combatant.tags = [];
 		combatant.note = '';
-		combatant.altitude = 0;
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = pc.darkvision;
 		combatant.lightSource = null;
+		combatant.path = null;
 
 		return combatant;
 	}
@@ -292,12 +292,12 @@ export class Napoleon {
 		combatant.conditions = [];
 		combatant.tags = [];
 		combatant.note = '';
-		combatant.altitude = 0;
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = Frankenstein.getVisionRadius(monster);
 		combatant.lightSource = null;
+		combatant.path = null;
 
 		return combatant;
 	}
@@ -324,12 +324,12 @@ export class Napoleon {
 		combatant.conditions = [];
 		combatant.tags = [];
 		combatant.note = '';
-		combatant.altitude = 0;
 		combatant.aura = { radius: 0, style: 'rounded', color: '#005080' };
 		combatant.mountID = null;
 		combatant.mountType = 'controlled';
 		combatant.darkvision = 0;
 		combatant.lightSource = null;
+		combatant.path = null;
 
 		return combatant;
 	}
@@ -355,12 +355,12 @@ export class Napoleon {
 			conditions: [],
 			tags: [],
 			note: '',
-			altitude: 0,
 			aura: { radius: 0, style: 'rounded', color: '#005080' },
 			mountID: null,
 			mountType: 'controlled',
 			darkvision: 0,
-			lightSource: null
+			lightSource: null,
+			path: null
 		};
 	}
 

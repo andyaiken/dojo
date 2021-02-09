@@ -61,7 +61,6 @@ export interface Combatant {
 	conditions: Condition[];
 	tags: string[];
 	note: string;
-	altitude: number;
 	aura: {
 		radius: number;
 		style: 'square' | 'rounded' | 'circle';
@@ -71,6 +70,7 @@ export interface Combatant {
 	mountType: 'controlled' | 'independent';
 	darkvision: number;
 	lightSource: { bright: number, dim: number } | null;
+	path: { x: number, y: number, z: number }[] | null;
 }
 
 export interface Notification {
