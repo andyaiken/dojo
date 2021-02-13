@@ -602,17 +602,30 @@ export class Mercator {
 
 	public static getDistance(i: MapItem, steps: { x: number, y: number, z: number }[], diagonalMode: string) {
 		let d = 0;
+
 		steps.forEach((step, index) => {
-			let next: { x: number, y: number, z: number } = { x: i.x, y: i.y, z: i.z };
+			let next: { x: number, y: number, z: number } | null = null;
 			if (index !== steps.length - 1) {
 				next = steps[index + 1];
 			}
+			if (next === null) {
+				next = {
+					x: i.x,
+					y: i.y,
+					z: i.z
+				};
+			}
 			d += Mercator.getStepDistance(step, next, diagonalMode);
 		});
+
 		return d;
 	}
 
 	public static getStepDistance(a: { x: number, y: number, z: number }, b: { x: number, y: number, z: number }, diagonalMode: string) {
+		if ((a === null) || (b === null)) {
+			return 0;
+		}
+
 		const dx = Math.abs(a.x - b.x);
 		const dy = Math.abs(a.y - b.y);
 		const dz = Math.abs(a.z - b.z);
