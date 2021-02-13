@@ -531,6 +531,10 @@ export class Mercator {
 			item.width = size;
 
 			map.items.push(item);
+		} else {
+			if (combatant.path) {
+				combatant.path.push({ x: item.x, y: item.y, z: item.z });
+			}
 		}
 
 		item.x = x;
@@ -608,8 +612,17 @@ export class Mercator {
 		const dx = Math.abs(a.x - b.x);
 		const dy = Math.abs(a.y - b.y);
 		const dz = Math.abs(a.z - b.z);
+
+		const d = Math.max(dx, dy, dz);
+
 		const diagonal = ((dx > 0) && (dy > 0)) || ((dx > 0) && (dz > 0)) || ((dy > 0) && (dz > 0));
 		if (diagonal) {
+			if (d > 1) {
+				// We're jumping to a new square - calculate distance as the crow flies
+				const hyp = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
+				return Math.round(hyp * 2) / 2;
+			}
+
 			switch (diagonalMode) {
 				case 'one':
 					return dx;
@@ -620,6 +633,6 @@ export class Mercator {
 			}
 		}
 
-		return Math.max(dx, dy, dz);
+		return d;
 	}
 }
