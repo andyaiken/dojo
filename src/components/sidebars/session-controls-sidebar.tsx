@@ -10,11 +10,13 @@ import { Utils } from '../../utils/utils';
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration, Map } from '../../models/map';
+import { Options } from '../../models/misc';
 
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
 import { Note } from '../panels/note';
 
 interface Props {
+	options: Options;
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
@@ -57,6 +59,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 						combatants={[current]}
 						allCombatants={allCombatants}
 						map={map}
+						options={this.props.options}
 						lighting={lighting}
 						showTabs={false}
 						// Main tab

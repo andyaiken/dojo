@@ -439,6 +439,7 @@ export class PageSidebar extends React.Component<Props> {
 				case 'session-controls':
 					content = (
 						<SessionControlsSidebar
+							options={this.props.options}
 							addCondition={(combatants, allCombatants) => this.props.addCondition(combatants, allCombatants)}
 							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
 							toggleAddingToMap={() => this.props.toggleAddingToMap()}

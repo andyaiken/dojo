@@ -417,6 +417,7 @@ export class MapPanel extends React.Component<Props, State> {
 			// Draw the tokens
 			const tokens: JSX.Element[] = [];
 			const steps: JSX.Element[] = [];
+			let distance: JSX.Element | null = null;
 			if (this.props.mode !== 'edit') {
 				const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
 				this.props.map.items
@@ -445,17 +446,8 @@ export class MapPanel extends React.Component<Props, State> {
 							isPC = (combatant.type === 'pc');
 							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
 								if (combatant.path && combatant.path.length > 0) {
-									let distance = 0;
-									combatant.path.forEach((step, index) => {
-										let next: { x: number, y: number, z: number } = { x: i.x, y: i.y, z: i.z };
-										if ((combatant.path) && (index !== combatant.path.length - 1)) {
-											next = combatant.path[index + 1];
-										}
-										distance += Mercator.getStepDistance(step, next, this.props.options ? this.props.options.diagonals : '');
-									});
 									combatant.path.forEach((step, index) => {
 										const stepStyle = this.getStyle(step.x, step.y, miniSize, miniSize, 'square', mapDimensions);
-										stepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
 										steps.push(
 											<GridSquare
 												key={combatant.id + '-step-' + index}
@@ -463,10 +455,22 @@ export class MapPanel extends React.Component<Props, State> {
 												y={step.y}
 												style={stepStyle}
 												mode='step'
-												content={index === 0 ? (distance * 5) + ' ft' : null}
 											/>
 										);
 									});
+									const d = Mercator.getDistance(i, combatant.path, this.props.options ? this.props.options.diagonals : '');
+									const firstStep = combatant.path[0];
+									const firstStepStyle = this.getStyle(firstStep.x, firstStep.y, miniSize, miniSize, 'square', mapDimensions);
+									firstStepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
+									distance = (
+										<GridSquare
+											x={firstStep.x}
+											y={firstStep.y}
+											style={firstStepStyle}
+											mode='step'
+											content={(d * 5) + ' ft'}
+										/>
+									);
 								}
 							}
 						}
@@ -614,6 +618,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{overlays}
 						{auras}
 						{steps}
+						{distance}
 						{tokens}
 						{fog}
 						{lighting}

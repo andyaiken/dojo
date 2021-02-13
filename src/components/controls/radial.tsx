@@ -1,15 +1,20 @@
-import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, UndoOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, UndoOutlined } from '@ant-design/icons';
+import { Col, Row } from 'antd';
 import React from 'react';
 
 interface Props {
 	showToggle: boolean;
-	showAltitude: boolean;
 	undo: {
 		enabled: boolean;
+		text: JSX.Element;
 		onUndo: () => void;
 	} | null;
+	altitude: {
+		enabled: boolean;
+		text: JSX.Element;
+	} | null;
 	disabled: boolean;
-	onClick: (dir: string, step: number) => void;
+	onMove: (dir: string, step: number) => void;
 }
 
 interface State {
@@ -19,8 +24,8 @@ interface State {
 export class Radial extends React.Component<Props, State> {
 	public static defaultProps = {
 		showToggle: false,
-		showAltitude: false,
 		undo: null,
+		altitude: null,
 		disabled: false
 	};
 
@@ -33,7 +38,7 @@ export class Radial extends React.Component<Props, State> {
 
 	private click(e: React.MouseEvent, dir: string) {
 		e.stopPropagation();
-		this.props.onClick(dir, this.state.step);
+		this.props.onMove(dir, this.state.step);
 	}
 
 	private undo(e: React.MouseEvent) {
@@ -69,19 +74,28 @@ export class Radial extends React.Component<Props, State> {
 
 			let undo = null;
 			if (this.props.undo) {
+				let undoStyle = 'undo';
+				if (!this.props.undo.enabled) {
+					undoStyle += ' disabled';
+				}
 				undo = (
-					<div className='undo'>
-						<UndoOutlined className={this.props.undo.enabled ? '' : 'disabled'} title='undo' onClick={e => this.undo(e)} />
+					<div className={undoStyle}>
+						<UndoOutlined title='undo' onClick={e => this.undo(e)} />
+						{this.props.undo.text}
 					</div>
 				);
 			}
 
 			let altitude = null;
-			if (this.props.showAltitude) {
+			if (this.props.altitude) {
+				let altStyle = 'altitude';
+				if (!this.props.altitude.enabled) {
+					altStyle += ' disabled';
+				}
 				altitude = (
-					<div className='altitude'>
+					<div className={altStyle}>
 						<CaretUpOutlined title='move up' onClick={e => this.click(e, 'UP')} />
-						<hr style={{ width: '30px', margin: '5px 0' }} />
+						{this.props.altitude.text}
 						<CaretDownOutlined title='move down' onClick={e => this.click(e, 'DOWN')} />
 					</div>
 				);
@@ -89,53 +103,63 @@ export class Radial extends React.Component<Props, State> {
 
 			return (
 				<div className={style}>
-					{undo}
-					<div className='dial'>
-						<div className='radial-cell'>
-							<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'NW')} role='button'>
-								<ArrowUpOutlined rotate={-45} />
+					<Row align='middle'>
+						<Col span={8}>
+							{undo}
+						</Col>
+						<Col span={8}>
+							<div className='dial'>
+								<div className='cells'>
+									<div className='radial-cell'>
+										<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'NW')} role='button'>
+											<ArrowUpOutlined rotate={-45} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow' onClick={e => this.click(e, 'N')} role='button'>
+											<ArrowUpOutlined />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'NE')} role='button'>
+											<ArrowUpOutlined rotate={45} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow' onClick={e => this.click(e, 'W')} role='button'>
+											<ArrowUpOutlined rotate={-90} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										{middle}
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow' onClick={e => this.click(e, 'E')} role='button'>
+											<ArrowUpOutlined rotate={90} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'SW')} role='button'>
+											<ArrowUpOutlined rotate={-135} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow' onClick={e => this.click(e, 'S')} role='button'>
+											<ArrowUpOutlined rotate={180} />
+										</div>
+									</div>
+									<div className='radial-cell'>
+										<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'SE')} role='button'>
+											<ArrowUpOutlined rotate={135} />
+										</div>
+									</div>
+								</div>
 							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow' onClick={e => this.click(e, 'N')} role='button'>
-								<ArrowUpOutlined />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'NE')} role='button'>
-								<ArrowUpOutlined rotate={45} />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow' onClick={e => this.click(e, 'W')} role='button'>
-								<ArrowLeftOutlined />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							{middle}
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow' onClick={e => this.click(e, 'E')} role='button'>
-								<ArrowRightOutlined />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'SW')} role='button'>
-								<ArrowDownOutlined rotate={45} />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow' onClick={e => this.click(e, 'S')} role='button'>
-								<ArrowDownOutlined />
-							</div>
-						</div>
-						<div className='radial-cell'>
-							<div className='radial-arrow radial-arrow-diag' onClick={e => this.click(e, 'SE')} role='button'>
-								<ArrowDownOutlined rotate={-45} />
-							</div>
-						</div>
-					</div>
-					{altitude}
+						</Col>
+						<Col span={8}>
+							{altitude}
+						</Col>
+					</Row>
 				</div>
 			);
 

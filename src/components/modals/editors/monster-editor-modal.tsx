@@ -1,4 +1,4 @@
-import { MenuOutlined, PlusCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { MenuOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
@@ -51,7 +51,6 @@ interface State {
 		challenge: boolean
 	};
 	addingToScratchpad: boolean;
-	scratchpadView: string;
 	scratchpadAddMode: string;
 	scratchpadFilter: MonsterFilter;
 	scratchpadList: Monster[];
@@ -75,7 +74,6 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				challenge: true
 			},
 			addingToScratchpad: false,
-			scratchpadView: 'list',
 			scratchpadAddMode: 'similar',
 			scratchpadFilter: Factory.createMonsterFilter(),
 			scratchpadList: [],
@@ -215,7 +213,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getHelpOptionsForPage(page: string) {
 		switch (page) {
 			case 'overview':
-				return ['type', 'subtype', 'align', 'challenge', 'size', 'speed', 'senses', 'languages', 'equip'];
+				return ['type', 'subtype', 'align', 'challenge', 'size', 'speed', 'senses', 'lang', 'equip'];
 			case 'abilities':
 				return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
 			case 'combat':
@@ -325,7 +323,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return this.getValueSection('speed', 'text');
 			case 'senses':
 				return this.getValueSection('senses', 'text');
-			case 'languages':
+			case 'lang':
 				return this.getValueSection('languages', 'text');
 			case 'equip':
 				return this.getValueSection('equipment', 'text');
@@ -522,33 +520,41 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	}
 
 	private getScratchpad() {
-		let scratchpad = null;
-		switch (this.state.scratchpadView) {
-			case 'list':
-				let list = null;
-				if (this.state.scratchpadList.length > 0) {
-					list = Utils.sort(this.state.scratchpadList).map(m => (
-						<div className='section' key={m.id}>
-							<MonsterTemplateCard
-								monster={m}
-								section={this.state.page}
-								copyTrait={trait => this.copyTrait(trait)}
-								deselectMonster={monster => this.removeFromScratchpad(monster)}
-								showMonster={monster => this.setState({ inspectedMonster: monster })}
-							/>
-						</div>
-					));
-				} else {
-					list = (
-						<Note>
-							<div className='section'>
-								there are no monsters in your scratchpad
-							</div>
-						</Note>
-					);
-				}
-				scratchpad = (
+		let content = null;
+
+		if (this.state.scratchpadList.length > 0) {
+			const list = Utils.sort(this.state.scratchpadList).map(m => (
+				<div className='section' key={m.id}>
+					<MonsterTemplateCard
+						monster={m}
+						section={this.state.page}
+						copyTrait={trait => this.copyTrait(trait)}
+						deselectMonster={monster => this.removeFromScratchpad(monster)}
+						showMonster={monster => this.setState({ inspectedMonster: monster })}
+					/>
+				</div>
+			));
+
+			let selector = null;
+			if (this.getHelpOptionsForPage(this.state.page).length > 1) {
+				selector = (
 					<div>
+						<Note>
+							<p>select a
+								one of the following fields to see its values from your scratchpad monsters</p>
+						</Note>
+						<Selector
+							options={this.getHelpOptionsForPage(this.state.page).map(s => ({ id: s, text: s }))}
+							selectedID={this.state.helpSection}
+							onSelect={optionID => this.setHelpSection(optionID)}
+						/>
+					</div>
+				);
+			}
+
+			content = (
+				<div>
+					<Expander text='scratchpad list'>
 						<Row gutter={10}>
 							<Col span={12}>
 								<button
@@ -567,38 +573,19 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							</Col>
 						</Row>
 						{list}
+					</Expander>
+					<div className='monster-help'>
+						{selector}
+						{this.getHelpSection()}
 					</div>
-				);
-				break;
-			case 'statistics':
-				if (this.state.scratchpadList.length > 0) {
-					let selector = null;
-					if (this.getHelpOptionsForPage(this.state.page).length > 1) {
-						selector = (
-							<Selector
-								options={this.getHelpOptionsForPage(this.state.page).map(s => ({ id: s, text: s }))}
-								selectedID={this.state.helpSection}
-								onSelect={optionID => this.setHelpSection(optionID)}
-							/>
-						);
-					}
-
-					scratchpad = (
-						<div className='monster-help'>
-							{selector}
-							{this.getHelpSection()}
-						</div>
-					);
-				} else {
-					scratchpad = (
-						<Note>
-							<div className='section'>
-								when there are monsters in your scratchpad, their combined stats will be shown here
-							</div>
-						</Note>
-					);
-				}
-				break;
+				</div>
+			);
+		} else {
+			content = (
+				<button onClick={() => this.setState({ addingToScratchpad: true })}>
+					add monsters to your scratchpad list
+				</button>
+			);
 		}
 
 		return (
@@ -614,12 +601,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						or you can <button className='link' onClick={() => this.spliceMonsters()}>splice these monsters together</button> to create a unique hyrid monster
 					</div>
 				</Note>
-				<Tabs
-					options={['list', 'statistics'].map(o => ({ id: o, text: o, disabled: ((o === 'statistics') && (this.state.scratchpadList.length === 0)) }))}
-					selectedID={this.state.scratchpadView}
-					onSelect={view => this.setState({ scratchpadView : view })}
-				/>
-				{scratchpad}
+				{content}
 			</div>
 		);
 	}
@@ -870,7 +852,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						/>
 						{content}
 					</Col>
-					<Col span={12} className='scrollable'>
+					<Col span={12} className='scrollable sidebar sidebar-right'>
 						<Tabs
 							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
 							selectedID={this.state.sidebarView}
@@ -923,7 +905,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 								onChange={value => this.props.changeValue('name', value)}
 							/>
 							<div className='icons'>
-								<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+								<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
 							</div>
 						</div>
 						<div className='subheading'>type</div>

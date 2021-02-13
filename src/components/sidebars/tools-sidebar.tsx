@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, CopyOutlined, FileOutlined, ReloadOutlined, SoundOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CopyOutlined, FileOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
@@ -306,7 +306,7 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
 								</div>
 								<div className='icon-section'>
-									<ReloadOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
+									<ThunderboltOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
 								</div>
 							</div>
 						</div>

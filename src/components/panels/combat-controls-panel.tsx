@@ -1,11 +1,13 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
+import { Mercator } from '../../utils/mercator';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map } from '../../models/map';
+import { Map, MapItem } from '../../models/map';
+import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
@@ -24,6 +26,7 @@ interface Props {
 	combatants: Combatant[];
 	allCombatants: Combatant[];
 	map: Map | null;
+	options: Options;
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	showTabs: boolean;
 	defaultTab: string;
@@ -534,17 +537,33 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return this.props.map && this.props.map.items.find(i => i.id === c.id);
 		});
 		if (allOnMap) {
-			let undo: { enabled: boolean, onUndo: () => void } | null = null;
+			let undo: { enabled: boolean, text: JSX.Element, onUndo: () => void } | null = null;
+			let altitude: { enabled: boolean, text: JSX.Element } | null = null;
 			let aura = null;
 			let place = null;
 			if (this.props.combatants.length === 1) {
 				const combatant = this.props.combatants[0];
+				const mi = this.props.map.items.find(i => i.id === combatant.id) as MapItem;
 				if (combatant.path) {
+					const d = Mercator.getDistance(mi, combatant.path, this.props.options.diagonals);
 					undo = {
 						enabled: combatant.path.length > 0,
+						text: (
+							<div className='section centered'>
+								<b>{d * 5}</b> ft
+							</div>
+						),
 						onUndo: () => this.props.undoStep(combatant)
 					};
 				}
+				altitude = {
+					enabled: true,
+					text: (
+						<div className='section centered'>
+							<b>{mi.z * 5}</b> ft
+						</div>
+					)
+				};
 				let auraDetails = null;
 				if (combatant.aura.radius > 0) {
 					const auraStyleOptions = [
@@ -595,7 +614,12 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<Radial showToggle={true} showAltitude={true} undo={undo} onClick={(dir, step) => this.props.mapMove(this.props.combatants, dir, step)} />
+					<Radial
+						showToggle={true}
+						undo={undo}
+						altitude={altitude}
+						onMove={(dir, step) => this.props.mapMove(this.props.combatants, dir, step)}
+					/>
 					<hr/>
 					{aura}
 					{place}

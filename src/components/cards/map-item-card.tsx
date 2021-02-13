@@ -39,7 +39,7 @@ export class MapItemCard extends React.Component<Props> {
 							onSelect={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
 						/>
 						<div className='subheading'>move</div>
-						<Radial showToggle={true} onClick={(dir, step) => this.props.moveMapItem(this.props.item, dir, step)} />
+						<Radial showToggle={true} onMove={(dir, step) => this.props.moveMapItem(this.props.item, dir, step)} />
 						<div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
 							<div className='subheading'>size</div>
 							<div className='section'>

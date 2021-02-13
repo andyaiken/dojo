@@ -520,6 +520,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				combatants={selectedCombatants}
 				allCombatants={this.props.exploration.combatants}
 				map={this.props.exploration.map}
+				options={this.props.options}
 				lighting={this.props.exploration.lighting}
 				defaultTab='map'
 				// Main tab

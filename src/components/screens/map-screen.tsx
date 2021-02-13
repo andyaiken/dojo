@@ -1,4 +1,4 @@
-import { CaretLeftOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -328,7 +328,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 					<div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onClick={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
+							<Radial onMove={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>
@@ -473,13 +473,13 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 									onChange={value => this.props.changeValue(this.props.area, 'name', value)}
 								/>
 								<div className='icons'>
-									<ReloadOutlined onClick={() => this.randomName()} title='generate a random name' />
+									<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
 								</div>
 							</div>
 						</div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onClick={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
+							<Radial onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>

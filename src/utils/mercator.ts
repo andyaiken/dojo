@@ -592,6 +592,18 @@ export class Mercator {
 		}
 	}
 
+	public static getDistance(i: MapItem, steps: { x: number, y: number, z: number }[], diagonalMode: string) {
+		let d = 0;
+		steps.forEach((step, index) => {
+			let next: { x: number, y: number, z: number } = { x: i.x, y: i.y, z: i.z };
+			if (index !== steps.length - 1) {
+				next = steps[index + 1];
+			}
+			d += Mercator.getStepDistance(step, next, diagonalMode);
+		});
+		return d;
+	}
+
 	public static getStepDistance(a: { x: number, y: number, z: number }, b: { x: number, y: number, z: number }, diagonalMode: string) {
 		const dx = Math.abs(a.x - b.x);
 		const dy = Math.abs(a.y - b.y);
