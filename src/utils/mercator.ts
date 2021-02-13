@@ -533,7 +533,11 @@ export class Mercator {
 			map.items.push(item);
 		} else {
 			if (combatant.path) {
-				combatant.path.push({ x: item.x, y: item.y, z: item.z });
+				combatant.path.push({
+					x: item.x,
+					y: item.y,
+					z: item.z
+				});
 			}
 		}
 

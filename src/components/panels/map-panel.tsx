@@ -447,16 +447,18 @@ export class MapPanel extends React.Component<Props, State> {
 							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
 								if (combatant.path && combatant.path.length > 0) {
 									combatant.path.forEach((step, index) => {
-										const stepStyle = this.getStyle(step.x, step.y, miniSize, miniSize, 'square', mapDimensions);
-										steps.push(
-											<GridSquare
-												key={combatant.id + '-step-' + index}
-												x={step.x}
-												y={step.y}
-												style={stepStyle}
-												mode='step'
-											/>
-										);
+										if (step) {
+											const stepStyle = this.getStyle(step.x, step.y, miniSize, miniSize, 'square', mapDimensions);
+											steps.push(
+												<GridSquare
+													key={combatant.id + '-step-' + index}
+													x={step.x}
+													y={step.y}
+													style={stepStyle}
+													mode='step'
+												/>
+											);
+										}
 									});
 									const d = Mercator.getDistance(i, combatant.path, this.props.options ? this.props.options.diagonals : '');
 									const firstStep = combatant.path[0];
@@ -629,7 +631,7 @@ export class MapPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <div className='render-error map-panel'/>;
 		}
 	}
 }
