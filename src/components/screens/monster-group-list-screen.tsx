@@ -8,6 +8,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 
 import { MonsterGroupCard } from '../cards/monster-group-card';
 import { MonsterGroupListOptions } from '../options/monster-group-list-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -89,7 +90,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

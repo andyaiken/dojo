@@ -1,6 +1,8 @@
 import { LeftCircleOutlined, RightCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	breadcrumbs: {
 		id: string,
@@ -50,7 +52,7 @@ export class PageHeader extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

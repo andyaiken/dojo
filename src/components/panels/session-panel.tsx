@@ -19,6 +19,7 @@ import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from './die-roll-panel';
 import { DieRollResultPanel } from './die-roll-result-panel';
+import { RenderError } from './error-boundary';
 import { Note } from './note';
 import { PlayingCardPanel } from './playing-card-panel';
 import { PortraitPanel } from './portrait-panel';
@@ -75,9 +76,9 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 					{people}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -203,9 +204,9 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 					<div ref={this.bottom} />
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -326,9 +327,9 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -818,9 +819,9 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					{this.getMessageSection()}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

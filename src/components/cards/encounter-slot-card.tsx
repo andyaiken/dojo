@@ -11,6 +11,7 @@ import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -189,7 +190,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

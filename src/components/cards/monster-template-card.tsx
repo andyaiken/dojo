@@ -8,6 +8,7 @@ import { Gygax } from '../../utils/gygax';
 import { Monster, Trait } from '../../models/monster';
 
 import { AbilityScorePanel } from '../panels/ability-score-panel';
+import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { TraitsPanel } from '../panels/traits-panel';
 
@@ -133,7 +134,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

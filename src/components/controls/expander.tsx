@@ -2,6 +2,8 @@ import { DownCircleOutlined } from '@ant-design/icons';
 import { Collapse } from 'antd';
 import React from 'react';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	text: string | JSX.Element;
 	disabled: boolean;
@@ -32,9 +34,9 @@ export class Expander extends React.Component<Props> {
 					</Collapse.Panel>
 				</Collapse>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

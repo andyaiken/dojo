@@ -1,6 +1,8 @@
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	value: number | string | JSX.Element | JSX.Element[];
 	label: string;
@@ -93,9 +95,9 @@ export class NumberSpin extends React.Component<Props> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

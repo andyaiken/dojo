@@ -8,6 +8,7 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait } from '../../models/monster';
 
 import { AbilityScorePanel } from '../panels/ability-score-panel';
+import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { Statistic } from '../panels/statistic';
 import { TraitsPanel } from '../panels/traits-panel';
@@ -196,7 +197,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

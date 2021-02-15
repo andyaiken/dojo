@@ -8,6 +8,7 @@ import { Party } from '../../models/party';
 
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	party: Party;
@@ -99,7 +100,7 @@ export class PartyOptions extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

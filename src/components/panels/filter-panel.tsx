@@ -11,6 +11,8 @@ import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	filter: MonsterFilter;
 	prefix: string;
@@ -118,7 +120,7 @@ export class FilterPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

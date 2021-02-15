@@ -9,6 +9,7 @@ import { Utils } from '../../utils/utils';
 import { SavedImage } from '../../models/misc';
 
 import { Textbox } from '../controls/textbox';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 
 interface Props {
@@ -112,9 +113,9 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 					{images}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

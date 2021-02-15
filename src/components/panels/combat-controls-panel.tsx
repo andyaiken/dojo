@@ -6,7 +6,7 @@ import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map, MapItem } from '../../models/map';
+import { Map } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
@@ -20,6 +20,7 @@ import { Selector } from '../controls/selector';
 import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
+import { RenderError } from './error-boundary';
 import { Note } from './note';
 
 interface Props {
@@ -543,27 +544,29 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			let place = null;
 			if (this.props.combatants.length === 1) {
 				const combatant = this.props.combatants[0];
-				const mi = this.props.map.items.find(i => i.id === combatant.id) as MapItem;
-				if (combatant.path) {
-					const d = Mercator.getDistance(mi, combatant.path, this.props.options.diagonals);
-					undo = {
-						enabled: combatant.path.length > 0,
+				const mi = this.props.map.items.find(i => i.id === combatant.id);
+				if (mi) {
+					if (combatant.path) {
+						const d = Mercator.getDistance(mi, combatant.path, this.props.options.diagonals);
+						undo = {
+							enabled: combatant.path.length > 0,
+							text: (
+								<div className='section centered'>
+									<b>{d * 5}</b> ft
+								</div>
+							),
+							onUndo: () => this.props.undoStep(combatant)
+						};
+					}
+					altitude = {
+						enabled: true,
 						text: (
 							<div className='section centered'>
-								<b>{d * 5}</b> ft
+								<b>{mi.z * 5}</b> ft
 							</div>
-						),
-						onUndo: () => this.props.undoStep(combatant)
+						)
 					};
 				}
-				altitude = {
-					enabled: true,
-					text: (
-						<div className='section centered'>
-							<b>{mi.z * 5}</b> ft
-						</div>
-					)
-				};
 				let auraDetails = null;
 				if (combatant.aura.radius > 0) {
 					const auraStyleOptions = [
@@ -937,7 +940,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

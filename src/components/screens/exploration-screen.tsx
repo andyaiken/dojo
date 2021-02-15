@@ -21,6 +21,7 @@ import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { NotOnMapInitiativeEntry } from '../panels/initiative-entry';
 import { MapPanel } from '../panels/map-panel';
@@ -694,9 +695,9 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					</Drawer>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

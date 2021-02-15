@@ -8,7 +8,8 @@ import { Gygax } from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
-import { Note } from '../panels/note';
+import { RenderError } from './error-boundary';
+import { Note } from './note';
 
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
@@ -207,7 +208,7 @@ export class TraitsPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -336,7 +337,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 			}
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -6,6 +6,7 @@ import { MapItem } from '../../models/map';
 import { NumberSpin } from '../controls/number-spin';
 import { Radial } from '../controls/radial';
 import { Selector } from '../controls/selector';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	item: MapItem;
@@ -95,9 +96,9 @@ export class MapItemCard extends React.Component<Props> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

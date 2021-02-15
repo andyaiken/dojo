@@ -4,6 +4,7 @@ import React from 'react';
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
+import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { Statistic } from '../panels/statistic';
 
@@ -84,7 +85,7 @@ export class PCStatblockCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

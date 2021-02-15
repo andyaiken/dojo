@@ -9,6 +9,7 @@ import { PC } from '../../models/party';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { AwardPanel } from '../panels/award-panel';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;
@@ -60,9 +61,9 @@ export class StatBlockModal extends React.Component<Props> {
 					{awards}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

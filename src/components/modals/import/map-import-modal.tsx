@@ -10,6 +10,7 @@ import { Map } from '../../../models/map';
 import { NumberSpin } from '../../controls/number-spin';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
+import { RenderError } from '../../panels/error-boundary';
 import { MapPanel } from '../../panels/map-panel';
 import { Note } from '../../panels/note';
 
@@ -311,9 +312,9 @@ export class MapImportModal extends React.Component<Props, State> {
 					</Col>
 				</Row>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

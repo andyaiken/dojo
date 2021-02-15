@@ -2,6 +2,8 @@ import { DownCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	content: (JSX.Element | null)[];
 	columns: number;
@@ -98,7 +100,7 @@ export class GridPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -6,6 +6,7 @@ import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/
 
 import { Selector } from '../controls/selector';
 import { ChartPanel } from '../panels/chart-panel';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	groups: MonsterGroup[];
@@ -96,9 +97,9 @@ export class DemographicsModal extends React.Component<Props, State> {
 					<ChartPanel data={data} />
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

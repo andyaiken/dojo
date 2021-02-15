@@ -16,6 +16,7 @@ import { Note } from '../panels/note';
 
 import pkg from '../../../package.json';
 import { Dropdown } from '../controls/dropdown';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	parties: Party[];
@@ -211,9 +212,9 @@ export class AboutSidebar extends React.Component<Props, State> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

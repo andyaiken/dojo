@@ -16,6 +16,7 @@ import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -200,7 +201,7 @@ export class EncounterScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

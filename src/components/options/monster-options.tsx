@@ -10,6 +10,7 @@ import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	monster: Monster;
@@ -86,7 +87,7 @@ export class MonsterOptions extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -7,6 +7,7 @@ import { Comms } from '../../utils/uhura';
 import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
 import { AwardPanel } from '../panels/award-panel';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 
 interface Props {
@@ -120,9 +121,9 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -12,6 +12,7 @@ import { Party } from '../../models/party';
 import { CombatCard } from '../cards/combat-card';
 import { EncounterCard } from '../cards/encounter-card';
 import { EncounterListOptions } from '../options/encounter-list-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -123,7 +124,7 @@ export class EncounterListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

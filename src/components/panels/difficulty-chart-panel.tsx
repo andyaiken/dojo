@@ -12,6 +12,8 @@ import { Party } from '../../models/party';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
@@ -321,9 +323,9 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 					{diffSection}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

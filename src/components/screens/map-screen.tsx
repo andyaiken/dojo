@@ -16,6 +16,7 @@ import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { MapOptions } from '../options/map-options';
+import { RenderError } from '../panels/error-boundary';
 import { MapPanel } from '../panels/map-panel';
 import { Note } from '../panels/note';
 
@@ -274,9 +275,9 @@ export class MapScreen extends React.Component<Props, State> {
 					</Col>
 				</Row>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -438,7 +439,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -511,7 +512,7 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -3,6 +3,8 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
+import { RenderError } from './error-boundary';
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
 interface Props {
@@ -38,36 +40,41 @@ export class PDF extends React.Component<Props, State> {
 	}
 
 	public render() {
-		let controls = null;
-		if (this.state.pageCount > 1) {
-			controls = (
-				<Row gutter={10}>
-					<Col span={6}>
-						<div className='section centered'>
-							<LeftCircleOutlined style={{ fontSize: '16px' }} onClick={() => this.nudgePage(-1)} />
-						</div>
-					</Col>
-					<Col span={12}>
-						<div className='section centered'>
-							{this.state.page} / {this.state.pageCount}
-						</div>
-					</Col>
-					<Col span={6}>
-						<div className='section centered'>
-							<RightCircleOutlined style={{ fontSize: '16px' }} onClick={() => this.nudgePage(+1)} />
-						</div>
-					</Col>
-				</Row>
-			);
-		}
+		try {
+			let controls = null;
+			if (this.state.pageCount > 1) {
+				controls = (
+					<Row gutter={10}>
+						<Col span={6}>
+							<div className='section centered'>
+								<LeftCircleOutlined style={{ fontSize: '16px' }} onClick={() => this.nudgePage(-1)} />
+							</div>
+						</Col>
+						<Col span={12}>
+							<div className='section centered'>
+								{this.state.page} / {this.state.pageCount}
+							</div>
+						</Col>
+						<Col span={6}>
+							<div className='section centered'>
+								<RightCircleOutlined style={{ fontSize: '16px' }} onClick={() => this.nudgePage(+1)} />
+							</div>
+						</Col>
+					</Row>
+				);
+			}
 
-		return (
-			<div>
-				<Document className='pdf-document' file={this.props.src} onLoadSuccess={({ numPages }) => this.setPageCount(numPages)}>
-					<Page pageNumber={this.state.page} />
-				</Document>
-				{controls}
-			</div>
-		);
+			return (
+				<div>
+					<Document className='pdf-document' file={this.props.src} onLoadSuccess={({ numPages }) => this.setPageCount(numPages)}>
+						<Page pageNumber={this.state.page} />
+					</Document>
+					{controls}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
+		}
 	}
 }

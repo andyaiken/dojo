@@ -11,6 +11,7 @@ import { Party } from '../../models/party';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
+import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
 import { Note } from '../panels/note';
 
@@ -220,9 +221,9 @@ export class RandomEncounterModal extends React.Component<Props, State> {
 					</Row>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -10,6 +10,7 @@ import { Party, PC } from '../../models/party';
 
 import { PartyCard } from '../cards/party-card';
 import { PartyListOptions } from '../options/party-list-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -86,7 +87,7 @@ export class PartyListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

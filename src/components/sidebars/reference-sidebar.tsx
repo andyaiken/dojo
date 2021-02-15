@@ -18,6 +18,7 @@ import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { AwardPanel } from '../panels/award-panel';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 import { Popout } from '../panels/popout';
 
@@ -312,9 +313,9 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -355,9 +356,9 @@ class MarkdownReference extends React.Component<MarkdownReferenceProps, Markdown
 					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
 				</Spin>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -568,9 +569,9 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 					{awards}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -641,9 +642,9 @@ class MonsterReference extends React.Component<MonsterReferenceProps, MonsterRef
 					{this.getPlayerView()}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -733,9 +734,9 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 					{list}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

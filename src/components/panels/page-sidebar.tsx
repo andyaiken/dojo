@@ -24,6 +24,7 @@ import { SessionControlsSidebar } from '../sidebars/session-controls-sidebar';
 import { SessionPlayerSidebar } from '../sidebars/session-player-sidebar';
 import { SessionSidebar } from '../sidebars/session-sidebar';
 import { ToolsSidebar } from '../sidebars/tools-sidebar';
+import { RenderError } from './error-boundary';
 
 interface Props {
 	sidebar: Sidebar;
@@ -493,7 +494,7 @@ export class PageSidebar extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

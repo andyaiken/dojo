@@ -15,6 +15,7 @@ import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	condition: Condition;
@@ -342,7 +343,7 @@ export class ConditionModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

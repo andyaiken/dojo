@@ -4,6 +4,8 @@ import React from 'react';
 
 import { Award } from '../../models/party';
 
+import { RenderError } from './error-boundary';
+
 interface AwardPanelProps {
 	award: Award;
 }
@@ -28,7 +30,7 @@ export class AwardPanel extends React.Component<AwardPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

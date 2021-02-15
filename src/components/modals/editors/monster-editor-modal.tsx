@@ -26,6 +26,7 @@ import { Selector } from '../../controls/selector';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { AbilityScorePanel } from '../../panels/ability-score-panel';
+import { RenderError } from '../../panels/error-boundary';
 import { FilterPanel } from '../../panels/filter-panel';
 import { Note } from '../../panels/note';
 import { PortraitPanel } from '../../panels/portrait-panel';
@@ -876,7 +877,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -974,7 +975,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1014,7 +1015,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1088,7 +1089,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1197,7 +1198,7 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1221,7 +1222,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1279,7 +1280,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1387,7 +1388,7 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

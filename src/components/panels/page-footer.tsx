@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	tabs: {
 		id: string,
@@ -31,7 +33,7 @@ export class PageFooter extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

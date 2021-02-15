@@ -5,6 +5,8 @@ import { Sherlock } from '../../utils/sherlock';
 
 import { Textbox } from './textbox';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	options: { id: string; text: string; disabled?: boolean }[];
 	selectedID: string | null;
@@ -132,9 +134,9 @@ export class Dropdown extends React.Component<Props, State> {
 					{content}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -168,9 +170,9 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 					{this.props.option.text}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

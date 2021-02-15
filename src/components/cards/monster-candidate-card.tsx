@@ -6,6 +6,7 @@ import { Gygax } from '../../utils/gygax';
 
 import { Monster } from '../../models/monster';
 
+import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -54,7 +55,7 @@ export class MonsterCandidateCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

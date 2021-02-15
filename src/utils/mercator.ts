@@ -603,26 +603,21 @@ export class Mercator {
 	public static getDistance(i: MapItem, steps: { x: number, y: number, z: number }[], diagonalMode: string) {
 		let d = 0;
 
-		steps.forEach((step, index) => {
-			let next: { x: number, y: number, z: number } | null = null;
-			if (index !== steps.length - 1) {
-				next = steps[index + 1];
+		const allSteps = steps.concat([i]);
+		let prev: { x: number, y: number, z: number } | null = null;
+		allSteps.forEach(step => {
+			if (prev) {
+				d += Mercator.getStepDistance(prev, step, diagonalMode);
 			}
-			if (next === null) {
-				next = {
-					x: i.x,
-					y: i.y,
-					z: i.z
-				};
-			}
-			d += Mercator.getStepDistance(step, next, diagonalMode);
+			prev = step;
 		});
 
 		return d;
 	}
 
 	public static getStepDistance(a: { x: number, y: number, z: number }, b: { x: number, y: number, z: number }, diagonalMode: string) {
-		if ((a === null) || (b === null)) {
+		// Make sure we have valid data
+		if (!a || !b) {
 			return 0;
 		}
 

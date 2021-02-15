@@ -8,6 +8,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { Textbox } from '../controls/textbox';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 
 interface Props {
@@ -176,9 +177,9 @@ export class SearchSidebar extends React.Component<Props, State> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

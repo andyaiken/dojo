@@ -36,7 +36,7 @@ import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
-import { ErrorBoundary } from '../panels/error-boundary';
+import { ErrorBoundary, RenderError } from '../panels/error-boundary';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
@@ -3548,7 +3548,7 @@ export class Main extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 

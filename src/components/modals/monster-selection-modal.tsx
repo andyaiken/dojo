@@ -10,6 +10,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { RadioGroup } from '../controls/radio-group';
+import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
 import { Note } from '../panels/note';
 
@@ -132,7 +133,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

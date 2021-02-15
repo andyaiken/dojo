@@ -7,6 +7,7 @@ import { Utils } from '../../../utils/utils';
 import { MonsterGroup } from '../../../models/monster';
 
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { RenderError } from '../../panels/error-boundary';
 import { GridPanel } from '../../panels/grid-panel';
 import { Note } from '../../panels/note';
 
@@ -79,9 +80,9 @@ export class MonsterGroupImportModal extends React.Component<Props, State> {
 					</Col>
 				</Row>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

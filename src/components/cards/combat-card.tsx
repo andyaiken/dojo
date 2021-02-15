@@ -5,6 +5,7 @@ import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import { CombatOptions } from '../options/combat-options';
+import { RenderError } from '../panels/error-boundary';
 import { MapPanel } from '../panels/map-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -88,7 +89,7 @@ export class CombatCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

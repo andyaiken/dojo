@@ -17,6 +17,8 @@ import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 
+import { RenderError } from './error-boundary';
+
 const showdown = new Showdown.Converter();
 showdown.setOption('tables', true);
 
@@ -631,7 +633,7 @@ export class MapPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error map-panel'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -728,9 +730,9 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 					{controls}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -753,9 +755,9 @@ class Area extends React.Component<AreaProps> {
 					style={this.props.style}
 				/>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -834,9 +836,9 @@ class GridSquare extends React.Component<GridSquareProps> {
 					{content}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1060,9 +1062,9 @@ class MapTile extends React.Component<MapTileProps> {
 					{content}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1095,9 +1097,9 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 					role='button'
 				/>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -1292,9 +1294,9 @@ class MapToken extends React.Component<MapTokenProps> {
 			} else {
 				return token;
 			}
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

@@ -10,6 +10,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 import { MonsterCard } from '../cards/monster-card';
 import { Textbox } from '../controls/textbox';
 import { MonsterGroupOptions } from '../options/monster-group-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -134,7 +135,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

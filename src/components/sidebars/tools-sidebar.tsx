@@ -18,6 +18,7 @@ import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
+import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 import { PDF } from '../panels/pdf';
 import { PlayingCardPanel } from '../panels/playing-card-panel';
@@ -158,9 +159,9 @@ export class ToolsSidebar extends React.Component<Props> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -194,9 +195,9 @@ class DieRollerTool extends React.Component<DieRollerToolProps> {
 					{results}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -346,9 +347,9 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 					{output}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -386,9 +387,9 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -568,9 +569,9 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 					{this.getPlayerView()}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -714,9 +715,9 @@ class OracleTool extends React.Component<OracleToolProps, OracleToolState> {
 					{cardSection}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

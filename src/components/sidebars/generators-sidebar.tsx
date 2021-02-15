@@ -6,6 +6,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { NPC } from '../../models/misc';
 
 import { Selector } from '../controls/selector';
+import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	view: string;
@@ -97,9 +98,9 @@ export class GeneratorsSidebar extends React.Component<Props> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -165,9 +166,9 @@ class SimpleGenerator extends React.Component<SimpleGeneratorProps, SimpleGenera
 					{values}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -214,9 +215,9 @@ class PlaceNameGenerator extends React.Component<PlaceNameGeneratorProps, PlaceN
 					{output}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -259,9 +260,9 @@ class NPCGenerator extends React.Component<NPCGeneratorProps> {
 					{item}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -288,9 +289,9 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

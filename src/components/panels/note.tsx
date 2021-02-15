@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	white: boolean;
 }
@@ -23,7 +25,7 @@ export class Note extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

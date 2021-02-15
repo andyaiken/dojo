@@ -2,6 +2,8 @@ import React from 'react';
 
 import { PlayingCard } from '../../models/misc';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	card: PlayingCard;
 	reversed: boolean;
@@ -62,9 +64,9 @@ export class PlayingCardPanel extends React.Component<Props, State> {
 					</div>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

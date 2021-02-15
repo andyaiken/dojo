@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	options: { id: string; text: string; disabled?: boolean }[];
 	selectedID: string | null;
@@ -36,9 +38,9 @@ export class Selector extends React.Component<Props> {
 					{options}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -73,9 +75,9 @@ class SelectorOption extends React.Component<SelectorOptionProps> {
 					{this.props.option.text}
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

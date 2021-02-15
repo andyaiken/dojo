@@ -12,6 +12,7 @@ import { PC } from '../../../models/party';
 import { Dropdown } from '../../controls/dropdown';
 import { NumberSpin } from '../../controls/number-spin';
 import { Textbox } from '../../controls/textbox';
+import { RenderError } from '../../panels/error-boundary';
 import { PortraitPanel } from '../../panels/portrait-panel';
 
 interface Props {
@@ -203,7 +204,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

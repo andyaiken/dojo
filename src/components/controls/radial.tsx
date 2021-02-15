@@ -2,6 +2,8 @@ import { ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, UndoOutlined } fro
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	showToggle: boolean;
 	undo: {
@@ -163,9 +165,9 @@ export class Radial extends React.Component<Props, State> {
 				</div>
 			);
 
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

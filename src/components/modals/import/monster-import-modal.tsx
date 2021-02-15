@@ -9,6 +9,7 @@ import { Monster } from '../../../models/monster';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
+import { RenderError } from '../../panels/error-boundary';
 import { Note } from '../../panels/note';
 
 interface Props {
@@ -135,9 +136,9 @@ export class MonsterImportModal extends React.Component<Props, State> {
 					</Col>
 				</Row>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

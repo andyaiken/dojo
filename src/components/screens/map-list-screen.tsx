@@ -9,6 +9,7 @@ import { Party } from '../../models/party';
 import { ExplorationCard } from '../cards/exploration-card';
 import { MapCard } from '../cards/map-card';
 import { MapListOptions } from '../options/map-list-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -82,7 +83,7 @@ export class MapListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

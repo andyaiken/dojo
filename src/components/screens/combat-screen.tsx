@@ -25,6 +25,7 @@ import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
 import { NumberSpin } from '../controls/number-spin';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initiative-entry';
 import { InitiativeOrder } from '../panels/initiative-order';
@@ -1059,7 +1060,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

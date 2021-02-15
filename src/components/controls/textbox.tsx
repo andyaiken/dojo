@@ -1,6 +1,8 @@
 import React from 'react';
 import { DebounceInput } from 'react-debounce-input';
 
+import { RenderError } from '../panels/error-boundary';
+
 interface Props {
 	text: string;
 	placeholder: string;
@@ -66,9 +68,9 @@ export class Textbox extends React.Component<Props> {
 					onKeyDown={e => this.keyDown(e)}
 				/>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 }

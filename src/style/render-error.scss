@@ -5,9 +5,9 @@
 	justify-content: center;
 	background-color: orange;
 
-	&:after {
+	.message {
+		margin: 5px 0;
 		color: white;
 		font-weight: 600;
-		content: 'error - please refresh';
 	}
 }

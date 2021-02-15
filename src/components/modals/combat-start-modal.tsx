@@ -21,6 +21,7 @@ import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
+import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
 import { MapPanel } from '../panels/map-panel';
 import { Note } from '../panels/note';
@@ -282,7 +283,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

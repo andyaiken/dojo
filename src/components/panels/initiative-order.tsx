@@ -4,6 +4,7 @@ import { Napoleon } from '../../utils/napoleon';
 
 import { Combat, Combatant } from '../../models/combat';
 
+import { RenderError } from './error-boundary';
 import { InitiativeEntry } from './initiative-entry';
 
 interface Props {
@@ -58,15 +59,20 @@ export class InitiativeOrder extends React.Component<Props> {
 	}
 
 	public render() {
-		const combatants = Napoleon.getActiveCombatants(this.props.combat, this.props.playerView, this.props.showDefeated);
-		const rows = this.orderCombatants(combatants)
-			.map(c => this.createCombatantRow(c));
+		try {
+			const combatants = Napoleon.getActiveCombatants(this.props.combat, this.props.playerView, this.props.showDefeated);
+			const rows = this.orderCombatants(combatants)
+				.map(c => this.createCombatantRow(c));
 
-		return (
-			<div>
-				{this.props.help}
-				{rows}
-			</div>
-		);
+			return (
+				<div>
+					{this.props.help}
+					{rows}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
+		}
 	}
 }

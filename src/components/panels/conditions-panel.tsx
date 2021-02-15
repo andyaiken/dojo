@@ -8,6 +8,8 @@ import { Condition } from '../../models/condition';
 
 import { NumberSpin } from '../controls/number-spin';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	combatants: Combatant[];
 	allCombatants: Combatant[];
@@ -46,7 +48,7 @@ export class ConditionsPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
@@ -120,7 +122,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

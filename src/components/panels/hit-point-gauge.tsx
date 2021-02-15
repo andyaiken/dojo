@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Combatant } from '../../models/combat';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	combatant: Combatant;
 }
@@ -37,7 +39,7 @@ export class HitPointGauge extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

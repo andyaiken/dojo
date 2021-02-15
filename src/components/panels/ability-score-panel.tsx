@@ -6,6 +6,8 @@ import { Monster } from '../../models/monster';
 
 import { NumberSpin } from '../controls/number-spin';
 
+import { RenderError } from './error-boundary';
+
 interface Props {
 	combatant: Monster;
 	edit: boolean;
@@ -138,7 +140,7 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 			return result;
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }

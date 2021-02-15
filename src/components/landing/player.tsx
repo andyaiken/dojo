@@ -28,7 +28,7 @@ import { StatBlockModal } from '../modals/stat-block-modal';
 import { AwardPanel } from '../panels/award-panel';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
-import { ErrorBoundary } from '../panels/error-boundary';
+import { ErrorBoundary, RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { InitiativeOrder } from '../panels/initiative-order';
 import { MapPanel } from '../panels/map-panel';
@@ -783,9 +783,9 @@ export class Player extends React.Component<Props, State> {
 					</ErrorBoundary>
 				</div>
 			);
-		} catch (ex) {
-			console.error(ex);
-			return <div className='render-error'/>;
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
 		}
 	}
 

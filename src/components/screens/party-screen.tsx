@@ -11,6 +11,7 @@ import { Party, PC } from '../../models/party';
 import { PCCard } from '../cards/pc-card';
 import { Textbox } from '../controls/textbox';
 import { PartyOptions } from '../options/party-options';
+import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
 
@@ -128,7 +129,7 @@ export class PartyScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <div className='render-error'/>;
+			return <RenderError error={e} />;
 		}
 	}
 }
