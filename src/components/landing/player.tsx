@@ -409,6 +409,8 @@ export class Player extends React.Component<Props, State> {
 						fog={combat.fog}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
+						itemMove={(ids, dir) => Comms.data.options.allowControls ? Mercator.moveCombatants(ids, dir, combat.combatants, combat.map as Map, 1) : null}
+						itemRemove={id => null}
 						gridSquareClicked={(x, y) => {
 							if (this.state.addingToMap) {
 								const list = Napoleon.getMountsAndRiders([characterID], combat.combatants);
@@ -460,6 +462,7 @@ export class Player extends React.Component<Props, State> {
 					fog={exploration.fog}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
+					itemMove={(ids, dir) => Comms.data.options.allowControls ? Mercator.moveCombatants(ids, dir, exploration.combatants, exploration.map, 1) : null}
 					gridSquareClicked={(x, y) => {
 						if (this.state.addingToMap) {
 							const list = Napoleon.getMountsAndRiders([characterID], exploration.combatants);

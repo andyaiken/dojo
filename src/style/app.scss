@@ -283,19 +283,42 @@ p,
 		margin: 0;
 	}
 
-	.icons {
+	>.icons {
 		position: absolute;
 		right: 0;
 		top: 0;
+
+		.anticon {
+			font-size: 16px;
+			padding: 8px;
+
+			&:hover,
+			&:focus {
+				background-color: $highlight01;
+			}
+		}
+	}
+}
+
+.content-then-icons {
+	display: flex;
+	align-items: center;
+
+	>.content {
+		flex: 1 1 0;
 	}
 
-	.anticon {
-		font-size: 16px;
-		padding: 8px;
+	>.icons {
+		flex: 0 0 auto;
 
-		&:hover,
-		&:focus {
-			background-color: $highlight01;
+		.anticon {
+			font-size: 16px;
+			padding: 5px;
+
+			&:hover,
+			&:focus {
+				background-color: $highlight01;
+			}
 		}
 	}
 }

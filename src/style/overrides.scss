@@ -273,22 +273,6 @@ button {
 	margin: 10px 5px;
 }
 
-.ant-tooltip {
-	font-size: 12px;
-	line-height: 12px;
-	user-select: none;
-	pointer-events: none;
-
-	.ant-tooltip-inner {
-		border-radius: 0;
-		opacity: 0.95;
-
-		b, strong {
-			color: $background;
-		}
-	}
-}
-
 .ant-slider, .ant-slider:hover {
 	.ant-slider-track {
 		background-color: $highlight !important;
@@ -416,11 +400,34 @@ button {
 	user-select: none;
 	font-size: 12px;
 	font-family: 'Open Sans', 'Segoe UI', sans-serif;
-	
+
 	.ant-popover-inner {
 		border-radius: 0;
-		min-width: 260px;
-		border: 1px solid $control-border;
+
+		.ant-popover-inner-content {
+			padding: 5px 10px;
+		}
+	}
+
+	&.map-hover-tooltip {
+		pointer-events: none;
+		opacity: 0.9;
+
+		.ant-popover-inner {
+			max-width: 225px;
+		}
+	}
+	
+	&.map-click-tooltip {
+		.ant-popover-inner {
+			max-width: 225px;
+		}
+	}
+	
+	&.confirm-tooltip {
+		.ant-popover-inner {
+			min-width: 260px;
+		}
 	}
 }
 

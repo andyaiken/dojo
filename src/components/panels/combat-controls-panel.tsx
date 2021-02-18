@@ -260,48 +260,13 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			<div>
 				{notes}
 				{actionSection}
-				<div className='section'>
-					<b>quick tags: </b>
-					<Tag.CheckableTag
-						checked={this.props.combatants.every(c => c.tags.includes('conc'))}
-						onChange={() => this.props.toggleTag(this.props.combatants, 'conc')}
-					>
-						concentrating
-					</Tag.CheckableTag>
-					<Tag.CheckableTag
-						checked={this.props.combatants.every(c => c.tags.includes('bane'))}
-						onChange={() => this.props.toggleTag(this.props.combatants, 'bane')}
-					>
-						bane
-					</Tag.CheckableTag>
-					<Tag.CheckableTag
-						checked={this.props.combatants.every(c => c.tags.includes('bless'))}
-						onChange={() => this.props.toggleTag(this.props.combatants, 'bless')}
-					>
-						bless
-					</Tag.CheckableTag>
-					<Tag.CheckableTag
-						checked={!this.props.combatants.every(c => c.showOnMap)}
-						onChange={() => this.props.toggleHidden(this.props.combatants)}
-					>
-						hidden
-					</Tag.CheckableTag>
-				</div>
-				<div className='section'>
-					<b>quick conditions: </b>
-					<Tag.CheckableTag
-						checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone'))}
-						onChange={() => this.props.toggleCondition(this.props.combatants, 'prone')}
-					>
-						prone
-					</Tag.CheckableTag>
-					<Tag.CheckableTag
-						checked={this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious'))}
-						onChange={() => this.props.toggleCondition(this.props.combatants, 'unconscious')}
-					>
-						unconscious
-					</Tag.CheckableTag>
-				</div>
+				<CombatantTags
+					combatants={this.props.combatants}
+					editable={true}
+					toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+					toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+					toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
+				/>
 				{engagedSection}
 			</div>
 		);
@@ -936,6 +901,54 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 						onSelect={option => this.setView(option)}
 					/>
 					{content}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError error={e} />;
+		}
+	}
+}
+
+interface CombatantTagsProps {
+	combatants: Combatant[];
+	editable: boolean;
+	toggleTag: (combatants: Combatant[], tag: string) => void;
+	toggleCondition: (combatants: Combatant[], condition: string) => void;
+	toggleHidden: (combatants: Combatant[]) => void;
+}
+
+export class CombatantTags extends React.Component<CombatantTagsProps> {
+	private createTag(name: string, checked: boolean, onChange: () => void) {
+		if (!this.props.editable) {
+			if (checked) {
+				return (
+					<Tag>
+						{name}
+					</Tag>
+				);
+			}
+
+			return null;
+		}
+
+		return (
+			<Tag.CheckableTag checked={checked} onChange={() => onChange()}>
+				{name}
+			</Tag.CheckableTag>
+		);
+	}
+
+	public render() {
+		try {
+			return (
+				<div className='section'>
+					{this.createTag('bane', this.props.combatants.every(c => c.tags.includes('bane')), () => this.props.toggleTag(this.props.combatants, 'bane'))}
+					{this.createTag('bless', this.props.combatants.every(c => c.tags.includes('bless')), () => this.props.toggleTag(this.props.combatants, 'bless'))}
+					{this.createTag('concentrating', this.props.combatants.every(c => c.tags.includes('conc')), () => this.props.toggleTag(this.props.combatants, 'conc'))}
+					{this.createTag('hidden', !this.props.combatants.every(c => c.showOnMap), () => this.props.toggleHidden(this.props.combatants))}
+					{this.createTag('prone', this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'prone')), () => this.props.toggleCondition(this.props.combatants, 'prone'))}
+					{this.createTag('unconscious', this.props.combatants.every(c => c.conditions.some(condition => condition.name === 'unconscious')), () => this.props.toggleCondition(this.props.combatants, 'unconscious'))}
 				</div>
 			);
 		} catch (e) {

@@ -12,41 +12,12 @@ interface Props {
 	onConfirm: () => void;
 }
 
-interface State {
-	visible: boolean;
-}
-
-export class ConfirmButton extends React.Component<Props, State> {
+export class ConfirmButton extends React.Component<Props> {
 	public static defaultProps = {
 		prompt: 'are you sure you want to do this?',
 		info: null,
 		disabled: false
 	};
-
-	constructor(props: Props) {
-		super(props);
-
-		this.state = {
-			visible: false
-		};
-	}
-
-	private onClick(e: React.MouseEvent) {
-		e.stopPropagation();
-		this.setState({
-			visible: true
-		});
-	}
-
-	private onClose(e: React.MouseEvent, confirm: boolean) {
-		e.stopPropagation();
-		if (confirm) {
-			this.props.onConfirm();
-		}
-		this.setState({
-			visible: false
-		});
-	}
 
 	public render() {
 		try {
@@ -60,14 +31,13 @@ export class ConfirmButton extends React.Component<Props, State> {
 							</div>
 							{this.props.info}
 							<hr/>
-							<button onClick={e => this.onClose(e, true)}>confirm</button>
-							<button onClick={e => this.onClose(e, false)}>cancel</button>
+							<button onClick={() => this.props.onConfirm()}>confirm</button>
 						</div>
 					)}
 					trigger='click'
-					visible={this.state.visible}
+					overlayClassName='confirm-tooltip'
 				>
-					<button className={this.props.disabled ? 'danger disabled' : 'danger'} onClick={e => this.onClick(e)}>
+					<button className={this.props.disabled ? 'danger disabled' : 'danger'}>
 						{this.props.text}
 					</button>
 				</Popover>

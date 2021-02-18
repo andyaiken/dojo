@@ -36,6 +36,7 @@ import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
+import { DieRollResultPanel } from '../panels/die-roll-result-panel';
 import { ErrorBoundary, RenderError } from '../panels/error-boundary';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
@@ -412,11 +413,6 @@ export class Main extends React.Component<Props, State> {
 			this.setSidebar('search');
 		});
 
-		window.addEventListener('beforeunload', (e: BeforeUnloadEvent) => {
-			this.save();
-			e.returnValue = '';
-		});
-
 		CommsDM.onStateChanged = () => this.setState(this.state);
 		CommsDM.onDataChanged = () => this.setState(this.state);
 		CommsDM.onNewConnection = name => {
@@ -612,20 +608,27 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private setDice(count: number, sides: number, constant: number) {
+	private rollDice(count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') {
 		const dice: { [sides: number]: number } = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		dice[sides] = count;
 
+		const result = Gygax.rollDice(dice, constant, mode);
+
 		const sidebar = this.state.sidebar;
-		sidebar.visible = true;
-		sidebar.type = 'tools';
-		sidebar.subtype = 'die';
-		sidebar.dice = dice;
-		sidebar.constant = constant;
+		sidebar.dieRolls.push(result);
 
 		this.setState({
 			sidebar: sidebar
+		}, () => {
+			notification.open({
+				key: result.id,
+				message: (
+					<DieRollResultPanel result={result} />
+				),
+				closeIcon: <CloseCircleOutlined />,
+				duration: 5
+			});
 		});
 	}
 
@@ -2365,28 +2368,7 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private mapMove(ids: string[], dir: string, combatants: Combatant[], map: Map, step: number) {
-		const list = Napoleon.getMountsAndRiders(ids, combatants).map(c => c.id);
-		ids.forEach(id => {
-			if (!list.includes(id)) {
-				list.push(id);
-			}
-		});
-		list.forEach(id => {
-			const combatant = combatants.find(c => c.id === id);
-			if (combatant && combatant.path) {
-				// Find map item
-				const item = map.items.find(i => i.id === id);
-				if (item) {
-					combatant.path.push({
-						x: item.x,
-						y: item.y,
-						z: item.z
-					});
-				}
-			}
-		});
-		list.forEach(id => Mercator.move(map, id, dir, step));
-		Napoleon.setMountPositions(combatants, map);
+		Mercator.moveCombatants(ids, dir, combatants, map, step);
 
 		this.setState({
 			combats: this.state.combats,
@@ -2771,7 +2753,7 @@ export class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.addMapItem(overlay, combat.map as Map);
 							}}
-							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
+							onRollDice={(count, sides, constant, mode) => this.rollDice(count, sides, constant, mode)}
 							onOpenSession={() => this.openSession()}
 						/>
 					);
@@ -2982,7 +2964,7 @@ export class Main extends React.Component<Props, State> {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.addMapItem(overlay, ex.map);
 							}}
-							onRollDice={(count, sides, constant) => this.setDice(count, sides, constant)}
+							onRollDice={(count, sides, constant, mode) => this.rollDice(count, sides, constant, mode)}
 							onOpenSession={() => this.openSession()}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}

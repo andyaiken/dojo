@@ -1,3 +1,4 @@
+import { Popover } from 'antd';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -13,7 +14,7 @@ interface Props {
 	edit: boolean;
 	showRollButtons: boolean;
 	onNudgeValue: (combatant: Monster, field: string, delta: number) => void;
-	onRollDice: (count: number, sides: number, constant: number) => void;
+	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 interface State {
@@ -41,12 +42,12 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 		});
 	}
 
-	private roll(e: React.MouseEvent, ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
+	private roll(e: React.MouseEvent, ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', mode: '' | 'advantage' | 'disadvantage') {
 		e.stopPropagation();
 
 		const score = this.props.combatant.abilityScores[ability];
-		const mod = Gygax.modifierValue(score);
-		this.props.onRollDice(1, 20, mod);
+		const constant = Gygax.modifierValue(score);
+		this.props.onRollDice(1, 20, constant, mode);
 	}
 
 	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {
@@ -66,9 +67,19 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 
 		if (this.props.showRollButtons) {
 			return (
-				<div className='ability-score link' onClick={e => this.roll(e, ability)} role='button'>
-					{content}
-				</div>
+				<Popover
+					content={(
+						<div>
+							<button onClick={e => this.roll(e, ability, 'advantage')}>adv</button>
+							<button onClick={e => this.roll(e, ability, 'disadvantage')}>dis</button>
+						</div>
+					)}
+					trigger='contextMenu'
+				>
+					<div className='ability-score link' onClick={e => this.roll(e, ability, '')} role='button'>
+						{content}
+					</div>
+				</Popover>
 			);
 		} else {
 			return (

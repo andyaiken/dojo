@@ -52,7 +52,7 @@ interface Props {
 	rechargeTrait: (trait: Trait) => void;
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
-	onRollDice: (count: number, sides: number, constant: number) => void;
+	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 	onOpenSession: () => void;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
@@ -419,6 +419,12 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
+				itemMove={(ids, dir) => this.props.mapMove(ids, dir, 1)}
+				itemRemove={id => this.props.mapRemove([id])}
+				conditionRemove={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
+				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+				toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+				toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
 				areaSelected={id => this.setSelectedAreaID(id)}
 				changeLighting={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
 			/>
@@ -566,7 +572,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 						showRollButtons={this.props.options.showMonsterDieRolls}
 						useTrait={trait => this.props.useTrait(trait)}
 						rechargeTrait={trait => this.props.rechargeTrait(trait)}
-						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
 					/>
 				);
 			case 'companion':
@@ -583,7 +589,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 									showRollButtons={this.props.options.showMonsterDieRolls}
 									useTrait={trait => this.props.useTrait(trait)}
 									rechargeTrait={trait => this.props.rechargeTrait(trait)}
-									onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+									onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
 								/>
 							);
 						}

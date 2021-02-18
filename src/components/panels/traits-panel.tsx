@@ -1,4 +1,5 @@
 import { StarFilled, StarOutlined, ToTopOutlined } from '@ant-design/icons';
+import { Popover } from 'antd';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -21,7 +22,7 @@ interface Props {
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number) => void;
+	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class TraitsPanel extends React.Component<Props> {
@@ -156,7 +157,7 @@ export class TraitsPanel extends React.Component<Props> {
 						copyTrait={action => this.props.copyTrait(action)}
 						useTrait={action => this.props.useTrait(action)}
 						rechargeTrait={action => this.props.rechargeTrait(action)}
-						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
 					/>
 				));
 			});
@@ -220,7 +221,7 @@ interface TraitPanelProps {
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number) => void;
+	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class TraitPanel extends React.Component<TraitPanelProps> {
@@ -298,13 +299,23 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 						Frankenstein.getToHitExpressions(this.props.trait)
 							.forEach(exp => {
 								buttons.push(
-									<button
-										key={exp.expression}
-										className='link'
-										onClick={() => this.props.onRollDice(1, 20, exp.bonus)}
+									<Popover
+										content={(
+											<div>
+												<button onClick={e => this.props.onRollDice(1, 20, exp.bonus, 'advantage')}>adv</button>
+												<button onClick={e => this.props.onRollDice(1, 20, exp.bonus, 'disadvantage')}>dis</button>
+											</div>
+										)}
+										trigger='contextMenu'
 									>
-										{exp.expression}
-									</button>
+										<button
+											key={exp.expression}
+											className='link'
+											onClick={() => this.props.onRollDice(1, 20, exp.bonus, '')}
+										>
+											{exp.expression}
+										</button>
+									</Popover>
 								);
 							});
 						Frankenstein.getDiceExpressions(this.props.trait)
@@ -313,7 +324,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 									<button
 										key={exp.expression}
 										className='link'
-										onClick={() => this.props.onRollDice(exp.count, exp.sides, exp.bonus)}
+										onClick={() => this.props.onRollDice(exp.count, exp.sides, exp.bonus, '')}
 									>
 										{exp.expression}
 									</button>

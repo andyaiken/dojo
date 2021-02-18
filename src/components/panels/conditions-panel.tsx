@@ -1,4 +1,4 @@
-import { CloseOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -113,7 +113,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 						<div className='condition-name'>{name}</div>
 						<div className='condition-buttons'>
 							<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-							<CloseOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
+							<DeleteOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
 						</div>
 					</div>
 					{duration}

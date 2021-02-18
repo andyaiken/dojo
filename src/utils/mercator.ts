@@ -2,6 +2,7 @@
 
 import { Factory } from './factory';
 import { Gygax } from './gygax';
+import { Napoleon } from './napoleon';
 import { Shakespeare } from './shakespeare';
 import { Utils } from './utils';
 
@@ -66,6 +67,31 @@ export class Mercator {
 				});
 			}
 		}
+	}
+
+	public static moveCombatants(ids: string[], dir: string, combatants: Combatant[], map: Map, step: number) {
+		const list = Napoleon.getMountsAndRiders(ids, combatants).map(c => c.id);
+		ids.forEach(id => {
+			if (!list.includes(id)) {
+				list.push(id);
+			}
+		});
+		list.forEach(id => {
+			const combatant = combatants.find(c => c.id === id);
+			if (combatant && combatant.path) {
+				// Find map item
+				const item = map.items.find(i => i.id === id);
+				if (item) {
+					combatant.path.push({
+						x: item.x,
+						y: item.y,
+						z: item.z
+					});
+				}
+			}
+		});
+		list.forEach(id => Mercator.move(map, id, dir, step));
+		Napoleon.setMountPositions(combatants, map);
 	}
 
 	public static mapDimensions(items: MapItem[]) {

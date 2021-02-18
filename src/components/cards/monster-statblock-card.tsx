@@ -1,4 +1,4 @@
-import { Col, Row, Tag } from 'antd';
+import { Col, Popover, Row, Tag } from 'antd';
 import React from 'react';
 
 import { Frankenstein } from '../../utils/frankenstein';
@@ -19,7 +19,7 @@ interface Props {
 	showRollButtons: boolean;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number) => void;
+	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class MonsterStatblockCard extends React.Component<Props> {
@@ -61,13 +61,23 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					const sign = exp[2] || '+';
 					const bonus = parseInt(exp[3], 10) * (sign === '+' ? 1 : -1);
 					buttons.push(
-						<button
-							key={expression}
-							className='link'
-							onClick={() => this.props.onRollDice(1, 20, bonus)}
+						<Popover
+							content={(
+								<div>
+									<button onClick={e => this.props.onRollDice(1, 20, bonus, 'advantage')}>adv</button>
+									<button onClick={e => this.props.onRollDice(1, 20, bonus, 'disadvantage')}>dis</button>
+								</div>
+							)}
+							trigger='contextMenu'
 						>
-							{expression}
-						</button>
+							<button
+								key={expression}
+								className='link'
+								onClick={() => this.props.onRollDice(1, 20, bonus, '')}
+							>
+								{expression}
+							</button>
+						</Popover>
 					);
 					remainingText = remainingText.replace(expression, '');
 				});
@@ -149,7 +159,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					<AbilityScorePanel
 						combatant={this.props.monster}
 						showRollButtons={this.props.showRollButtons}
-						onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
 					/>
 				</div>
 				{this.statSection('ac', this.getAC())}
@@ -171,7 +181,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					showRollButtons={this.props.showRollButtons}
 					useTrait={trait => this.props.useTrait(trait)}
 					rechargeTrait={trait => this.props.rechargeTrait(trait)}
-					onRollDice={(count, sides, constant) => this.props.onRollDice(count, sides, constant)}
+					onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
 				/>
 			</div>
 		);

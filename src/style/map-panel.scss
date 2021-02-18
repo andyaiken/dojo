@@ -276,6 +276,10 @@
 		box-shadow: 0 0 10px 3px black;
 	}
 
+	&.not-selectable {
+		pointer-events: none;
+	}
+
 	&.hidden {
 		opacity: 0.3;
 	}

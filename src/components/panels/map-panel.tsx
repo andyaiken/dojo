@@ -1,5 +1,6 @@
-import { DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
-import { Progress, Tooltip } from 'antd';
+import { DeleteOutlined, DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { Popover, Progress } from 'antd';
+import Mousetrap from 'mousetrap';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -8,6 +9,7 @@ import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
 
 import { Combatant } from '../../models/combat';
+import { Condition } from '../../models/condition';
 import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
@@ -17,6 +19,7 @@ import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 
+import { CombatantTags } from './combat-controls-panel';
 import { RenderError } from './error-boundary';
 
 const showdown = new Showdown.Converter();
@@ -36,6 +39,12 @@ interface Props {
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
+	itemMove: (itemIDs: string[], dir: string) => void;
+	itemRemove: (itemID: string) => void;
+	conditionRemove: (combatant: Combatant, condition: Condition) => void;
+	toggleTag: (combatants: Combatant[], tag: string) => void;
+	toggleCondition: (combatants: Combatant[], condition: string) => void;
+	toggleHidden: (combatants: Combatant[]) => void;
 	areaSelected: (areaID: string | null) => void;
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
@@ -81,6 +90,12 @@ export class MapPanel extends React.Component<Props, State> {
 		lighting: 'bright light',
 		focussedSquare: null,
 		itemSelected: null,
+		itemMove: null,
+		itemRemove: null,
+		conditionRemove: null,
+		toggleTag: null,
+		toggleCondition: null,
+		toggleHidden: null,
 		areaSelected: null,
 		gridSquareEntered: null,
 		gridSquareClicked: null,
@@ -97,6 +112,40 @@ export class MapPanel extends React.Component<Props, State> {
 			selectionStartSquare: null,
 			selectionEndSquare: null
 		};
+	}
+
+	public componentDidMount() {
+		if (this.props.mode !== 'thumbnail') {
+			Mousetrap.bind('up', e => {
+				e.preventDefault();
+				// Move selected item N
+				this.props.itemMove(this.props.selectedItemIDs, 'N');
+			});
+			Mousetrap.bind('down', e => {
+				e.preventDefault();
+				// Move selected item S
+				this.props.itemMove(this.props.selectedItemIDs, 'S');
+			});
+			Mousetrap.bind('left', e => {
+				e.preventDefault();
+				// Move selected item W
+				this.props.itemMove(this.props.selectedItemIDs, 'W');
+			});
+			Mousetrap.bind('right', e => {
+				e.preventDefault();
+				// Move selected item E
+				this.props.itemMove(this.props.selectedItemIDs, 'E');
+			});
+		}
+	}
+
+	public componentWillUnmount() {
+		if (this.props.mode !== 'thumbnail') {
+			Mousetrap.unbind('up');
+			Mousetrap.unbind('down');
+			Mousetrap.unbind('left');
+			Mousetrap.unbind('right');
+		}
 	}
 
 	private gridSquareMouseDown(x: number, y: number) {
@@ -490,9 +539,14 @@ export class MapPanel extends React.Component<Props, State> {
 								simple={this.props.mode === 'thumbnail'}
 								showGauge={this.props.mode === 'combat'}
 								showHidden={(this.props.mode === 'combat') || isPC}
-								selectable={(this.props.mode === 'combat') || (this.props.mode === 'combat-player')}
+								selectable={this.props.mode === 'combat'}
 								selected={this.props.selectedItemIDs.includes(i.id)}
 								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
+								remove={id => this.props.itemRemove(id)}
+								conditionRemove={(c, condition) => this.props.conditionRemove(c, condition)}
+								toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+								toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+								toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
 							/>
 						);
 					});
@@ -1115,9 +1169,41 @@ interface MapTokenProps {
 	selectable: boolean;
 	selected: boolean;
 	select: (tokenID: string, ctrl: boolean) => void;
+	remove: (tokenID: string) => void;
+	conditionRemove: (combatant: Combatant, condition: Condition) => void;
+	toggleTag: (combatants: Combatant[], tag: string) => void;
+	toggleCondition: (combatants: Combatant[], condition: string) => void;
+	toggleHidden: (combatants: Combatant[]) => void;
 }
 
-class MapToken extends React.Component<MapTokenProps> {
+interface MapTokenState {
+	hovered: boolean;
+	clicked: boolean;
+}
+
+class MapToken extends React.Component<MapTokenProps, MapTokenState> {
+	constructor(props: MapTokenProps) {
+		super(props);
+		this.state = {
+			hovered: false,
+			clicked: false
+		};
+	}
+
+	private handleHoverChange(visible: boolean) {
+		this.setState({
+			hovered: visible,
+			clicked: false
+		});
+	}
+
+	private handleClickChange(visible: boolean) {
+		this.setState({
+			hovered: false,
+			clicked: visible
+		});
+	}
+
 	private select(e: React.MouseEvent) {
 		if (this.props.selectable) {
 			e.stopPropagation();
@@ -1125,46 +1211,92 @@ class MapToken extends React.Component<MapTokenProps> {
 		}
 	}
 
-	private getNoteText() {
-		let noteText = this.props.combatant ? '**' + this.props.combatant.displayName + '**' : '';
+	private getPopoverContent(clicked: boolean) {
+		if (!this.props.selectable) {
+			return null;
+		}
+
+		let name = 'token';
+		let tags = null;
+		const info: JSX.Element[] = [];
 
 		if (this.props.combatant) {
-			if (!this.props.combatant.showOnMap) {
-				noteText += '\n\n';
-				noteText += '**hidden**';
-			}
+			name = this.props.combatant.displayName || 'unnamed combatant';
+
+			tags = (
+				<CombatantTags
+					combatants={[this.props.combatant]}
+					editable={clicked}
+					toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+					toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+					toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
+				/>
+			);
 
 			if (this.props.token.z !== 0) {
-				noteText += '\n\n';
-				noteText += '**altitude**: ' + Math.abs(this.props.token.z * 5) + ' ft ' + (this.props.token.z > 0 ? 'up' : 'down');
+				info.push(
+					<div key='altitude' className='section'>altitude: {Math.abs(this.props.token.z * 5)} ft {this.props.token.z > 0 ? 'up' : 'down'}</div>
+				);
 			}
 
-			this.props.combatant.tags.forEach(tag => {
-				noteText += '\n\n';
-				noteText += '**' + Gygax.getTagTitle(tag) + '**';
-				noteText += '\n\n';
-				noteText += '* ' + Gygax.getTagDescription(tag);
-			});
-
-			this.props.combatant.conditions.forEach(condition => {
-				if (condition.name === 'custom') {
-					Gygax.conditionText(condition).forEach(txt => {
-						noteText += '\n\n';
-						noteText += '* ' + txt;
-					});
-				} else {
-					noteText += '\n\n';
-					noteText += '* ' + condition.name;
+			if (clicked) {
+				// Allow conditions to be removed
+				this.props.combatant.conditions.filter(condition => (condition.name !== 'prone') && (condition.name !== 'unconscious')).forEach(condition => {
+					info.push(
+						<div key={condition.id} className='content-then-icons'>
+							<div className='content'>
+								<div className='group-panel'>{condition.name}</div>
+							</div>
+							<div className='icons'>
+								<DeleteOutlined onClick={() => this.props.conditionRemove(this.props.combatant as Combatant, condition)} />
+							</div>
+						</div>
+					);
+				});
+			} else {
+				// List condition names
+				const names = this.props.combatant.conditions
+					.map(condition => condition.name)
+					.filter(n => (n !== 'prone') && (n !== 'unconscious') && (n !== 'custom'))
+					.join(', ');
+				if (names !== '') {
+					info.push(
+						<div key='conditions' className='section'>{names}</div>
+					);
 				}
-			});
+
+				// List custom condition details
+				const custom = this.props.combatant.conditions.find(c => c.name === 'custom');
+				if (custom) {
+					Gygax.conditionText(custom).forEach((txt, index) => {
+						info.push(
+							<div key={custom.id + '-' + index} className='section'>{txt}</div>
+						);
+					});
+				}
+			}
 
 			if (this.props.combatant.note) {
-				noteText += '\n\n';
-				noteText += this.props.combatant.note;
+				info.push(
+					<div key='note' className='section'>{this.props.combatant.note}</div>
+				);
 			}
 		}
 
-		return noteText.trim();
+		if (clicked) {
+			info.push(
+				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from map</button>
+			);
+		}
+
+		return (
+			<div>
+				<div key='name' className='section centered'><b>{name}</b></div>
+				{tags}
+				{info.length > 0 ? <hr/> : null}
+				{info}
+			</div>
+		);
 	}
 
 	public render() {
@@ -1174,6 +1306,10 @@ class MapToken extends React.Component<MapTokenProps> {
 
 			if (this.props.selected) {
 				style += ' selected';
+			}
+
+			if (!this.props.selectable) {
+				style += ' not-selectable';
 			}
 
 			if (this.props.combatant) {
@@ -1270,30 +1406,37 @@ class MapToken extends React.Component<MapTokenProps> {
 				}
 			}
 
-			const token = (
-				<div
-					className={style}
-					style={this.props.style}
-					onClick={e => this.select(e)}
-					role='button'
+			return (
+				<Popover
+					content={this.getPopoverContent(false)}
+					trigger='hover'
+					placement='bottom'
+					overlayClassName='map-hover-tooltip'
+					visible={this.state.hovered}
+					onVisibleChange={value => this.handleHoverChange(value)}
 				>
-					{content}
-					{hpGauge}
-					{altitudeBadge}
-					{conditionsBadge}
-				</div>
+					<Popover
+						content={this.getPopoverContent(true)}
+						trigger='contextMenu'
+						placement='bottom'
+						overlayClassName='map-click-tooltip'
+						visible={this.state.clicked}
+						onVisibleChange={value => this.handleClickChange(value)}
+					>
+						<div
+							className={style}
+							style={this.props.style}
+							onClick={e => this.select(e)}
+							role='button'
+						>
+							{content}
+							{hpGauge}
+							{altitudeBadge}
+							{conditionsBadge}
+						</div>
+					</Popover>
+				</Popover>
 			);
-
-			const noteText = this.getNoteText();
-			if (noteText) {
-				return (
-					<Tooltip placement='bottom' title={<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(noteText) }} />}>
-						{token}
-					</Tooltip>
-				);
-			} else {
-				return token;
-			}
 		} catch (e) {
 			console.error(e);
 			return <RenderError error={e} />;
