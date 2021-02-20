@@ -497,7 +497,7 @@ export class MapPanel extends React.Component<Props, State> {
 							}
 							miniSize = Gygax.miniSize(s);
 							isPC = (combatant.type === 'pc');
-							isMe = (combatant.id === Comms.getCharacterID(Comms.getID()));
+							isMe = (combatant.id === Comms.getCharacterID(Comms.getID())) && Comms.data.options.allowControls;
 							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
 								if (combatant.path && combatant.path.length > 0) {
 									combatant.path.forEach((step, index) => {
