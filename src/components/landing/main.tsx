@@ -608,7 +608,7 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private rollDice(count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') {
+	private rollDice(text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') {
 		const dice: { [sides: number]: number } = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		dice[sides] = count;
@@ -624,7 +624,10 @@ export class Main extends React.Component<Props, State> {
 			notification.open({
 				key: result.id,
 				message: (
-					<DieRollResultPanel result={result} />
+					<div>
+						<div className='section'>{text}</div>
+						<DieRollResultPanel result={result} />
+					</div>
 				),
 				closeIcon: <CloseCircleOutlined />,
 				duration: 5
@@ -2753,7 +2756,7 @@ export class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.addMapItem(overlay, combat.map as Map);
 							}}
-							onRollDice={(count, sides, constant, mode) => this.rollDice(count, sides, constant, mode)}
+							onRollDice={(text, count, sides, constant, mode) => this.rollDice(text, count, sides, constant, mode)}
 							onOpenSession={() => this.openSession()}
 						/>
 					);
@@ -2964,7 +2967,7 @@ export class Main extends React.Component<Props, State> {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.addMapItem(overlay, ex.map);
 							}}
-							onRollDice={(count, sides, constant, mode) => this.rollDice(count, sides, constant, mode)}
+							onRollDice={(text, count, sides, constant, mode) => this.rollDice(text, count, sides, constant, mode)}
 							onOpenSession={() => this.openSession()}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}

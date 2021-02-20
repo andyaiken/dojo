@@ -14,7 +14,7 @@ interface Props {
 	edit: boolean;
 	showRollButtons: boolean;
 	onNudgeValue: (combatant: Monster, field: string, delta: number) => void;
-	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
+	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 interface State {
@@ -47,7 +47,7 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 
 		const score = this.props.combatant.abilityScores[ability];
 		const constant = Gygax.modifierValue(score);
-		this.props.onRollDice(1, 20, constant, mode);
+		this.props.onRollDice(ability, 1, 20, constant, mode);
 	}
 
 	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {

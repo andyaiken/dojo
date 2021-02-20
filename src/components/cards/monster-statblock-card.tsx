@@ -19,7 +19,7 @@ interface Props {
 	showRollButtons: boolean;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
+	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class MonsterStatblockCard extends React.Component<Props> {
@@ -64,8 +64,8 @@ export class MonsterStatblockCard extends React.Component<Props> {
 						<Popover
 							content={(
 								<div>
-									<button onClick={e => this.props.onRollDice(1, 20, bonus, 'advantage')}>adv</button>
-									<button onClick={e => this.props.onRollDice(1, 20, bonus, 'disadvantage')}>dis</button>
+									<button onClick={e => this.props.onRollDice(expression, 1, 20, bonus, 'advantage')}>adv</button>
+									<button onClick={e => this.props.onRollDice(expression, 1, 20, bonus, 'disadvantage')}>dis</button>
 								</div>
 							)}
 							trigger='contextMenu'
@@ -73,7 +73,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 							<button
 								key={expression}
 								className='link'
-								onClick={() => this.props.onRollDice(1, 20, bonus, '')}
+								onClick={() => this.props.onRollDice('', 1, 20, bonus, '')}
 							>
 								{expression}
 							</button>
@@ -159,7 +159,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					<AbilityScorePanel
 						combatant={this.props.monster}
 						showRollButtons={this.props.showRollButtons}
-						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
+						onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
 					/>
 				</div>
 				{this.statSection('ac', this.getAC())}
@@ -181,7 +181,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					showRollButtons={this.props.showRollButtons}
 					useTrait={trait => this.props.useTrait(trait)}
 					rechargeTrait={trait => this.props.rechargeTrait(trait)}
-					onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
+					onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
 				/>
 			</div>
 		);

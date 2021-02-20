@@ -7,6 +7,7 @@ import Showdown from 'showdown';
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
+import { Comms } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -484,6 +485,7 @@ export class MapPanel extends React.Component<Props, State> {
 					.forEach(i => {
 						let miniSize = Gygax.miniSize(i.size);
 						let isPC = false;
+						let isMe = false;
 						const combatant = this.props.combatants.find(c => c.id === i.id);
 						if (combatant) {
 							let s = combatant.displaySize;
@@ -495,6 +497,7 @@ export class MapPanel extends React.Component<Props, State> {
 							}
 							miniSize = Gygax.miniSize(s);
 							isPC = (combatant.type === 'pc');
+							isMe = (combatant.id === Comms.getCharacterID(Comms.getID()));
 							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
 								if (combatant.path && combatant.path.length > 0) {
 									combatant.path.forEach((step, index) => {
@@ -539,7 +542,7 @@ export class MapPanel extends React.Component<Props, State> {
 								simple={this.props.mode === 'thumbnail'}
 								showGauge={this.props.mode === 'combat'}
 								showHidden={(this.props.mode === 'combat') || isPC}
-								selectable={this.props.mode === 'combat'}
+								selectable={this.props.mode === 'combat' || ((this.props.mode === 'combat-player') && isMe)}
 								selected={this.props.selectedItemIDs.includes(i.id)}
 								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
 								remove={id => this.props.itemRemove(id)}

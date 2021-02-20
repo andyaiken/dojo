@@ -52,7 +52,7 @@ interface Props {
 	rechargeTrait: (trait: Trait) => void;
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
-	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
+	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 	onOpenSession: () => void;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
@@ -572,7 +572,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 						showRollButtons={this.props.options.showMonsterDieRolls}
 						useTrait={trait => this.props.useTrait(trait)}
 						rechargeTrait={trait => this.props.rechargeTrait(trait)}
-						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
+						onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
 					/>
 				);
 			case 'companion':
@@ -589,7 +589,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 									showRollButtons={this.props.options.showMonsterDieRolls}
 									useTrait={trait => this.props.useTrait(trait)}
 									rechargeTrait={trait => this.props.rechargeTrait(trait)}
-									onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
+									onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
 								/>
 							);
 						}

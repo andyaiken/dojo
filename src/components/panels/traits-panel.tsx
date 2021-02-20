@@ -22,7 +22,7 @@ interface Props {
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
+	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class TraitsPanel extends React.Component<Props> {
@@ -157,7 +157,7 @@ export class TraitsPanel extends React.Component<Props> {
 						copyTrait={action => this.props.copyTrait(action)}
 						useTrait={action => this.props.useTrait(action)}
 						rechargeTrait={action => this.props.rechargeTrait(action)}
-						onRollDice={(count, sides, constant, mode) => this.props.onRollDice(count, sides, constant, mode)}
+						onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
 					/>
 				));
 			});
@@ -221,7 +221,7 @@ interface TraitPanelProps {
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
-	onRollDice: (count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
+	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class TraitPanel extends React.Component<TraitPanelProps> {
@@ -302,8 +302,8 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 									<Popover
 										content={(
 											<div>
-												<button onClick={e => this.props.onRollDice(1, 20, exp.bonus, 'advantage')}>adv</button>
-												<button onClick={e => this.props.onRollDice(1, 20, exp.bonus, 'disadvantage')}>dis</button>
+												<button onClick={e => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
+												<button onClick={e => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'disadvantage')}>dis</button>
 											</div>
 										)}
 										trigger='contextMenu'
@@ -311,7 +311,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 										<button
 											key={exp.expression}
 											className='link'
-											onClick={() => this.props.onRollDice(1, 20, exp.bonus, '')}
+											onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, '')}
 										>
 											{exp.expression}
 										</button>
@@ -324,7 +324,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 									<button
 										key={exp.expression}
 										className='link'
-										onClick={() => this.props.onRollDice(exp.count, exp.sides, exp.bonus, '')}
+										onClick={() => this.props.onRollDice(this.props.trait.name, exp.count, exp.sides, exp.bonus, '')}
 									>
 										{exp.expression}
 									</button>
