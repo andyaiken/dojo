@@ -1215,10 +1215,6 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 	}
 
 	private getPopoverContent(clicked: boolean) {
-		if (!this.props.selectable) {
-			return null;
-		}
-
 		let name = 'token';
 		let tags = null;
 		const info: JSX.Element[] = [];
@@ -1409,6 +1405,33 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 				}
 			}
 
+			const token = (
+				<div
+					className={style}
+					style={this.props.style}
+					onClick={e => this.select(e)}
+					role='button'
+				>
+					{content}
+					{hpGauge}
+					{altitudeBadge}
+					{conditionsBadge}
+				</div>
+			);
+
+			if (!this.props.selectable) {
+				return (
+					<Popover
+						content={this.getPopoverContent(false)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-hover-tooltip'
+					>
+						{token}
+					</Popover>
+				);
+			}
+
 			return (
 				<Popover
 					content={this.getPopoverContent(false)}
@@ -1426,17 +1449,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 						visible={this.state.clicked}
 						onVisibleChange={value => this.handleClickChange(value)}
 					>
-						<div
-							className={style}
-							style={this.props.style}
-							onClick={e => this.select(e)}
-							role='button'
-						>
-							{content}
-							{hpGauge}
-							{altitudeBadge}
-							{conditionsBadge}
-						</div>
+						{token}
 					</Popover>
 				</Popover>
 			);
