@@ -28,6 +28,7 @@ import { Textbox } from '../../controls/textbox';
 import { AbilityScorePanel } from '../../panels/ability-score-panel';
 import { RenderError } from '../../panels/error-boundary';
 import { FilterPanel } from '../../panels/filter-panel';
+import { MarkdownEditor } from '../../panels/markdown-editor';
 import { Note } from '../../panels/note';
 import { PortraitPanel } from '../../panels/portrait-panel';
 import { TraitPanel } from '../../panels/traits-panel';
@@ -1267,12 +1268,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 						onChange={value => this.props.changeValue(this.props.trait, 'usage', value)}
 					/>
 					<div className='subheading'>details</div>
-					<Textbox
-						text={this.props.trait.text}
-						placeholder='details'
-						multiLine={true}
-						onChange={value => this.props.changeValue(this.props.trait, 'text', value)}
-					/>
+					<MarkdownEditor text={this.props.trait.text} onChange={text => this.props.changeValue(this.props.trait, 'text', text)} />
 					<hr/>
 					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this feature</button>
 					<ConfirmButton text='delete this feature' onConfirm={() => this.props.deleteTrait(this.props.trait)} />

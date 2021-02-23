@@ -17,6 +17,7 @@ import { EncounterOptions } from '../options/encounter-options';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
 import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
+import { MarkdownEditor } from '../panels/markdown-editor';
 import { Note } from '../panels/note';
 
 interface Props {
@@ -153,12 +154,7 @@ export class EncounterScreen extends React.Component<Props> {
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</Expander>
 						<Expander text='notes'>
-							<Textbox
-								text={this.props.encounter.notes}
-								placeholder='notes'
-								multiLine={true}
-								onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)}
-							/>
+							<MarkdownEditor text={this.props.encounter.notes} onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)} />
 						</Expander>
 						<EncounterOptions
 							encounter={this.props.encounter}

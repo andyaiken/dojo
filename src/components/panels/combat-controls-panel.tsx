@@ -21,6 +21,7 @@ import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
 import { RenderError } from './error-boundary';
+import { MarkdownEditor } from './markdown-editor';
 import { Note } from './note';
 
 interface Props {
@@ -778,12 +779,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			notes = (
 				<div>
 					<hr/>
-					<Textbox
-						text={combatant.note}
-						placeholder='notes'
-						multiLine={true}
-						onChange={value => this.props.changeValue(combatant, 'note', value)}
-					/>
+					<MarkdownEditor text={combatant.note} onChange={text => this.props.changeValue(combatant, 'note', text)} />
 				</div>
 			);
 		}

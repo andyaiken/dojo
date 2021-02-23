@@ -18,6 +18,7 @@ import { Textbox } from '../controls/textbox';
 import { MapOptions } from '../options/map-options';
 import { RenderError } from '../panels/error-boundary';
 import { MapPanel } from '../panels/map-panel';
+import { MarkdownEditor } from '../panels/markdown-editor';
 import { Note } from '../panels/note';
 
 interface Props {
@@ -499,11 +500,7 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 						</div>
 						<div className='section'>
 							<div className='subheading'>notes</div>
-							<Textbox
-								text={this.props.area.text}
-								multiLine={true}
-								onChange={value => this.props.changeValue(this.props.area, 'text', value)}
-							/>
+							<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
 						</div>
 						<hr/>
 						<ConfirmButton text='delete area' onConfirm={() => this.props.deleteMapArea(this.props.area)}/>
