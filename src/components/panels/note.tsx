@@ -20,6 +20,10 @@ export class Note extends React.Component<Props> {
 
 			return (
 				<div className={style}>
+					<div className='top-left-roundel' />
+					<div className='top-right-roundel' />
+					<div className='bottom-left-roundel' />
+					<div className='bottom-right-roundel' />
 					{this.props.children}
 				</div>
 			);

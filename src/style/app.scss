@@ -266,14 +266,44 @@ p,
 }
 
 .note {
-	margin: 15px 10px;
+	margin: 15px 5px;
 	padding: 5px 10px;
 	background-color: rgb(255, 250, 245);
 	background-image: radial-gradient(rgb(255, 250, 245), rgb(250, 245, 240));
 	color: $foreground;
-	border: 1px solid $control-border;
-	border-radius: 5px;
+	border-width: 0 1px;
+	border-style: solid;
+	border-color: black;
 	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+	position: relative;
+
+	.top-left-roundel, .top-right-roundel, .bottom-left-roundel, .bottom-right-roundel {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background-color: black;
+		position: absolute;
+	}
+
+	.top-left-roundel {
+		top: -3.5px;
+		left: -3.5px;
+	}
+
+	.top-right-roundel {
+		top: -3.5px;
+		right: -3.5px;
+	}
+
+	.bottom-left-roundel {
+		bottom: -3.5px;
+		left: -3.5px;
+	}
+
+	.bottom-right-roundel {
+		bottom: -3.5px;
+		right: -3.5px;
+	}
 
 	&.white {
 		background-color: #FFFFFF;

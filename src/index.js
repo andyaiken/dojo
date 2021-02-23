@@ -6,4 +6,4 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 
 import { App } from './components/app';
 
-ReactDOM.render(<App />, document.body);
+ReactDOM.render(<App />, document.getElementById('root'));
