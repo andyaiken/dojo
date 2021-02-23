@@ -1,6 +1,6 @@
 {
 	"name": "dojo",
-	"version": "12.0.4",
+	"version": "12.1.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
@@ -38,7 +38,6 @@
 		"typescript": "^4.1.3"
 	},
 	"scripts": {
-		"update": "npm update --legacy-peer-deps && npm update --legacy-peer-deps --save-dev && npm audit fix",
 		"start": "react-scripts start --display-error-details",
 		"lint": "tslint --config tslint.json --format verbose 'src/**/*.{ts,tsx}'",
 		"predeploy": "react-scripts build",
