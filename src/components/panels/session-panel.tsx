@@ -1,7 +1,7 @@
 import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Shakespeare } from '../../utils/shakespeare';
@@ -23,9 +23,6 @@ import { RenderError } from './error-boundary';
 import { Note } from './note';
 import { PlayingCardPanel } from './playing-card-panel';
 import { PortraitPanel } from './portrait-panel';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 //#region ConnectionsPanel
 
@@ -271,7 +268,7 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 						} else {
 							content = (
 								<div className='text'>
-									<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(text) }}  />
+									<ReactMarkdown source={text} />
 									{language !== '' ? <div className='language'>in {language}</div> : null}
 								</div>
 							);

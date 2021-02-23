@@ -1,7 +1,7 @@
 import { StarFilled, StarOutlined, ToTopOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 
 import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
@@ -11,9 +11,6 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
 import { RenderError } from './error-boundary';
 import { Note } from './note';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	combatant: Monster | (Combatant & Monster);
@@ -268,14 +265,14 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'view':
 					return (
 						<div key={this.props.trait.id} className='section trait'>
-							<div className='trait-content' dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+							<ReactMarkdown source={markdown} />
 						</div>
 					);
 				case 'template':
 					return (
 						<div key={this.props.trait.id} className='section trait trait-template'>
 							<ToTopOutlined className='copy-trait-button' rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
-							<div className='trait-content' dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+							<ReactMarkdown source={markdown} />
 						</div>
 					);
 				case 'combat':
@@ -341,7 +338,9 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 					}
 					return (
 						<div key={this.props.trait.id} className='section trait'>
-							<div className={style} dangerouslySetInnerHTML={{ __html: showdown.makeHtml(markdown) }} />
+							<div className={style}>
+								<ReactMarkdown source={markdown} />
+							</div>
 							{buttonSection}
 						</div>
 					);

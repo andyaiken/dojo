@@ -1,7 +1,6 @@
 import { DeleteOutlined, DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
@@ -21,9 +20,6 @@ import { Selector } from '../controls/selector';
 
 import { CombatantTags } from './combat-controls-panel';
 import { RenderError } from './error-boundary';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	map: Map;

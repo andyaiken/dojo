@@ -504,3 +504,9 @@ button {
 		}
 	}
 }
+
+body .react-mde {
+	margin: 5px 0;
+	border: 1px solid $control-border;
+	border-radius: 0;
+}

@@ -1,7 +1,7 @@
 import { CloseCircleOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Col, Progress, Row, Spin, Tag } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 
 import { Shakespeare } from '../../utils/shakespeare';
 import { Sherlock } from '../../utils/sherlock';
@@ -21,9 +21,6 @@ import { AwardPanel } from '../panels/award-panel';
 import { RenderError } from '../panels/error-boundary';
 import { Note } from '../panels/note';
 import { Popout } from '../panels/popout';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	view: string;
@@ -353,7 +350,7 @@ class MarkdownReference extends React.Component<MarkdownReferenceProps, Markdown
 
 			return (
 				<Spin spinning={this.state.source === null} indicator={<LoadingOutlined style={{ fontSize: 20, marginTop: 100 }} />}>
-					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.state.source || '') }} />
+					<ReactMarkdown source={this.state.source || ''} />
 				</Spin>
 			);
 		} catch (e) {

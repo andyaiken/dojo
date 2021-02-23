@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Napoleon } from '../../utils/napoleon';
 
@@ -108,6 +109,8 @@ export class EncounterCard extends React.Component<Props> {
 							{slots}
 							<div className='subheading'>xp</div>
 							{Napoleon.getEncounterXP(this.props.encounter, null, this.props.getMonster)}
+							<div className='subheading'>notes</div>
+							<ReactMarkdown source={this.props.encounter.notes} />
 						</div>
 						<hr/>
 						<button onClick={() => this.props.openEncounter(this.props.encounter)}>open encounter</button>

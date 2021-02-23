@@ -1,7 +1,7 @@
 import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 
 import { Factory } from '../../utils/factory';
 import { Mercator } from '../../utils/mercator';
@@ -33,9 +33,6 @@ import { MapPanel } from '../panels/map-panel';
 import { Note } from '../panels/note';
 import { Popout } from '../panels/popout';
 import { TraitsPanel } from '../panels/traits-panel';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	combat: Combat;
@@ -427,7 +424,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		if (this.props.combat.encounter.notes) {
 			notes = (
 				<Expander text='encounter notes'>
-					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combat.encounter.notes) }} />
+					<ReactMarkdown source={this.props.combat.encounter.notes} />
 				</Expander>
 			);
 		}

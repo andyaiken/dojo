@@ -1,7 +1,6 @@
 import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
 
 import { Utils } from '../../utils/utils';
 
@@ -19,9 +18,6 @@ import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
 import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { Note } from '../panels/note';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	encounter: Encounter;

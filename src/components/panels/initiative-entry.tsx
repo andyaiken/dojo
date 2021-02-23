@@ -1,6 +1,6 @@
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
-import Showdown from 'showdown';
+import ReactMarkdown from 'react-markdown';
 
 import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
@@ -13,9 +13,6 @@ import { RenderError } from './error-boundary';
 import { HitPointGauge } from './hit-point-gauge';
 import { Note } from './note';
 import { PortraitPanel } from './portrait-panel';
-
-const showdown = new Showdown.Converter();
-showdown.setOption('tables', true);
 
 interface Props {
 	combatant: Combatant;
@@ -213,7 +210,7 @@ export class InitiativeEntry extends React.Component<Props> {
 		if (this.props.combatant.note) {
 			notes.push(
 				<Note key='text'>
-					<div dangerouslySetInnerHTML={{ __html: showdown.makeHtml(this.props.combatant.note) }} />
+					<ReactMarkdown source={this.props.combatant.note} />
 				</Note>
 			);
 		}
