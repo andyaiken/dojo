@@ -1,6 +1,5 @@
 import { DeleteOutlined, DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
-import Mousetrap from 'mousetrap';
 import React from 'react';
 import Showdown from 'showdown';
 
@@ -40,7 +39,6 @@ interface Props {
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
-	itemMove: (itemIDs: string[], dir: string) => void;
 	itemRemove: (itemID: string) => void;
 	conditionRemove: (combatant: Combatant, condition: Condition) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
@@ -113,40 +111,6 @@ export class MapPanel extends React.Component<Props, State> {
 			selectionStartSquare: null,
 			selectionEndSquare: null
 		};
-	}
-
-	public componentDidMount() {
-		if (this.props.mode !== 'thumbnail') {
-			Mousetrap.bind('up', e => {
-				e.preventDefault();
-				// Move selected item N
-				this.props.itemMove(this.props.selectedItemIDs, 'N');
-			});
-			Mousetrap.bind('down', e => {
-				e.preventDefault();
-				// Move selected item S
-				this.props.itemMove(this.props.selectedItemIDs, 'S');
-			});
-			Mousetrap.bind('left', e => {
-				e.preventDefault();
-				// Move selected item W
-				this.props.itemMove(this.props.selectedItemIDs, 'W');
-			});
-			Mousetrap.bind('right', e => {
-				e.preventDefault();
-				// Move selected item E
-				this.props.itemMove(this.props.selectedItemIDs, 'E');
-			});
-		}
-	}
-
-	public componentWillUnmount() {
-		if (this.props.mode !== 'thumbnail') {
-			Mousetrap.unbind('up');
-			Mousetrap.unbind('down');
-			Mousetrap.unbind('left');
-			Mousetrap.unbind('right');
-		}
 	}
 
 	private gridSquareMouseDown(x: number, y: number) {

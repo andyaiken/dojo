@@ -269,12 +269,6 @@ export class MapScreen extends React.Component<Props, State> {
 								this.setSelectedTileID(id);
 								this.setSelectedAreaID(null);
 							}}
-							itemMove={(ids, dir) => {
-								const tile = this.props.map.items.find(i => i.id === this.state.selectedTileID);
-								if (tile) {
-									this.props.moveMapTile(this.props.map, tile, dir, 1);
-								}
-							}}
 							areaSelected={id => this.setSelectedAreaID(id)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.rectangleSelected(x1, y1, x2, y2)}
 						/>

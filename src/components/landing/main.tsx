@@ -625,7 +625,7 @@ export class Main extends React.Component<Props, State> {
 				key: result.id,
 				message: (
 					<div>
-						<div className='section'>{text}</div>
+						<div className='section subheading'>{text}</div>
 						<DieRollResultPanel result={result} />
 					</div>
 				),

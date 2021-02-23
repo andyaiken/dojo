@@ -419,7 +419,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				gridSquareClicked={(x, y) => this.gridSquareClicked(x, y, playerView)}
 				gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 				itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
-				itemMove={(ids, dir) => this.props.mapMove(ids, dir, 1)}
 				itemRemove={id => this.props.mapRemove([id])}
 				conditionRemove={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}

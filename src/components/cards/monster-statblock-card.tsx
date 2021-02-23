@@ -64,8 +64,8 @@ export class MonsterStatblockCard extends React.Component<Props> {
 						<Popover
 							content={(
 								<div>
-									<button onClick={e => this.props.onRollDice(expression, 1, 20, bonus, 'advantage')}>adv</button>
-									<button onClick={e => this.props.onRollDice(expression, 1, 20, bonus, 'disadvantage')}>dis</button>
+									<button onClick={() => this.props.onRollDice(expression, 1, 20, bonus, 'advantage')}>adv</button>
+									<button onClick={() => this.props.onRollDice(expression, 1, 20, bonus, 'disadvantage')}>dis</button>
 								</div>
 							)}
 							trigger='contextMenu'
@@ -73,7 +73,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 							<button
 								key={expression}
 								className='link'
-								onClick={() => this.props.onRollDice('', 1, 20, bonus, '')}
+								onClick={() => this.props.onRollDice(expression, 1, 20, bonus, '')}
 							>
 								{expression}
 							</button>

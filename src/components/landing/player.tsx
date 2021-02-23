@@ -1,5 +1,6 @@
 import { CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
+import Mousetrap from 'mousetrap';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
@@ -113,6 +114,23 @@ export class Player extends React.Component<Props, State> {
 	//#region Lifecycle
 
 	public componentDidMount() {
+		Mousetrap.bind('up', e => {
+			e.preventDefault();
+			this.moveToken('N');
+		});
+		Mousetrap.bind('down', e => {
+			e.preventDefault();
+			this.moveToken('S');
+		});
+		Mousetrap.bind('left', e => {
+			e.preventDefault();
+			this.moveToken('W');
+		});
+		Mousetrap.bind('right', e => {
+			e.preventDefault();
+			this.moveToken('E');
+		});
+
 		CommsPlayer.onStateChanged = () => this.forceUpdate();
 		CommsPlayer.onDataChanged = () => {
 			Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
@@ -176,6 +194,11 @@ export class Player extends React.Component<Props, State> {
 	}
 
 	public componentWillUnmount() {
+		Mousetrap.unbind('up');
+		Mousetrap.unbind('down');
+		Mousetrap.unbind('left');
+		Mousetrap.unbind('right');
+
 		CommsPlayer.onStateChanged = null;
 		CommsPlayer.onDataChanged = null;
 		Comms.onPrompt = null;
@@ -323,6 +346,29 @@ export class Player extends React.Component<Props, State> {
 		});
 	}
 
+	private moveToken(dir: string) {
+		let combatants: Combatant[] = [];
+		let map: Map | null = null;
+
+		if (Comms.data.shared.type === 'combat') {
+			const combat = Comms.data.shared.data as Combat;
+			combatants = combat.combatants;
+			map = combat.map;
+		} else if (Comms.data.shared.type === 'exploration') {
+			const exploration = Comms.data.shared.data as Exploration;
+			combatants = exploration.combatants;
+			map = exploration.map;
+		}
+
+		if (map) {
+			const ids = [Comms.getCharacterID(Comms.getID())];
+			Mercator.moveCombatants(ids, dir, combatants, map, 1);
+
+			CommsPlayer.sendSharedUpdate();
+			this.forceUpdate();
+		}
+	}
+
 	//#endregion
 
 	//#region Rendering helper methods
@@ -409,7 +455,6 @@ export class Player extends React.Component<Props, State> {
 						fog={combat.fog}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
-						itemMove={(ids, dir) => Comms.data.options.allowControls ? Mercator.moveCombatants(ids, dir, combat.combatants, combat.map as Map, 1) : null}
 						itemRemove={id => null}
 						gridSquareClicked={(x, y) => {
 							if (this.state.addingToMap) {
@@ -462,7 +507,6 @@ export class Player extends React.Component<Props, State> {
 					fog={exploration.fog}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
-					itemMove={(ids, dir) => Comms.data.options.allowControls ? Mercator.moveCombatants(ids, dir, exploration.combatants, exploration.map, 1) : null}
 					gridSquareClicked={(x, y) => {
 						if (this.state.addingToMap) {
 							const list = Napoleon.getMountsAndRiders([characterID], exploration.combatants);

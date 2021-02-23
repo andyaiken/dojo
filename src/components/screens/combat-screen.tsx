@@ -397,7 +397,6 @@ export class CombatScreen extends React.Component<Props, State> {
 								lighting={this.props.combat.lighting}
 								focussedSquare={this.state.highlightedSquare}
 								itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
-								itemMove={(ids, dir) => this.props.mapMove(ids, dir, 1)}
 							/>
 						</Col>
 						<Col span={6} className='scrollable'>
@@ -920,7 +919,6 @@ export class CombatScreen extends React.Component<Props, State> {
 							lighting={this.props.combat.lighting}
 							focussedSquare={this.state.highlightedSquare}
 							itemSelected={(id, ctrl) => this.toggleItemSelection(id, ctrl)}
-							itemMove={(ids, dir) => this.props.mapMove(ids, dir, 1)}
 							itemRemove={id => this.props.mapRemove([id])}
 							conditionRemove={(combatant, condition) => this.props.deleteCondition(combatant, condition)}
 							toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
