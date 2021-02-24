@@ -4,9 +4,9 @@ import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { PartyOptions } from '../options/party-options';
-import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -85,7 +85,7 @@ export class PartyCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartyCard' error={e} />;
 		}
 	}
 }

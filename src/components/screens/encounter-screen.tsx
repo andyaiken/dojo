@@ -8,17 +8,17 @@ import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter'
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { EncounterSlotCard } from '../cards/encounter-slot-card';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
-import { Note } from '../panels/note';
 
 interface Props {
 	encounter: Encounter;
@@ -193,7 +193,7 @@ export class EncounterScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterScreen' error={e} />;
 		}
 	}
 }

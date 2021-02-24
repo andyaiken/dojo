@@ -10,12 +10,12 @@ import { Condition, CONDITION_TYPES, ConditionDurationCombatant, ConditionDurati
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	condition: Condition;
@@ -343,7 +343,7 @@ export class ConditionModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ConditionModal' error={e} />;
 		}
 	}
 }

@@ -8,11 +8,11 @@ import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { PartyCard } from '../cards/party-card';
+import { Note } from '../controls/note';
 import { PartyListOptions } from '../options/party-list-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	parties: Party[];
@@ -87,7 +87,7 @@ export class PartyListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartyListScreen' error={e} />;
 		}
 	}
 }

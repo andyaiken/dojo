@@ -7,12 +7,12 @@ import { Utils } from '../../../utils/utils';
 
 import { Map } from '../../../models/map';
 
+import { RenderError } from '../../error';
+import { Note } from '../../controls/note';
 import { NumberSpin } from '../../controls/number-spin';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
-import { RenderError } from '../../panels/error-boundary';
 import { MapPanel } from '../../panels/map-panel';
-import { Note } from '../../panels/note';
 
 interface Props {
 	map: Map;
@@ -314,7 +314,7 @@ export class MapImportModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapImportModal' error={e} />;
 		}
 	}
 }

@@ -13,18 +13,18 @@ import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter'
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
-import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
 import { MapPanel } from '../panels/map-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	type: 'start' | 'add-wave' | 'add-combatants';
@@ -283,7 +283,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='CombatStartModal' error={e} />;
 		}
 	}
 }

@@ -7,12 +7,12 @@ import { Gygax } from '../../utils/gygax';
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { MonsterCard } from '../cards/monster-card';
+import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 import { MonsterGroupOptions } from '../options/monster-group-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	monsterGroup: MonsterGroup;
@@ -135,7 +135,7 @@ export class MonsterGroupScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterGroupScreen' error={e} />;
 		}
 	}
 }

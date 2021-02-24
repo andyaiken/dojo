@@ -11,12 +11,12 @@ import { Utils } from '../../utils/utils';
 import { Encounter } from '../../models/encounter';
 import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 
 interface Props {
 	monsterGroup: MonsterGroup;
@@ -173,7 +173,7 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterGroupOptions' error={e} />;
 		}
 	}
 }

@@ -3,9 +3,8 @@ import React from 'react';
 
 import { Sherlock } from '../../utils/sherlock';
 
+import { RenderError } from '../error';
 import { Textbox } from './textbox';
-
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	options: { id: string; text: string; disabled?: boolean }[];
@@ -136,7 +135,7 @@ export class Dropdown extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Dropdown' error={e} />;
 		}
 	}
 }
@@ -172,7 +171,7 @@ class DropdownOption extends React.Component<DropdownOptionProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='DropdownOption' error={e} />;
 		}
 	}
 }

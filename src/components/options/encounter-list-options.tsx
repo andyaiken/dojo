@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Napoleon } from '../../utils/napoleon';
 
+import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { RadioGroup } from '../controls/radio-group';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	createEncounter: () => void;
@@ -28,7 +28,7 @@ export class EncounterListOptions extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterListOptions' error={e} />;
 		}
 	}
 }

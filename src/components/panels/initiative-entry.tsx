@@ -8,10 +8,10 @@ import { PC } from '../../models/party';
 
 import { Gygax } from '../../utils/gygax';
 
+import { RenderError } from '../error';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
-import { RenderError } from './error-boundary';
 import { HitPointGauge } from './hit-point-gauge';
-import { Note } from './note';
 import { PortraitPanel } from './portrait-panel';
 
 interface Props {
@@ -259,7 +259,7 @@ export class InitiativeEntry extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='InitiativeEntry' error={e} />;
 		}
 	}
 }
@@ -303,7 +303,7 @@ export class PendingInitiativeEntry extends React.Component<PendingProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PendingInitiativeEntry' error={e} />;
 		}
 	}
 }
@@ -337,7 +337,7 @@ export class NotOnMapInitiativeEntry extends React.Component<NotOnMapProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='NotOnMapInitiativeEntry' error={e} />;
 		}
 	}
 }

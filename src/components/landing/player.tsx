@@ -19,7 +19,9 @@ import { Exploration, Map } from '../../models/map';
 import { Handout, Options, Sidebar } from '../../models/misc';
 import { Monster } from '../../models/monster';
 
+import { ErrorBoundary, RenderError } from '../error';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
@@ -29,11 +31,9 @@ import { StatBlockModal } from '../modals/stat-block-modal';
 import { AwardPanel } from '../panels/award-panel';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
-import { ErrorBoundary, RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { InitiativeOrder } from '../panels/initiative-order';
 import { MapPanel } from '../panels/map-panel';
-import { Note } from '../panels/note';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
@@ -832,7 +832,7 @@ export class Player extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Player' error={e} />;
 		}
 	}
 
@@ -881,21 +881,26 @@ class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState>
 	}
 
 	public render() {
-		if (this.props.dmcode === '') {
-			return (
-				<Note>
-					<p>this url isn't a valid dojo player url - there's no 6-letter dm code at the end</p>
-				</Note>
-			);
-		}
+		try {
+			if (this.props.dmcode === '') {
+				return (
+					<Note>
+						<p>this url isn't a valid dojo player url - there's no 6-letter dm code at the end</p>
+					</Note>
+				);
+			}
 
-		return (
-			<div className='connection-panel'>
-				<div className='heading'>connect</div>
-				<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
-				<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
-			</div>
-		);
+			return (
+				<div className='connection-panel'>
+					<div className='heading'>connect</div>
+					<Textbox placeholder='your name' debounce={false} text={this.state.name} onChange={name => this.setName(name)} />
+					<button className={this.canConnect() ? '' : 'disabled'} onClick={() => this.connect()}>connect</button>
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='ConnectPanel' error={e} />;
+		}
 	}
 }
 
@@ -988,57 +993,62 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 	}
 
 	public render() {
-		let content = null;
-		switch (this.state.mode) {
-			case 'roll':
-				if (this.state.result === null) {
-				content = (
-					<div>
-						<DieRollPanel
-							dice={this.state.dice}
-							constant={this.state.constant}
-							setDie={(sides, count) => this.setDie(sides, count)}
-							setConstant={value => this.setConstant(value)}
-							resetDice={() => this.resetDice()}
-							rollDice={mode => this.roll(mode)}
-						/>
-					</div>
-				);
-				} else {
+		try {
+			let content = null;
+			switch (this.state.mode) {
+				case 'roll':
+					if (this.state.result === null) {
 					content = (
 						<div>
-							<DieRollResultPanel result={this.state.result} />
+							<DieRollPanel
+								dice={this.state.dice}
+								constant={this.state.constant}
+								setDie={(sides, count) => this.setDie(sides, count)}
+								setConstant={value => this.setConstant(value)}
+								resetDice={() => this.resetDice()}
+								rollDice={mode => this.roll(mode)}
+							/>
+						</div>
+					);
+					} else {
+						content = (
+							<div>
+								<DieRollResultPanel result={this.state.result} />
+								<button onClick={() => this.sendRoll()}>send</button>
+							</div>
+						);
+					}
+					break;
+				case 'enter':
+					content = (
+						<div>
+							<NumberSpin
+								value={this.state.entry}
+								label={this.props.type}
+								onNudgeValue={delta => this.setEntry(this.state.entry + delta)}
+							/>
 							<button onClick={() => this.sendRoll()}>send</button>
 						</div>
 					);
-				}
-				break;
-			case 'enter':
-				content = (
-					<div>
-						<NumberSpin
-							value={this.state.entry}
-							label={this.props.type}
-							onNudgeValue={delta => this.setEntry(this.state.entry + delta)}
-						/>
-						<button onClick={() => this.sendRoll()}>send</button>
-					</div>
-				);
-				break;
-		}
+					break;
+			}
 
-		return (
-			<div>
-				<div className='heading'>{this.props.type}</div>
-				<Selector
-					options={['roll', 'enter'].map(o => ({ id: o, text: o }))}
-					selectedID={this.state.mode}
-					onSelect={mode => this.setMode(mode)}
-				/>
-				<hr/>
-				{content}
-			</div>
-		);
+			return (
+				<div>
+					<div className='heading'>{this.props.type}</div>
+					<Selector
+						options={['roll', 'enter'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.mode}
+						onSelect={mode => this.setMode(mode)}
+					/>
+					<hr/>
+					{content}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='RollPrompt' error={e} />;
+		}
 	}
 }
 

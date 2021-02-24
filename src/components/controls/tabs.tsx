@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
@@ -34,7 +34,7 @@ export class Tabs extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Tabs' error={e} />;
 		}
 	}
 }
@@ -79,7 +79,7 @@ class Tab extends React.Component<TabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Tab' error={e} />;
 		}
 	}
 }

@@ -6,11 +6,11 @@ import { Utils } from '../../utils/utils';
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { MonsterGroupCard } from '../cards/monster-group-card';
+import { Note } from '../controls/note';
 import { MonsterGroupListOptions } from '../options/monster-group-list-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	library: MonsterGroup[];
@@ -90,7 +90,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterGroupListScreen' error={e} />;
 		}
 	}
 }

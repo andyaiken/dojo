@@ -2,7 +2,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	text: string | JSX.Element | JSX.Element[];
@@ -44,7 +44,7 @@ export class ConfirmButton extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ConfirmButton' error={e} />;
 		}
 	}
 }

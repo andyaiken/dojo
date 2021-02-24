@@ -6,10 +6,10 @@ import { Utils } from '../../../utils/utils';
 
 import { MonsterGroup } from '../../../models/monster';
 
+import { RenderError } from '../../error';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
-import { RenderError } from '../../panels/error-boundary';
+import { Note } from '../../controls/note';
 import { GridPanel } from '../../panels/grid-panel';
-import { Note } from '../../panels/note';
 
 interface Props {
 	group: MonsterGroup;
@@ -82,7 +82,7 @@ export class MonsterGroupImportModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterGroupImportModal' error={e} />;
 		}
 	}
 }

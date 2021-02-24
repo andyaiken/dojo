@@ -9,10 +9,10 @@ import { Utils } from '../../../utils/utils';
 import { MonsterGroup } from '../../../models/monster';
 import { PC } from '../../../models/party';
 
+import { RenderError } from '../../error';
 import { Dropdown } from '../../controls/dropdown';
 import { NumberSpin } from '../../controls/number-spin';
 import { Textbox } from '../../controls/textbox';
-import { RenderError } from '../../panels/error-boundary';
 import { PortraitPanel } from '../../panels/portrait-panel';
 
 interface Props {
@@ -204,7 +204,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PCEditorModal' error={e} />;
 		}
 	}
 }

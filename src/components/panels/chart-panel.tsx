@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	data: { text: string, value: number }[];
@@ -53,7 +53,7 @@ export class ChartPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ChartPanel' error={e} />;
 		}
 	}
 }

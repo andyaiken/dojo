@@ -8,12 +8,12 @@ import { Napoleon } from '../../utils/napoleon';
 import { MonsterFilter } from '../../models/encounter';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
-import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	parties: Party[];
@@ -223,7 +223,7 @@ export class RandomEncounterModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='RandomEncounterModal' error={e} />;
 		}
 	}
 }

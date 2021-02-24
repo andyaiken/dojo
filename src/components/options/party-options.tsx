@@ -6,9 +6,9 @@ import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	party: Party;
@@ -100,7 +100,7 @@ export class PartyOptions extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartyOptions' error={e} />;
 		}
 	}
 }

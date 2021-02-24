@@ -8,18 +8,18 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { DOORWAY_TYPES, Map, MapArea, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Radial } from '../controls/radial';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { MapOptions } from '../options/map-options';
-import { RenderError } from '../panels/error-boundary';
 import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
-import { Note } from '../panels/note';
 
 interface Props {
 	map: Map;
@@ -278,7 +278,7 @@ export class MapScreen extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapScreen' error={e} />;
 		}
 	}
 }
@@ -440,7 +440,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapTilePanel' error={e} />;
 		}
 	}
 }
@@ -509,7 +509,7 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapAreaPanel' error={e} />;
 		}
 	}
 }

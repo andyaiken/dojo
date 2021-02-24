@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	label: string | JSX.Element;
@@ -27,7 +27,7 @@ export class Statistic extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Statistic' error={e} />;
 		}
 	}
 }

@@ -7,12 +7,12 @@ import { Utils } from '../../../utils/utils';
 
 import { Party } from '../../../models/party';
 
+import { RenderError } from '../../error';
 import { PCStatblockCard } from '../../cards/pc-statblock-card';
+import { Note } from '../../controls/note';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
-import { RenderError } from '../../panels/error-boundary';
 import { GridPanel } from '../../panels/grid-panel';
-import { Note } from '../../panels/note';
 
 interface Props {
 	party: Party;
@@ -149,7 +149,7 @@ export class PartyImportModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartyImportModal' error={e} />;
 		}
 	}
 }

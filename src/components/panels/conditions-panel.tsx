@@ -6,9 +6,8 @@ import { Gygax } from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
+import { RenderError } from '../error';
 import { NumberSpin } from '../controls/number-spin';
-
-import { RenderError } from './error-boundary';
 
 interface Props {
 	combatants: Combatant[];
@@ -48,7 +47,7 @@ export class ConditionsPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ConditionsPanel' error={e} />;
 		}
 	}
 }
@@ -122,7 +121,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ConditionPanel' error={e} />;
 		}
 	}
 }

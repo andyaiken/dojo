@@ -15,21 +15,21 @@ import { MonsterFilter } from '../../../models/encounter';
 import { Options } from '../../../models/misc';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
+import { RenderError } from '../../error';
 import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
 import { ConfirmButton } from '../../controls/confirm-button';
 import { Expander } from '../../controls/expander';
+import { Note } from '../../controls/note';
 import { NumberSpin } from '../../controls/number-spin';
 import { Selector } from '../../controls/selector';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { AbilityScorePanel } from '../../panels/ability-score-panel';
-import { RenderError } from '../../panels/error-boundary';
 import { FilterPanel } from '../../panels/filter-panel';
 import { MarkdownEditor } from '../../panels/markdown-editor';
-import { Note } from '../../panels/note';
 import { PortraitPanel } from '../../panels/portrait-panel';
 import { TraitPanel } from '../../panels/traits-panel';
 
@@ -878,7 +878,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterEditorModal' error={e} />;
 		}
 	}
 }
@@ -925,6 +925,13 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 							placeholder='none'
 							onChange={value => this.props.changeValue('tag', value)}
 						/>
+						<div className='subheading'>size</div>
+						<NumberSpin
+							value={this.props.monster.size}
+							downEnabled={this.props.monster.size !== 'tiny'}
+							upEnabled={this.props.monster.size !== 'gargantuan'}
+							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
+						/>
 						<div className='subheading'>alignment</div>
 						<Textbox
 							text={this.props.monster.alignment}
@@ -935,13 +942,6 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 							value={Gygax.challenge(this.props.monster.challenge)}
 							downEnabled={this.props.monster.challenge > 0}
 							onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
-						/>
-						<div className='subheading'>size</div>
-						<NumberSpin
-							value={this.props.monster.size}
-							downEnabled={this.props.monster.size !== 'tiny'}
-							upEnabled={this.props.monster.size !== 'gargantuan'}
-							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
 						/>
 						<div className='subheading'>speed</div>
 						<Textbox
@@ -976,7 +976,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='OverviewTab' error={e} />;
 		}
 	}
 }
@@ -1016,7 +1016,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='AbilitiesTab' error={e} />;
 		}
 	}
 }
@@ -1090,7 +1090,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='CombatTab' error={e} />;
 		}
 	}
 }
@@ -1199,7 +1199,7 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='FeaturesTab' error={e} />;
 		}
 	}
 }
@@ -1223,7 +1223,7 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='TraitBarPanel' error={e} />;
 		}
 	}
 }
@@ -1276,7 +1276,7 @@ class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='TraitEditorPanel' error={e} />;
 		}
 	}
 }
@@ -1384,7 +1384,7 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='GuidelinesPanel' error={e} />;
 		}
 	}
 }
@@ -1532,28 +1532,33 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 	}
 
 	public render() {
-		let content = null;
-		switch (this.state.mode) {
-			case 'search':
-				content = this.getSearchSection();
-				break;
-			case 'random':
-				content = this.getRandomSection();
-				break;
-		}
+		try {
+			let content = null;
+			switch (this.state.mode) {
+				case 'search':
+					content = this.getSearchSection();
+					break;
+				case 'random':
+					content = this.getRandomSection();
+					break;
+			}
 
-		return (
-			<div>
-				<Note>
-					<p>here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster</p>
-				</Note>
-				<Selector
-					options={['search', 'random'].map(o => ({ id: o, text: o }))}
-					selectedID={this.state.mode}
-					onSelect={mode => this.setState({ mode: mode })}
-				/>
-				{content}
-			</div>
-		);
+			return (
+				<div>
+					<Note>
+						<p>here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster</p>
+					</Note>
+					<Selector
+						options={['search', 'random'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.mode}
+						onSelect={mode => this.setState({ mode: mode })}
+					/>
+					{content}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='FeatureBrowser' error={e} />;
+		}
 	}
 }

@@ -11,15 +11,15 @@ import { Comms, CommsDM } from '../../utils/uhura';
 import { Monster } from '../../models/monster';
 import { Award, Party, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { AwardPanel } from '../panels/award-panel';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 import { Popout } from '../panels/popout';
 
 interface Props {
@@ -312,7 +312,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ReferenceSidebar' error={e} />;
 		}
 	}
 }
@@ -355,7 +355,7 @@ class MarkdownReference extends React.Component<MarkdownReferenceProps, Markdown
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MarkdownReference' error={e} />;
 		}
 	}
 }
@@ -568,7 +568,7 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartyReference' error={e} />;
 		}
 	}
 }
@@ -641,7 +641,7 @@ class MonsterReference extends React.Component<MonsterReferenceProps, MonsterRef
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterReference' error={e} />;
 		}
 	}
 }
@@ -733,7 +733,7 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='AwardsReference' error={e} />;
 		}
 	}
 }

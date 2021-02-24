@@ -11,18 +11,18 @@ import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Radial } from '../controls/radial';
 import { Selector } from '../controls/selector';
 import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
-import { RenderError } from './error-boundary';
 import { MarkdownEditor } from './markdown-editor';
-import { Note } from './note';
 
 interface Props {
 	combatants: Combatant[];
@@ -901,7 +901,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='CombatControlsPanel' error={e} />;
 		}
 	}
 }
@@ -949,7 +949,7 @@ export class CombatantTags extends React.Component<CombatantTagsProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='CombatantTags' error={e} />;
 		}
 	}
 }

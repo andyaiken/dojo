@@ -6,11 +6,11 @@ import { Hero } from '../../../utils/hero';
 
 import { PC } from '../../../models/party';
 
+import { RenderError } from '../../error';
 import { PCStatblockCard } from '../../cards/pc-statblock-card';
+import { Note } from '../../controls/note';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
-import { RenderError } from '../../panels/error-boundary';
-import { Note } from '../../panels/note';
 
 interface Props {
 	pc: PC;
@@ -166,7 +166,7 @@ export class PCImportModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PCImportModal' error={e} />;
 		}
 	}
 }

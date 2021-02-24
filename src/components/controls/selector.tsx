@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	options: { id: string; text: string; disabled?: boolean }[];
@@ -40,7 +40,7 @@ export class Selector extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Selector' error={e} />;
 		}
 	}
 }
@@ -77,7 +77,7 @@ class SelectorOption extends React.Component<SelectorOptionProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='SelectorOption' error={e} />;
 		}
 	}
 }

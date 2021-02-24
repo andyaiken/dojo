@@ -8,12 +8,12 @@ import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { PCCard } from '../cards/pc-card';
+import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 import { PartyOptions } from '../options/party-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	party: Party;
@@ -129,7 +129,7 @@ export class PartyScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PartySidebar' error={e} />;
 		}
 	}
 }

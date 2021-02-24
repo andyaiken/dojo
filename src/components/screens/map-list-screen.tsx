@@ -6,12 +6,12 @@ import { Utils } from '../../utils/utils';
 import { Exploration, Map } from '../../models/map';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { ExplorationCard } from '../cards/exploration-card';
 import { MapCard } from '../cards/map-card';
+import { Note } from '../controls/note';
 import { MapListOptions } from '../options/map-list-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	maps: Map[];
@@ -83,7 +83,7 @@ export class MapListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapListScreen' error={e} />;
 		}
 	}
 }

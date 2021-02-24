@@ -9,10 +9,9 @@ import { Encounter } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
-
-import { RenderError } from './error-boundary';
 
 interface Props {
 	encounter: Encounter;
@@ -325,7 +324,7 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='DifficultyChartPanel' error={e} />;
 		}
 	}
 }

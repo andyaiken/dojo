@@ -4,7 +4,7 @@ import { Napoleon } from '../../utils/napoleon';
 
 import { Combat, Combatant } from '../../models/combat';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 import { InitiativeEntry } from './initiative-entry';
 
 interface Props {
@@ -72,7 +72,7 @@ export class InitiativeOrder extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='InitiativeOrder' error={e} />;
 		}
 	}
 }

@@ -7,10 +7,10 @@ import { Gygax } from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Monster, Trait } from '../../models/monster';
 
+import { RenderError } from '../error';
+import { Statistic } from '../controls/statistic';
 import { AbilityScorePanel } from '../panels/ability-score-panel';
-import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
-import { Statistic } from '../panels/statistic';
 import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
@@ -207,7 +207,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterStatblockCard' error={e} />;
 		}
 	}
 }

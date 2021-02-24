@@ -6,13 +6,13 @@ import { Gygax } from '../../utils/gygax';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -190,7 +190,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterSlotCard' error={e} />;
 		}
 	}
 }

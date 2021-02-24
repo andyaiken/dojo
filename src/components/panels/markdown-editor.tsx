@@ -3,7 +3,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	text: string;
@@ -60,7 +60,7 @@ export class MarkdownEditor extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MarkdownEditor' error={e} />;
 		}
 	}
 }

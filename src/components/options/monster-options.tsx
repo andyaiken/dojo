@@ -6,11 +6,11 @@ import { Utils } from '../../utils/utils';
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	monster: Monster;
@@ -87,7 +87,7 @@ export class MonsterOptions extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterOptions' error={e} />;
 		}
 	}
 }

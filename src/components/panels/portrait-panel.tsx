@@ -5,7 +5,7 @@ import React from 'react';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	source: PC | Monster;
@@ -95,7 +95,7 @@ export class PortraitPanel extends React.Component<Props> {
 			return (this.props.setPortrait !== null) ? this.getEditor() : this.getDisplay();
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PortraitPanel' error={e} />;
 		}
 	}
 }

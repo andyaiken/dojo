@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	items: {
@@ -39,7 +39,7 @@ export class RadioGroup extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='RadioGroup' error={e} />;
 		}
 	}
 }
@@ -93,7 +93,7 @@ class RadioGroupItem extends React.Component<RadioGroupItemProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='RadioGroupItem' error={e} />;
 		}
 	}
 }

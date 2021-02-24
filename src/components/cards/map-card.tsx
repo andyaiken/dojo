@@ -3,9 +3,9 @@ import React from 'react';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { MapOptions } from '../options/map-options';
-import { RenderError } from '../panels/error-boundary';
 import { MapPanel } from '../panels/map-panel';
 
 interface Props {
@@ -52,7 +52,7 @@ export class MapCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapCard' error={e} />;
 		}
 	}
 }

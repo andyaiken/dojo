@@ -5,8 +5,8 @@ import { Shakespeare } from '../../utils/shakespeare';
 
 import { NPC } from '../../models/misc';
 
+import { RenderError } from '../error';
 import { Selector } from '../controls/selector';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	view: string;
@@ -100,7 +100,7 @@ export class GeneratorsSidebar extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='GeneratorsSidebar' error={e} />;
 		}
 	}
 }
@@ -168,7 +168,7 @@ class SimpleGenerator extends React.Component<SimpleGeneratorProps, SimpleGenera
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='SimpleGenerator' error={e} />;
 		}
 	}
 }
@@ -217,7 +217,7 @@ class PlaceNameGenerator extends React.Component<PlaceNameGeneratorProps, PlaceN
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PlaceNameGenerator' error={e} />;
 		}
 	}
 }
@@ -262,7 +262,7 @@ class NPCGenerator extends React.Component<NPCGeneratorProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='NPCGenerator' error={e} />;
 		}
 	}
 }
@@ -291,7 +291,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='GeneratedItem' error={e} />;
 		}
 	}
 }

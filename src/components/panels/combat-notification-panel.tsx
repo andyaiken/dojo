@@ -5,7 +5,7 @@ import { Combatant, Notification } from '../../models/combat';
 import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Monster, Trait } from '../../models/monster';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	notification: Notification;
@@ -102,7 +102,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 			}
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='CombatNotificationPanel' error={e} />;
 		}
 	}
 }

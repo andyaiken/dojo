@@ -4,11 +4,11 @@ import React from 'react';
 import { Streep } from '../../utils/streep';
 import { Comms } from '../../utils/uhura';
 
+import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { AwardPanel } from '../panels/award-panel';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 
 interface Props {
 }
@@ -123,7 +123,7 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='AwardsPlayerSidebar' error={e} />;
 		}
 	}
 }

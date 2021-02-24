@@ -9,8 +9,8 @@ import { Gygax } from '../../utils/gygax';
 import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
-import { RenderError } from './error-boundary';
-import { Note } from './note';
+import { RenderError } from '../error';
+import { Note } from '../controls/note';
 
 interface Props {
 	combatant: Monster | (Combatant & Monster);
@@ -206,7 +206,7 @@ export class TraitsPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='TraitsPanel' error={e} />;
 		}
 	}
 }
@@ -347,7 +347,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 			}
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='TraitPanel' error={e} />;
 		}
 	}
 }

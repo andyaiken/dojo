@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	title: string;
@@ -76,7 +76,7 @@ export class Popout extends React.Component<Props, State> {
 			return ReactDOM.createPortal(this.props.children, this.state.containerElement);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Popout' error={e} />;
 		}
 	}
 }

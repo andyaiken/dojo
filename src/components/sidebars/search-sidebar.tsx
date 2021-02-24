@@ -7,9 +7,9 @@ import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
+import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 
 interface Props {
 	parties: Party[];
@@ -179,7 +179,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='SearchSidebar' error={e} />;
 		}
 	}
 }

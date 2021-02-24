@@ -6,12 +6,11 @@ import { Napoleon } from '../../utils/napoleon';
 import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
-
-import { RenderError } from './error-boundary';
 
 interface Props {
 	filter: MonsterFilter;
@@ -120,7 +119,7 @@ export class FilterPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='FilterPanel' error={e} />;
 		}
 	}
 }

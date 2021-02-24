@@ -1,7 +1,7 @@
 import { Carousel, Row } from 'antd';
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 }
@@ -77,7 +77,7 @@ export class HomeScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='HomeScreen' error={e} />;
 		}
 	}
 }

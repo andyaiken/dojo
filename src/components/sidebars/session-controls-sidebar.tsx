@@ -12,8 +12,8 @@ import { Condition } from '../../models/condition';
 import { Exploration, Map } from '../../models/map';
 import { Options } from '../../models/misc';
 
+import { Note } from '../controls/note';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	options: Options;

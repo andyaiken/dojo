@@ -2,7 +2,7 @@ import { CloseCircleOutlined } from '@ant-design/icons';
 import { notification } from 'antd';
 import React, { ErrorInfo } from 'react';
 
-import { Textbox } from '../controls/textbox';
+import { Textbox } from './controls/textbox';
 
 interface ErrorBoundaryProps {
 }
@@ -36,7 +36,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 	public render() {
 		if (this.state.error) {
 			return (
-				<RenderError error={this.state.error} />
+				<RenderError context='ErrorBoundary' error={this.state.error} />
 			);
 		}
 
@@ -45,6 +45,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 }
 
 interface RenderErrorProps {
+	context: string;
 	error: any;
 }
 
@@ -54,13 +55,15 @@ export class RenderError extends React.Component<RenderErrorProps> {
 			message: (
 				<div>
 					<div className='subheading'>error</div>
-					<Textbox text={this.props.error} multiLine={true} onChange={text => null} />
+					<div className='section'>{this.props.context}</div>
+					<Textbox text={this.props.error} multiLine={true} onChange={() => null} />
 				</div>
 			),
 			closeIcon: <CloseCircleOutlined />,
 			duration: 5
 		});
 	}
+
 	public render() {
 		return (
 			<div className='render-error'>

@@ -1,6 +1,7 @@
 import { DeleteOutlined, DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
@@ -14,12 +15,11 @@ import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
-
 import { CombatantTags } from './combat-controls-panel';
-import { RenderError } from './error-boundary';
 
 interface Props {
 	map: Map;
@@ -308,24 +308,393 @@ export class MapPanel extends React.Component<Props, State> {
 		};
 	}
 
-	public render() {
-		try {
-			let controls = null;
-			if (this.props.mode !== 'thumbnail') {
-				controls = (
-					<Controls
-						mapSize={this.state.size}
-						setMapSize={size => this.setState({ size: size })}
-						showAreasControl={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
-						areas={this.props.map.areas}
-						selectArea={id => this.props.areaSelected(id)}
-						showLightControl={this.props.mode === 'combat'}
-						lighting={this.props.lighting}
-						selectLighting={light => this.props.changeLighting(light)}
-					/>
-				);
+	//#region Rendering
+
+	private getControls() {
+		if (this.props.mode !== 'thumbnail') {
+			return (
+				<Controls
+					mapSize={this.state.size}
+					setMapSize={size => this.setState({ size: size })}
+					showAreasControl={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
+					areas={this.props.map.areas}
+					selectArea={id => this.props.areaSelected(id)}
+					showLightControl={this.props.mode === 'combat'}
+					lighting={this.props.lighting}
+					selectLighting={light => this.props.changeLighting(light)}
+				/>
+			);
+		}
+
+		return null;
+	}
+
+	private getAreas(dimensions: MapDimensions) {
+		if ((this.props.mode === 'edit') || (this.props.mode === 'combat')) {
+			return this.props.map.areas.map(a => (
+				<Area
+					key={a.id}
+					style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
+					selected={this.props.selectedItemIDs.includes(a.id)}
+				/>
+			));
+		}
+
+		return null;
+	}
+
+	private getTiles(dimensions: MapDimensions) {
+		return this.props.map.items
+			.filter(i => i.type === 'tile')
+			.map(i => (
+				<Tile
+					key={i.id}
+					tile={i}
+					style={this.getStyle(i.x, i.y, i.width, i.height, i.style, dimensions)}
+					selectable={this.props.mode === 'edit'}
+					selected={this.props.selectedItemIDs.includes(i.id)}
+					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
+				/>
+			));
+	}
+
+	private getAreaNames(dimensions: MapDimensions) {
+		if (this.props.showAreaNames) {
+			return this.props.map.areas.map(area => (
+				<div
+					key={area.id + ' name'}
+					className='map-area-name'
+					style={this.getStyle(area.x, area.y, area.width, area.height, null, dimensions)}
+				>
+					{area.name}
+				</div>
+			));
+		}
+
+		return null;
+	}
+
+	private getOverlays(dimensions: MapDimensions) {
+		if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
+			return this.props.map.items
+				.filter(i => i.type === 'overlay')
+				.map(i => {
+					const overlayStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, dimensions);
+					overlayStyle.backgroundColor = i.color + i.opacity.toString(16);
+					return (
+						<MapOverlay
+							key={i.id}
+							overlay={i}
+							style={overlayStyle}
+							selected={this.props.selectedItemIDs.includes(i.id)}
+							select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
+						/>
+					);
+				});
+		}
+
+		return null;
+	}
+
+	private getAuras(dimensions: MapDimensions) {
+		if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
+			return this.props.combatants
+				.filter(c => c.aura.radius > 0)
+				.filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
+				.map(c => {
+					const mi = this.props.map.items.find(i => i.id === c.id);
+					if (mi) {
+						const sizeInSquares = c.aura.radius / 5;
+						const dim = (sizeInSquares * 2) + Math.max(Gygax.miniSize(c.displaySize), 1);
+						const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, dimensions);
+						auraStyle.backgroundColor = c.aura.color;
+						return (
+							<div
+								key={c.id + ' aura'}
+								className={'aura'}
+								style={auraStyle}
+							/>
+						);
+					}
+					return null;
+				});
+		}
+
+		return null;
+	}
+
+	private getSteps(dimensions: MapDimensions) {
+		if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+			const steps: (JSX.Element | null)[] = [];
+
+			this.props.map.items.forEach(i => {
+				const combatant = this.props.combatants.find(c => c.id === i.id);
+				if (combatant && combatant.path && (combatant.path.length > 0)) {
+					try {
+						let s = combatant.displaySize;
+						if (combatant.mountID) {
+							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+							if (mount) {
+								s = mount.displaySize;
+							}
+						}
+						const miniSize = Gygax.miniSize(s);
+
+						combatant.path.forEach((step, index) => {
+							steps.push(
+								<GridSquare
+									key={combatant.id + '-step-' + index}
+									x={step.x}
+									y={step.y}
+									style={this.getStyle(step.x, step.y, miniSize, miniSize, 'circle', dimensions)}
+									mode='step'
+								/>
+							);
+						});
+					} catch (e) {
+						console.error('drawing steps');
+						console.error('path is ' + combatant.path);
+						console.error(e);
+					}
+				}
+			});
+
+			return steps;
+		}
+
+		return null;
+	}
+
+	private getDistances(dimensions: MapDimensions) {
+		if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+			const distances: (JSX.Element | null)[] = [];
+
+			this.props.map.items.forEach(i => {
+				const combatant = this.props.combatants.find(c => c.id === i.id);
+				if (combatant && combatant.path && (combatant.path.length > 0)) {
+					try {
+						let s = combatant.displaySize;
+						if (combatant.mountID) {
+							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+							if (mount) {
+								s = mount.displaySize;
+							}
+						}
+						const miniSize = Gygax.miniSize(s);
+
+						const d = Mercator.getDistance(i, combatant.path, this.props.options ? this.props.options.diagonals : '');
+						const firstStep = combatant.path[0];
+						const firstStepStyle = this.getStyle(firstStep.x, firstStep.y, miniSize, miniSize, 'circle', dimensions);
+						firstStepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
+						distances.push(
+							<GridSquare
+								key={combatant.id + '-distance'}
+								x={firstStep.x}
+								y={firstStep.y}
+								style={firstStepStyle}
+								mode='step'
+								content={(d * 5) + ' ft'}
+							/>
+						);
+					} catch (e) {
+						console.error('drawing distances');
+						console.error('path is ' + combatant.path);
+						console.error(e);
+					}
+				}
+			});
+
+			return distances;
+		}
+
+		return null;
+	}
+
+	private getTokens(dimensions: MapDimensions) {
+		if (this.props.mode !== 'edit') {
+			const tokens: (JSX.Element | null)[] = [];
+
+			const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
+			this.props.map.items
+				.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
+				.filter(i => !mountIDs.includes(i.id))
+				.sort((a, b) => {
+					const combatantA = this.props.combatants.find(c => c.id === a.id);
+					const combatantB = this.props.combatants.find(c => c.id === b.id);
+					const sizeA = combatantA ? combatantA.displaySize : a.size;
+					const sizeB = combatantB ? combatantB.displaySize : b.size;
+					return Gygax.miniSize(sizeB) - Gygax.miniSize(sizeA);
+				})
+				.forEach(i => {
+					let miniSize = Gygax.miniSize(i.size);
+					let isPC = false;
+					let isMe = false;
+					const combatant = this.props.combatants.find(c => c.id === i.id);
+					if (combatant) {
+						let s = combatant.displaySize;
+						if (combatant.mountID) {
+							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+							if (mount) {
+								s = mount.displaySize;
+							}
+						}
+						miniSize = Gygax.miniSize(s);
+						isPC = (combatant.type === 'pc');
+						isMe = (combatant.id === Comms.getCharacterID(Comms.getID())) && Comms.data.options.allowControls;
+					}
+					const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', dimensions);
+					tokenStyle.fontSize = (miniSize * this.state.size / 4) + 'px';
+					tokens.push(
+						<MapToken
+							key={i.id}
+							token={i}
+							combatant={combatant || null}
+							style={tokenStyle}
+							width={miniSize * this.state.size}
+							simple={this.props.mode === 'thumbnail'}
+							showGauge={this.props.mode === 'combat'}
+							showHidden={(this.props.mode === 'combat') || isPC}
+							selectable={this.props.mode === 'combat' || ((this.props.mode === 'combat-player') && isMe)}
+							selected={this.props.selectedItemIDs.includes(i.id)}
+							select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
+							remove={id => this.props.itemRemove(id)}
+							conditionRemove={(c, condition) => this.props.conditionRemove(c, condition)}
+							toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
+							toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
+							toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
+						/>
+					);
+				});
+
+			return tokens;
+		}
+
+		return null;
+	}
+
+	private getFog(dimensions: MapDimensions) {
+		if (this.props.mode !== 'edit') {
+			return this.props.fog.map(f => (
+				<GridSquare
+					key={'fog ' + f.x + ',' + f.y}
+					x={f.x}
+					y={f.y}
+					style={this.getStyle(f.x, f.y, 1, 1, 'square', dimensions)}
+					mode='fog'
+				/>
+			));
+		}
+
+		return null;
+	}
+
+	private getLighting(dimensions: MapDimensions) {
+		if (this.props.lighting !== 'bright light') {
+			const actors: Combatant[] = [];
+			if (this.props.mode === 'combat') {
+				this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
+				this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+			}
+			if (this.props.mode === 'combat-player') {
+				this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
 			}
 
+			const lighting: (JSX.Element | null)[] = [];
+			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+					let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
+					this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
+						const item = this.props.map.items.find(i => i.id === combatant.id);
+						if (item) {
+							const dist = Mercator.calculateDistance(item, x, y);
+							if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
+								if (level === 'darkness') {
+									level = 'dim light';
+								}
+							}
+							if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
+								level = 'bright light';
+							}
+						}
+					});
+					actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
+						// Can this actor see this square?
+						const item = this.props.map.items.find(i => i.id === combatant.id);
+						if (item) {
+							const dist = Mercator.calculateDistance(item, x, y);
+							if (combatant.darkvision >= dist) {
+								if (level === 'dim light') {
+									level = 'bright light';
+								} else if (level === 'darkness') {
+									level = 'dim light';
+								}
+							}
+						}
+					});
+					if (level !== 'bright light') {
+						lighting.push(
+							<GridSquare
+								key={'light ' + x + ',' + y}
+								x={x}
+								y={y}
+								style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
+								mode={'light ' + level.replaceAll(' ', '-')}
+							/>
+						);
+					}
+				}
+			}
+
+			return lighting;
+		}
+
+		return null;
+	}
+
+	private getGrid(dimensions: MapDimensions) {
+		if (this.props.showGrid) {
+			const grid: (JSX.Element | null)[] = [];
+
+			for (let yGrid = dimensions.minY; yGrid !== dimensions.maxY + 1; ++yGrid) {
+				for (let xGrid = dimensions.minX; xGrid !== dimensions.maxX + 1; ++xGrid) {
+					grid.push(
+						<GridSquare
+							key={xGrid + ',' + yGrid}
+							x={xGrid}
+							y={yGrid}
+							style={this.getStyle(xGrid, yGrid, 1, 1, 'square', dimensions)}
+							selected={this.isSelected(xGrid, yGrid)}
+							onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
+							onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
+							onMouseEnter={(posX, posY) => this.gridSquareEntered(posX, posY)}
+						/>
+					);
+				}
+			}
+
+			return grid;
+		}
+
+		return null;
+	}
+
+	private getFocus(dimensions: MapDimensions) {
+		if (this.props.focussedSquare) {
+			return (
+				<div
+					className='grid-focus'
+					style={this.getStyle(this.props.focussedSquare.x - 1, this.props.focussedSquare.y - 1, 3, 3, 'circle', dimensions)}
+				/>
+			);
+		}
+
+		return null;
+	}
+
+	//#endregion
+
+	public render() {
+		try {
 			const mapDimensions = this.getMapDimensions();
 			if (!mapDimensions) {
 				return (
@@ -333,324 +702,42 @@ export class MapPanel extends React.Component<Props, State> {
 				);
 			}
 
-			// Draw the map areas
-			let areas: JSX.Element[] = [];
-			if ((this.props.mode === 'edit') || (this.props.mode === 'combat')) {
-				areas = this.props.map.areas
-					.map(a => {
-						const areaStyle = this.getStyle(a.x, a.y, a.width, a.height, 'square', mapDimensions);
-						return (
-							<Area
-								key={a.id}
-								style={areaStyle}
-								selected={this.props.selectedItemIDs.includes(a.id)}
-							/>
-						);
-					});
-			}
-
-			// Draw the map tiles
-			const tiles = this.props.map.items
-				.filter(i => i.type === 'tile')
-				.map(i => {
-					const tileStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
-					return (
-						<MapTile
-							key={i.id}
-							tile={i}
-							style={tileStyle}
-							selectable={this.props.mode === 'edit'}
-							selected={this.props.selectedItemIDs.includes(i.id)}
-							select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
-						/>
-					);
-				});
-
-			// Draw area names
-			let areaNames: JSX.Element[] = [];
-			if (this.props.showAreaNames) {
-				areaNames = this.props.map.areas.map(area => {
-					const areaStyle = this.getStyle(area.x, area.y, area.width, area.height, null, mapDimensions);
-					return (
-						<div key={area.id + ' name'} className='map-area-name' style={areaStyle}>
-							{area.name}
-						</div>
-					);
-				});
-			}
-
-			// Draw overlays
-			let overlays: JSX.Element[] = [];
-			if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
-				overlays = this.props.map.items
-					.filter(i => i.type === 'overlay')
-					.map(i => {
-						const overlayStyle = this.getStyle(i.x, i.y, i.width, i.height, i.style, mapDimensions);
-						overlayStyle.backgroundColor = i.color + i.opacity.toString(16);
-						return (
-							<MapOverlay
-								key={i.id}
-								overlay={i}
-								style={overlayStyle}
-								selected={this.props.selectedItemIDs.includes(i.id)}
-								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
-							/>
-						);
-					});
-			}
-
-			// Draw token auras
-			let auras: JSX.Element[] = [];
-			if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
-				auras = this.props.combatants
-					.filter(c => c.aura.radius > 0)
-					.filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
-					.map(c => {
-						const mi = this.props.map.items.find(i => i.id === c.id);
-						if (mi) {
-							const sizeInSquares = c.aura.radius / 5;
-							const miniSize = Math.max(Gygax.miniSize(c.displaySize), 1);
-							const dim = (sizeInSquares * 2) + miniSize;
-							const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, mapDimensions);
-							auraStyle.backgroundColor = c.aura.color;
-							return (
-								<div
-									key={c.id + ' aura'}
-									className={'aura'}
-									style={auraStyle}
-								/>
-							);
-						}
-						return null;
-					})
-					.filter(mt => mt !== null) as JSX.Element[];
-			}
-
-			// Draw the tokens
-			const tokens: JSX.Element[] = [];
-			const steps: JSX.Element[] = [];
-			let distance: JSX.Element | null = null;
-			if (this.props.mode !== 'edit') {
-				const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
-				this.props.map.items
-					.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
-					.filter(i => !mountIDs.includes(i.id))
-					.sort((a, b) => {
-						const combatantA = this.props.combatants.find(c => c.id === a.id);
-						const combatantB = this.props.combatants.find(c => c.id === b.id);
-						const sizeA = combatantA ? combatantA.displaySize : a.size;
-						const sizeB = combatantB ? combatantB.displaySize : b.size;
-						return Gygax.miniSize(sizeB) - Gygax.miniSize(sizeA);
-					})
-					.forEach(i => {
-						let miniSize = Gygax.miniSize(i.size);
-						let isPC = false;
-						let isMe = false;
-						const combatant = this.props.combatants.find(c => c.id === i.id);
-						if (combatant) {
-							let s = combatant.displaySize;
-							if (combatant.mountID) {
-								const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-								if (mount) {
-									s = mount.displaySize;
-								}
-							}
-							miniSize = Gygax.miniSize(s);
-							isPC = (combatant.type === 'pc');
-							isMe = (combatant.id === Comms.getCharacterID(Comms.getID())) && Comms.data.options.allowControls;
-							if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
-								if (combatant.path && combatant.path.length > 0) {
-									combatant.path.forEach((step, index) => {
-										if (step) {
-											const stepStyle = this.getStyle(step.x, step.y, miniSize, miniSize, 'square', mapDimensions);
-											steps.push(
-												<GridSquare
-													key={combatant.id + '-step-' + index}
-													x={step.x}
-													y={step.y}
-													style={stepStyle}
-													mode='step'
-												/>
-											);
-										}
-									});
-									const d = Mercator.getDistance(i, combatant.path, this.props.options ? this.props.options.diagonals : '');
-									const firstStep = combatant.path[0];
-									const firstStepStyle = this.getStyle(firstStep.x, firstStep.y, miniSize, miniSize, 'square', mapDimensions);
-									firstStepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
-									distance = (
-										<GridSquare
-											x={firstStep.x}
-											y={firstStep.y}
-											style={firstStepStyle}
-											mode='step'
-											content={(d * 5) + ' ft'}
-										/>
-									);
-								}
-							}
-						}
-						const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', mapDimensions);
-						tokenStyle.fontSize = (miniSize * this.state.size / 4) + 'px';
-						tokens.push(
-							<MapToken
-								key={i.id}
-								token={i}
-								combatant={combatant || null}
-								style={tokenStyle}
-								width={miniSize * this.state.size}
-								simple={this.props.mode === 'thumbnail'}
-								showGauge={this.props.mode === 'combat'}
-								showHidden={(this.props.mode === 'combat') || isPC}
-								selectable={this.props.mode === 'combat' || ((this.props.mode === 'combat-player') && isMe)}
-								selected={this.props.selectedItemIDs.includes(i.id)}
-								select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
-								remove={id => this.props.itemRemove(id)}
-								conditionRemove={(c, condition) => this.props.conditionRemove(c, condition)}
-								toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
-								toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
-								toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
-							/>
-						);
-					});
-			}
-
-			// Draw fog of war
-			let fog: JSX.Element[] = [];
-			if (this.props.mode !== 'edit') {
-				fog = this.props.fog
-					.map(f => (
-						<GridSquare
-							key={'fog ' + f.x + ',' + f.y}
-							x={f.x}
-							y={f.y}
-							style={this.getStyle(f.x, f.y, 1, 1, 'square', mapDimensions)}
-							mode='fog'
-						/>
-					));
-			}
-
-			// Draw lighting
-			const lighting: JSX.Element[] = [];
-			if (this.props.lighting !== 'bright light') {
-				const actors: Combatant[] = [];
-				if (this.props.mode === 'combat') {
-					this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
-					this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-				}
-				if (this.props.mode === 'combat-player') {
-					this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-				}
-				for (let x = mapDimensions.minX; x <= mapDimensions.maxX; ++x) {
-					for (let y = mapDimensions.minY; y <= mapDimensions.maxY; ++y) {
-						let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
-						this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
-							const item = this.props.map.items.find(i => i.id === combatant.id);
-							if (item) {
-								const dist = Mercator.calculateDistance(item, x, y);
-								if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
-									if (level === 'darkness') {
-										level = 'dim light';
-									}
-								}
-								if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
-									level = 'bright light';
-								}
-							}
-						});
-						actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
-							// Can this actor see this square?
-							const item = this.props.map.items.find(i => i.id === combatant.id);
-							if (item) {
-								const dist = Mercator.calculateDistance(item, x, y);
-								if (combatant.darkvision >= dist) {
-									if (level === 'dim light') {
-										level = 'bright light';
-									} else if (level === 'darkness') {
-										level = 'dim light';
-									}
-								}
-							}
-						});
-						if (level !== 'bright light') {
-							lighting.push(
-								<GridSquare
-									key={'light ' + x + ',' + y}
-									x={x}
-									y={y}
-									style={this.getStyle(x, y, 1, 1, 'square', mapDimensions)}
-									mode={'light ' + level.replaceAll(' ', '-')}
-								/>
-							);
-						}
-					}
-				}
-			}
-
-			// Draw the grid
-			const grid = [];
-			if (this.props.showGrid) {
-				for (let yGrid = mapDimensions.minY; yGrid !== mapDimensions.maxY + 1; ++yGrid) {
-					for (let xGrid = mapDimensions.minX; xGrid !== mapDimensions.maxX + 1; ++xGrid) {
-						grid.push(
-							<GridSquare
-								key={xGrid + ',' + yGrid}
-								x={xGrid}
-								y={yGrid}
-								style={this.getStyle(xGrid, yGrid, 1, 1, 'square', mapDimensions)}
-								selected={this.isSelected(xGrid, yGrid)}
-								onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
-								onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
-								onMouseEnter={(posX, posY) => this.gridSquareEntered(posX, posY)}
-							/>
-						);
-					}
-				}
-			}
-
-			let focus = null;
-			if (this.props.focussedSquare) {
-				const focusStyle = this.getStyle(this.props.focussedSquare.x - 1, this.props.focussedSquare.y - 1, 3, 3, 'circle', mapDimensions);
-				focus = (
-					<div className='grid-focus' style={focusStyle} />
-				);
-			}
-
-			const style = 'map-panel ' + this.props.mode;
 			const squareWidth = 1 + mapDimensions.maxX - mapDimensions.minX;
 			const squareHeight = 1 + mapDimensions.maxY - mapDimensions.minY;
 			const mapWidth = (this.state.size * squareWidth) + 2;
 			let mapHeight = (this.state.size * squareHeight) + 2;
-			if (controls) {
+			if (this.props.mode !== 'thumbnail') {
+				// Allow for map controls
 				mapHeight += 42;
 			}
+
 			return (
 				<div
-					className={style}
+					className={'map-panel ' + this.props.mode}
 					style={{ width: mapWidth + 'px', height: mapHeight + 'px' }}
 					onClick={() => this.props.itemSelected ? this.props.itemSelected(null, false) : null}
 					role='button'
 				>
-					{controls}
+					{this.getControls()}
 					<div className='grid'>
-						{areas}
-						{tiles}
-						{areaNames}
-						{overlays}
-						{auras}
-						{steps}
-						{distance}
-						{tokens}
-						{fog}
-						{lighting}
-						{grid}
-						{focus}
+						{this.getAreas(mapDimensions)}
+						{this.getTiles(mapDimensions)}
+						{this.getAreaNames(mapDimensions)}
+						{this.getOverlays(mapDimensions)}
+						{this.getAuras(mapDimensions)}
+						{this.getSteps(mapDimensions)}
+						{this.getDistances(mapDimensions)}
+						{this.getTokens(mapDimensions)}
+						{this.getFog(mapDimensions)}
+						{this.getLighting(mapDimensions)}
+						{this.getGrid(mapDimensions)}
+						{this.getFocus(mapDimensions)}
 					</div>
 				</div>
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapPanel' error={e} />;
 		}
 	}
 }
@@ -749,7 +836,7 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Controls' error={e} />;
 		}
 	}
 }
@@ -774,7 +861,7 @@ class Area extends React.Component<AreaProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Area' error={e} />;
 		}
 	}
 }
@@ -855,12 +942,12 @@ class GridSquare extends React.Component<GridSquareProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='GridSquare' error={e} />;
 		}
 	}
 }
 
-interface MapTileProps {
+interface TileProps {
 	tile: MapItem;
 	style: MapItemStyle;
 	selectable: boolean;
@@ -868,7 +955,7 @@ interface MapTileProps {
 	select: (tileID: string, ctrl: boolean) => void;
 }
 
-class MapTile extends React.Component<MapTileProps> {
+class Tile extends React.Component<TileProps> {
 	private select(e: React.MouseEvent) {
 		if (this.props.selectable) {
 			e.stopPropagation();
@@ -1081,7 +1168,7 @@ class MapTile extends React.Component<MapTileProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Tile' error={e} />;
 		}
 	}
 }
@@ -1116,7 +1203,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapOverlay' error={e} />;
 		}
 	}
 }
@@ -1237,7 +1324,9 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 
 			if (this.props.combatant.note) {
 				info.push(
-					<div key='note' className='section'>{this.props.combatant.note}</div>
+					<div key='note' className='section'>
+						<ReactMarkdown source={this.props.combatant.note} />
+					</div>
 				);
 			}
 		}
@@ -1415,7 +1504,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MapToken' error={e} />;
 		}
 	}
 }

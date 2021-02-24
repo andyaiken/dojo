@@ -8,11 +8,11 @@ import { Napoleon } from '../../utils/napoleon';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { Note } from '../controls/note';
 import { RadioGroup } from '../controls/radio-group';
-import { RenderError } from '../panels/error-boundary';
 import { FilterPanel } from '../panels/filter-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	encounter: Encounter;
@@ -133,7 +133,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterSelectionModal' error={e} />;
 		}
 	}
 }

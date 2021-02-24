@@ -3,7 +3,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -74,7 +74,7 @@ export class PDF extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PDF' error={e} />;
 		}
 	}
 }

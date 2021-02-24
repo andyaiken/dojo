@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	label: string;
@@ -44,7 +44,7 @@ export class Checkbox extends React.Component<Props> {
 
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Checkbox' error={e} />;
 		}
 	}
 }

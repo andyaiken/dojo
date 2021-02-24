@@ -4,7 +4,7 @@ import React from 'react';
 
 import { DieRollResult } from '../../models/dice';
 
-import { RenderError } from './error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	result: DieRollResult;
@@ -59,7 +59,7 @@ export class DieRollResultPanel extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='DieRollResultPanel' error={e} />;
 		}
 	}
 }

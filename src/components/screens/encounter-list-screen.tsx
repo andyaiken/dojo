@@ -9,12 +9,12 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { CombatCard } from '../cards/combat-card';
 import { EncounterCard } from '../cards/encounter-card';
+import { Note } from '../controls/note';
 import { EncounterListOptions } from '../options/encounter-list-options';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
-import { Note } from '../panels/note';
 
 interface Props {
 	encounters: Encounter[];
@@ -124,7 +124,7 @@ export class EncounterListScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterListScreen' error={e} />;
 		}
 	}
 }

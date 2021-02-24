@@ -15,17 +15,17 @@ import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { MapItemCard } from '../cards/map-item-card';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
+import { Note } from '../controls/note';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
-import { RenderError } from '../panels/error-boundary';
 import { GridPanel } from '../panels/grid-panel';
 import { NotOnMapInitiativeEntry } from '../panels/initiative-entry';
 import { MapPanel } from '../panels/map-panel';
-import { Note } from '../panels/note';
 import { Popout } from '../panels/popout';
 import { TraitsPanel } from '../panels/traits-panel';
 
@@ -702,7 +702,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ExplorationScreen' error={e} />;
 		}
 	}
 }

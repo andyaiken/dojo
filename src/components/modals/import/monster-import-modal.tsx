@@ -6,11 +6,11 @@ import { Frankenstein } from '../../../utils/frankenstein';
 
 import { Monster } from '../../../models/monster';
 
+import { RenderError } from '../../error';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { Note } from '../../controls/note';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
-import { RenderError } from '../../panels/error-boundary';
-import { Note } from '../../panels/note';
 
 interface Props {
 	monster: Monster;
@@ -138,7 +138,7 @@ export class MonsterImportModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MonsterImportModal' error={e} />;
 		}
 	}
 }

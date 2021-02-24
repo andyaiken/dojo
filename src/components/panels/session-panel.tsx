@@ -12,15 +12,15 @@ import { Utils } from '../../utils/utils';
 import { DieRollResult } from '../../models/dice';
 import { CardDraw, PlayingCard } from '../../models/misc';
 
+import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from './die-roll-panel';
 import { DieRollResultPanel } from './die-roll-result-panel';
-import { RenderError } from './error-boundary';
-import { Note } from './note';
 import { PlayingCardPanel } from './playing-card-panel';
 import { PortraitPanel } from './portrait-panel';
 
@@ -75,7 +75,7 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ConnectionsPanel' error={e} />;
 		}
 	}
 }
@@ -203,7 +203,7 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MessagesPanel' error={e} />;
 		}
 	}
 }
@@ -326,7 +326,7 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='MessagePanel' error={e} />;
 		}
 	}
 }
@@ -818,7 +818,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='SendMessagePanel' error={e} />;
 		}
 	}
 }

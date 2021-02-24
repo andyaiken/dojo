@@ -4,9 +4,9 @@ import { Gygax } from '../../utils/gygax';
 
 import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { Selector } from '../controls/selector';
 import { ChartPanel } from '../panels/chart-panel';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	groups: MonsterGroup[];
@@ -99,7 +99,7 @@ export class DemographicsModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='DemographicsModal' error={e} />;
 		}
 	}
 }

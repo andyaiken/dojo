@@ -2,7 +2,7 @@ import { ArrowUpOutlined, CaretDownOutlined, CaretUpOutlined, UndoOutlined } fro
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	showToggle: boolean;
@@ -167,7 +167,7 @@ export class Radial extends React.Component<Props, State> {
 
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Radial' error={e} />;
 		}
 	}
 }

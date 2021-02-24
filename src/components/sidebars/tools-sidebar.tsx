@@ -11,15 +11,15 @@ import { Ustinov } from '../../utils/ustinov';
 import { DieRollResult } from '../../models/dice';
 import { CardDraw, Handout, PlayingCard } from '../../models/misc';
 
+import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel } from '../panels/die-roll-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
-import { RenderError } from '../panels/error-boundary';
-import { Note } from '../panels/note';
 import { PDF } from '../panels/pdf';
 import { PlayingCardPanel } from '../panels/playing-card-panel';
 import { Popout } from '../panels/popout';
@@ -161,7 +161,7 @@ export class ToolsSidebar extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='ToolsSidebar' error={e} />;
 		}
 	}
 }
@@ -197,7 +197,7 @@ class DieRollerTool extends React.Component<DieRollerToolProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='DieRollerTool' error={e} />;
 		}
 	}
 }
@@ -349,7 +349,7 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='LanguageTool' error={e} />;
 		}
 	}
 }
@@ -389,7 +389,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='GeneratedText' error={e} />;
 		}
 	}
 }
@@ -571,7 +571,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='HandoutTool' error={e} />;
 		}
 	}
 }
@@ -583,32 +583,37 @@ interface WildSurgeProps {
 
 class WildSurgeTool extends React.Component<WildSurgeProps> {
 	public render() {
-		let content = null;
-		if (this.props.surge) {
-			content = (
-				<div>
-					<hr/>
-					<div className='generated-item group-panel'>
-						<div className='text-section'>
-							<p>{this.props.surge}</p>
-						</div>
-						<div className='icon-section'>
-							<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
+		try {
+			let content = null;
+			if (this.props.surge) {
+				content = (
+					<div>
+						<hr/>
+						<div className='generated-item group-panel'>
+							<div className='text-section'>
+								<p>{this.props.surge}</p>
+							</div>
+							<div className='icon-section'>
+								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
+							</div>
 						</div>
 					</div>
+				);
+			}
+
+			return (
+				<div>
+					<Note>
+						<p>this tool randomly chooses wild magic surge effects</p>
+					</Note>
+					<button onClick={() => this.props.rollSurge()}>surge</button>
+					{content}
 				</div>
 			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='WildSurgeTool' error={e} />;
 		}
-
-		return (
-			<div>
-				<Note>
-					<p>this tool randomly chooses wild magic surge effects</p>
-				</Note>
-				<button onClick={() => this.props.rollSurge()}>surge</button>
-				{content}
-			</div>
-		);
 	}
 }
 
@@ -717,7 +722,7 @@ class OracleTool extends React.Component<OracleToolProps, OracleToolState> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='OracleTool' error={e} />;
 		}
 	}
 }

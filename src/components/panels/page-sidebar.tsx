@@ -14,6 +14,7 @@ import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
 import { Party, PC } from '../../models/party';
 
+import { RenderError } from '../error';
 import { AboutSidebar } from '../sidebars/about-sidebar';
 import { AwardsPlayerSidebar } from '../sidebars/awards-player-sidebar';
 import { GeneratorsSidebar } from '../sidebars/generators-sidebar';
@@ -24,7 +25,6 @@ import { SessionControlsSidebar } from '../sidebars/session-controls-sidebar';
 import { SessionPlayerSidebar } from '../sidebars/session-player-sidebar';
 import { SessionSidebar } from '../sidebars/session-sidebar';
 import { ToolsSidebar } from '../sidebars/tools-sidebar';
-import { RenderError } from './error-boundary';
 
 interface Props {
 	sidebar: Sidebar;
@@ -494,7 +494,7 @@ export class PageSidebar extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PageSidebar' error={e} />;
 		}
 	}
 }

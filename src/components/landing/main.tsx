@@ -21,6 +21,7 @@ import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
+import { ErrorBoundary, RenderError } from '../error';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
@@ -37,7 +38,6 @@ import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { DieRollResultPanel } from '../panels/die-roll-result-panel';
-import { ErrorBoundary, RenderError } from '../panels/error-boundary';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
@@ -3533,7 +3533,7 @@ export class Main extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Main' error={e} />;
 		}
 	}
 

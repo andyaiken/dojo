@@ -7,9 +7,9 @@ import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { EncounterOptions } from '../options/encounter-options';
-import { RenderError } from '../panels/error-boundary';
 import { PortraitPanel } from '../panels/portrait-panel';
 
 interface Props {
@@ -128,7 +128,7 @@ export class EncounterCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterCard' error={e} />;
 		}
 	}
 }

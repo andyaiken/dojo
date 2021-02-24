@@ -3,11 +3,11 @@ import React from 'react';
 import { Encounter } from '../../models/encounter';
 import { Party } from '../../models/party';
 
+import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Textbox } from '../controls/textbox';
-import { RenderError } from '../panels/error-boundary';
 
 interface Props {
 	encounter: Encounter;
@@ -71,7 +71,7 @@ export class EncounterOptions extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='EncounterOptions' error={e} />;
 		}
 	}
 }

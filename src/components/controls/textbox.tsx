@@ -1,7 +1,7 @@
 import React from 'react';
 import { DebounceInput } from 'react-debounce-input';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
 
 interface Props {
 	text: string;
@@ -70,7 +70,7 @@ export class Textbox extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='Textbox' error={e} />;
 		}
 	}
 }

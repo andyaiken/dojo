@@ -4,9 +4,9 @@ import React from 'react';
 import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
-import { RenderError } from '../panels/error-boundary';
+import { RenderError } from '../error';
+import { Statistic } from '../controls/statistic';
 import { PortraitPanel } from '../panels/portrait-panel';
-import { Statistic } from '../panels/statistic';
 
 interface Props {
 	pc: PC | (PC & Combatant);
@@ -85,7 +85,7 @@ export class PCStatblockCard extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='PCStatblockCard' error={e} />;
 		}
 	}
 }

@@ -5,9 +5,8 @@ import { Gygax } from '../../utils/gygax';
 
 import { Monster } from '../../models/monster';
 
+import { RenderError } from '../error';
 import { NumberSpin } from '../controls/number-spin';
-
-import { RenderError } from './error-boundary';
 
 interface Props {
 	combatant: Monster;
@@ -151,7 +150,7 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 			return result;
 		} catch (e) {
 			console.error(e);
-			return <RenderError error={e} />;
+			return <RenderError context='AbilityScorePanel' error={e} />;
 		}
 	}
 }
