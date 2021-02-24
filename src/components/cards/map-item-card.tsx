@@ -5,8 +5,8 @@ import { MapItem } from '../../models/map';
 
 import { RenderError } from '../error';
 import { NumberSpin } from '../controls/number-spin';
-import { Radial } from '../controls/radial';
 import { Selector } from '../controls/selector';
+import { MovementPanel } from '../panels/movement-panel';
 
 interface Props {
 	item: MapItem;
@@ -40,7 +40,7 @@ export class MapItemCard extends React.Component<Props> {
 							onSelect={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
 						/>
 						<div className='subheading'>move</div>
-						<Radial showToggle={true} onMove={(dir, step) => this.props.moveMapItem(this.props.item, dir, step)} />
+						<MovementPanel showToggle={true} onMove={(dir, step) => this.props.moveMapItem(this.props.item, dir, step)} />
 						<div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
 							<div className='subheading'>size</div>
 							<div className='section'>

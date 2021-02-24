@@ -14,7 +14,7 @@ import { NumberSpin } from '../controls/number-spin';
 import { HitPointGauge } from './hit-point-gauge';
 import { PortraitPanel } from './portrait-panel';
 
-interface Props {
+interface InitiativeEntryProps {
 	combatant: Combatant;
 	playerView: boolean;
 	selectedText: string;
@@ -23,7 +23,7 @@ interface Props {
 	select: (combatant: Combatant, ctrl: boolean) => void;
 }
 
-export class InitiativeEntry extends React.Component<Props> {
+export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 	private getInformationTag() {
 		if (this.props.combatant.current) {
 			return <Tag className='info'>current turn</Tag>;

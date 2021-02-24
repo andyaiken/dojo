@@ -19,8 +19,7 @@ import { Dropdown } from '../controls/dropdown';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
-import { DieRollPanel } from './die-roll-panel';
-import { DieRollResultPanel } from './die-roll-result-panel';
+import { DieRollPanel, DieRollResultPanel } from './die-roll-panel';
 import { PlayingCardPanel } from './playing-card-panel';
 import { PortraitPanel } from './portrait-panel';
 

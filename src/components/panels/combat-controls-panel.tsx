@@ -17,12 +17,12 @@ import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
-import { Radial } from '../controls/radial';
 import { Selector } from '../controls/selector';
 import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
 import { MarkdownEditor } from './markdown-editor';
+import { MovementPanel } from './movement-panel';
 
 interface Props {
 	combatants: Combatant[];
@@ -583,7 +583,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			return (
 				<div>
-					<Radial
+					<MovementPanel
 						showToggle={true}
 						undo={undo}
 						altitude={altitude}

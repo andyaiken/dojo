@@ -20,7 +20,6 @@ import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
-import { ConfirmButton } from '../../controls/confirm-button';
 import { Expander } from '../../controls/expander';
 import { Note } from '../../controls/note';
 import { NumberSpin } from '../../controls/number-spin';
@@ -29,9 +28,8 @@ import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { AbilityScorePanel } from '../../panels/ability-score-panel';
 import { FilterPanel } from '../../panels/filter-panel';
-import { MarkdownEditor } from '../../panels/markdown-editor';
 import { PortraitPanel } from '../../panels/portrait-panel';
-import { TraitPanel } from '../../panels/traits-panel';
+import { TraitEditorPanel, TraitPanel } from '../../panels/traits-panel';
 
 interface Props {
 	monster: Monster;
@@ -1224,59 +1222,6 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='TraitBarPanel' error={e} />;
-		}
-	}
-}
-
-interface TraitEditorPanelProps {
-	trait: Trait;
-	copyTrait: (trait: Trait) => void;
-	deleteTrait: (trait: Trait) => void;
-	changeValue: (trait: Trait, field: string, value: any) => void;
-}
-
-class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
-	public render() {
-		try {
-			const typeOptions = TRAIT_TYPES.map(t => ({ id: t, text: t }));
-			typeOptions.forEach(o => {
-				if (o.id === 'reaction') {
-					o.text = 'react';
-				}
-				if (o.id === 'legendary') {
-					o.text = 'legend';
-				}
-			});
-
-			return (
-				<div key={this.props.trait.id} className='section'>
-					<Selector
-						options={typeOptions}
-						selectedID={this.props.trait.type}
-						itemsPerRow={4}
-						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
-					/>
-					<hr/>
-					<div className='subheading'>feature name</div>
-					<Textbox
-						text={this.props.trait.name}
-						onChange={value => this.props.changeValue(this.props.trait, 'name', value)}
-					/>
-					<div className='subheading'>usage</div>
-					<Textbox
-						text={this.props.trait.usage}
-						onChange={value => this.props.changeValue(this.props.trait, 'usage', value)}
-					/>
-					<div className='subheading'>details</div>
-					<MarkdownEditor text={this.props.trait.text} onChange={text => this.props.changeValue(this.props.trait, 'text', text)} />
-					<hr/>
-					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this feature</button>
-					<ConfirmButton text='delete this feature' onConfirm={() => this.props.deleteTrait(this.props.trait)} />
-				</div>
-			);
-		} catch (e) {
-			console.error(e);
-			return <RenderError context='TraitEditorPanel' error={e} />;
 		}
 	}
 }

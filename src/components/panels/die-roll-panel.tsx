@@ -1,10 +1,12 @@
-import { CloseCircleOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
 import { RenderError } from '../error';
 
-interface Props {
+import { DieRollResult } from '../../models/dice';
+
+interface DieRollPanelProps {
 	dice: { [sides: number]: number };
 	constant: number;
 	setDie: (sides: number, count: number) => void;
@@ -13,7 +15,7 @@ interface Props {
 	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
-export class DieRollPanel extends React.Component<Props> {
+export class DieRollPanel extends React.Component<DieRollPanelProps> {
 	private getDieTypeBox(sides: number) {
 		const count = this.props.dice[sides];
 		return (
@@ -133,6 +135,64 @@ export class DieRollPanel extends React.Component<Props> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='DieRollPanel' error={e} />;
+		}
+	}
+}
+
+interface DieRollResultPanelProps {
+	result: DieRollResult;
+}
+
+export class DieRollResultPanel extends React.Component<DieRollResultPanelProps> {
+	public render() {
+		try {
+			const rolls: JSX.Element[] = [];
+			let sum = 0;
+			this.props.result.rolls.forEach(roll => {
+				let style = '';
+				if (roll.sides === 20) {
+					if (roll.value === 1) {
+						style = 'nat1';
+					}
+					if (roll.value === 20) {
+						style = 'nat20';
+					}
+				}
+				rolls.push(
+					<Tag key={roll.id} className={style}>
+						d{roll.sides}: <b>{roll.value}</b>
+					</Tag>
+				);
+				sum += roll.value;
+			});
+			if (this.props.result.constant !== 0) {
+				const sign = (this.props.result.constant > 0) ? '+' : '-';
+				rolls.push(
+					<Tag key='constant'>
+						{sign} <b>{Math.abs(this.props.result.constant)}</b>
+					</Tag>
+				);
+				sum += this.props.result.constant;
+			}
+
+			const icon = (this.props.result.mode === '') ? null : (
+				<ExclamationCircleOutlined className={'roll-icon ' + this.props.result.mode} title={this.props.result.mode} />
+			);
+
+			return (
+				<div className='die-roll-result group-panel'>
+					<div className='rolls'>
+						{rolls}
+						{icon}
+					</div>
+					<div className='sum'>
+						{sum}
+					</div>
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='DieRollResultPanel' error={e} />;
 		}
 	}
 }

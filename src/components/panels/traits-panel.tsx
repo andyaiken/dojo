@@ -10,9 +10,13 @@ import { Combatant } from '../../models/combat';
 import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
 import { RenderError } from '../error';
+import { ConfirmButton } from '../controls/confirm-button';
 import { Note } from '../controls/note';
+import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
+import { MarkdownEditor } from './markdown-editor';
 
-interface Props {
+interface TraitsPanelProps {
 	combatant: Monster | (Combatant & Monster);
 	mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
 	showRollButtons: boolean;
@@ -22,7 +26,7 @@ interface Props {
 	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
-export class TraitsPanel extends React.Component<Props> {
+export class TraitsPanel extends React.Component<TraitsPanelProps> {
 	public static defaultProps = {
 		mode: 'view',
 		showRollButtons: false,
@@ -348,6 +352,59 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='TraitPanel' error={e} />;
+		}
+	}
+}
+
+interface TraitEditorPanelProps {
+	trait: Trait;
+	copyTrait: (trait: Trait) => void;
+	deleteTrait: (trait: Trait) => void;
+	changeValue: (trait: Trait, field: string, value: any) => void;
+}
+
+export class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
+	public render() {
+		try {
+			const typeOptions = TRAIT_TYPES.map(t => ({ id: t, text: t }));
+			typeOptions.forEach(o => {
+				if (o.id === 'reaction') {
+					o.text = 'react';
+				}
+				if (o.id === 'legendary') {
+					o.text = 'legend';
+				}
+			});
+
+			return (
+				<div key={this.props.trait.id} className='section'>
+					<Selector
+						options={typeOptions}
+						selectedID={this.props.trait.type}
+						itemsPerRow={4}
+						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
+					/>
+					<hr/>
+					<div className='subheading'>feature name</div>
+					<Textbox
+						text={this.props.trait.name}
+						onChange={value => this.props.changeValue(this.props.trait, 'name', value)}
+					/>
+					<div className='subheading'>usage</div>
+					<Textbox
+						text={this.props.trait.usage}
+						onChange={value => this.props.changeValue(this.props.trait, 'usage', value)}
+					/>
+					<div className='subheading'>details</div>
+					<MarkdownEditor text={this.props.trait.text} onChange={text => this.props.changeValue(this.props.trait, 'text', text)} />
+					<hr/>
+					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this feature</button>
+					<ConfirmButton text='delete this feature' onConfirm={() => this.props.deleteTrait(this.props.trait)} />
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='TraitEditorPanel' error={e} />;
 		}
 	}
 }

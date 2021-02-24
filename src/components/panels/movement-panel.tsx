@@ -23,7 +23,7 @@ interface State {
 	step: number;
 }
 
-export class Radial extends React.Component<Props, State> {
+export class MovementPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		showToggle: false,
 		undo: null,
@@ -167,7 +167,7 @@ export class Radial extends React.Component<Props, State> {
 
 		} catch (e) {
 			console.error(e);
-			return <RenderError context='Radial' error={e} />;
+			return <RenderError context='MovementPanel' error={e} />;
 		}
 	}
 }

@@ -37,7 +37,7 @@ import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
-import { DieRollResultPanel } from '../panels/die-roll-result-panel';
+import { DieRollResultPanel } from '../panels/die-roll-panel';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';

@@ -13,13 +13,13 @@ import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
-import { Radial } from '../controls/radial';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
+import { MovementPanel } from '../panels/movement-panel';
 
 interface Props {
 	map: Map;
@@ -330,7 +330,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 					<div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onMove={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
+							<MovementPanel onMove={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>
@@ -481,7 +481,7 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 						</div>
 						<div className='section'>
 							<div className='subheading'>move</div>
-							<Radial onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
+							<MovementPanel onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
 						</div>
 						<div className='section'>
 							<div className='subheading'>size</div>
