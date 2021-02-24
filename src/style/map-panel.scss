@@ -5,16 +5,22 @@
 		z-index: 4;
 		height: 42px;
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 
-		.number-spin,
-		.checkbox,
-		.dropdown,
-		.selector {
-			margin: 5px;
-			flex-grow: 0;
-			flex-shrink: 0;
-			flex-basis: 145px;
+		>.anticon {
+			margin: 0 3px;
+			flex: 0 0 auto;
+			padding: 5px;
+			font-size: 20px;
+
+			&:hover {
+				background-color: $highlight01;
+			}
+
+			&.selected {
+				background-color: $highlight02;
+				color: $highlight;
+			}
 		}
 	}
 

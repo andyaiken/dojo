@@ -474,38 +474,10 @@ export class CombatScreen extends React.Component<Props, State> {
 				<div>
 					<div className='heading'>map</div>
 					<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
-					<div className='group-panel' style={{ display: this.state.addingOverlay ? '' : 'none' }}>
+					<div style={{ display: this.state.addingOverlay ? '' : 'none' }}>
 						<Note>
 							<p>click on a map square to add a token, or select a rectangle to add an overlay</p>
 						</Note>
-					</div>
-					<Checkbox
-						label='highlight map square'
-						checked={this.state.highlightMapSquare}
-						onChecked={() => this.toggleHighlightMapSquare()}
-					/>
-					<div className='group-panel' style={{ display: this.state.highlightMapSquare ? '' : 'none' }}>
-						<Note>
-							<p>use your mouse to indicate a square on the map</p>
-							<p>that square will be highlighted on the shared map as well</p>
-						</Note>
-					</div>
-					<Checkbox
-						label='edit fog of war'
-						checked={this.state.editFog}
-						onChecked={() => this.toggleEditFog()}
-					/>
-					<div style={{ display: this.state.editFog ? '' : 'none' }}>
-						<Note>
-							<p>click on map squares to turn fog of war on and off</p>
-							<p>you can also click and drag to select an area</p>
-						</Note>
-						<button onClick={() => this.fillFog()}>
-							fill fog of war
-						</button>
-						<button className={this.props.combat.fog.length === 0 ? 'disabled' : ''} onClick={() => this.clearFog()}>
-							clear fog of war
-						</button>
 					</div>
 					<button onClick={() => this.props.rotateMap()}>rotate map</button>
 				</div>
@@ -907,6 +879,7 @@ export class CombatScreen extends React.Component<Props, State> {
 						<MapPanel
 							map={this.props.combat.map}
 							mode='combat'
+							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 							options={this.props.options}
 							viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
@@ -926,6 +899,18 @@ export class CombatScreen extends React.Component<Props, State> {
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 							changeLighting={light => this.props.changeValue(this.props.combat, 'lighting', light)}
+							toggleFeature={feature => {
+								switch (feature) {
+									case 'highlight':
+										this.toggleHighlightMapSquare();
+										break;
+									case 'editFog':
+										this.toggleEditFog();
+										break;
+								}
+							}}
+							fillFog={() => this.fillFog()}
+							clearFog={() => this.clearFog()}
 						/>
 					</div>
 				);

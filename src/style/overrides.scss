@@ -428,6 +428,12 @@ button {
 			min-width: 260px;
 		}
 	}
+
+	&.map-control-tooltip {
+		.ant-popover-inner {
+			width: 200px;
+		}
+	}
 }
 
 .ant-message {

@@ -193,7 +193,7 @@ export class MapScreen extends React.Component<Props, State> {
 				const addAreaText = this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area';
 				const areas = this.props.map.areas.map(a => (
 					<div key={a.id} className='group-panel clickable' onClick={() => this.setSelectedAreaID(a.id)} role='button'>
-						{a.name}
+						{a.name || 'unnamed area'}
 					</div>
 				));
 

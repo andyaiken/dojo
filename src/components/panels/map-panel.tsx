@@ -1,4 +1,4 @@
-import { DeleteOutlined, DownSquareTwoTone, StarTwoTone, UpSquareTwoTone } from '@ant-design/icons';
+import { BulbOutlined, CloudOutlined, DeleteOutlined, DownSquareTwoTone, EnvironmentOutlined, StarTwoTone, UpSquareTwoTone, ZoomInOutlined } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -10,7 +10,7 @@ import { Comms } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
+import { Map, MapDimensions, MapItem } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
@@ -18,12 +18,17 @@ import { PC } from '../../models/party';
 import { RenderError } from '../error';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
-import { Selector } from '../controls/selector';
 import { CombatantTags } from './combat-controls-panel';
+import { Checkbox } from '../controls/checkbox';
+import { Note } from '../controls/note';
 
 interface Props {
 	map: Map;
 	mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
+	features: {
+		highlight: boolean;
+		editFog: boolean;
+	};
 	options: Options | null;
 	viewport: MapDimensions | null;
 	paddingSquares: number;
@@ -45,6 +50,9 @@ interface Props {
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
 	changeLighting: (light: string) => void;
+	toggleFeature: (feature: string) => void;
+	fillFog: () => void;
+	clearFog: () => void;
 }
 
 interface State {
@@ -74,6 +82,10 @@ interface MapItemStyle {
 export class MapPanel extends React.Component<Props, State> {
 	public static defaultProps = {
 		mode: 'thumbnail',
+		features: {
+			highlight: false,
+			editFog: false
+		},
 		options: null,
 		viewport: null,
 		paddingSquares: 0,
@@ -96,7 +108,10 @@ export class MapPanel extends React.Component<Props, State> {
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
 		gridRectangleSelected: null,
-		changeLighting: null
+		changeLighting: null,
+		toggleFeature: null,
+		fillFog: null,
+		clearFog: null
 	};
 
 	constructor(props: Props) {
@@ -312,17 +327,124 @@ export class MapPanel extends React.Component<Props, State> {
 
 	private getControls() {
 		if (this.props.mode !== 'thumbnail') {
+			const controls = [];
+
+			if ((this.props.mode === 'combat') && (this.props.map.areas.length > 0)) {
+				const areas = [{ id: '', text: 'whole map' }];
+				this.props.map.areas.forEach(a => {
+					areas.push({ id: a.id, text: a.name });
+				});
+				controls.push(
+					<Dropdown
+						key='areas'
+						options={areas}
+						placeholder='show map area...'
+						onSelect={id => this.props.areaSelected(id)}
+					/>
+				);
+			}
+
+			controls.push(
+				<Popover
+					key='zoom'
+					content={(
+						<NumberSpin
+							value='zoom'
+							downEnabled={this.state.size > 3}
+							onNudgeValue={delta => this.setState({ size: Math.max(this.state.size + (delta * 3), 3) })}
+						/>
+					)}
+					trigger='hover'
+					placement='bottom'
+					overlayClassName='map-control-tooltip'
+				>
+					<ZoomInOutlined title='zoom' />
+				</Popover>
+			);
+
+			if (this.props.mode === 'combat') {
+				controls.push(
+					<Popover
+						key='light'
+						content={(
+							<NumberSpin
+								value={this.props.lighting}
+								downEnabled={this.props.lighting !== 'darkness'}
+								upEnabled={this.props.lighting !== 'bright light'}
+								onNudgeValue={delta => this.props.changeLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
+							/>
+						)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-control-tooltip'
+					>
+						<BulbOutlined title='lighting' />
+					</Popover>
+				);
+
+				controls.push(
+					<Popover
+						key='highlight'
+						content={(
+							<div>
+								<Checkbox
+									label='highlight square'
+									checked={this.props.features.highlight}
+									onChecked={() => this.props.toggleFeature('highlight')}
+								/>
+								<div style={{ display: this.props.features.highlight ? 'block' : 'none' }}>
+									<Note>
+										<p>use your mouse to indicate a square on the map</p>
+										<p>that square will be highlighted on the shared map as well</p>
+									</Note>
+								</div>
+							</div>
+						)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-control-tooltip'
+					>
+						<EnvironmentOutlined title='highlight map square' className={this.props.features.highlight ? 'selected' : ''} />
+					</Popover>
+				);
+
+				controls.push(
+					<Popover
+						key='fog'
+						content={(
+							<div>
+								<Checkbox
+									label='edit fog of war'
+									checked={this.props.features.editFog}
+									onChecked={() => this.props.toggleFeature('editFog')}
+								/>
+								<div style={{ display: this.props.features.editFog ? 'block' : 'none' }}>
+									<Note>
+										<p>click on map squares to turn fog of war on and off</p>
+										<p>you can also click and drag to select an area</p>
+									</Note>
+									<button onClick={() => this.props.fillFog()}>
+										fill fog of war
+									</button>
+									<button onClick={() => this.props.clearFog()} className={this.props.fog.length === 0 ? 'disabled' : ''}>
+										clear fog of war
+									</button>
+								</div>
+							</div>
+						)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-control-tooltip'
+					>
+						<CloudOutlined title='fog of war' className={this.props.features.editFog ? 'selected' : ''} />
+					</Popover>
+				);
+			}
+
 			return (
-				<Controls
-					mapSize={this.state.size}
-					setMapSize={size => this.setState({ size: size })}
-					showAreasControl={(this.props.mode === 'combat') && (this.props.map.areas.length > 0)}
-					areas={this.props.map.areas}
-					selectArea={id => this.props.areaSelected(id)}
-					showLightControl={this.props.mode === 'combat'}
-					lighting={this.props.lighting}
-					selectLighting={light => this.props.changeLighting(light)}
-				/>
+				<div className='map-menu'>
+					{controls}
+				</div>
 			);
 		}
 
@@ -738,105 +860,6 @@ export class MapPanel extends React.Component<Props, State> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='MapPanel' error={e} />;
-		}
-	}
-}
-
-interface ControlsProps {
-	mapSize: number;
-	setMapSize: (size: number) => void;
-	showAreasControl: boolean;
-	areas: MapArea[];
-	selectArea: (id: string | null) => void;
-	showLightControl: boolean;
-	lighting: 'bright light' | 'dim light' | 'darkness';
-	selectLighting: (light: string) => void;
-}
-
-interface ControlsState {
-	mode: string;
-}
-
-class Controls extends React.Component<ControlsProps, ControlsState> {
-	constructor(props: ControlsProps) {
-		super(props);
-		this.state = {
-			mode: 'view'
-		};
-	}
-
-	private setMode(mode: string) {
-		this.setState({
-			mode: mode
-		});
-	}
-
-	private nudgeSize(delta: number) {
-		const value = Math.max(this.props.mapSize + delta, 3);
-		this.props.setMapSize(value);
-	}
-
-	public render() {
-		try {
-			const controls = [];
-
-			if (this.props.showLightControl) {
-				controls.push(
-					<Selector
-						key='mode'
-						options={['view', 'light'].map(o => ({ id: o, text: o }))}
-						selectedID={this.state.mode}
-						onSelect={id => this.setMode(id)}
-					/>
-				);
-			}
-
-			switch (this.state.mode) {
-				case 'view':
-					controls.push(
-						<NumberSpin
-							key='zoom'
-							value='zoom'
-							downEnabled={this.props.mapSize > 3}
-							onNudgeValue={delta => this.nudgeSize(delta * 3)}
-						/>
-					);
-					if (this.props.showAreasControl) {
-						const areas = [{ id: '', text: 'whole map' }];
-						this.props.areas.forEach(a => {
-							areas.push({ id: a.id, text: a.name });
-						});
-						controls.push(
-							<Dropdown
-								key='areas'
-								options={areas}
-								placeholder='show map area...'
-								onSelect={id => this.props.selectArea(id)}
-							/>
-						);
-					}
-					break;
-				case 'light':
-					controls.push(
-						<NumberSpin
-							key='light'
-							value={this.props.lighting}
-							downEnabled={this.props.lighting !== 'darkness'}
-							upEnabled={this.props.lighting !== 'bright light'}
-							onNudgeValue={delta => this.props.selectLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
-						/>
-					);
-					break;
-			}
-
-			return (
-				<div className='map-menu'>
-					{controls}
-				</div>
-			);
-		} catch (e) {
-			console.error(e);
-			return <RenderError context='Controls' error={e} />;
 		}
 	}
 }
