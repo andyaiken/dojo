@@ -62,6 +62,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 					const bonus = parseInt(exp[3], 10) * (sign === '+' ? 1 : -1);
 					buttons.push(
 						<Popover
+							key={expression}
 							content={(
 								<div>
 									<button onClick={() => this.props.onRollDice(expression, 1, 20, bonus, 'advantage')}>adv</button>
@@ -71,7 +72,6 @@ export class MonsterStatblockCard extends React.Component<Props> {
 							trigger='contextMenu'
 						>
 							<button
-								key={expression}
 								className='link'
 								onClick={() => this.props.onRollDice(expression, 1, 20, bonus, '')}
 							>

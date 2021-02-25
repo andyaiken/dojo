@@ -1,3 +1,4 @@
+import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Encounter } from '../../models/encounter';
@@ -58,15 +59,25 @@ export class EncounterOptions extends React.Component<Props, State> {
 			return (
 				<div>
 					<Expander text='copy encounter'>
-						<Textbox
-							text={this.state.cloneName}
-							placeholder='encounter name'
-							onChange={value => this.setCloneName(value)}
-						/>
-						<button onClick={() => this.props.cloneEncounter(this.props.encounter, this.state.cloneName)}>create copy</button>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									text={this.state.cloneName}
+									placeholder='name of copy'
+									onChange={value => this.setCloneName(value)}
+								/>
+							</div>
+							<div className='icons'>
+								<ExportOutlined
+									title='create copy'
+									className={this.state.cloneName === '' ? 'disabled' : ''}
+									onClick={() => this.props.cloneEncounter(this.props.encounter, this.state.cloneName)}
+								/>
+							</div>
+						</div>
 					</Expander>
 					{run}
-					<ConfirmButton text='delete encounter' onConfirm={() => this.props.deleteEncounter(this.props.encounter)} />
+					<ConfirmButton onConfirm={() => this.props.deleteEncounter(this.props.encounter)}>delete encounter</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

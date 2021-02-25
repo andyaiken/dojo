@@ -611,13 +611,14 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		if (this.props.removeCombatants && this.props.combatants.every(c => !c.current)) {
 			remove = (
 				<ConfirmButton
-					text='remove from encounter'
 					onConfirm={() => {
 						if (this.props.removeCombatants) {
 							this.props.removeCombatants(this.props.combatants);
 						}
 					}}
-				/>
+				>
+					remove from encounter
+				</ConfirmButton>
 			);
 		}
 

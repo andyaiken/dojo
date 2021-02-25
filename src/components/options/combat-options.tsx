@@ -15,7 +15,7 @@ export class CombatOptions extends React.Component<Props> {
 		return (
 			<div>
 				<button onClick={() => this.props.resumeCombat(this.props.combat)}>resume combat</button>
-				<ConfirmButton text='delete combat' onConfirm={() => this.props.deleteCombat(this.props.combat)} />
+				<ConfirmButton onConfirm={() => this.props.deleteCombat(this.props.combat)}>delete combat</ConfirmButton>
 			</div>
 		);
 	}

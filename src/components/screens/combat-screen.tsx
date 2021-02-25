@@ -431,7 +431,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		let exitToMap = null;
 		if (this.props.combat.map) {
 			exitToMap = (
-				<ConfirmButton text='end combat and start exploring' onConfirm={() => this.props.endCombat(this.props.combat, true)} />
+				<ConfirmButton onConfirm={() => this.props.endCombat(this.props.combat, true)}>end combat and start exploring</ConfirmButton>
 			);
 		}
 
@@ -515,7 +515,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					<div className='heading'>combat</div>
 					{notes}
 					<button onClick={() => this.props.pauseCombat()}>pause combat</button>
-					<ConfirmButton text='end combat' onConfirm={() => this.props.endCombat(this.props.combat, false)} />
+					<ConfirmButton onConfirm={() => this.props.endCombat(this.props.combat, false)}>end combat</ConfirmButton>
 					{exitToMap}
 				</div>
 				<div>

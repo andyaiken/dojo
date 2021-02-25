@@ -301,6 +301,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 							.forEach(exp => {
 								buttons.push(
 									<Popover
+										key={exp.expression}
 										content={(
 											<div>
 												<button onClick={e => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
@@ -310,7 +311,6 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 										trigger='contextMenu'
 									>
 										<button
-											key={exp.expression}
 											className='link'
 											onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, '')}
 										>
@@ -399,7 +399,7 @@ export class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 					<MarkdownEditor text={this.props.trait.text} onChange={text => this.props.changeValue(this.props.trait, 'text', text)} />
 					<hr/>
 					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this feature</button>
-					<ConfirmButton text='delete this feature' onConfirm={() => this.props.deleteTrait(this.props.trait)} />
+					<ConfirmButton onConfirm={() => this.props.deleteTrait(this.props.trait)}>delete this feature</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

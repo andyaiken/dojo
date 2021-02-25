@@ -362,7 +362,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				<div className='heading'>exploration</div>
 				<button onClick={() => this.props.startCombat(this.props.exploration)}>stop exploring and start combat</button>
 				<button onClick={() => this.props.pauseExploration()}>pause exploration</button>
-				<ConfirmButton text='end exploration' onConfirm={() => this.props.endExploration(this.props.exploration)} />
+				<ConfirmButton onConfirm={() => this.props.endExploration(this.props.exploration)}>end exploration</ConfirmButton>
 				<div className='heading'>map</div>
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 				<div style={{ display: this.state.addingOverlay ? '' : 'none' }}>

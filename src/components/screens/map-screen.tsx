@@ -219,13 +219,13 @@ export class MapScreen extends React.Component<Props, State> {
 						<div className='section'>
 							<div className='subheading'>map tiles</div>
 							<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
-							<ConfirmButton text='clear all tiles' onConfirm={() => this.props.clearMapTiles(this.props.map)} />
+							<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
 						</div>
 						<div className='section'>
 							<div className='subheading'>map areas</div>
 							{areas}
 							<button onClick={() => this.toggleAddingArea()}>{addAreaText}</button>
-							<ConfirmButton text='clear all areas' onConfirm={() => this.props.clearMapAreas(this.props.map)} />
+							<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
 						</div>
 						<hr/>
 						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate map</button>
@@ -434,7 +434,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 							<button onClick={() => this.props.cloneMapTile(this.props.tile)}>copy tile</button>
 						</Expander>
 						<hr/>
-						<ConfirmButton text='delete tile' onConfirm={() => this.props.deleteMapTile(this.props.tile)}/>
+						<ConfirmButton onConfirm={() => this.props.deleteMapTile(this.props.tile)}>delete tile</ConfirmButton>
 					</div>
 				</div>
 			);
@@ -498,12 +498,12 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 								onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'height', delta)}
 							/>
 						</div>
-						<div className='section'>
-							<div className='subheading'>notes</div>
-							<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
-						</div>
 						<hr/>
-						<ConfirmButton text='delete area' onConfirm={() => this.props.deleteMapArea(this.props.area)}/>
+						<Expander text='notes'>
+							<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
+						</Expander>
+						<hr/>
+						<ConfirmButton onConfirm={() => this.props.deleteMapArea(this.props.area)}>delete area</ConfirmButton>
 					</div>
 				</div>
 			);

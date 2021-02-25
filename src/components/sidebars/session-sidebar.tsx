@@ -140,7 +140,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 				let stopSharingBtn = null;
 				if (Comms.data.shared.type !== 'nothing') {
 					stopSharingBtn = (
-						<ConfirmButton text='stop sharing' onConfirm={() => CommsDM.shareNothing()} />
+						<ConfirmButton onConfirm={() => CommsDM.shareNothing()}>stop sharing</ConfirmButton>
 					);
 				}
 
@@ -174,10 +174,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 							checked={Comms.data.options.allowControls}
 							onChecked={value => CommsDM.setOption('allowControls', value)}
 						/>
-						<ConfirmButton
-							text='end the session'
-							onConfirm={() => CommsDM.shutdown()}
-						/>
+						<ConfirmButton onConfirm={() => CommsDM.shutdown()}>end the session</ConfirmButton>
 					</div>
 				);
 		}

@@ -134,7 +134,7 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 						/>
 					</div>
 				</div>
-				<ConfirmButton text='disconnect' onConfirm={() => CommsPlayer.disconnect()} />
+				<ConfirmButton onConfirm={() => CommsPlayer.disconnect()}>disconnect</ConfirmButton>
 			</div>
 		);
 	}

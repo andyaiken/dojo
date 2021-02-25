@@ -10,6 +10,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 import { RenderError } from '../error';
 import { MonsterCard } from '../cards/monster-card';
 import { Note } from '../controls/note';
+import { Statistic } from '../controls/statistic';
 import { Textbox } from '../controls/textbox';
 import { MonsterGroupOptions } from '../options/monster-group-options';
 import { GridPanel } from '../panels/grid-panel';
@@ -55,20 +56,14 @@ export class MonsterGroupScreen extends React.Component<Props> {
 			: Gygax.challenge(challenge.min) + ' - ' + Gygax.challenge(challenge.max);
 
 		return (
-			<div className='group-panel'>
-				<div className='section'>
-					<div className='subheading'>monsters</div>
-				</div>
-				<div className='section'>
-					{this.props.monsterGroup.monsters.length}
-				</div>
-				<div className='section'>
-					<div className='subheading'>challenge rating</div>
-				</div>
-				<div className='section'>
-					{challengeSummary}
-				</div>
-			</div>
+			<Row gutter={10}>
+				<Col span={12}>
+					<Statistic label='monsters' value={this.props.monsterGroup.monsters.length} />
+				</Col>
+				<Col span={12}>
+					<Statistic label='challenge rating' value={challengeSummary} />
+				</Col>
+			</Row>
 		);
 	}
 

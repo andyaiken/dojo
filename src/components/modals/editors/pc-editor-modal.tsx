@@ -10,6 +10,7 @@ import { MonsterGroup } from '../../../models/monster';
 import { PC } from '../../../models/party';
 
 import { RenderError } from '../../error';
+import { ConfirmButton } from '../../controls/confirm-button';
 import { Dropdown } from '../../controls/dropdown';
 import { NumberSpin } from '../../controls/number-spin';
 import { Textbox } from '../../controls/textbox';
@@ -87,23 +88,28 @@ export class PCEditorModal extends React.Component<Props, State> {
 			Utils.sort(monsterOptions, [{ field: 'text', dir: 'asc' }]);
 
 			const companions = this.state.pc.companions.map(comp => (
-				<div className='group-panel companion-list-item' key={comp.id}>
-					<div className='companion-fields'>
-						<Textbox
-							text={comp.name}
-							onChange={value => this.changeValue(comp, 'name', value)}
-						/>
-						<Dropdown
-							options={monsterOptions}
-							placeholder='select a stat block'
-							selectedID={comp.monsterID || undefined}
-							onSelect={value => this.changeValue(comp, 'monsterID', value)}
-							onClear={() => this.changeValue(comp, 'monsterID', null)}
-						/>
+				<div className='group-panel' key={comp.id}>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Textbox
+								text={comp.name}
+								placeholder='companion name'
+								onChange={value => this.changeValue(comp, 'name', value)}
+							/>
+						</div>
+						<div className='icons'>
+							<ConfirmButton onConfirm={() => this.removeCompanion(comp.id)}>
+								<DeleteOutlined title='delete companion' />
+							</ConfirmButton>
+						</div>
 					</div>
-					<div className='companion-actions'>
-						<DeleteOutlined onClick={() => this.removeCompanion(comp.id)} />
-					</div>
+					<Dropdown
+						options={monsterOptions}
+						placeholder='select a stat block'
+						selectedID={comp.monsterID || undefined}
+						onSelect={value => this.changeValue(comp, 'monsterID', value)}
+						onClear={() => this.changeValue(comp, 'monsterID', null)}
+					/>
 				</div>
 			));
 

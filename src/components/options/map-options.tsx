@@ -1,3 +1,4 @@
+import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Map } from '../../models/map';
@@ -74,16 +75,26 @@ export class MapOptions extends React.Component<Props, State> {
 			return (
 				<div>
 					<Expander text='copy map'>
-						<Textbox
-							text={this.state.cloneName}
-							placeholder='map name'
-							onChange={value => this.setCloneName(value)}
-						/>
-						<button onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}>create copy</button>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									text={this.state.cloneName}
+									placeholder='name of copy'
+									onChange={value => this.setCloneName(value)}
+								/>
+							</div>
+							<div className='icons'>
+								<ExportOutlined
+									title='create copy'
+									className={this.state.cloneName === '' ? 'disabled' : ''}
+									onClick={() => this.props.cloneMap(this.props.map, this.state.cloneName)}
+								/>
+							</div>
+						</div>
 					</Expander>
 					{combat}
 					{exploration}
-					<ConfirmButton text='delete map' onConfirm={() => this.props.deleteMap(this.props.map)} />
+					<ConfirmButton onConfirm={() => this.props.deleteMap(this.props.map)}>delete map</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

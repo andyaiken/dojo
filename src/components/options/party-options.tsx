@@ -95,7 +95,7 @@ export class PartyOptions extends React.Component<Props> {
 					{create}
 					{levelUp}
 					<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
-					<ConfirmButton text='delete party' onConfirm={() => this.props.deleteParty(this.props.party)} />
+					<ConfirmButton onConfirm={() => this.props.deleteParty(this.props.party)}>delete party</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

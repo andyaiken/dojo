@@ -1,3 +1,4 @@
+import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Napoleon } from '../../utils/napoleon';
@@ -65,12 +66,22 @@ export class MonsterOptions extends React.Component<Props, State> {
 					<button onClick={() => this.props.editMonster(this.props.monster)}>edit monster</button>
 					<button onClick={() => this.export()}>export monster</button>
 					<Expander text='copy monster'>
-						<Textbox
-							text={this.state.cloneName}
-							placeholder='monster name'
-							onChange={value => this.setCloneName(value)}
-						/>
-						<button onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}>create copy</button>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									text={this.state.cloneName}
+									placeholder='name of copy'
+									onChange={value => this.setCloneName(value)}
+								/>
+							</div>
+							<div className='icons'>
+								<ExportOutlined
+									title='create copy'
+									className={this.state.cloneName === '' ? 'disabled' : ''}
+									onClick={() => this.props.cloneMonster(this.props.monster, this.state.cloneName)}
+								/>
+							</div>
+						</div>
 					</Expander>
 					<Dropdown
 						options={groupOptions}
@@ -79,10 +90,11 @@ export class MonsterOptions extends React.Component<Props, State> {
 					/>
 					<button onClick={() => this.props.createEncounter(this.props.monster.id)}>create an encounter</button>
 					<ConfirmButton
-						text='delete monster'
 						disabled={this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, this.props.monster.id))}
 						onConfirm={() => this.props.deleteMonster(this.props.monster)}
-					/>
+					>
+						delete monster
+					</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

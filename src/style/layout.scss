@@ -23,12 +23,13 @@
 			color: $header-foreground;
 
 			.app-title {
-				flex-grow: 1;
+				flex: 1 1 auto;
 				margin: 0 10px;
 				display: flex;
 				align-items: center;
 
 				.breadcrumb {
+					flex: 0 1 auto;
 					border-left: 5px solid $header-foreground;
 					margin-right: 20px;
 					padding: 5px 10px;
@@ -36,7 +37,6 @@
 					font-weight: 600;
 					text-transform: uppercase;
 					letter-spacing: 2px;
-					white-space: nowrap;
 					cursor: pointer;
 
 					&:nth-of-type(1) {
@@ -54,6 +54,7 @@
 			}
 
 			.toggle {
+				flex: 0 0 auto;
 				font-size: 20px;
 				padding: 15px;
 				cursor: pointer;

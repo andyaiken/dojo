@@ -26,30 +26,6 @@
 		font-weight: 600;
 	}
 
-	.companion-list-item {
-		display: flex;
-		align-items: center;
-
-		.companion-fields {
-			flex-grow: 1;
-			flex-shrink: 1;
-		}
-
-		.companion-actions {
-			flex-basis: auto;
-			margin-left: 10px;
-
-			.anticon {
-				padding: 5px;
-				font-size: 20px;
-
-				&:hover {
-					background-color: $highlight02;
-				}
-			}
-		}
-	}
-
 	.monster-help {
 		margin-top: 20px;
 

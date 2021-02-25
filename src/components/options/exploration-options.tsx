@@ -15,7 +15,7 @@ export class ExplorationOptions extends React.Component<Props> {
 		return (
 			<div>
 				<button onClick={() => this.props.resumeExploration(this.props.exploration)}>resume exploration</button>
-				<ConfirmButton text='delete exploration' onConfirm={() => this.props.deleteExploration(this.props.exploration)} />
+				<ConfirmButton onConfirm={() => this.props.deleteExploration(this.props.exploration)}>delete exploration</ConfirmButton>
 			</div>
 		);
 	}

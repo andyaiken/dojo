@@ -145,7 +145,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 							<div className='section'>
 								<button onClick={() => this.props.chooseMonster(this.props.slot)}>choose a monster</button>
 								{this.getMoveControl()}
-								<ConfirmButton text='remove from encounter' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
+								<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
 							</div>
 						</div>
 					</div>
@@ -183,7 +183,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 						<div className='section'>
 							<button onClick={() => this.props.showStatblock(this.props.monster as Monster)}>statblock</button>
 							{this.getMoveControl()}
-							<ConfirmButton text='remove from encounter' onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}/>
+							<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
 						</div>
 					</div>
 				</div>

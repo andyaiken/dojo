@@ -1,3 +1,4 @@
+import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Utils } from '../../utils/utils';
@@ -83,19 +84,29 @@ export class PCOptions extends React.Component<Props, State> {
 					{active}
 					<button key='export' onClick={() => this.export(this.props.pc)}>export pc</button>
 					<Expander text='copy pc'>
-						<Textbox
-							text={this.state.cloneName}
-							placeholder='pc name'
-							onChange={value => this.setCloneName(value)}
-						/>
-						<button onClick={() => this.props.clonePC(this.props.pc, this.state.cloneName)}>create copy</button>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									text={this.state.cloneName}
+									placeholder='name of copy'
+									onChange={value => this.setCloneName(value)}
+								/>
+							</div>
+							<div className='icons'>
+								<ExportOutlined
+									title='create copy'
+									className={this.state.cloneName === '' ? 'disabled' : ''}
+									onClick={() => this.props.clonePC(this.props.pc, this.state.cloneName)}
+								/>
+							</div>
+						</div>
 					</Expander>
 					<Dropdown
 						options={partyOptions}
 						placeholder='move to party...'
 						onSelect={optionID => this.props.moveToParty(this.props.pc, optionID)}
 					/>
-					<ConfirmButton text='delete pc' onConfirm={() => this.props.removePC(this.props.pc)} />
+					<ConfirmButton onConfirm={() => this.props.removePC(this.props.pc)}>delete pc</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

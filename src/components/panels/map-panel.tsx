@@ -1,4 +1,4 @@
-import { BulbOutlined, CloudOutlined, DeleteOutlined, DownSquareTwoTone, EnvironmentOutlined, StarTwoTone, UpSquareTwoTone, ZoomInOutlined } from '@ant-design/icons';
+import { BulbOutlined, CloudOutlined, DeleteOutlined, DownSquareTwoTone, EnvironmentOutlined, ExpandOutlined, StarTwoTone, UpSquareTwoTone, ZoomInOutlined } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -16,8 +16,8 @@ import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import { RenderError } from '../error';
-import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
+import { RadioGroup } from '../controls/radio-group';
 import { CombatantTags } from './combat-controls-panel';
 import { Checkbox } from '../controls/checkbox';
 import { Note } from '../controls/note';
@@ -332,15 +332,23 @@ export class MapPanel extends React.Component<Props, State> {
 			if ((this.props.mode === 'combat') && (this.props.map.areas.length > 0)) {
 				const areas = [{ id: '', text: 'whole map' }];
 				this.props.map.areas.forEach(a => {
-					areas.push({ id: a.id, text: a.name });
+					areas.push({ id: a.id, text: a.name || 'unnamed area' });
 				});
 				controls.push(
-					<Dropdown
+					<Popover
 						key='areas'
-						options={areas}
-						placeholder='show map area...'
-						onSelect={id => this.props.areaSelected(id)}
-					/>
+						content={(
+							<RadioGroup
+								items={areas}
+								onSelect={id => this.props.areaSelected(id)}
+							/>
+						)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-control-tooltip'
+					>
+						<ExpandOutlined title='areas' />
+					</Popover>
 				);
 			}
 

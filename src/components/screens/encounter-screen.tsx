@@ -1,4 +1,4 @@
-import { CaretLeftOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -75,12 +75,20 @@ export class EncounterScreen extends React.Component<Props> {
 		try {
 			const waves = this.props.encounter.waves.map(wave => (
 				<div key={wave.id} className='group-panel'>
-					<Textbox
-						text={wave.name}
-						placeholder='wave name'
-						onChange={value => this.props.changeValue(wave, 'name', value)}
-					/>
-					<ConfirmButton text='delete wave' onConfirm={() => this.props.deleteWave(this.props.encounter, wave)} />
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Textbox
+								text={wave.name}
+								placeholder='wave name'
+								onChange={value => this.props.changeValue(wave, 'name', value)}
+							/>
+						</div>
+						<div className='icons'>
+							<ConfirmButton onConfirm={() => this.props.deleteWave(this.props.encounter, wave)}>
+								<DeleteOutlined title='delete wave' />
+							</ConfirmButton>
+						</div>
+					</div>
 				</div>
 			));
 

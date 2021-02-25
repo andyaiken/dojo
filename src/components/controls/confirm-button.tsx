@@ -5,7 +5,6 @@ import React from 'react';
 import { RenderError } from '../error';
 
 interface Props {
-	text: string | JSX.Element | JSX.Element[];
 	prompt: string | JSX.Element | JSX.Element[];
 	info: string | JSX.Element | JSX.Element[] | null;
 	disabled: boolean;
@@ -21,6 +20,22 @@ export class ConfirmButton extends React.Component<Props> {
 
 	public render() {
 		try {
+			let btn = null;
+			const style = this.props.disabled ? 'confirm-button disabled' : 'confirm-button';
+			if (typeof(this.props.children) === 'string') {
+				btn = (
+					<button className={style}>
+						{this.props.children}
+					</button>
+				);
+			} else {
+				btn = (
+					<div className={style}>
+						{this.props.children}
+					</div>
+				);
+			}
+
 			return (
 				<Popover
 					content={(
@@ -37,9 +52,7 @@ export class ConfirmButton extends React.Component<Props> {
 					trigger='click'
 					overlayClassName='confirm-tooltip'
 				>
-					<button className={this.props.disabled ? 'danger disabled' : 'danger'}>
-						{this.props.text}
-					</button>
+					{btn}
 				</Popover>
 			);
 		} catch (e) {
