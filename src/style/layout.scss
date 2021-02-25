@@ -191,41 +191,4 @@
 			padding: 5px 10px;
 		}
 	}
-
-	.generated-item {
-		display: flex;
-		align-items: center;
-		font-size: 18px;
-		padding: 5px 10px;
-
-		.text-section {
-			flex-grow: 1;
-			flex-shrink: 0;
-			flex-basis: 0;
-
-			&.small {
-				font-size: 12px;
-				margin: 5px 0;
-			}
-		}
-
-		.icon-section {
-			flex-grow: 0;
-			flex-shrink: 0;
-			flex-basis: auto;
-			opacity: 0;
-
-			.anticon {
-				padding: 5px;
-
-				&:hover {
-					background-color: $highlight02;
-				}
-			}
-		}
-
-		&:hover .icon-section {
-			opacity: 1;
-		}
-	}
 }

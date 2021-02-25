@@ -107,12 +107,14 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			}
 
 			return (
-				<div className='group-panel condition-panel'>
-					<div className='condition-heading'>
-						<div className='condition-name'>{name}</div>
-						<div className='condition-buttons'>
-							<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-							<DeleteOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
+				<div className='group-panel'>
+					<div className='condition-panel'>
+						<div className='condition-heading'>
+							<div className='condition-name'>{name}</div>
+							<div className='condition-buttons'>
+								<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+								<DeleteOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
+							</div>
 						</div>
 					</div>
 					{duration}

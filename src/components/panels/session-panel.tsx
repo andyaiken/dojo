@@ -55,13 +55,15 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 				}
 
 				return (
-					<div key={person.id} className='group-panel person'>
-						<div className='person-details'>
-							<CharacterPanel person={person} />
-							<div className='status'>{person.status}</div>
-						</div>
-						<div className='person-icon'>
-							{icon}
+					<div key={person.id} className='group-panel'>
+						<div className='person'>
+							<div className='person-details'>
+								<CharacterPanel person={person} />
+								<div className='status'>{person.status}</div>
+							</div>
+							<div className='person-icon'>
+								{icon}
+							</div>
 						</div>
 					</div>
 				);
@@ -119,14 +121,16 @@ export class PlayerStatusPanel extends React.Component<PlayerStatusPanelProps, P
 	public render() {
 		return (
 			<div className='player-status-panel'>
-				<div className='control-with-icons'>
-					<Textbox
-						placeholder='update your status'
-						debounce={false}
-						text={this.state.status}
-						onChange={status => this.setStatus(status)}
-						onPressEnter={() => this.sendPlayerUpdate()}
-					/>
+				<div className='content-then-icons'>
+					<div className='content'>
+						<Textbox
+							placeholder='update your status'
+							debounce={false}
+							text={this.state.status}
+							onChange={status => this.setStatus(status)}
+							onPressEnter={() => this.sendPlayerUpdate()}
+						/>
+					</div>
 					<div className='icons'>
 						<SendOutlined
 							onClick={() => this.sendPlayerUpdate()}

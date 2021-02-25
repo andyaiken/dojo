@@ -17,7 +17,6 @@ import { RenderError } from '../error';
 import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
-import { Expander } from '../controls/expander';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
@@ -699,6 +698,7 @@ interface OptionsSectionProps {
 interface OptionsSectionState {
 	standardInitOptions: boolean;
 	standardHPOptions: boolean;
+	additionalOptions: boolean;
 	view: string;
 }
 
@@ -708,6 +708,7 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 		this.state = {
 			standardInitOptions: true,
 			standardHPOptions: true,
+			additionalOptions: false,
 			view: 'count'
 		};
 	}
@@ -788,22 +789,31 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 					<div className='heading'>options</div>
 					<Checkbox
 						checked={this.state.standardInitOptions}
-						label='roll initiative once for each different type of monster'
+						label='roll initiative automatically for monsters'
 						onChecked={checked => this.setState({ standardInitOptions: checked })}
 					/>
-					{this.state.standardInitOptions ? null : this.getSlots(slotsContainer, 'initiative')}
+					<div style={{ display: this.state.standardInitOptions ? 'none' : 'block' }}>
+						{this.getSlots(slotsContainer, 'initiative')}
+						<hr/>
+					</div>
 					<Checkbox
 						checked={this.state.standardHPOptions}
-						label='use typical hp for each monster'
+						label='use typical hp for monsters'
 						onChecked={checked => this.setState({ standardHPOptions: checked })}
 					/>
-					{this.state.standardHPOptions ? null : this.getSlots(slotsContainer, 'hit points')}
-					<hr/>
-					<Expander text='advanced options'>
-						<Selector options={['count', 'names', 'faction'].map(s => ({ id: s, text: s }))} selectedID={this.state.view} onSelect={id => this.setView(id)} />
+					<div style={{ display: this.state.standardHPOptions ? 'none' : 'block' }}>
+						{this.getSlots(slotsContainer, 'hit points')}
 						<hr/>
-						<div>{this.getSlots(slotsContainer, this.state.view)}</div>
-					</Expander>
+					</div>
+					<Checkbox
+						checked={this.state.additionalOptions}
+						label='show additional options'
+						onChecked={checked => this.setState({ additionalOptions: checked })}
+					/>
+					<div style={{ display: this.state.additionalOptions ? 'block' : 'none' }}>
+						<Selector options={['count', 'names', 'faction'].map(s => ({ id: s, text: s }))} selectedID={this.state.view} onSelect={id => this.setView(id)} />
+						{this.getSlots(slotsContainer, this.state.view)}
+					</div>
 				</div>
 			);
 		}
@@ -849,7 +859,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 				<Col span={4}>
 					<div className='combatant-value'>
 						{source[field]}
-						<RedoOutlined onClick={() => roll()}/>
+						<RedoOutlined title='reroll' onClick={() => roll()}/>
 					</div>
 				</Col>
 			</Row>
@@ -1014,9 +1024,11 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		}
 
 		return (
-			<div className='group-panel combatant-setup'>
-				<div className='subheading'>{header}</div>
-				{content}
+			<div className='group-panel'>
+				<div className='combatant-setup'>
+					<div className='subheading'>{header}</div>
+					{content}
+				</div>
 			</div>
 		);
 	}

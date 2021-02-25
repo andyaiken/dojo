@@ -280,11 +280,13 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 	public render() {
 		try {
 			return (
-				<div className='generated-item group-panel'>
-					<div className='text-section'>
-						{this.props.text.toLowerCase()}
+				<div className='group-panel content-then-icons'>
+					<div className='content'>
+						<div className='section'>
+							{this.props.text.toLowerCase()}
+						</div>
 					</div>
-					<div className='icon-section'>
+					<div className='icons'>
 						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 					</div>
 				</div>

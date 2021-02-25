@@ -670,8 +670,12 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 					const awardees = [];
 					if (this.props.party.awards.includes(award.id)) {
 						awardees.push(
-							<div key={this.props.party.id} className='group-panel control-with-icons'>
-								<div>{this.props.party.name || 'unnamed party'}</div>
+							<div key={this.props.party.id} className='group-panel content-then-icons'>
+								<div className='content'>
+									<div className='section'>
+										{this.props.party.name || 'unnamed party'}
+									</div>
+								</div>
 								<div className='icons'>
 									<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, this.props.party as Party)} />
 								</div>
@@ -682,8 +686,12 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 					this.props.party.pcs.filter(pc => pc.active).forEach(pc => {
 						if (pc.awards.includes(award.id)) {
 							awardees.push(
-								<div key={pc.id} className='group-panel control-with-icons'>
-									<div>{pc.name || 'unnamed pc'}</div>
+								<div key={pc.id} className='group-panel content-then-icons'>
+									<div className='content'>
+										<div className='section'>
+											{pc.name || 'unnamed pc'}
+										</div>
+									</div>
 									<div className='icons'>
 										<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, pc)} />
 									</div>

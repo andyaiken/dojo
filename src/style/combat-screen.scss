@@ -1,3 +1,26 @@
+.combatant-setup {
+	.combatant-name {
+		font-weight: 600;
+		padding-top: 10px;
+	}
+
+	.combatant-value {
+		text-align: right;
+		font-size: 20px;
+		line-height: 32px;
+
+		.anticon {
+			font-size: 14px;
+			vertical-align: unset;
+			padding: 5px;
+
+			&:hover {
+				background-color: $highlight01;
+			}
+		}
+	}
+}
+
 .combat-top-row {
 	height: 50px;
 	background-color: $top-row-background;

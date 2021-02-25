@@ -800,6 +800,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					<Note key='init-help'>
 						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
 						<div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
+						<div className='section'>this message will go away when combat starts</div>
 					</Note>
 				);
 			}

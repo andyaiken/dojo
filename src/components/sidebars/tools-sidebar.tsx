@@ -284,12 +284,18 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 
 					content = (
 						<div id='custom'>
-							<div className='generated-item group-panel'>
-								<div className='text-section small'>
-									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+							<div className='group-panel content-then-icons'>
+								<div className='content'>
+									<div className='section'>
+										selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+									</div>
 								</div>
-								<div className='icon-section'>
-									<CloseCircleOutlined title='clear languages' onClick={() => this.props.clearLanguages()} />
+								<div className='icons'>
+									<CloseCircleOutlined
+										title='clear languages'
+										className={this.props.selectedLanguages.length === 0 ? 'disabled' : ''}
+										onClick={() => this.props.clearLanguages()}
+									/>
 								</div>
 							</div>
 							<Expander text='languages'>
@@ -301,9 +307,11 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 				case 'random':
 					content = (
 						<div id='random'>
-							<div className='generated-item group-panel'>
-								<div className='text-section small'>
-									selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+							<div className='group-panel content-then-icons'>
+								<div className='content'>
+									<div className='section'>
+										selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+									</div>
 								</div>
 								<div className='icon-section'>
 									<ThunderboltOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
@@ -372,17 +380,15 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 	public render() {
 		try {
 			return (
-				<div className='generated-item group-panel'>
-					<div className='text-section'>
-						{this.props.text.toLowerCase()}
+				<div className='group-panel content-then-icons'>
+					<div className='content'>
+						<div className='section'>
+							{this.props.text.toLowerCase()}
+						</div>
 					</div>
-					<div className='icon-section'>
-						<div>
-							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
-						</div>
-						<div>
-							<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
-						</div>
+					<div className='icons'>
+						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
+						<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
 					</div>
 				</div>
 			);
@@ -588,11 +594,13 @@ class WildSurgeTool extends React.Component<WildSurgeProps> {
 				content = (
 					<div>
 						<hr/>
-						<div className='generated-item group-panel'>
-							<div className='text-section'>
-								<p>{this.props.surge}</p>
+						<div className='group-panel content-then-icons'>
+							<div className='content'>
+								<div className='section'>
+									<p>{this.props.surge}</p>
+								</div>
 							</div>
-							<div className='icon-section'>
+							<div className='icons'>
 								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
 							</div>
 						</div>
