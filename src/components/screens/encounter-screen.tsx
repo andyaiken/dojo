@@ -13,6 +13,7 @@ import { EncounterSlotCard } from '../cards/encounter-slot-card';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 import { EncounterOptions } from '../options/encounter-options';
@@ -74,7 +75,7 @@ export class EncounterScreen extends React.Component<Props> {
 	public render() {
 		try {
 			const waves = this.props.encounter.waves.map(wave => (
-				<div key={wave.id} className='group-panel'>
+				<Group key={wave.id}>
 					<div className='content-then-icons'>
 						<div className='content'>
 							<Textbox
@@ -89,7 +90,7 @@ export class EncounterScreen extends React.Component<Props> {
 							</ConfirmButton>
 						</div>
 					</div>
-				</div>
+				</Group>
 			));
 
 			let templateOptions = null;

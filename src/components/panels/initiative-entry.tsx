@@ -1,3 +1,4 @@
+import { CheckCircleOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -9,6 +10,7 @@ import { PC } from '../../models/party';
 import { Gygax } from '../../utils/gygax';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { HitPointGauge } from './hit-point-gauge';
@@ -43,10 +45,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 		}
 	}
 
-	private getContent() {
-		const notes = [];
-
-		// HP, AC stats
+	private getStats() {
 		if ((this.props.combatant.type === 'monster') && !this.props.playerView) {
 			const monster = this.props.combatant as (Combatant & Monster);
 
@@ -55,8 +54,8 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				hp += '+' + this.props.combatant.hpTemp;
 			}
 
-			notes.push(
-				<div key='stats'>
+			return (
+				<div>
 					<Row align='middle'>
 						<Col span={12}>
 							<div className='information'>
@@ -76,21 +75,72 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 			);
 		}
 
-		// Mounted on
-		if (!!this.props.combatant.mountID) {
-			const mount = this.props.combat.combatants.find(c => c.id === this.props.combatant.mountID);
-			if (mount) {
-				const btn = (
+		return null;
+	}
+
+	private getTags() {
+		const tags = [];
+
+		// Ridden by
+		const rider = this.props.combat.combatants.find(c => c.mountID === this.props.combatant.id);
+		if (rider) {
+			tags.push(
+				<Tag key='rider'>
+					<span>ridden by: </span>
 					<button
 						className='link'
 						onClick={e => {
 							e.stopPropagation();
-							this.props.select(mount, false);
+							this.props.select(rider, false);
 						}}
 					>
-						{mount.displayName}
+						{rider.displayName}
 					</button>
-				);
+				</Tag>
+			);
+		}
+
+		// Engaged with
+		const engaged: string[] = [];
+		this.props.combatant.tags.filter(tag => tag.startsWith('engaged')).forEach(tag => {
+			engaged.push(Gygax.getTagDescription(tag));
+		});
+		if (engaged.length > 0) {
+			tags.push(
+				<Tag key='engaged'>
+					engaged with: {engaged.join(', ')}
+				</Tag>
+			);
+		}
+
+		// Not on the map
+		if (this.props.combat.map && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
+			tags.push(
+				<Tag key='not-on-map'>
+					not on the map
+				</Tag>
+			);
+		}
+
+		// Hidden
+		if (!this.props.combatant.showOnMap) {
+			tags.push(
+				<Tag key='hidden'>
+					hidden
+				</Tag>
+			);
+		}
+
+		return tags;
+	}
+
+	private getNotes() {
+		const notes = [];
+
+		// Mounted on
+		if (!!this.props.combatant.mountID) {
+			const mount = this.props.combat.combatants.find(c => c.id === this.props.combatant.mountID);
+			if (mount) {
 				let info = null;
 				if (this.props.combatant.mountType === 'controlled') {
 					info = (
@@ -102,7 +152,16 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				notes.push(
 					<Note key='mount'>
 						<div className='note-heading'>
-							mounted on: {btn}
+							<span>mounted on: </span>
+							<button
+								className='link'
+								onClick={e => {
+									e.stopPropagation();
+									this.props.select(mount, false);
+								}}
+							>
+								{mount.displayName}
+							</button>
 						</div>
 						{info}
 						<div className='note-details'>
@@ -116,40 +175,6 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 			}
 		}
 
-		// Ridden by
-		const rider = this.props.combat.combatants.find(c => c.mountID === this.props.combatant.id);
-		if (rider) {
-			const btn = (
-				<button
-					className='link'
-					onClick={e => {
-						e.stopPropagation();
-						this.props.select(rider, false);
-					}}
-				>
-					{rider.displayName}
-				</button>
-			);
-			notes.push(
-				<Note key='rider'>
-					<div>ridden by: {btn}</div>
-				</Note>
-			);
-		}
-
-		// Engaged with
-		const engaged: string[] = [];
-		this.props.combatant.tags.filter(tag => tag.startsWith('engaged')).forEach(tag => {
-			engaged.push(Gygax.getTagDescription(tag));
-		});
-		if (engaged.length > 0) {
-			notes.push(
-				<Note key='engaged'>
-					<div>engaged with: {engaged.join(', ')}</div>
-				</Note>
-			);
-		}
-
 		// Other tags
 		this.props.combatant.tags.filter(tag => !tag.startsWith('engaged')).forEach(tag => {
 			notes.push(
@@ -159,22 +184,6 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				</Note>
 			);
 		});
-
-		// Not on the map
-		if (this.props.combat.map && !this.props.combat.map.items.find(i => i.id === this.props.combatant.id)) {
-			notes.push(
-				<Note key='not-on-map'>
-					<p>not on the map</p>
-				</Note>
-			);
-		}
-
-		// Hidden
-		if (!this.props.combatant.showOnMap) {
-			notes.push(
-				<Note key='hidden'>hidden</Note>
-			);
-		}
 
 		// Conditions
 		if (this.props.combatant.conditions) {
@@ -220,7 +229,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 
 	public render() {
 		try {
-			let style = 'initiative-list-item clickable ' + this.props.combatant.type;
+			let style = 'initiative-list-item';
 			if (this.props.combatant.current) {
 				style += ' current';
 			}
@@ -245,6 +254,20 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				}
 			}
 
+			const stats = this.getStats();
+			const tags = this.getTags();
+			const notes = this.getNotes();
+			let content = null;
+			if (stats || (tags.length > 0) || (notes.length > 0)) {
+				content = (
+					<div className='init-entry-content'>
+						{this.getStats()}
+						{this.getTags()}
+						{this.getNotes()}
+					</div>
+				);
+			}
+
 			return (
 				<div className={style} onClick={e => this.onClick(e)} role='button'>
 					<div className='header'>
@@ -252,9 +275,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 						<div className='name'>{name}</div>
 						{this.getInformationTag()}
 					</div>
-					<div className='init-entry-content'>
-						{this.getContent()}
-					</div>
+					{content}
 				</div>
 			);
 		} catch (e) {
@@ -266,6 +287,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 
 interface PendingProps {
 	combatant: Combatant;
+	changeValue: (combatant: Combatant, field: string, value: number) => void;
 	nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
 	makeActive: (combatant: Combatant) => void;
 }
@@ -285,21 +307,24 @@ export class PendingInitiativeEntry extends React.Component<PendingProps> {
 			}
 
 			return (
-				<div className={'initiative-list-item ' + this.props.combatant.type}>
-					<div className='header'>
-						{portrait}
-						<div className='name'>
-							{this.props.combatant.displayName || 'combatant'}
+				<Group>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='subheading'>
+								{portrait}
+								{this.props.combatant.displayName || 'combatant'}
+							</div>
+							<NumberSpin
+								label='initiative'
+								value={this.props.combatant.initiative ?? 10}
+								onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
+							/>
+						</div>
+						<div className='icons'>
+							<CheckCircleOutlined title='add to encounter' onClick={e => this.makeActive(e)} />
 						</div>
 					</div>
-					<div className='init-entry-content'>
-						<NumberSpin
-							value={this.props.combatant.initiative ?? 10}
-							onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
-						/>
-						<button onClick={e => this.makeActive(e)}>add to encounter</button>
-					</div>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);
@@ -310,10 +335,15 @@ export class PendingInitiativeEntry extends React.Component<PendingProps> {
 
 interface NotOnMapProps {
 	combatant: Combatant;
-	addToMap: () => void;
+	addToMap: (combatant: Combatant) => void;
 }
 
 export class NotOnMapInitiativeEntry extends React.Component<NotOnMapProps> {
+	private addToMap(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.props.addToMap(this.props.combatant);
+	}
+
 	public render() {
 		try {
 			let portrait = null;
@@ -323,17 +353,19 @@ export class NotOnMapInitiativeEntry extends React.Component<NotOnMapProps> {
 			}
 
 			return (
-				<div className={'initiative-list-item ' + this.props.combatant.type}>
-					<div className='header'>
-						{portrait}
-						<div className='name'>
-							{this.props.combatant.displayName || 'combatant'}
+				<Group>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='subheading'>
+								{portrait}
+								{this.props.combatant.displayName || 'combatant'}
+							</div>
+						</div>
+						<div className='icons'>
+							<EnvironmentOutlined title='place on map' onClick={e => this.addToMap(e)} />
 						</div>
 					</div>
-					<div className='init-entry-content'>
-						<button onClick={() => this.props.addToMap()}>place on map</button>
-					</div>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);

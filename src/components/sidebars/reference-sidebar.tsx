@@ -16,6 +16,7 @@ import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
@@ -670,32 +671,36 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 					const awardees = [];
 					if (this.props.party.awards.includes(award.id)) {
 						awardees.push(
-							<div key={this.props.party.id} className='group-panel content-then-icons'>
-								<div className='content'>
-									<div className='section'>
-										{this.props.party.name || 'unnamed party'}
+							<Group key={this.props.party.id}>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<div className='section'>
+											{this.props.party.name || 'unnamed party'}
+										</div>
+									</div>
+									<div className='icons'>
+										<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, this.props.party as Party)} />
 									</div>
 								</div>
-								<div className='icons'>
-									<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, this.props.party as Party)} />
-								</div>
-							</div>
+							</Group>
 						);
 					}
 					const all = [{ id: this.props.party.id, text: this.props.party.name || 'unnamed party' }];
 					this.props.party.pcs.filter(pc => pc.active).forEach(pc => {
 						if (pc.awards.includes(award.id)) {
 							awardees.push(
-								<div key={pc.id} className='group-panel content-then-icons'>
-									<div className='content'>
-										<div className='section'>
-											{pc.name || 'unnamed pc'}
+								<Group key={pc.id}>
+									<div className='content-then-icons'>
+										<div className='content'>
+											<div className='section'>
+												{pc.name || 'unnamed pc'}
+											</div>
+										</div>
+										<div className='icons'>
+											<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, pc)} />
 										</div>
 									</div>
-									<div className='icons'>
-										<CloseCircleOutlined onClick={() => this.props.deleteAward(award.id, pc)} />
-									</div>
-								</div>
+								</Group>
 							);
 						}
 						all.push({ id: pc.id, text: pc.name || 'unnamed pc' });

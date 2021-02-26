@@ -7,6 +7,7 @@ import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { NumberSpin } from '../controls/number-spin';
 
 interface Props {
@@ -107,7 +108,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 			}
 
 			return (
-				<div className='group-panel'>
+				<Group>
 					<div className='condition-panel'>
 						<div className='condition-heading'>
 							<div className='condition-name'>{name}</div>
@@ -119,7 +120,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 					</div>
 					{duration}
 					{description}
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);

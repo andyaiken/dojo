@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, EnvironmentOutlined, SettingOutlined, UpCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -24,6 +24,7 @@ import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
@@ -610,13 +611,13 @@ export class CombatScreen extends React.Component<Props, State> {
 					<Note>
 						<div className='section'>multiple combatants are selected:</div>
 						{combatants.map(c => (
-							<div key={c.id} className='group-panel'>
+							<Group key={c.id}>
 								{c.displayName}
 								<CloseCircleOutlined
 									style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
 									onClick={() => this.toggleItemSelection(c.id, true)}
 								/>
-							</div>
+							</Group>
 						))}
 					</Note>
 					{this.createControls(combatants)}
@@ -643,7 +644,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		return (
 			<Note>
 				<div className='section'>
-					select a pc or monster from the <b>initiative order</b> list (in the middle column) to see its details here
+					select a pc or monster from the initiative order (in the middle column) to see its details here
 				</div>
 			</Note>
 		);
@@ -774,6 +775,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				<PendingInitiativeEntry
 					key={combatant.id}
 					combatant={combatant}
+					changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
 					nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
 					makeActive={c => this.props.makeActive([c])}
 				/>
@@ -788,7 +790,8 @@ export class CombatScreen extends React.Component<Props, State> {
 				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
-						<div className='section'>set initiative on each of them, then add them to the encounter</div>
+						<div className='section'>set initiative on each of them, then press the <CheckCircleOutlined /> button to add them to the initiative order</div>
+						<div className='section'>you can hide this section by clicking on the <UpCircleOutlined /> button above</div>
 						{ask}
 					</Note>
 				);
@@ -816,29 +819,26 @@ export class CombatScreen extends React.Component<Props, State> {
 				/>
 			);
 
+			let startSection = null;
 			let currentSection = null;
-			if (!this.state.showOptions) {
-				if (initHolder) {
-					currentSection = (
-						<div>
-							{this.createControls([initHolder])}
-							<hr/>
-							{this.createCard(initHolder)}
-						</div>
-					);
-				} else {
-					currentSection = (
+			if (initHolder) {
+				currentSection = (
+					<div>
+						{this.createControls([initHolder])}
+						<hr/>
+						{this.createCard(initHolder)}
+					</div>
+				);
+			} else {
+				startSection = (
+					<div>
 						<Note>
-							<div className='section'>
-								when you're ready to begin the encounter, press the <b>start combat</b> button
-							</div>
-							<div className='section'>
-								the current initiative holder will be displayed here
-							</div>
-							<button onClick={() => this.nextTurn()}>start combat</button>
+							<div className='section'>when you're ready to begin, press the <b>start combat</b> button</div>
+							<div className='section'>the current initiative holder will be displayed in this column</div>
 						</Note>
-					);
-				}
+						<button onClick={() => this.nextTurn()}>start combat</button>
+					</div>
+				);
 			}
 
 			let notOnMapSection = null;
@@ -850,21 +850,21 @@ export class CombatScreen extends React.Component<Props, State> {
 						<div>
 							<Note>
 								<div className='section'>
-									these combatants are in the initiative order, but have not yet been placed on the map (which you'll find in the middle column)
+									these combatants are in the initiative order, but have not yet been placed on the map (shown in the middle column)
 								</div>
 								<div className='section'>
-									to place one on the map, click the <b>place on map</b> button and then click on a map square
+									to place one on the map, click the <EnvironmentOutlined /> button and then click on a map square
 								</div>
 								<div className='section'>
-									or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+									or, click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
 								</div>
 							</Note>
 							{
-								notOnMap.map(c => (
+								notOnMap.map(combatant => (
 									<NotOnMapInitiativeEntry
-										key={c.id}
-										combatant={c}
-										addToMap={() => this.setAddingToMapID(c.id)}
+										key={combatant.id}
+										combatant={combatant}
+										addToMap={c => this.setAddingToMapID(c.id)}
 									/>
 								))
 							}
@@ -984,6 +984,24 @@ export class CombatScreen extends React.Component<Props, State> {
 					<Row className='combat-main'>
 						<Col span={sideWidth} className='scrollable'>
 							<GridPanel
+								heading='waiting for intiative'
+								content={pendingList}
+								columns={1}
+								showToggle={true}
+							/>
+							<GridPanel
+								heading='not on the map'
+								content={[notOnMapSection]}
+								columns={1}
+								showToggle={true}
+							/>
+							<GridPanel
+								heading='ready to start'
+								content={[startSection]}
+								columns={1}
+								showToggle={false}
+							/>
+							<GridPanel
 								heading='initiative holder'
 								content={[currentSection]}
 								columns={1}
@@ -991,12 +1009,6 @@ export class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={middleWidth} className='scrollable'>
-							<GridPanel
-								heading='waiting for intiative'
-								content={pendingList}
-								columns={1}
-								showToggle={true}
-							/>
 							<GridPanel
 								heading={'legendary actions'}
 								content={legendary}
@@ -1017,12 +1029,6 @@ export class CombatScreen extends React.Component<Props, State> {
 							/>
 						</Col>
 						<Col span={sideWidth} className='scrollable'>
-							<GridPanel
-								heading='not on the map'
-								content={[notOnMapSection]}
-								columns={1}
-								showToggle={true}
-							/>
 							<GridPanel
 								heading='selected'
 								content={[this.getSelectedCombatants()]}

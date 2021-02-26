@@ -46,30 +46,33 @@
 	display: flex;
 	align-items: center;
 
-	.rolls {
+	.info {
 		flex: 1 1 0;
-		flex-wrap: wrap;
-		display: flex;
-		align-items: center;
 
-		.nat1 {
-			background-color: rgba(255, 0, 0, 0.1);
-		}
+		.rolls {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
 
-		.nat20 {
-			background-color: rgba(0, 255, 0, 0.1);
-		}
-
-		.roll-icon {
-			font-size: 16px;
-			padding-left: 5px;
-
-			&.advantage {
-				color: green;
+			.nat1 {
+				background-color: rgba(255, 0, 0, 0.1);
 			}
 
-			&.disadvantage {
-				color: red;
+			.nat20 {
+				background-color: rgba(0, 255, 0, 0.1);
+			}
+
+			.roll-icon {
+				font-size: 16px;
+				padding-left: 5px;
+
+				&.advantage {
+					color: green;
+				}
+
+				&.disadvantage {
+					color: red;
+				}
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import { Utils } from '../../utils/utils';
 import { SavedImage } from '../../models/misc';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 
@@ -67,7 +68,7 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 			const images = this.state.images
 				.filter(img => Sherlock.match(this.state.filter, img.name))
 				.map(img => (
-					<div key={img.id} className='group-panel'>
+					<Group key={img.id}>
 						<div className='subheading'>{img.name}</div>
 						<img
 							className='section selectable-image'
@@ -75,7 +76,7 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 							alt={img.name}
 							onClick={() => this.props.select ? this.props.select(img.id) : null}
 						/>
-					</div>
+					</Group>
 				));
 
 			if (images.length === 0) {

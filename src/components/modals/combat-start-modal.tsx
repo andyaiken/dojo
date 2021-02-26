@@ -17,6 +17,7 @@ import { RenderError } from '../error';
 import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
@@ -345,9 +346,9 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 					name += ' (x' + slot.count + ')';
 				}
 				return (
-					<div key={slot.id} className='group-panel'>
+					<Group key={slot.id}>
 						{name}
-					</div>
+					</Group>
 				);
 			});
 
@@ -513,9 +514,9 @@ class WaveSection extends React.Component<WaveSectionProps> {
 							name += ' (x' + slot.count + ')';
 						}
 						return (
-							<div key={slot.id} className='group-panel'>
+							<Group key={slot.id}>
 								{name}
-							</div>
+							</Group>
 						);
 					});
 
@@ -569,14 +570,14 @@ class SelectedMonsterSection extends React.Component<SelectedMonsterSectionProps
 				name += ' (x' + slot.count + ')';
 			}
 			return (
-				<div key={slot.id} className='group-panel'>
+				<Group key={slot.id}>
 					{name}
 					<NumberSpin
 						value={'count: ' + slot.count}
 						downEnabled={slot.count > 1}
 						onNudgeValue={delta => this.props.nudgeValue(slot, 'count', delta)}
 					/>
-				</div>
+				</Group>
 			);
 		});
 
@@ -1024,12 +1025,12 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		}
 
 		return (
-			<div className='group-panel'>
+			<Group>
 				<div className='combatant-setup'>
 					<div className='subheading'>{header}</div>
 					{content}
 				</div>
-			</div>
+			</Group>
 		);
 	}
 }

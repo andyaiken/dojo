@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2019 Andy Aiken
+Copyright (c) 2021 Andy Aiken
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

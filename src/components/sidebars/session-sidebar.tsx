@@ -11,6 +11,7 @@ import { Party } from '../../models/party';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
@@ -149,17 +150,19 @@ export class SessionSidebar extends React.Component<Props, State> {
 						<Note>
 							<p>give the following link to your players, and ask them to open the player app in their browser</p>
 						</Note>
-						<div className='group-panel content-then-icons'>
-							<div className='content'>
-								<div className='section'>
-									<p>player app link:</p>
-									<p><b>{playerURL}</b></p>
+						<Group>
+							<div className='content-then-icons'>
+								<div className='content'>
+									<div className='section'>
+										<p>player app link:</p>
+										<p><b>{playerURL}</b></p>
+									</div>
+								</div>
+								<div className='icons'>
+									<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
 								</div>
 							</div>
-							<div className='icons'>
-								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
-							</div>
-						</div>
+						</Group>
 						<hr/>
 						<div className='subheading'>currently sharing</div>
 						<div className='section'>{sharing}</div>

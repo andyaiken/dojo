@@ -15,6 +15,7 @@ import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
@@ -284,20 +285,22 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 
 					content = (
 						<div id='custom'>
-							<div className='group-panel content-then-icons'>
-								<div className='content'>
-									<div className='section'>
-										selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+							<Group>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<div className='section'>
+											selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+										</div>
+									</div>
+									<div className='icons'>
+										<CloseCircleOutlined
+											title='clear languages'
+											className={this.props.selectedLanguages.length === 0 ? 'disabled' : ''}
+											onClick={() => this.props.clearLanguages()}
+										/>
 									</div>
 								</div>
-								<div className='icons'>
-									<CloseCircleOutlined
-										title='clear languages'
-										className={this.props.selectedLanguages.length === 0 ? 'disabled' : ''}
-										onClick={() => this.props.clearLanguages()}
-									/>
-								</div>
-							</div>
+							</Group>
 							<Expander text='languages'>
 								{languages}
 							</Expander>
@@ -306,8 +309,8 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 					break;
 				case 'random':
 					content = (
-						<div id='random'>
-							<div className='group-panel content-then-icons'>
+						<Group key='random'>
+							<div className='content-then-icons'>
 								<div className='content'>
 									<div className='section'>
 										selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
@@ -317,7 +320,7 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 									<ThunderboltOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
 								</div>
 							</div>
-						</div>
+						</Group>
 					);
 					break;
 			}
@@ -380,17 +383,19 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 	public render() {
 		try {
 			return (
-				<div className='group-panel content-then-icons'>
-					<div className='content'>
-						<div className='section'>
-							{this.props.text.toLowerCase()}
+				<Group>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='section'>
+								{this.props.text.toLowerCase()}
+							</div>
+						</div>
+						<div className='icons'>
+							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
+							<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
 						</div>
 					</div>
-					<div className='icons'>
-						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
-						<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
-					</div>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);
@@ -594,16 +599,18 @@ class WildSurgeTool extends React.Component<WildSurgeProps> {
 				content = (
 					<div>
 						<hr/>
-						<div className='group-panel content-then-icons'>
-							<div className='content'>
-								<div className='section'>
-									<p>{this.props.surge}</p>
+						<Group>
+							<div className='content-then-icons'>
+								<div className='content'>
+									<div className='section'>
+										<p>{this.props.surge}</p>
+									</div>
+								</div>
+								<div className='icons'>
+									<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
 								</div>
 							</div>
-							<div className='icons'>
-								<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
-							</div>
-						</div>
+						</Group>
 					</div>
 				);
 			}

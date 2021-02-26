@@ -5,6 +5,7 @@ import { Combatant } from '../../models/combat';
 import { PC } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { Statistic } from '../controls/statistic';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -18,9 +19,9 @@ export class PCStatblockCard extends React.Component<Props> {
 			let companions = null;
 			if (this.props.pc.companions.length > 0) {
 				const list = this.props.pc.companions.map(companion => (
-					<div key={companion.id} className='group-panel'>
+					<Group key={companion.id}>
 						{companion.name}
-					</div>
+					</Group>
 				));
 
 				companions = (

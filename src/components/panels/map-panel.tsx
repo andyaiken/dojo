@@ -16,11 +16,12 @@ import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Checkbox } from '../controls/checkbox';
+import { Group } from '../controls/group';
+import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { CombatantTags } from './combat-controls-panel';
-import { Checkbox } from '../controls/checkbox';
-import { Note } from '../controls/note';
 
 interface Props {
 	map: Map;
@@ -1322,7 +1323,9 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 					info.push(
 						<div key={condition.id} className='content-then-icons'>
 							<div className='content'>
-								<div className='group-panel'>{condition.name}</div>
+								<Group>
+									{condition.name}
+								</Group>
 							</div>
 							<div className='icons'>
 								<DeleteOutlined onClick={() => this.props.conditionRemove(this.props.combatant as Combatant, condition)} />

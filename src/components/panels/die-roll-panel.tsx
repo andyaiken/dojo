@@ -2,9 +2,10 @@ import { CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icon
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
-import { RenderError } from '../error';
-
 import { DieRollResult } from '../../models/dice';
+
+import { RenderError } from '../error';
+import { Group } from '../controls/group';
 
 interface DieRollPanelProps {
 	dice: { [sides: number]: number };
@@ -141,11 +142,25 @@ export class DieRollPanel extends React.Component<DieRollPanelProps> {
 
 interface DieRollResultPanelProps {
 	result: DieRollResult;
+	text: string | null;
 }
 
 export class DieRollResultPanel extends React.Component<DieRollResultPanelProps> {
+	public static defaultProps = {
+		text: null
+	};
+
 	public render() {
 		try {
+			let heading = null;
+			if (this.props.text) {
+				heading = (
+					<div className='section subheading'>
+						{this.props.text}
+					</div>
+				);
+			}
+
 			const rolls: JSX.Element[] = [];
 			let sum = 0;
 			this.props.result.rolls.forEach(roll => {
@@ -180,15 +195,20 @@ export class DieRollResultPanel extends React.Component<DieRollResultPanelProps>
 			);
 
 			return (
-				<div className='die-roll-result group-panel'>
-					<div className='rolls'>
-						{rolls}
-						{icon}
+				<Group>
+					<div className='die-roll-result'>
+						<div className='info'>
+							{heading}
+							<div className='rolls'>
+								{rolls}
+								{icon}
+							</div>
+						</div>
+						<div className='sum'>
+							{sum}
+						</div>
 					</div>
-					<div className='sum'>
-						{sum}
-					</div>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);

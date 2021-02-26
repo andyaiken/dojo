@@ -12,6 +12,7 @@ import { PC } from '../../../models/party';
 import { RenderError } from '../../error';
 import { ConfirmButton } from '../../controls/confirm-button';
 import { Dropdown } from '../../controls/dropdown';
+import { Group } from '../../controls/group';
 import { NumberSpin } from '../../controls/number-spin';
 import { Textbox } from '../../controls/textbox';
 import { PortraitPanel } from '../../panels/portrait-panel';
@@ -88,7 +89,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 			Utils.sort(monsterOptions, [{ field: 'text', dir: 'asc' }]);
 
 			const companions = this.state.pc.companions.map(comp => (
-				<div className='group-panel' key={comp.id}>
+				<Group key={comp.id}>
 					<div className='content-then-icons'>
 						<div className='content'>
 							<Textbox
@@ -110,7 +111,7 @@ export class PCEditorModal extends React.Component<Props, State> {
 						onSelect={value => this.changeValue(comp, 'monsterID', value)}
 						onClear={() => this.changeValue(comp, 'monsterID', null)}
 					/>
-				</div>
+				</Group>
 			));
 
 			if (companions.length === 0) {

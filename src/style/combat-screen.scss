@@ -56,10 +56,7 @@
 	border: 0px solid $control-border;
 	border-left-width: 5px;
 	margin: 5px 0;
-
-	&.clickable {
-		cursor: pointer;
-	}
+	cursor: pointer;
 
 	&:hover ,
 	&.highlight,
@@ -94,43 +91,12 @@
 	}
 
 	.init-entry-content {
-		padding: 0 5px;
+		padding: 5px;
 
 		.note {
-			margin: 5px 0;
-		}
-
-		.note-heading {
-			font-weight: 600;
-		}
-
-		.note-details {
-			font-size: 11px;
-			margin: 2px 0;
-		}
-
-		.icon-button {
-			float: right;
-			font-size: 14px;
-			padding: 2px;
-			pointer-events: all;
-
-			&:hover {
-				background-color: $highlight01;
-			}
+			margin: 5px;
 		}
 	}
-}
-
-.next-up {
-	margin: 15px 0;
-}
-
-.notifications {
-	position: sticky;
-	z-index: 15;
-	top: 0;
-	padding: 1px 5px 0 5px;
 }
 
 .legendary-usage .anticon {

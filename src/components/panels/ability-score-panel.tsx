@@ -44,9 +44,31 @@ export class AbilityScorePanel extends React.Component<Props, State> {
 	private roll(e: React.MouseEvent, ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha', mode: '' | 'advantage' | 'disadvantage') {
 		e.stopPropagation();
 
+		let abilityName = '';
+		switch (ability) {
+			case 'str':
+				abilityName = 'strength';
+				break;
+			case 'dex':
+				abilityName = 'dexterity';
+				break;
+			case 'con':
+				abilityName = 'constitution';
+				break;
+			case 'int':
+				abilityName = 'intelligence';
+				break;
+			case 'wis':
+				abilityName = 'wisdom';
+				break;
+			case 'cha':
+				abilityName = 'charisma';
+				break;
+		}
+
 		const score = this.props.combatant.abilityScores[ability];
 		const constant = Gygax.modifierValue(score);
-		this.props.onRollDice(ability, 1, 20, constant, mode);
+		this.props.onRollDice(abilityName, 1, 20, constant, mode);
 	}
 
 	private getAbilityScore(ability: 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha') {

@@ -624,10 +624,7 @@ export class Main extends React.Component<Props, State> {
 			notification.open({
 				key: result.id,
 				message: (
-					<div>
-						<div className='section subheading'>{text}</div>
-						<DieRollResultPanel result={result} />
-					</div>
+					<DieRollResultPanel result={result} text={text} />
 				),
 				closeIcon: <CloseCircleOutlined />,
 				duration: 5

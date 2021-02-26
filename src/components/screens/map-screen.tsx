@@ -11,6 +11,7 @@ import { Party } from '../../models/party';
 import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
@@ -192,9 +193,9 @@ export class MapScreen extends React.Component<Props, State> {
 				const addTileText = this.state.addingTile ? 'click and drag on the map to create a tile, or click here to cancel' : 'add a map tile';
 				const addAreaText = this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area';
 				const areas = this.props.map.areas.map(a => (
-					<div key={a.id} className='group-panel clickable' onClick={() => this.setSelectedAreaID(a.id)} role='button'>
+					<Group key={a.id} onClick={() => this.setSelectedAreaID(a.id)}>
 						{a.name || 'unnamed area'}
-					</div>
+					</Group>
 				));
 
 				sidebar = (

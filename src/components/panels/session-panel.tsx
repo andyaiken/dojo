@@ -16,6 +16,7 @@ import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
@@ -55,7 +56,7 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 				}
 
 				return (
-					<div key={person.id} className='group-panel'>
+					<Group key={person.id}>
 						<div className='person'>
 							<div className='person-details'>
 								<CharacterPanel person={person} />
@@ -65,7 +66,7 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 								{icon}
 							</div>
 						</div>
-					</div>
+					</Group>
 				);
 			});
 

@@ -12,7 +12,6 @@
 @import './dice.scss';
 @import './difficulty-gauge.scss';
 @import './drawer.scss';
-@import './group-panel.scss';
 @import './hp-gauge.scss';
 @import './layout.scss';
 @import './map-panel.scss';
@@ -212,29 +211,8 @@ p,
 	margin: 5px 0;
 	break-inside: avoid;
 
-	&.intro {
-		font-size: 16px;
-	}
-
-	&.to-left {
-		text-align: left;
-	}
-
 	&.centered {
 		text-align: center;
-	}
-
-	&.to-right {
-		text-align: right;
-	}
-
-	&.large {
-		font-size: 15px;
-	}
-
-	&.small {
-		font-size: 10px;
-		font-weight: normal;
 	}
 
 	.right-value {
@@ -297,20 +275,28 @@ p,
 
 	>.content {
 		flex: 1 1 0;
+		border-right: 1px solid $control-border;
+		margin-right: 10px;
+		padding-right: 10px;
 	}
 
 	>.icons {
-		margin-left: 5px;
 		flex: 0 0 auto;
 
 		.anticon {
-			font-size: 16px;
+			font-size: 20px;
 			padding: 5px;
 
 			&:hover,
 			&:focus {
 				background-color: $highlight01;
 			}
+		}
+	}
+
+	&:hover {
+		>.content {
+			border-color: $highlight;
 		}
 	}
 }

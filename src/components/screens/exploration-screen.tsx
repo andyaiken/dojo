@@ -21,6 +21,7 @@ import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { ConfirmButton } from '../controls/confirm-button';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
 import { GridPanel } from '../panels/grid-panel';
@@ -470,13 +471,13 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					<Note>
 						<div className='section'>multiple combatants are selected:</div>
 						{combatants.map(c => (
-							<div key={c.id} className='group-panel'>
+							<Group key={c.id}>
 								{c.displayName}
 								<CloseCircleOutlined
 									style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
 									onClick={() => this.toggleItemSelection(c.id, true)}
 								/>
-							</div>
+							</Group>
 						))}
 					</Note>
 					{this.createControls(combatants)}

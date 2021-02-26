@@ -1,5 +1,5 @@
 import { CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
-import { Col, Drawer, notification, Row } from 'antd';
+import { Col, Drawer, notification, Row, Tag } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
@@ -387,7 +387,9 @@ export class Player extends React.Component<Props, State> {
 								<PortraitPanel source={pc} inline={true} />
 								{pc.name}
 							</div>
-							<div className='section small'>{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}</div>
+							<Tag>
+								{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}
+							</Tag>
 						</button>
 					);
 				}

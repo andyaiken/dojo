@@ -6,6 +6,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { NPC } from '../../models/misc';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { Selector } from '../controls/selector';
 
 interface Props {
@@ -235,7 +236,7 @@ class NPCGenerator extends React.Component<NPCGeneratorProps> {
 				item = (
 					<div>
 						<hr/>
-						<div className='group-panel'>
+						<Group>
 							<div className='section'><b>age:</b> {this.props.npc.age}</div>
 							<div className='section'><b>profession:</b> {this.props.npc.profession}</div>
 							<div className='section'><b>height:</b> {this.props.npc.height}</div>
@@ -249,7 +250,7 @@ class NPCGenerator extends React.Component<NPCGeneratorProps> {
 							<div className='section'><b>ideal:</b> {this.props.npc.ideal}</div>
 							<div className='section'><b>bond:</b> {this.props.npc.bond}</div>
 							<div className='section'><b>flaw:</b> {this.props.npc.flaw}</div>
-						</div>
+						</Group>
 					</div>
 				);
 			}
@@ -280,16 +281,18 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 	public render() {
 		try {
 			return (
-				<div className='group-panel content-then-icons'>
-					<div className='content'>
-						<div className='section'>
-							{this.props.text.toLowerCase()}
+				<Group>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='section'>
+								{this.props.text.toLowerCase()}
+							</div>
+						</div>
+						<div className='icons'>
+							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 						</div>
 					</div>
-					<div className='icons'>
-						<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
-					</div>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);

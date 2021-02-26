@@ -8,6 +8,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 
@@ -52,23 +53,23 @@ export class SearchSidebar extends React.Component<Props, State> {
 						const companions: JSX.Element[] = [];
 						pc.companions.filter(comp => Sherlock.matchCompanion(this.state.text, comp)).forEach(comp => {
 							companions.push(
-								<div key={comp.id} className='group-panel'>
+								<Group key={comp.id}>
 									<div className='section'>{comp.name}</div>
-								</div>
+								</Group>
 							);
 						});
 						pcs.push(
-							<div key={pc.id} className='group-panel'>
+							<Group key={pc.id}>
 								<div className='section'>{pc.name}</div>
 								{companions}
-							</div>
+							</Group>
 						);
 					});
 					results.push(
-						<div key={party.id} className='group-panel clickable' onClick={() => this.props.openParty(party.id)} role='button'>
+						<Group key={party.id} onClick={() => this.props.openParty(party.id)}>
 							<div className='section'>{party.name}</div>
 							{pcs}
-						</div>
+						</Group>
 					);
 				});
 
@@ -78,23 +79,23 @@ export class SearchSidebar extends React.Component<Props, State> {
 						const traits: JSX.Element[] = [];
 						monster.traits.filter(trait => Sherlock.matchTrait(this.state.text, trait)).forEach(trait => {
 							traits.push(
-								<div key={trait.id} className='group-panel'>
+								<Group key={trait.id}>
 									<div className='section'>{trait.name}</div>
-								</div>
+								</Group>
 							);
 						});
 						monsters.push(
-							<div key={monster.id} className='group-panel'>
+							<Group key={monster.id}>
 								<div className='section'>{monster.name}</div>
 								{traits}
-							</div>
+							</Group>
 						);
 					});
 					results.push(
-						<div key={group.id} className='group-panel clickable' onClick={() => this.props.openGroup(group.id)} role='button'>
+						<Group key={group.id} onClick={() => this.props.openGroup(group.id)}>
 							<div className='section'>{group.name}</div>
 							{monsters}
-						</div>
+						</Group>
 					);
 				});
 
@@ -103,9 +104,9 @@ export class SearchSidebar extends React.Component<Props, State> {
 					encounter.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot, id => this.props.getMonster(id))).forEach(slot => {
 						const monster = this.props.getMonster(slot.monsterID);
 						slots.push(
-							<div key={slot.id} className='group-panel'>
+							<Group key={slot.id}>
 								<div className='section'>{monster ? monster.name : 'monster'}</div>
-							</div>
+							</Group>
 						);
 					});
 					const waves: JSX.Element[] = [];
@@ -114,24 +115,24 @@ export class SearchSidebar extends React.Component<Props, State> {
 						wave.slots.filter(slot => Sherlock.matchEncounterSlot(this.state.text, slot, id => this.props.getMonster(id))).forEach(slot => {
 							const monster = this.props.getMonster(slot.monsterID);
 							waveSlots.push(
-								<div key={slot.id} className='group-panel'>
+								<Group key={slot.id}>
 									<div className='section'>{monster ? monster.name : 'monster'}</div>
-								</div>
+								</Group>
 							);
 						});
 						waves.push(
-							<div key={wave.id} className='group-panel'>
+							<Group key={wave.id}>
 								<div className='section'>{wave.name}</div>
 								{waveSlots}
-							</div>
+							</Group>
 						);
 					});
 					results.push(
-						<div key={encounter.id} className='group-panel clickable' onClick={() => this.props.openEncounter(encounter.id)} role='button'>
+						<Group key={encounter.id} onClick={() => this.props.openEncounter(encounter.id)}>
 							<div className='section'>{encounter.name}</div>
 							{slots}
 							{waves}
-						</div>
+						</Group>
 					);
 				});
 
@@ -139,16 +140,16 @@ export class SearchSidebar extends React.Component<Props, State> {
 					const areas: JSX.Element[] = [];
 					map.areas.filter(area => Sherlock.matchMapArea(this.state.text, area)).forEach(area => {
 						areas.push(
-							<div key={area.id} className='group-panel'>
+							<Group key={area.id}>
 								<div className='section'>map area</div>
-							</div>
+							</Group>
 						);
 					});
 					results.push(
-						<div key={map.id} className='group-panel clickable' onClick={() => this.props.openMap(map.id)} role='button'>
+						<Group key={map.id} onClick={() => this.props.openMap(map.id)}>
 							<div className='section'>{map.name}</div>
 							{areas}
-						</div>
+						</Group>
 					);
 				});
 

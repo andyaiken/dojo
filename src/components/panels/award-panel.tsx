@@ -5,6 +5,7 @@ import React from 'react';
 import { Award } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Group } from '../controls/group';
 
 interface AwardPanelProps {
 	award: Award;
@@ -14,7 +15,7 @@ export class AwardPanel extends React.Component<AwardPanelProps> {
 	public render() {
 		try {
 			return (
-				<div className='group-panel'>
+				<Group>
 					<Row gutter={10} align='middle'>
 						<Col span={4}>
 							<TrophyTwoTone style={{ fontSize: '50px' }} twoToneColor='#d4af37' />
@@ -26,7 +27,7 @@ export class AwardPanel extends React.Component<AwardPanelProps> {
 							{this.props.children}
 						</Col>
 					</Row>
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);
