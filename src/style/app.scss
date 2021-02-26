@@ -292,6 +292,12 @@ p,
 				background-color: $highlight01;
 			}
 		}
+
+		&.vertical {
+			.anticon {
+				display: block;
+			}
+		}
 	}
 
 	&:hover {

@@ -6,6 +6,7 @@ export interface DieRoll {
 
 export interface DieRollResult {
 	id: string;
+	text: string;
 	rolls: DieRoll[];
 	constant: number;
 	mode: '' | 'advantage' | 'disadvantage';

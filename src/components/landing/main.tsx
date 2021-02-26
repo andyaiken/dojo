@@ -613,10 +613,10 @@ export class Main extends React.Component<Props, State> {
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
 		dice[sides] = count;
 
-		const result = Gygax.rollDice(dice, constant, mode);
+		const result = Gygax.rollDice(text, dice, constant, mode);
 
 		const sidebar = this.state.sidebar;
-		sidebar.dieRolls.push(result);
+		sidebar.dieRolls.unshift(result);
 
 		this.setState({
 			sidebar: sidebar
@@ -624,7 +624,7 @@ export class Main extends React.Component<Props, State> {
 			notification.open({
 				key: result.id,
 				message: (
-					<DieRollResultPanel result={result} text={text} />
+					<DieRollResultPanel result={result} />
 				),
 				closeIcon: <CloseCircleOutlined />,
 				duration: 5

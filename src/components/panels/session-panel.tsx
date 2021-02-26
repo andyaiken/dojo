@@ -563,10 +563,10 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		}
 	}
 
-	private sendRoll(mode: '' | 'advantage' | 'disadvantage') {
+	private sendRoll(expression: string, mode: '' | 'advantage' | 'disadvantage') {
 		if (this.canSend()) {
 			const rec = [...this.state.recipients];
-			const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
+			const result = Gygax.rollDice(expression, this.state.dice, this.state.constant, mode);
 			this.props.sendRoll(rec, result);
 		}
 	}
@@ -720,7 +720,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 						setDie={(sides, count) => this.setDie(sides, count)}
 						setConstant={value => this.setConstant(value)}
 						resetDice={() => this.resetDice()}
-						rollDice={mode => this.sendRoll(mode)}
+						rollDice={(expression, mode) => this.sendRoll(expression, mode)}
 					/>
 				);
 			case 'card':

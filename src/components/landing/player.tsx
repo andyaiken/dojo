@@ -986,8 +986,8 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 		});
 	}
 
-	private roll(mode: '' | 'advantage' | 'disadvantage') {
-		const result = Gygax.rollDice(this.state.dice, this.state.constant, mode);
+	private roll(expression: string, mode: '' | 'advantage' | 'disadvantage') {
+		const result = Gygax.rollDice(expression, this.state.dice, this.state.constant, mode);
 		this.setState({
 			result: result
 		});
@@ -1019,7 +1019,7 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 								setDie={(sides, count) => this.setDie(sides, count)}
 								setConstant={value => this.setConstant(value)}
 								resetDice={() => this.resetDice()}
-								rollDice={mode => this.roll(mode)}
+								rollDice={(expression, mode) => this.roll(expression, mode)}
 							/>
 						</div>
 					);

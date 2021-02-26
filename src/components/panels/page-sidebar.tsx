@@ -229,9 +229,9 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.constant = value;
 								this.props.onUpdateSidebar(sidebar);
 							}}
-							rollDice={mode => {
+							rollDice={(expression, mode) => {
 								const sidebar = this.props.sidebar;
-								const result = Gygax.rollDice(sidebar.dice, sidebar.constant, mode);
+								const result = Gygax.rollDice(expression, sidebar.dice, sidebar.constant, mode);
 								sidebar.dieRolls.unshift(result);
 								this.props.onUpdateSidebar(sidebar);
 							}}

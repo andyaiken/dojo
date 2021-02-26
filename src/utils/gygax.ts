@@ -33,9 +33,10 @@ export class Gygax {
 		return total;
 	}
 
-	public static rollDice(dice: { [sides: number]: number }, constant: number, mode: '' | 'advantage' | 'disadvantage'): DieRollResult {
+	public static rollDice(text: string, dice: { [sides: number]: number }, constant: number, mode: '' | 'advantage' | 'disadvantage'): DieRollResult {
 		const result: DieRollResult = {
 			id: Utils.guid(),
+			text: text,
 			rolls: [],
 			constant: constant,
 			mode: mode

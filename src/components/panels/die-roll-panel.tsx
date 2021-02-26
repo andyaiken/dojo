@@ -13,7 +13,7 @@ interface DieRollPanelProps {
 	setDie: (sides: number, count: number) => void;
 	setConstant: (value: number) => void;
 	resetDice: () => void;
-	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
+	rollDice: (expression: string, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
 export class DieRollPanel extends React.Component<DieRollPanelProps> {
@@ -93,44 +93,44 @@ export class DieRollPanel extends React.Component<DieRollPanelProps> {
 			if ((total === 1) && (this.props.dice[20] === 1)) {
 				buttons = (
 					<Row gutter={10}>
-						<Col span={8}><button onClick={() => this.props.rollDice('')}>roll {expression}</button></Col>
-						<Col span={8}><button onClick={() => this.props.rollDice('advantage')}>advantage</button></Col>
-						<Col span={8}><button onClick={() => this.props.rollDice('disadvantage')}>disadvantage</button></Col>
+						<Col span={12}><button onClick={() => this.props.rollDice(expression, '')}>roll {expression}</button></Col>
+						<Col span={6}><button onClick={() => this.props.rollDice(expression + ' (adv)', 'advantage')}>adv</button></Col>
+						<Col span={6}><button onClick={() => this.props.rollDice(expression + ' (dis)', 'disadvantage')}>dis</button></Col>
 					</Row>
 				);
 			} else {
 				buttons = (
 					<div>
-						<button className={total > 0 ? '' : 'disabled'} onClick={() => this.props.rollDice('')}>roll {expression}</button>
+						<button className={total > 0 ? '' : 'disabled'} onClick={() => this.props.rollDice(expression, '')}>roll {expression}</button>
 					</div>
 				);
 			}
 
 			return (
 				<div className='die-roll-panel'>
-					<div className='die-types'>
-						{this.getDieTypeBox(4)}
-						{this.getDieTypeBox(6)}
-						{this.getDieTypeBox(8)}
-						{this.getDieTypeBox(10)}
-						{this.getDieTypeBox(12)}
-						{this.getDieTypeBox(20)}
-						{this.getDieTypeBox(100)}
-						{this.getConstantBox()}
-					</div>
-					<hr/>
-					<Row gutter={10} align='middle'>
-						<Col span={22}>
-							{buttons}
-						</Col>
-						<Col span={2} className='section centered'>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='die-types'>
+								{this.getDieTypeBox(4)}
+								{this.getDieTypeBox(6)}
+								{this.getDieTypeBox(8)}
+								{this.getDieTypeBox(10)}
+								{this.getDieTypeBox(12)}
+								{this.getDieTypeBox(20)}
+								{this.getDieTypeBox(100)}
+								{this.getConstantBox()}
+							</div>
+						</div>
+						<div className='icons'>
 							<CloseCircleOutlined
 								className={total > 0 ? 'die-reset-button' : 'die-reset-button disabled'}
 								title='reset dice'
 								onClick={() => this.props.resetDice()}
 							/>
-						</Col>
-					</Row>
+						</div>
+					</div>
+					<hr/>
+					{buttons}
 				</div>
 			);
 		} catch (e) {
@@ -142,7 +142,6 @@ export class DieRollPanel extends React.Component<DieRollPanelProps> {
 
 interface DieRollResultPanelProps {
 	result: DieRollResult;
-	text: string | null;
 }
 
 export class DieRollResultPanel extends React.Component<DieRollResultPanelProps> {
@@ -153,10 +152,10 @@ export class DieRollResultPanel extends React.Component<DieRollResultPanelProps>
 	public render() {
 		try {
 			let heading = null;
-			if (this.props.text) {
+			if (this.props.result.text) {
 				heading = (
 					<div className='section subheading'>
-						{this.props.text}
+						{this.props.result.text}
 					</div>
 				);
 			}

@@ -33,7 +33,7 @@ interface Props {
 	dieRolls: DieRollResult[];
 	setDie: (sides: number, count: number) => void;
 	setConstant: (value: number) => void;
-	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
+	rollDice: (expression: string, mode: '' | 'advantage' | 'disadvantage') => void;
 	resetDice: () => void;
 	// Handout
 	handout: Handout | null;
@@ -95,7 +95,7 @@ export class ToolsSidebar extends React.Component<Props> {
 							dieRolls={this.props.dieRolls}
 							setDie={(sides, count) => this.props.setDie(sides, count)}
 							setConstant={value => this.props.setConstant(value)}
-							rollDice={mode => this.props.rollDice(mode)}
+							rollDice={(expression, mode) => this.props.rollDice(expression, mode)}
 							resetDice={() => this.props.resetDice()}
 						/>
 					);
@@ -172,15 +172,13 @@ interface DieRollerToolProps {
 	dieRolls: DieRollResult[];
 	setDie: (sides: number, count: number) => void;
 	setConstant: (value: number) => void;
-	rollDice: (mode: '' | 'advantage' | 'disadvantage') => void;
+	rollDice: (expression: string, mode: '' | 'advantage' | 'disadvantage') => void;
 	resetDice: () => void;
 }
 
 class DieRollerTool extends React.Component<DieRollerToolProps> {
 	public render() {
 		try {
-			const results = this.props.dieRolls.map(result => <DieRollResultPanel key={result.id} result={result} />);
-
 			return (
 				<div>
 					<DieRollPanel
@@ -189,10 +187,10 @@ class DieRollerTool extends React.Component<DieRollerToolProps> {
 						setDie={(sides, count) => this.props.setDie(sides, count)}
 						setConstant={value => this.props.setConstant(value)}
 						resetDice={() => this.props.resetDice()}
-						rollDice={mode => this.props.rollDice(mode)}
+						rollDice={(expression, mode) => this.props.rollDice(expression, mode)}
 					/>
 					<hr/>
-					{results}
+					{this.props.dieRolls.map(result => <DieRollResultPanel key={result.id} result={result} />)}
 				</div>
 			);
 		} catch (e) {
@@ -316,7 +314,7 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 										selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
 									</div>
 								</div>
-								<div className='icon-section'>
+								<div className='icons'>
 									<ThunderboltOutlined title='choose again' onClick={() => this.props.selectRandomLanguages()} />
 								</div>
 							</div>
@@ -392,7 +390,7 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 								{this.props.text.toLowerCase()}
 							</div>
 						</div>
-						<div className='icons'>
+						<div className='icons vertical'>
 							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
 							<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
 						</div>
