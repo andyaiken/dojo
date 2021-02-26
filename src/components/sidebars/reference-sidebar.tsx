@@ -192,7 +192,9 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 						selectionSection = (
 							<Expander text='granting awards'>
 								<Note>
-									<p>to grant any of these awards, you need to select a party</p>
+									<div className='section'>
+										to grant any of these awards, you need to select a party
+									</div>
 								</Note>
 								<Dropdown
 									placeholder='select a party...'
@@ -502,7 +504,9 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 			});
 			let awards = (
 				<Note>
-					<p>no awards yet</p>
+					<div className='section'>
+						no awards yet
+					</div>
 				</Note>
 			);
 			if (list.length > 0) {
@@ -558,7 +562,9 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 						{rows}
 					</div>
 					<Note>
-						<p>remember that advantage / disadvantage grants +/- 5 to passive rolls</p>
+						<div className='section'>
+							remember that advantage / disadvantage grants +/- 5 to passive rolls
+						</div>
 					</Note>
 					<hr/>
 					<div className='section subheading'>
@@ -660,7 +666,9 @@ class AwardsReference extends React.Component<AwardsReferenceProps> {
 			if (this.props.awards.length === 0) {
 				return (
 					<Note>
-						<p>no awards</p>
+						<div className='section'>
+							no awards
+						</div>
 					</Note>
 				);
 			}

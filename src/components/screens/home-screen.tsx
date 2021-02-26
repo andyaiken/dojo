@@ -12,12 +12,20 @@ export class HomeScreen extends React.Component<Props> {
 			const carousel = (
 				<Carousel autoplay={true} autoplaySpeed={10 * 1000}>
 					<div key='prologue'>
-						<p className='heading'>welcome to <span className='app-name'>dojo</span></p>
-						<p><span className='app-name'>dojo</span> is an app for dms of <a href='https://www.wizards.com/dnd' target='_blank' rel='noopener noreferrer'>dungeons and dragons fifth edition</a></p>
-						<p>with <span className='app-name'>dojo</span> you can...</p>
+						<div className='heading'>
+							welcome to <span className='app-name'>dojo</span>
+						</div>
+						<div className='section'>
+							<span className='app-name'>dojo</span> is an app for dms of <a href='https://www.wizards.com/dnd' target='_blank' rel='noopener noreferrer'>dungeons and dragons fifth edition</a>
+						</div>
+						<div className='section'>
+							with <span className='app-name'>dojo</span> you can...
+						</div>
 					</div>
 					<div key='monster'>
-						<p className='heading'>build unique, challenging monsters</p>
+						<div className='heading'>
+							build unique, challenging monsters
+						</div>
 						<ul>
 							<li>watch the stat block change as you design your monster</li>
 							<li>see a list of similar monsters to help kickstart your creativity (or show you typical stat values for the type of monster you're creating)</li>
@@ -27,7 +35,9 @@ export class HomeScreen extends React.Component<Props> {
 						</ul>
 					</div>
 					<div key='encounter'>
-						<p className='heading'>create rewarding encounters</p>
+						<div className='heading'>
+							create rewarding encounters
+						</div>
 						<ul>
 							<li>quickly add monsters to your encounter and see its xp value and difficulty level change</li>
 							<li>split your encounter into multiple waves</li>
@@ -35,7 +45,9 @@ export class HomeScreen extends React.Component<Props> {
 						</ul>
 					</div>
 					<div key='map'>
-						<p className='heading'>design intricate tactical maps</p>
+						<div className='heading'>
+							design intricate tactical maps
+						</div>
 						<ul>
 							<li>create a dungeon map by quickly adding rooms, doors, corridors, and stairs</li>
 							<li>for something a little more fancy, you can upload your own battlemap images - even animated images</li>
@@ -44,7 +56,9 @@ export class HomeScreen extends React.Component<Props> {
 						</ul>
 					</div>
 					<div key='combat'>
-						<p className='heading'>run combat without the book-keeping</p>
+						<div className='heading'>
+							run combat without the book-keeping
+						</div>
 						<ul>
 							<li>see the initiative list at a glance - and share it with players in a separate window</li>
 							<li>track monster hit points, rechargable actions, and legendary actions</li>
@@ -54,7 +68,9 @@ export class HomeScreen extends React.Component<Props> {
 						</ul>
 					</div>
 					<div key='session'>
-						<p className='heading'>connect with your players</p>
+						<div className='heading'>
+							connect with your players
+						</div>
 						<ul>
 							<li>use a dedicated player app to share information with your group</li>
 							<li>send messages (or links, or images, or die rolls) to the whole table - or whisper them to just one player</li>
@@ -63,9 +79,15 @@ export class HomeScreen extends React.Component<Props> {
 						</ul>
 					</div>
 					<div key='epilogue'>
-						<p className='heading'>to get started</p>
-						<p>use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features</p>
-						<p>the arrow at the top right gives you additional tools like a die roller, some useful random generators, and rules references</p>
+						<div className='heading'>
+							to get started
+						</div>
+						<div className='section'>
+							use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features
+						</div>
+						<div className='section'>
+							the arrow at the top right gives you additional tools like a die roller, some useful random generators, and rules references
+						</div>
 					</div>
 				</Carousel>
 			);

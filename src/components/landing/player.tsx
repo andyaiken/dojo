@@ -397,9 +397,13 @@ export class Player extends React.Component<Props, State> {
 			pcSection = (
 				<div>
 					<hr/>
-					<p>in the meantime, please select your character:</p>
+					<div className='section'>
+						in the meantime, please select your character:
+					</div>
 					{pcs}
-					<p>or, create a new character <button className='link' onClick={() => this.newPC()}>here</button></p>
+					<div className='section'>
+						or, create a new character <button className='link' onClick={() => this.newPC()}>here</button>
+					</div>
 				</div>
 			);
 		}
@@ -407,7 +411,9 @@ export class Player extends React.Component<Props, State> {
 		return (
 			<Row align='middle' justify='center' className='scrollable'>
 				<Note>
-					<p>the dm is not currently sharing anything with you; when they do, you'll see it here</p>
+					<div className='section'>
+						the dm is not currently sharing anything with you; when they do, you'll see it here
+					</div>
 					{pcSection}
 				</Note>
 			</Row>
@@ -424,7 +430,9 @@ export class Player extends React.Component<Props, State> {
 		if (current && (current.id === characterID)) {
 			banner = (
 				<Note>
-					<p>you are the current initiative holder</p>
+					<div className='section'>
+						you are the current initiative holder
+					</div>
 				</Note>
 			);
 		}
@@ -580,7 +588,9 @@ export class Player extends React.Component<Props, State> {
 					<Row align='middle' justify='center' className='full-height'>
 						<div className='connection-panel'>
 							<Note>
-								<p>connecting to <span className='app-name'>dojo</span>...</p>
+								<div className='section'>
+									connecting to <span className='app-name'>dojo</span>...
+								</div>
 							</Note>
 						</div>
 					</Row>
@@ -886,7 +896,9 @@ class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState>
 			if (this.props.dmcode === '') {
 				return (
 					<Note>
-						<p>this url isn't a valid dojo player url - there's no 6-letter dm code at the end</p>
+						<div className='section'>
+							this url isn't a valid dojo player url - there's no 6-letter dm code at the end
+						</div>
 					</Note>
 				);
 			}

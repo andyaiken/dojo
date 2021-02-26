@@ -368,7 +368,9 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 				<div style={{ display: this.state.addingOverlay ? '' : 'none' }}>
 					<Note>
-						<p>click on a map square to add a token, or select a rectangle to add an overlay</p>
+						<div className='section'>
+							click on a map square to add a token, or select a rectangle to add an overlay
+						</div>
 					</Note>
 				</div>
 				<button onClick={() => this.props.rotateMap()}>rotate map</button>

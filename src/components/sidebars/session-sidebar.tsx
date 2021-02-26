@@ -56,8 +56,12 @@ export class SessionSidebar extends React.Component<Props, State> {
 		return (
 			<div>
 				<Note>
-					<p>select a party, then click the 'start' button to allow your players to connect to the game session</p>
-					<p>you can then send messages and share content such as handouts, combat encounters, and map explorations</p>
+					<div className='section'>
+						select a party, then click the 'start' button to allow your players to connect to the game session
+					</div>
+					<div className='section'>
+						you can then send messages and share content such as handouts, combat encounters, and map explorations
+					</div>
 				</Note>
 				<Dropdown
 					placeholder='select a party...'
@@ -83,7 +87,9 @@ export class SessionSidebar extends React.Component<Props, State> {
 	private getStartingContent() {
 		return (
 			<Note>
-				<p>starting session...</p>
+				<div className='section'>
+					starting session...
+				</div>
 			</Note>
 		);
 	}
@@ -148,14 +154,18 @@ export class SessionSidebar extends React.Component<Props, State> {
 				return (
 					<div>
 						<Note>
-							<p>give the following link to your players, and ask them to open the player app in their browser</p>
+							<div className='section'>
+								give the following link to your players, and ask them to open the player app in their browser
+							</div>
 						</Note>
 						<Group>
 							<div className='content-then-icons'>
 								<div className='content'>
 									<div className='section'>
-										<p>player app link:</p>
-										<p><b>{playerURL}</b></p>
+										player app link:
+									</div>
+									<div className='section'>
+										<b>{playerURL}</b>
 									</div>
 								</div>
 								<div className='icons'>

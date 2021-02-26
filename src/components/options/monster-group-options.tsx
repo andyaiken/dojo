@@ -98,8 +98,12 @@ export class MonsterGroupOptions extends React.Component<Props, State> {
 					<button onClick={() => this.props.importMonster()}>import a monster</button>
 					<Expander text='create a random monster'>
 						<Note>
-							<p>create a random monster using existing monsters as templates</p>
-							<p>use the parameters below to specify the sort of monster you want to create</p>
+							<div className='section'>
+								create a random monster using existing monsters as templates
+							</div>
+							<div className='section'>
+								use the parameters below to specify the sort of monster you want to create
+							</div>
 						</Note>
 						<NumberSpin
 							label='cr'

@@ -344,7 +344,9 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 			return (
 				<div>
 					<Note>
-						<p>you can use this tool to generate words and sentences in fantasy languages</p>
+						<div className='section'>
+							you can use this tool to generate words and sentences in fantasy languages
+						</div>
 					</Note>
 					<Selector
 						options={['common', 'custom', 'random'].map(o => ({ id: o, text: o }))}
@@ -554,7 +556,9 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 				content = (
 					<div>
 						<Note>
-							<p>you can use this tool to select a file and show it to your players</p>
+							<div className='section'>
+								you can use this tool to select a file and show it to your players
+							</div>
 						</Note>
 						<Selector
 							options={['image', 'audio', 'video', 'pdf'].map(o => ({ id: o, text: o }))}
@@ -603,7 +607,9 @@ class WildSurgeTool extends React.Component<WildSurgeProps> {
 							<div className='content-then-icons'>
 								<div className='content'>
 									<div className='section'>
-										<p>{this.props.surge}</p>
+										<div className='section'>
+											{this.props.surge}
+										</div>
 									</div>
 								</div>
 								<div className='icons'>
@@ -618,7 +624,9 @@ class WildSurgeTool extends React.Component<WildSurgeProps> {
 			return (
 				<div>
 					<Note>
-						<p>this tool randomly chooses wild magic surge effects</p>
+						<div className='section'>
+							this tool randomly chooses wild magic surge effects
+						</div>
 					</Note>
 					<button onClick={() => this.props.rollSurge()}>surge</button>
 					{content}
@@ -716,7 +724,9 @@ class OracleTool extends React.Component<OracleToolProps, OracleToolState> {
 			return (
 				<div>
 					<Note>
-						<p>this tool lets you draw cards from various different decks</p>
+						<div className='section'>
+							this tool lets you draw cards from various different decks
+						</div>
 					</Note>
 					<Dropdown
 						options={[

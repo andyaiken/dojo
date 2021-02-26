@@ -54,7 +54,7 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 
 			let forMeSection = (
 				<Note>
-					<p>no awards</p>
+					<div className='section'>no awards</div>
 				</Note>
 			);
 			if (awardsForMe.length > 0) {
@@ -67,7 +67,7 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 
 			let forPartySection = (
 				<Note>
-					<p>no awards</p>
+					<div className='section'>no awards</div>
 				</Note>
 			);
 			if (awardsForParty.length > 0) {
@@ -80,7 +80,7 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 
 			let otherSection = (
 				<Note>
-					<p>no awards</p>
+					<div className='section'>no awards</div>
 				</Note>
 			);
 			if (otherAwards.length > 0) {

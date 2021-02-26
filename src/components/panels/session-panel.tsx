@@ -39,7 +39,9 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 			if (this.props.people.length < 2) {
 				return (
 					<Note key='empty'>
-						<p>no-one else is currently connected</p>
+						<div className='section'>
+							no-one else is currently connected
+						</div>
 					</Note>
 				);
 			}
@@ -194,7 +196,9 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 			if (messages.length === 0) {
 				messages.push(
 					<Note key='empty'>
-						<p>no messages yet</p>
+						<div className='section'>
+							no messages yet
+						</div>
 					</Note>
 				);
 			}
@@ -763,7 +767,9 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			if (this.state.recipients.length === 0) {
 				info = (
 					<Note>
-						<p>for a private message, you must select at least one person</p>
+						<div className='section'>
+							for a private message, you must select at least one person
+						</div>
 					</Note>
 				);
 			}

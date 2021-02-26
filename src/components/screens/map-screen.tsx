@@ -209,13 +209,25 @@ export class MapScreen extends React.Component<Props, State> {
 							/>
 						</div>
 						<Note>
-							<p>maps are made out of map tiles, arranged together</p>
-							<p>to add a new tile to the map, click on <b>add a map tile</b> below</p>
-							<p>to edit an existing tile, click on it to select it</p>
+							<div className='section'>
+								maps are made out of map tiles, arranged together
+							</div>
+							<div className='section'>
+								to add a new tile to the map, click on <b>add a map tile</b> below
+							</div>
+							<div className='section'>
+								to edit an existing tile, click on it to select it
+							</div>
 							<hr/>
-							<p>if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)</p>
-							<p>to add a new area to the map, click on <b>add a map area</b> below</p>
-							<p>to edit an existing area, click on it to select it</p>
+							<div className='section'>
+								if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)
+							</div>
+							<div className='section'>
+								to add a new area to the map, click on <b>add a map area</b> below
+							</div>
+							<div className='section'>
+								to edit an existing area, click on it to select it
+							</div>
 						</Note>
 						<div className='section'>
 							<div className='subheading'>map tiles</div>

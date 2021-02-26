@@ -64,7 +64,9 @@ export class EncounterScreen extends React.Component<Props> {
 		if (slots.length === 0) {
 			cards.push(
 				<Note>
-					<p>there are no monsters in this {wave ? 'wave' : 'encounter'}</p>
+					<div className='section'>
+						there are no monsters in this {wave ? 'wave' : 'encounter'}
+					</div>
 				</Note>
 			);
 		}
@@ -157,7 +159,9 @@ export class EncounterScreen extends React.Component<Props> {
 						{add}
 						<Expander text='waves'>
 							<Note>
-								<p>if your encounter is large or occurs in stages, you can split it into waves</p>
+								<div className='section'>
+									if your encounter is large or occurs in stages, you can split it into waves
+								</div>
 							</Note>
 							{waves}
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>

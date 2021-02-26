@@ -49,7 +49,9 @@ export class SessionControlsSidebar extends React.Component<Props> {
 				if (!current) {
 					return (
 						<Note>
-							<p>when you choose your character, you will be able to control it here</p>
+							<div className='section'>
+								when you choose your character, you will be able to control it here
+							</div>
 						</Note>
 					);
 				}
@@ -189,7 +191,9 @@ export class SessionControlsSidebar extends React.Component<Props> {
 			} else {
 				return (
 					<Note>
-						<p>you haven't been given control of your character</p>
+						<div className='section'>
+							you haven't been given control of your character
+						</div>
 					</Note>
 				);
 			}
@@ -197,7 +201,9 @@ export class SessionControlsSidebar extends React.Component<Props> {
 
 		return (
 			<Note>
-				<p>you're not connected</p>
+				<div className='section'>
+					you're not connected
+				</div>
 			</Note>
 		);
 	}

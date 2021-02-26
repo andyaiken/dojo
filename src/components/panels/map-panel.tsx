@@ -403,8 +403,12 @@ export class MapPanel extends React.Component<Props, State> {
 								/>
 								<div style={{ display: this.props.features.highlight ? 'block' : 'none' }}>
 									<Note>
-										<p>use your mouse to indicate a square on the map</p>
-										<p>that square will be highlighted on the shared map as well</p>
+										<div className='section'>
+											use your mouse to indicate a square on the map
+										</div>
+										<div className='section'>
+											that square will be highlighted on the shared map as well
+										</div>
 									</Note>
 								</div>
 							</div>
@@ -429,8 +433,12 @@ export class MapPanel extends React.Component<Props, State> {
 								/>
 								<div style={{ display: this.props.features.editFog ? 'block' : 'none' }}>
 									<Note>
-										<p>click on map squares to turn fog of war on and off</p>
-										<p>you can also click and drag to select an area</p>
+										<div className='section'>
+											click on map squares to turn fog of war on and off
+										</div>
+										<div className='section'>
+											you can also click and drag to select an area
+										</div>
 									</Note>
 									<button onClick={() => this.props.fillFog()}>
 										fill fog of war

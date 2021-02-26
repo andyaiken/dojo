@@ -420,9 +420,9 @@ export class Main extends React.Component<Props, State> {
 			if (!peopleVisible) {
 				notification.open({
 					message: (
-						<p>
+						<div className='section'>
 							<b>{name}</b> has joined
-						</p>
+						</div>
 					),
 					closeIcon: <CloseCircleOutlined />,
 					duration: 5

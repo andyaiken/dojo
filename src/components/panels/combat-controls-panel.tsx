@@ -226,7 +226,9 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				if (c.darkvision === 0) {
 					notes.push(
 						<Note key='light'>
-							<p>{c.displayName} is in {this.props.lighting}, and has no darkvision</p>
+							<div className='section'>
+								{c.displayName} is in {this.props.lighting}, and has no darkvision
+							</div>
 						</Note>
 					);
 				}

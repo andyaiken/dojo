@@ -433,7 +433,9 @@ class MapSection extends React.Component<MapSectionProps> {
 			tools = (
 				<div>
 					<Note>
-						<p>this is optional - you don't have to use a map to run an encounter</p>
+						<div className='section'>
+							this is optional - you don't have to use a map to run an encounter
+						</div>
 					</Note>
 					{selector}
 					<button onClick={() => this.props.generateMap('delve')}>generate a random delve</button>

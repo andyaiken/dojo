@@ -138,9 +138,9 @@ export class RandomEncounterModal extends React.Component<Props, State> {
 			switch (this.state.data.type) {
 				case 'xp':
 					info = (
-						<p>
+						<div className='section'>
 							the encounter will be created by adding <b>random {monsters}</b> until it reaches <b>{this.state.data.xp} xp</b>
-						</p>
+						</div>
 					);
 					content = (
 						<div>
@@ -159,9 +159,9 @@ export class RandomEncounterModal extends React.Component<Props, State> {
 					break;
 				case 'party':
 					info = (
-						<p>
+						<div className='section'>
 							the encounter will be created by adding <b>random {monsters}</b> until it reaches <b>{this.state.data.difficulty} difficulty</b>
-						</p>
+						</div>
 					);
 					content = (
 						<div>

@@ -540,8 +540,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				selector = (
 					<div>
 						<Note>
-							<p>select a
-								one of the following fields to see its values from your scratchpad monsters</p>
+							<div className='section'>
+								select one of the following fields to see its values from your scratchpad monsters
+							</div>
 						</Note>
 						<Selector
 							options={this.getHelpOptionsForPage(this.state.page).map(s => ({ id: s, text: s }))}
@@ -1049,7 +1050,9 @@ class CombatTab extends React.Component<CombatTabProps> {
 							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 						/>
 						<Note>
-							<p>to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier</p>
+							<div className='section'>
+								to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier
+							</div>
 							<hr/>
 							<div className='hp-value'>
 								{Frankenstein.getTypicalHP(this.props.monster) + ' hp (' + Frankenstein.getTypicalHPString(this.props.monster) + ')'}
@@ -1271,8 +1274,12 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 			return (
 				<div>
 					<Note>
-						<p>this table shows typical values for certain stats (ac, hp, etc) for a given challenge rating</p>
-						<p>to gauge a monster's cr, take the average of its defensive cr (from ac and hp) and offensive cr (from attack bonus, save dc, and damage per round)</p>
+						<div className='section'>
+							this table shows typical values for certain stats (ac, hp, etc) for a given challenge rating
+						</div>
+						<div className='section'>
+							to gauge a monster's cr, take the average of its defensive cr (from ac and hp) and offensive cr (from attack bonus, save dc, and damage per round)
+						</div>
 					</Note>
 					<div className='table alternating'>
 						<Row className='table-row table-row-header'>
@@ -1404,7 +1411,9 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 			if (traits.length === 0) {
 				featuresSection = (
 					<Note>
-						<p>no features found</p>
+						<div className='section'>
+							no features found
+						</div>
 					</Note>
 				);
 			} else {
@@ -1491,7 +1500,9 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 			return (
 				<div>
 					<Note>
-						<p>here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster</p>
+						<div className='section'>
+							here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster
+						</div>
 					</Note>
 					<Selector
 						options={['search', 'random'].map(o => ({ id: o, text: o }))}
