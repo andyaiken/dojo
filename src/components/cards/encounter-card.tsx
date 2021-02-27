@@ -11,6 +11,7 @@ import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { EncounterOptions } from '../options/encounter-options';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Conditional } from '../controls/conditional';
 
 interface Props {
 	encounter: Encounter;
@@ -109,8 +110,10 @@ export class EncounterCard extends React.Component<Props> {
 							{slots}
 							<div className='subheading'>xp</div>
 							{Napoleon.getEncounterXP(this.props.encounter, null, this.props.getMonster)}
-							<div className='subheading'>notes</div>
-							<ReactMarkdown source={this.props.encounter.notes} />
+							<Conditional display={!!this.props.encounter.notes}>
+								<div className='subheading'>notes</div>
+								<ReactMarkdown source={this.props.encounter.notes} />
+							</Conditional>
 						</div>
 						<hr/>
 						<button onClick={() => this.props.openEncounter(this.props.encounter)}>open encounter</button>
