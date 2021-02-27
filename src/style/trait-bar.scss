@@ -1,27 +1,7 @@
 .trait-header-bar {
 	background-color: $control-border-05;
 	margin: 2px 0;
-	padding: 5px;
-	display: flex;
-	align-items: center;
-
-	.subheading {
-		flex-grow: 1;
-		flex-shrink: 1;
-		flex-basis: 0;
-	}
-
-	.anticon {
-		flex-grow: 0;
-		flex-shrink: 0;
-		flex-basis: auto;
-		font-size: 14px;
-		padding: 5px;
-
-		&:hover {
-			background-color: $highlight02;
-		}
-	}
+	padding-left: 5px;
 }
 
 .trait-bar {

@@ -74,6 +74,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>on the right you will see your monster groups</div>
 							<div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
+							<div className='section'>press a group's <b>open group</b> button to see monster details</div>
 							<hr/>
 							<div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
 						</Note>

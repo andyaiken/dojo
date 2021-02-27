@@ -66,6 +66,7 @@ export class MapListScreen extends React.Component<Props> {
 							<div className='section'>when you have created a map you can explore it with a party of pcs, or use it in the combat manager</div>
 							<hr/>
 							<div className='section'>on the right you will see the maps you have created</div>
+							<div className='section'>press a map's <b>open map</b> button to modify it</div>
 							<hr/>
 							<div className='section'>to design a new map, press the <b>add a new map</b> button</div>
 						</Note>

@@ -9,6 +9,7 @@ import { Condition } from '../../models/condition';
 import { RenderError } from '../error';
 import { Group } from '../controls/group';
 import { NumberSpin } from '../controls/number-spin';
+import { Conditional } from '../controls/conditional';
 
 interface Props {
 	combatants: Combatant[];
@@ -77,15 +78,6 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 				name = this.props.combatant.displayName + ': ' + name;
 			}
 
-			let duration = null;
-			if (this.props.condition.duration !== null) {
-				duration = (
-					<div className='section'>
-						<i>{Gygax.conditionDurationText(this.props.condition, this.props.combatants)}</i>
-					</div>
-				);
-			}
-
 			const description = [];
 			if (this.props.condition.name === 'exhaustion') {
 				description.push(
@@ -109,17 +101,21 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 
 			return (
 				<Group>
-					<div className='condition-panel'>
-						<div className='condition-heading'>
-							<div className='condition-name'>{name}</div>
-							<div className='condition-buttons'>
-								<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
-								<DeleteOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
-							</div>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='subheading'>{name}</div>
+							<Conditional display={this.props.condition.duration !== null}>
+								<div className='section'>
+									<i>{Gygax.conditionDurationText(this.props.condition, this.props.combatants)}</i>
+								</div>
+							</Conditional>
+							{description}
+						</div>
+						<div className='icons vertical'>
+							<EditOutlined title='edit' onClick={() => this.props.editCondition(this.props.condition)} />
+							<DeleteOutlined title='remove' onClick={() => this.props.deleteCondition(this.props.condition)} />
 						</div>
 					</div>
-					{duration}
-					{description}
 				</Group>
 			);
 		} catch (e) {

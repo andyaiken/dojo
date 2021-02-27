@@ -83,7 +83,7 @@ export class HomeScreen extends React.Component<Props> {
 							to get started
 						</div>
 						<div className='section'>
-							use the buttons at the bottom of the screen to explore <span className='app-name'>dojo</span>'s main features
+							use the buttons at the bottom of this screen to explore <span className='app-name'>dojo</span>'s main features
 						</div>
 						<div className='section'>
 							the arrow at the top right gives you additional tools like a die roller, some useful random generators, and rules references

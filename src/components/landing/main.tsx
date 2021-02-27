@@ -22,6 +22,7 @@ import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
 import { ErrorBoundary, RenderError } from '../error';
+import { Checkbox } from '../controls/checkbox';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
@@ -1025,7 +1026,8 @@ export class Main extends React.Component<Props, State> {
 			this.setState({
 				drawer: {
 					type: 'monster',
-					monster: copy
+					monster: copy,
+					showAdvancedTools: false
 				}
 			});
 		}
@@ -1036,7 +1038,8 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			drawer: {
 				type: 'monster',
-				monster: copy
+				monster: copy,
+				showAdvancedTools: false
 			}
 		});
 	}
@@ -3163,6 +3166,7 @@ export class Main extends React.Component<Props, State> {
 					content = (
 						<MonsterEditorModal
 							monster={this.state.drawer.monster}
+							showAdvancedTools={this.state.drawer.showAdvancedTools}
 							library={this.state.library}
 							options={this.state.options}
 						/>
@@ -3170,12 +3174,25 @@ export class Main extends React.Component<Props, State> {
 					header = 'monster editor';
 					footer = (
 						<Row gutter={20}>
-							<Col span={12}>
+							<Col span={6}>
 								<button onClick={() => this.saveMonster()}>save changes</button>
 							</Col>
-							<Col span={12}>
+							<Col span={6}>
 								<button onClick={() => this.closeDrawer()}>discard changes</button>
 							</Col>
+							<Col span={3} />
+							<Col span={6}>
+								<Checkbox
+									label='show advanced tools'
+									checked={this.state.drawer.showAdvancedTools}
+									onChecked={() => {
+										const drawer = this.state.drawer;
+										drawer.showAdvancedTools = !drawer.showAdvancedTools;
+										this.setState({ drawer: drawer });
+									}}
+								/>
+							</Col>
+							<Col span={3} />
 						</Row>
 					);
 					width = '85%';

@@ -8,6 +8,7 @@ import { RenderError } from '../error';
 import { Group } from '../controls/group';
 import { Statistic } from '../controls/statistic';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Conditional } from '../controls/conditional';
 
 interface Props {
 	pc: PC | (PC & Combatant);
@@ -51,9 +52,11 @@ export class PCStatblockCard extends React.Component<Props> {
 								<Tag>{this.props.pc.classes || 'unknown class'}</Tag>
 								<Tag>{'level ' + this.props.pc.level}</Tag>
 							</div>
-							<div className='section centered' style={{ display: this.props.pc.url ? '' : 'none' }}>
-								<a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
-							</div>
+							<Conditional display={!!this.props.pc.url}>
+								<div className='section centered'>
+									<a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
+								</div>
+							</Conditional>
 							<hr/>
 							<div className='section subheading'>size</div>
 							<div className='section'>

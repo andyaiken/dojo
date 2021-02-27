@@ -441,8 +441,8 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					downEnabled={this.state.damageValue > 0}
 					onNudgeValue={delta => this.nudgeDamage(delta)}
 				/>
-				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>{apply}</button>
 				{degrees}
+				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>{apply}</button>
 				{defeatedBtn}
 				<hr/>
 				<Expander text='healing'>
@@ -594,14 +594,14 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					<hr/>
 					{aura}
 					{place}
-					<button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from map</button>
+					<button onClick={() => this.props.mapRemove(this.props.combatants)}>remove from the map</button>
 				</div>
 			);
 		}
 
 		if (this.props.combatants.length === 1) {
 			return (
-				<button key='mapAdd' onClick={() => this.props.mapAdd(this.props.combatants[0])}>add to map</button>
+				<button key='mapAdd' onClick={() => this.props.mapAdd(this.props.combatants[0])}>add to the map</button>
 			);
 		}
 

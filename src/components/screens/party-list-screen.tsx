@@ -71,7 +71,7 @@ export class PartyListScreen extends React.Component<Props> {
 							<div className='section'>when you have set up a party and an encounter you can run the encounter in the combat manager</div>
 							<hr/>
 							<div className='section'>on the right you will see the parties that you have created</div>
-							<div className='section'>select a party from the list to see pc details</div>
+							<div className='section'>press a party's <b>open party</b> button to see details of its pcs</div>
 							<hr/>
 							<div className='section'>to start adding a party, press the <b>add a new party</b> button</div>
 						</Note>

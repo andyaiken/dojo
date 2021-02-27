@@ -3,47 +3,12 @@
 	margin-bottom: 100px;
 }
 
-.connections-panel {
-	.person {
-		display: flex;
-		align-items: center;
-
-		.person-details {
-			flex-grow: 1;
-			flex-shrink: 1;
-			flex-basis: 0;
-		}
-
-		.person-icon {
-			flex-grow: 0;
-			flex-shrink: 0;
-			flex-basis: auto;
-			padding: 0 5px;
-			font-size: 18px;
-
-			&:hover,
-			&.active {
-				background-color: $highlight01;
-			}
-		}
-
-		.status {
-			opacity: 0.7;
-		}
-
-		.controls-panel {
-			margin-top: 10px;
-		}
-	}
-}
-
 .character-panel {
+	margin: 5px 0;
+
 	.name {
 		display: inline-block;
-
-		&.pc {
-			font-weight: 600;
-		}
+		font-weight: 600;
 	}
 }
 

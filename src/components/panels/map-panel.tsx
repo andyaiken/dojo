@@ -17,6 +17,7 @@ import { PC } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
@@ -397,11 +398,11 @@ export class MapPanel extends React.Component<Props, State> {
 						content={(
 							<div>
 								<Checkbox
-									label='highlight square'
+									label='highlight map square'
 									checked={this.props.features.highlight}
 									onChecked={() => this.props.toggleFeature('highlight')}
 								/>
-								<div style={{ display: this.props.features.highlight ? 'block' : 'none' }}>
+								<Conditional display={this.props.features.highlight}>
 									<Note>
 										<div className='section'>
 											use your mouse to indicate a square on the map
@@ -410,7 +411,7 @@ export class MapPanel extends React.Component<Props, State> {
 											that square will be highlighted on the shared map as well
 										</div>
 									</Note>
-								</div>
+								</Conditional>
 							</div>
 						)}
 						trigger='hover'
@@ -431,7 +432,7 @@ export class MapPanel extends React.Component<Props, State> {
 									checked={this.props.features.editFog}
 									onChecked={() => this.props.toggleFeature('editFog')}
 								/>
-								<div style={{ display: this.props.features.editFog ? 'block' : 'none' }}>
+								<Conditional display={this.props.features.editFog}>
 									<Note>
 										<div className='section'>
 											click on map squares to turn fog of war on and off
@@ -446,7 +447,7 @@ export class MapPanel extends React.Component<Props, State> {
 									<button onClick={() => this.props.clearFog()} className={this.props.fog.length === 0 ? 'disabled' : ''}>
 										clear fog of war
 									</button>
-								</div>
+								</Conditional>
 							</div>
 						)}
 						trigger='hover'
@@ -1375,7 +1376,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 
 		if (clicked) {
 			info.push(
-				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from map</button>
+				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from the map</button>
 			);
 		}
 
@@ -1398,8 +1399,8 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 				style += ' selected';
 			}
 
-			if (!this.props.selectable) {
-				style += ' not-selectable';
+			if (this.props.simple) {
+				style += ' not-interactive';
 			}
 
 			if (this.props.combatant) {

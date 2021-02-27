@@ -20,6 +20,7 @@ import { MapItemCard } from '../cards/map-item-card';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
 import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
@@ -366,14 +367,14 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				<ConfirmButton onConfirm={() => this.props.endExploration(this.props.exploration)}>end exploration</ConfirmButton>
 				<div className='heading'>map</div>
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
-				<div style={{ display: this.state.addingOverlay ? '' : 'none' }}>
+				<Conditional display={this.state.addingOverlay}>
 					<Note>
 						<div className='section'>
 							click on a map square to add a token, or select a rectangle to add an overlay
 						</div>
 					</Note>
-				</div>
-				<button onClick={() => this.props.rotateMap()}>rotate map</button>
+				</Conditional>
+				<button onClick={() => this.props.rotateMap()}>rotate the map</button>
 				<div className='heading'>sharing</div>
 				<Checkbox
 					label='share in player view'
@@ -474,11 +475,14 @@ export class ExplorationScreen extends React.Component<Props, State> {
 						<div className='section'>multiple combatants are selected:</div>
 						{combatants.map(c => (
 							<Group key={c.id}>
-								{c.displayName}
-								<CloseCircleOutlined
-									style={{ float: 'right', padding: '2px 0', fontSize: '14px' }}
-									onClick={() => this.toggleItemSelection(c.id, true)}
-								/>
+								<div className='content-then-icons'>
+									<div className='content'>
+										{c.displayName}
+									</div>
+									<div className='icons'>
+										<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />
+									</div>
+								</div>
 							</Group>
 						))}
 					</Note>

@@ -241,7 +241,7 @@ export class MapScreen extends React.Component<Props, State> {
 							<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
 						</div>
 						<hr/>
-						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate map</button>
+						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate the map</button>
 						<button onClick={() => this.props.generateRoom(this.props.map)}>add a random room</button>
 						<hr/>
 						<MapOptions

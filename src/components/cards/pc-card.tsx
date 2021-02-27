@@ -5,6 +5,7 @@ import { Combatant } from '../../models/combat';
 import { Party, PC } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { PCOptions } from '../options/pc-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -41,9 +42,11 @@ export class PCCard extends React.Component<Props> {
 								<Tag>{this.props.pc.classes || 'unknown class'}</Tag>
 								<Tag>{'level ' + this.props.pc.level}</Tag>
 							</div>
-							<div className='section centered' style={{ display: this.props.pc.url ? '' : 'none' }}>
-								<a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
-							</div>
+							<Conditional display={!!this.props.pc.url}>
+								<div className='section centered'>
+									<a href={this.props.pc.url} target='_blank' rel='noopener noreferrer'>d&amp;d beyond sheet</a>
+								</div>
+							</Conditional>
 						</div>
 						<hr/>
 						<PCOptions

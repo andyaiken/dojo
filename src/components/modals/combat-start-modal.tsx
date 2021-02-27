@@ -16,6 +16,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 import { RenderError } from '../error';
 import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
@@ -795,28 +796,28 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 						label='roll initiative automatically for monsters'
 						onChecked={checked => this.setState({ standardInitOptions: checked })}
 					/>
-					<div style={{ display: this.state.standardInitOptions ? 'none' : 'block' }}>
+					<Conditional display={!this.state.standardInitOptions}>
 						{this.getSlots(slotsContainer, 'initiative')}
 						<hr/>
-					</div>
+					</Conditional>
 					<Checkbox
 						checked={this.state.standardHPOptions}
 						label='use typical hp for monsters'
 						onChecked={checked => this.setState({ standardHPOptions: checked })}
 					/>
-					<div style={{ display: this.state.standardHPOptions ? 'none' : 'block' }}>
+					<Conditional display={!this.state.standardHPOptions}>
 						{this.getSlots(slotsContainer, 'hit points')}
 						<hr/>
-					</div>
+					</Conditional>
 					<Checkbox
 						checked={this.state.additionalOptions}
 						label='show additional options'
 						onChecked={checked => this.setState({ additionalOptions: checked })}
 					/>
-					<div style={{ display: this.state.additionalOptions ? 'block' : 'none' }}>
+					<Conditional display={this.state.additionalOptions}>
 						<Selector options={['count', 'names', 'faction'].map(s => ({ id: s, text: s }))} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 						{this.getSlots(slotsContainer, this.state.view)}
-					</div>
+					</Conditional>
 				</div>
 			);
 		}

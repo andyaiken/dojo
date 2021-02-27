@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
 
-import { CATEGORY_TYPES, Monster, MonsterGroup, SIZE_TYPES } from '../../models/monster';
+import { CATEGORY_TYPES, Monster, MonsterGroup, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
 
 import { RenderError } from '../error';
 import { Selector } from '../controls/selector';
@@ -67,6 +67,14 @@ export class DemographicsModal extends React.Component<Props, State> {
 						};
 					});
 					break;
+				case 'role':
+					data = ROLE_TYPES.map(role => {
+						return {
+							text: role,
+							value: allMonsters.filter(monster => monster.role === role).length
+						};
+					});
+					break;
 				default:
 					// Do nothing
 					break;
@@ -84,6 +92,10 @@ export class DemographicsModal extends React.Component<Props, State> {
 				{
 					id: 'type',
 					text: 'type'
+				},
+				{
+					id: 'role',
+					text: 'role'
 				}
 			];
 

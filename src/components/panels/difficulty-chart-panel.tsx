@@ -10,6 +10,7 @@ import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
 import { NumberSpin } from '../controls/number-spin';
 
@@ -101,12 +102,14 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 							<Col span={8} className='right-value'>{monsterXP} xp</Col>
 						</Row>
 					</div>
-					<div className='section' style={{ display: (adjustedXP === monsterXP) ? 'none' : ''}}>
-						<Row>
-							<Col span={16}>effective xp for {monsterCount} monster(s)</Col>
-							<Col span={8} className='right-value'>{adjustedXP} xp</Col>
-						</Row>
-					</div>
+					<Conditional display={adjustedXP !== monsterXP}>
+						<div className='section'>
+							<Row>
+								<Col span={16}>effective xp for {monsterCount} monster(s)</Col>
+								<Col span={8} className='right-value'>{adjustedXP} xp</Col>
+							</Row>
+						</div>
+					</Conditional>
 				</div>
 			);
 
@@ -252,12 +255,14 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 								<Col span={8} className='right-value'>{difficulty}</Col>
 							</Row>
 						</div>
-						<div className='section' style={{ display: (adjustedDifficulty === difficulty) ? 'none' : ''}}>
-							<Row>
-								<Col span={16}>effective difficulty for {pcs.length} pc(s)</Col>
-								<Col span={8} className='right-value'>{adjustedDifficulty}</Col>
-							</Row>
-						</div>
+						<Conditional display={adjustedDifficulty !== difficulty}>
+							<div className='section'>
+								<Row>
+									<Col span={16}>effective difficulty for {pcs.length} pc(s)</Col>
+									<Col span={8} className='right-value'>{adjustedDifficulty}</Col>
+								</Row>
+							</div>
+						</Conditional>
 					</div>
 				);
 			} else {

@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row, Tag } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
@@ -21,6 +21,7 @@ import { Monster } from '../../models/monster';
 
 import { ErrorBoundary, RenderError } from '../error';
 import { MonsterStatblockCard } from '../cards/monster-statblock-card';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
@@ -130,7 +131,18 @@ export class Player extends React.Component<Props, State> {
 			this.moveToken('E');
 		});
 
-		CommsPlayer.onStateChanged = () => this.forceUpdate();
+		CommsPlayer.onStateChanged = () => {
+			if (CommsPlayer.getState() !== 'connected') {
+				const sidebar = this.state.sidebar;
+				sidebar.type = 'reference';
+				sidebar.subtype = 'skills';
+				this.setState({
+					sidebar: sidebar
+				});
+			} else {
+				this.forceUpdate();
+			}
+		}
 		CommsPlayer.onDataChanged = () => {
 			Comms.data.shared.images.forEach(img => Matisse.saveImage(img.id, img.name, img.data));
 			this.forceUpdate();
@@ -377,12 +389,10 @@ export class Player extends React.Component<Props, State> {
 
 		let pcSection = null;
 		if ((characterID === '') && (Comms.data.party !== null)) {
-			const pcs: JSX.Element[] = [];
-			Comms.data.party.pcs.filter(pc => pc.active).forEach(pc => {
-				const claimed = Comms.data.people.some(person => person.characterID === pc.id);
-				if (!claimed) {
-					pcs.push(
-						<button key={pc.id} onClick={() => CommsPlayer.sendUpdate('', pc.id)}>
+			const pcs = Comms.data.party.pcs.filter(pc => pc.active).map(pc => (
+				<Group key={pc.id}>
+					<div className='content-then-icons'>
+						<div className='content'>
 							<div className='section'>
 								<PortraitPanel source={pc} inline={true} />
 								{pc.name}
@@ -390,10 +400,17 @@ export class Player extends React.Component<Props, State> {
 							<Tag>
 								{'level ' + pc.level + ' ' + pc.race + ' ' + pc.classes}
 							</Tag>
-						</button>
-					);
-				}
-			});
+						</div>
+						<div className='icons'>
+							<CheckCircleOutlined
+								className={Comms.data.people.some(person => person.characterID === pc.id) ? 'disabled' : ''}
+								title='select'
+								onClick={() => CommsPlayer.sendUpdate('', pc.id)}
+							/>
+						</div>
+					</div>
+				</Group>
+			));
 			pcSection = (
 				<div>
 					<hr/>
@@ -401,6 +418,7 @@ export class Player extends React.Component<Props, State> {
 						in the meantime, please select your character:
 					</div>
 					{pcs}
+					<hr/>
 					<div className='section'>
 						or, create a new character <button className='link' onClick={() => this.newPC()}>here</button>
 					</div>

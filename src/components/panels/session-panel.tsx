@@ -46,35 +46,42 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 				);
 			}
 
-			const people = this.props.people.map(person => {
-				let icon = null;
-				if ((this.props.user === 'dm') && (person.id !== Comms.getID())) {
-					icon = (
-						<CloseCircleOutlined
-							title='kick'
-							onClick={() => this.props.kick(person.id)}
-						/>
-					);
-				}
-
+			if (this.props.user === 'player') {
 				return (
-					<Group key={person.id}>
-						<div className='person'>
-							<div className='person-details'>
-								<CharacterPanel person={person} />
-								<div className='status'>{person.status}</div>
-							</div>
-							<div className='person-icon'>
-								{icon}
-							</div>
-						</div>
-					</Group>
+					<div>
+						{
+							this.props.people.map(person => (
+								<Group key={person.id}>
+									<CharacterPanel person={person} />
+									<div className='section'>{person.status || 'connected'}</div>
+								</Group>
+							))
+						}
+					</div>
 				);
-			});
+			}
 
 			return (
 				<div className='connections-panel'>
-					{people}
+					{
+						this.props.people.map(person => (
+							<Group key={person.id}>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<CharacterPanel person={person} />
+										<div className='section'>{person.status || 'connected'}</div>
+									</div>
+									<div className='icons'>
+										<CloseCircleOutlined
+											className={person.id === Comms.getID() ? 'disabled' : ''}
+											title='kick'
+											onClick={() => this.props.kick(person.id)}
+										/>
+									</div>
+								</div>
+							</Group>
+						))
+					}
 				</div>
 			);
 		} catch (e) {
@@ -854,7 +861,7 @@ class CharacterPanel extends React.Component<CharacterPanelProps> {
 				return (
 					<div className='character-panel'>
 						<PortraitPanel source={pc} inline={true} />
-						<div className='name pc'>{pc.name}</div>
+						<div className='name'>{pc.name}</div>
 					</div>
 				);
 			}

@@ -4,6 +4,7 @@ import React from 'react';
 import { MapItem } from '../../models/map';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 import { MovementPanel } from '../panels/movement-panel';
@@ -41,7 +42,7 @@ export class MapItemCard extends React.Component<Props> {
 						/>
 						<div className='subheading'>move</div>
 						<MovementPanel showToggle={true} onMove={(dir, step) => this.props.moveMapItem(this.props.item, dir, step)} />
-						<div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
+						<Conditional display={this.props.item.type === 'overlay'}>
 							<div className='subheading'>size</div>
 							<div className='section'>
 								<NumberSpin
@@ -57,8 +58,8 @@ export class MapItemCard extends React.Component<Props> {
 									onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'height', delta)}
 								/>
 							</div>
-						</div>
-						<div style={{ display: this.props.item.type === 'overlay' ? 'block' : 'none' }}>
+						</Conditional>
+						<Conditional display={this.props.item.type === 'overlay'}>
 							<div className='subheading'>shape</div>
 							<Selector
 								options={styleOptions}
@@ -79,8 +80,8 @@ export class MapItemCard extends React.Component<Props> {
 								tooltipVisible={false}
 								onChange={(value: any) => this.props.changeValue(this.props.item, 'opacity', value)}
 							/>
-						</div>
-						<div style={{ display: this.props.item.type === 'token' ? 'block' : 'none' }}>
+						</Conditional>
+						<Conditional display={this.props.item.type === 'token'}>
 							<div className='subheading'>size</div>
 							<NumberSpin
 								value={this.props.item.size}
@@ -88,7 +89,7 @@ export class MapItemCard extends React.Component<Props> {
 								upEnabled={this.props.item.size !== 'gargantuan'}
 								onNudgeValue={delta => this.props.nudgeValue(this.props.item, 'size', delta)}
 							/>
-						</div>
+						</Conditional>
 						<hr/>
 						<div className='section'>
 							<button onClick={() => this.props.deleteMapItem(this.props.item)}>remove from the map</button>

@@ -30,9 +30,11 @@ import { AbilityScorePanel } from '../../panels/ability-score-panel';
 import { FilterPanel } from '../../panels/filter-panel';
 import { PortraitPanel } from '../../panels/portrait-panel';
 import { TraitEditorPanel, TraitPanel } from '../../panels/traits-panel';
+import { Conditional } from '../../controls/conditional';
 
 interface Props {
 	monster: Monster;
+	showAdvancedTools: boolean;
 	library: MonsterGroup[];
 	options: Options;
 }
@@ -598,9 +600,11 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					<div className='section'>
 						you might find this useful if, for example, you want your monster to have similar abilities to other monsters
 					</div>
-					<div className='section' style={{ display: this.state.scratchpadList.length < 2 ? 'none' : '' }}>
-						or you can <button className='link' onClick={() => this.spliceMonsters()}>splice these monsters together</button> to create a unique hyrid monster
-					</div>
+					<Conditional display={this.state.scratchpadList.length >= 2}>
+						<div className='section'>
+							you can also <button className='link' onClick={() => this.spliceMonsters()}>splice these monsters together</button> to create a unique hyrid monster
+						</div>
+					</Conditional>
 				</Note>
 				{content}
 			</div>
@@ -840,8 +844,24 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	public render() {
 		try {
 			const content = this.getContent();
-			const sidebar = this.getSidebar();
 			const drawer = this.getDrawer();
+
+			let right = (
+				<MonsterStatblockCard monster={this.state.monster} />
+			);
+			if (this.props.showAdvancedTools) {
+				const sidebar = this.getSidebar();
+				right = (
+					<div>
+						<Tabs
+							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.sidebarView}
+							onSelect={option => this.setState({ sidebarView: option })}
+						/>
+						{sidebar}
+					</div>
+				);
+			}
 
 			return (
 				<Row className='full-height'>
@@ -854,12 +874,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						{content}
 					</Col>
 					<Col span={12} className='scrollable sidebar sidebar-right'>
-						<Tabs
-							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.sidebarView}
-							onSelect={option => this.setState({ sidebarView: option })}
-						/>
-						{sidebar}
+						{right}
 					</Col>
 					<Drawer
 						className={this.props.options.theme}
@@ -1129,11 +1144,19 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 		return (
 			<div>
 				<div className='trait-header-bar'>
-					<div className='subheading'>{Gygax.traitType(type, true)}</div>
-					<PlusCircleOutlined
-						title='add'
-						onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}
-					/>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='subheading'>
+								{Gygax.traitType(type, true)}
+							</div>
+						</div>
+						<div className='icons'>
+							<PlusCircleOutlined
+								title='add'
+								onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}
+							/>
+						</div>
+					</div>
 				</div>
 				<List
 					values={traits}
