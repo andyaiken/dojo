@@ -626,6 +626,30 @@ export class Mercator {
 		}
 	}
 
+	public static getDistanceBetweenItems(a: MapItem, b: MapItem) {
+		let min = Number.MAX_VALUE;
+
+		for (let xa = a.x; xa <= a.x + a.width - 1; ++xa) {
+			for (let ya = a.y; ya <= a.y + a.height - 1; ++ya) {
+				for (let za = a.z; za <= a.z + a.depth - 1; ++za) {
+					for (let xb = b.x; xb <= b.x + b.width - 1; ++xb) {
+						for (let yb = b.y; yb <= b.y + b.height - 1; ++yb) {
+							for (let zb = b.z; zb <= b.z + b.depth - 1; ++zb) {
+								const dx = Math.abs(xa - xb);
+								const dy = Math.abs(ya - yb);
+								const dz = Math.abs(za - zb);
+								const hyp = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2));
+								min = Math.min(min, hyp);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return Math.round(min * 2) / 2;
+	}
+
 	public static getDistance(i: MapItem, steps: { x: number, y: number, z: number }[], diagonalMode: string) {
 		let d = 0;
 

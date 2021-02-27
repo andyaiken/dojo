@@ -181,6 +181,11 @@ class DieRollerTool extends React.Component<DieRollerToolProps> {
 		try {
 			return (
 				<div>
+					<Note>
+						<div className='section'>
+							click to increment a die type; right-click to decrement
+						</div>
+					</Note>
 					<DieRollPanel
 						dice={this.props.dice}
 						constant={this.props.constant}

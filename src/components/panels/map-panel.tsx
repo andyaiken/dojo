@@ -654,6 +654,20 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.mode !== 'edit') {
 			const tokens: (JSX.Element | null)[] = [];
 
+			// Find the active token
+			let activeToken: MapItem | null = null;
+			const characterID = Comms.getCharacterID(Comms.getID());
+			if (characterID) {
+				// The active token is my character's token
+				activeToken = this.props.map.items.find(i => i.id === characterID) || null;
+			} else {
+				// The active token is the initiative holder
+				const combatant = this.props.combatants.find(c => c.current);
+				if (combatant) {
+					activeToken = this.props.map.items.find(i => i.id === combatant.id) || null;
+				}
+			}
+
 			const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
 			this.props.map.items
 				.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
@@ -689,6 +703,7 @@ export class MapPanel extends React.Component<Props, State> {
 							key={i.id}
 							token={i}
 							combatant={combatant || null}
+							activeToken={activeToken}
 							style={tokenStyle}
 							width={miniSize * this.state.size}
 							simple={this.props.mode === 'thumbnail'}
@@ -1252,6 +1267,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
+	activeToken: MapItem | null;
 	style: MapItemStyle;
 	width: number;
 	simple: boolean;
@@ -1306,6 +1322,14 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 		let name = 'token';
 		let tags = null;
 		const info: JSX.Element[] = [];
+
+		if (this.props.activeToken && (this.props.activeToken.id !== this.props.token.id)) {
+			info.push(
+				<div key='distance' className='section'>
+					{Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken) * 5} ft away
+				</div>
+			);
+		}
 
 		if (this.props.combatant) {
 			name = this.props.combatant.displayName || 'unnamed combatant';
