@@ -8,10 +8,10 @@ import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { Expander } from '../controls/expander';
 import { EncounterOptions } from '../options/encounter-options';
 import { PortraitPanel } from '../panels/portrait-panel';
-import { Conditional } from '../controls/conditional';
 
 interface Props {
 	encounter: Encounter;
