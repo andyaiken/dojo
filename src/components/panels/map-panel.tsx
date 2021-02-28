@@ -655,16 +655,28 @@ export class MapPanel extends React.Component<Props, State> {
 			const tokens: (JSX.Element | null)[] = [];
 
 			// Find the active token
-			let activeToken: MapItem | null = null;
+			let activeToken: { token: MapItem, name: string } | null = null;
 			const characterID = Comms.getCharacterID(Comms.getID());
 			if (characterID) {
 				// The active token is my character's token
-				activeToken = this.props.map.items.find(i => i.id === characterID) || null;
+				const token = this.props.map.items.find(i => i.id === characterID);
+				if (token) {
+					activeToken = {
+						token: token,
+						name: 'you'
+					};
+				}
 			} else {
 				// The active token is the initiative holder
 				const combatant = this.props.combatants.find(c => c.current);
 				if (combatant) {
-					activeToken = this.props.map.items.find(i => i.id === combatant.id) || null;
+					const token = this.props.map.items.find(i => i.id === combatant.id);
+					if (token) {
+						activeToken = {
+							token: token,
+							name: combatant.displayName
+						};
+					}
 				}
 			}
 
@@ -1267,7 +1279,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
-	activeToken: MapItem | null;
+	activeToken: { token: MapItem, name: string } | null;
 	style: MapItemStyle;
 	width: number;
 	simple: boolean;
@@ -1323,10 +1335,10 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 		let tags = null;
 		const info: JSX.Element[] = [];
 
-		if (this.props.activeToken && (this.props.activeToken.id !== this.props.token.id)) {
+		if (this.props.activeToken && (this.props.activeToken.token.id !== this.props.token.id)) {
 			info.push(
 				<div key='distance' className='section'>
-					{Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken) * 5} ft away
+					{Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken.token) * 5} ft away from {this.props.activeToken.name}
 				</div>
 			);
 		}

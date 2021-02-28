@@ -653,7 +653,7 @@ export class Mercator {
 	public static getDistance(i: MapItem, steps: { x: number, y: number, z: number }[], diagonalMode: string) {
 		let d = 0;
 
-		const allSteps = steps.concat([i]);
+		const allSteps = steps.filter(step => step !== null).concat([i]);
 		let prev: { x: number, y: number, z: number } | null = null;
 		allSteps.forEach(step => {
 			if (prev) {
