@@ -129,7 +129,7 @@ export class PartyScreen extends React.Component<Props> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError context='PartySidebar' error={e} />;
+			return <RenderError context='PartyScreen' error={e} />;
 		}
 	}
 }

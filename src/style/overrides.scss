@@ -434,6 +434,12 @@ button {
 			width: 200px;
 		}
 	}
+
+	&.scene-tooltip {
+		.ant-popover-inner {
+			width: 225px;
+		}
+	}
 }
 
 .ant-message {
@@ -515,4 +521,8 @@ body .react-mde {
 	margin: 5px 0;
 	border: 1px solid $control-border;
 	border-radius: 0;
+
+	.mde-textarea-wrapper textarea.mde-text {
+		margin: 0;
+	}
 }

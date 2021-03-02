@@ -55,7 +55,7 @@ export class RenderError extends React.Component<RenderErrorProps> {
 			message: (
 				<div>
 					<div className='subheading'>error</div>
-					<div className='section'>{this.props.context}</div>
+					<div className='section'>in {this.props.context}</div>
 					<Textbox text={this.props.error} multiLine={true} onChange={() => null} />
 				</div>
 			),
@@ -67,8 +67,8 @@ export class RenderError extends React.Component<RenderErrorProps> {
 	public render() {
 		return (
 			<div className='render-error'>
-				<div className='message'>error</div>
-				<div className='message'>please refresh</div>
+				<div className='render-message'>error</div>
+				<div className='render-message'>please refresh</div>
 				<button className='link' onClick={() => this.showError()}>details</button>
 			</div>
 		);

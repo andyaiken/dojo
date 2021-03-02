@@ -1,3 +1,4 @@
+import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -13,8 +14,11 @@ import { Party } from '../../models/party';
 import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
 import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
+import { Textbox } from '../controls/textbox';
 
 import pkg from '../../../package.json';
 
@@ -26,17 +30,21 @@ interface Props {
 	explorations: Exploration[];
 	options: Options;
 	setOption: (option: string, value: any) => void;
+	addFlag: (flag: string) => void;
+	removeFlag: (flag: string) => void;
 }
 
 interface State {
 	view: string;
+	flag: string;
 }
 
 export class AboutSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			view: 'dojo'
+			view: 'dojo',
+			flag: ''
 		};
 	}
 
@@ -44,6 +52,21 @@ export class AboutSidebar extends React.Component<Props, State> {
 		this.setState({
 			view: view
 		});
+	}
+
+	private setFlag(flag: string) {
+		this.setState({
+			flag: flag
+		});
+	}
+
+	private addFlag() {
+		const flag = this.state.flag;
+		this.setState({
+			flag: ''
+		}, () => {
+			this.props.addFlag(flag);
+		})
 	}
 
 	private clearImages() {
@@ -147,6 +170,31 @@ export class AboutSidebar extends React.Component<Props, State> {
 								</div>
 							</Note>
 							<button onClick={() => this.clearImages()}>remove unused images</button>
+							<hr/>
+							<Expander text='feature flags'>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<Textbox placeholder='add a feature flag' text={this.state.flag} onChange={text => this.setFlag(text)} />
+									</div>
+									<div className='icons'>
+										<PlusCircleOutlined title='add' onClick={() => this.addFlag()} />
+									</div>
+								</div>
+								{
+									this.props.options.featureFlags.map(flag => (
+										<Group key='flag'>
+											<div className='content-then-icons'>
+												<div className='content'>
+													{flag}
+												</div>
+												<div className='icons'>
+													<DeleteOutlined title='remove' onClick={() => this.props.removeFlag(flag)} />
+												</div>
+											</div>
+										</Group>
+									))
+								}
+							</Expander>
 							<hr/>
 							<div className='subheading'>
 								data

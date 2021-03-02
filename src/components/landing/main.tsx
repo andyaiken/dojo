@@ -13,6 +13,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
+import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
@@ -29,6 +30,7 @@ import { DemographicsModal } from '../modals/demographics-modal';
 import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
 import { ImageSelectionModal } from '../modals/image-selection-modal';
+import { AdventureImportModal } from '../modals/import/adventure-import-modal';
 import { MapImportModal } from '../modals/import/map-import-modal';
 import { MonsterGroupImportModal } from '../modals/import/monster-group-import-modal';
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
@@ -43,6 +45,8 @@ import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
 import { MessagePanel } from '../panels/session-panel';
+import { AdventureListScreen } from '../screens/adventure-list-screen';
+import { AdventureScreen } from '../screens/adventure-screen';
 import { CombatScreen } from '../screens/combat-screen';
 import { EncounterListScreen } from '../screens/encounter-list-screen';
 import { EncounterScreen } from '../screens/encounter-screen';
@@ -69,6 +73,7 @@ interface State {
 	maps: Map[];
 	combats: Combat[];
 	explorations: Exploration[];
+	adventures: Adventure[];
 	options: Options;
 
 	selectedPartyID: string | null;
@@ -77,6 +82,7 @@ interface State {
 	selectedMapID: string | null;
 	selectedCombatID: string | null;
 	selectedExplorationID: string | null;
+	selectedAdventureID: string | null;
 }
 
 export class Main extends React.Component<Props, State> {
@@ -340,10 +346,21 @@ export class Main extends React.Component<Props, State> {
 			console.error('Could not parse JSON: ', ex);
 		}
 
+		let adventures: Adventure[] = [];
+		try {
+			const str = window.localStorage.getItem('data-adventures');
+			if (str) {
+				adventures = JSON.parse(str);
+			}
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
+
 		let options: Options = {
 			showMonsterDieRolls: false,
 			theme: 'light',
-			diagonals: 'onepointfive'
+			diagonals: 'onepointfive',
+			featureFlags: []
 		};
 		try {
 			const str = window.localStorage.getItem('data-options');
@@ -355,6 +372,9 @@ export class Main extends React.Component<Props, State> {
 				}
 				if (options.diagonals === undefined) {
 					options.diagonals = 'onepointfive';
+				}
+				if (options.featureFlags === undefined) {
+					options.featureFlags = [];
 				}
 			}
 		} catch (ex) {
@@ -392,13 +412,15 @@ export class Main extends React.Component<Props, State> {
 			maps: maps,
 			combats: combats,
 			explorations: explorations,
+			adventures: adventures,
 			options: options,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedEncounterID: null,
 			selectedMapID: null,
 			selectedCombatID: null,
-			selectedExplorationID: null
+			selectedExplorationID: null,
+			selectedAdventureID: null
 		};
 
 		Matisse.clearUnusedImages(maps, combats, explorations);
@@ -557,6 +579,12 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private selectAdventure(adventure: Adventure | null) {
+		this.setState({
+			selectedAdventureID: adventure ? adventure.id : null
+		});
+	}
+
 	private selectPartyByID(id: string | null) {
 		this.save();
 		this.setState({
@@ -588,6 +616,14 @@ export class Main extends React.Component<Props, State> {
 			view: 'maps',
 			selectedMapID: id,
 			selectedExplorationID: null
+		});
+	}
+
+	private selectAdventureByID(id: string | null) {
+		this.save();
+		this.setState({
+			view: 'adventures',
+			selectedAdventureID: id
 		});
 	}
 
@@ -675,6 +711,7 @@ export class Main extends React.Component<Props, State> {
 		Utils.sort(this.state.library);
 		Utils.sort(this.state.encounters);
 		Utils.sort(this.state.maps);
+		Utils.sort(this.state.adventures);
 		Utils.sort(this.state.combats);
 		Utils.sort(this.state.explorations);
 
@@ -708,6 +745,7 @@ export class Main extends React.Component<Props, State> {
 			library: this.state.library,
 			encounters: this.state.encounters,
 			maps: this.state.maps,
+			adventures: this.state.adventures,
 			combats: this.state.combats,
 			explorations: this.state.explorations,
 			selectedPartyID: this.state.selectedPartyID,
@@ -1451,6 +1489,90 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			maps: this.state.maps
+		});
+	}
+
+	//#endregion
+
+	//#region Adventure screen
+
+	private addAdventure() {
+		const adventure = Factory.createAdventure();
+		const adventures: Adventure[] = ([] as Adventure[]).concat(this.state.adventures, [adventure]);
+		Utils.sort(adventures);
+		this.setState({
+			adventures: adventures,
+			selectedAdventureID: adventure.id
+		});
+	}
+
+	private importAdventure() {
+		this.setState({
+			drawer: {
+				type: 'import-adventure',
+				adventure: Factory.createAdventure()
+			}
+		});
+	}
+
+	private acceptImportedAdventure() {
+		this.state.adventures.push(this.state.drawer.adventure);
+		this.setState({
+			adventures: this.state.adventures,
+			drawer: null
+		});
+	}
+
+	private deleteAdventure(adventure: Adventure) {
+		const index = this.state.adventures.indexOf(adventure);
+		this.state.adventures.splice(index, 1);
+		this.setState({
+			adventures: this.state.adventures,
+			selectedAdventureID: null
+		});
+	}
+
+	private addScene(plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) {
+		const newScene = Factory.createScene();
+		plot.scenes.push(newScene);
+		if (sceneBefore) {
+			const link = Factory.createSceneLink();
+			link.sceneID = newScene.id;
+			sceneBefore.links.push(link);
+		}
+		if (sceneAfter) {
+			const link = Factory.createSceneLink();
+			link.sceneID = sceneAfter.id;
+			newScene.links.push(link);
+		}
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private deleteScene(plot: Plot, scene: Scene) {
+		plot.scenes = plot.scenes.filter(s => s.id !== scene.id);
+		plot.scenes.forEach(s => {
+			s.links = s.links.filter(l => l.sceneID !== scene.id);
+		});
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private addLink(scene: Scene, sceneID: string) {
+		const link = Factory.createSceneLink();
+		link.sceneID = sceneID;
+		scene.links.push(link);
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private deleteLink(scene: Scene, link: SceneLink) {
+		scene.links = scene.links.filter(l => l.id !== link.id);
+		this.setState({
+			adventures: this.state.adventures
 		});
 	}
 
@@ -2444,6 +2566,9 @@ export class Main extends React.Component<Props, State> {
 				this.saveKey(this.state.maps, 'data-maps');
 				this.saveKey(this.state.explorations, 'data-explorations');
 				break;
+			case 'adventures':
+				this.saveKey(this.state.adventures, 'data-adventures');
+				break;
 		}
 
 		this.saveKey(this.state.options, 'data-options');
@@ -2454,6 +2579,7 @@ export class Main extends React.Component<Props, State> {
 		this.saveKey(this.state.library, 'data-library');
 		this.saveKey(this.state.encounters, 'data-encounters');
 		this.saveKey(this.state.maps, 'data-maps');
+		this.saveKey(this.state.adventures, 'data-adventures');
 		this.saveKey(this.state.combats, 'data-combats');
 		this.saveKey(this.state.explorations, 'data-explorations');
 		this.saveKey(this.state.options, 'data-options');
@@ -2555,6 +2681,21 @@ export class Main extends React.Component<Props, State> {
 						id: ex.id,
 						text: ex.name || 'unnamed exploration',
 						onClick: () => this.selectExplorationByID(this.state.selectedExplorationID)
+					});
+				}
+				break;
+			case 'adventures':
+				breadcrumbs.push({
+					id: 'adventures',
+					text: 'adventures',
+					onClick: () => this.selectAdventureByID(null)
+				});
+				if (this.state.selectedAdventureID) {
+					const adventure = this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure;
+					breadcrumbs.push({
+						id: adventure.id,
+						text: adventure.name || 'unnamed adventure',
+						onClick: () => this.selectAdventureByID(this.state.selectedAdventureID)
 					});
 				}
 				break;
@@ -3033,13 +3174,39 @@ export class Main extends React.Component<Props, State> {
 						deleteExploration={ex => this.endExploration(ex)}
 					/>
 				);
+			case 'adventures':
+				if (this.state.selectedAdventureID) {
+					return (
+						<AdventureScreen
+							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
+							goBack={() => this.selectAdventure(null)}
+							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
+							deleteScene={(plot, scene) => this.deleteScene(plot, scene)}
+							addLink={(scene, sceneID) => this.addLink(scene, sceneID)}
+							deleteLink={(scene, link) => this.deleteLink(scene, link)}
+							deleteAdventure={adventure => this.deleteAdventure(adventure)}
+							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
+						/>
+					);
+				}
+				return (
+					<AdventureListScreen
+						adventures={this.state.adventures}
+						addAdventure={() => this.addAdventure()}
+						importAdventure={() => this.importAdventure()}
+						openAdventure={adventure => this.selectAdventure(adventure)}
+						deleteAdventure={adventure => this.deleteAdventure(adventure)}
+					/>
+				);
 		}
 
-		return null;
+		return (
+			<div>{this.state.view}</div>
+		);
 	}
 
 	private getTabs() {
-		return [{
+		const tabs = [{
 			id: 'parties',
 			text: 'pcs',
 			selected: (this.state.view === 'parties'),
@@ -3060,6 +3227,17 @@ export class Main extends React.Component<Props, State> {
 			selected: (this.state.view === 'maps'),
 			onSelect: () => this.setView('maps')
 		}];
+
+		if (this.state.options.featureFlags.includes('adventures')) {
+			tabs.push({
+				id: 'adventures',
+				text: 'adventures',
+				selected: (this.state.view === 'adventures'),
+				onSelect: () => this.setView('adventures')
+			});
+		}
+
+		return tabs;
 	}
 
 	private getDrawer() {
@@ -3325,6 +3503,20 @@ export class Main extends React.Component<Props, State> {
 					width = '75%';
 					closable = false;
 					break;
+				case 'import-adventure':
+					content = (
+						<AdventureImportModal
+							adventure={this.state.drawer.adventure}
+						/>
+					);
+					header = 'import adventure';
+					footer = (
+						<button onClick={() => this.acceptImportedAdventure()}>
+							accept adventure
+						</button>
+					);
+					closable = true;
+					break;
 				case 'combat-start':
 					content = (
 						<CombatStartModal
@@ -3522,6 +3714,21 @@ export class Main extends React.Component<Props, State> {
 							setOption={(option, value) => {
 								const options = this.state.options as any;
 								options[option] = value;
+								this.setState({
+									options: options
+								});
+							}}
+							addFlag={flag => {
+								const options = this.state.options;
+								options.featureFlags.push(flag);
+								options.featureFlags.sort();
+								this.setState({
+									options: options
+								});
+							}}
+							removeFlag={flag => {
+								const options = this.state.options;
+								options.featureFlags = options.featureFlags.filter(f => f !== flag);
 								this.setState({
 									options: options
 								});

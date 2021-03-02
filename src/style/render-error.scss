@@ -5,10 +5,14 @@
 	justify-content: center;
 	background-color: orange;
 
-	.message {
-		margin: 5px 0;
-		background-color: orange;
+	.render-message {
+		margin: 5px;
+		text-align: center;
 		color: white;
 		font-weight: 600;
+	}
+
+	button.link {
+		margin: 5px;
 	}
 }

@@ -52,6 +52,8 @@ interface Props {
 	toggleAddingToMap: () => void;
 	onUpdated: () => void;
 	setOption: (option: string, value: any) => void;
+	addFlag: (flag: string) => void;
+	removeFlag: (flag: string) => void;
 	getMonster: (id: string) => Monster | null;
 }
 
@@ -479,6 +481,8 @@ export class PageSidebar extends React.Component<Props> {
 							explorations={this.props.explorations}
 							options={this.props.options}
 							setOption={(option, value) => this.props.setOption(option, value)}
+							addFlag={flag => this.props.addFlag(flag)}
+							removeFlag={flag => this.props.removeFlag(flag)}
 						/>
 					);
 					break;

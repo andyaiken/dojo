@@ -4,6 +4,7 @@ export interface Options {
 	showMonsterDieRolls: boolean;
 	theme: string;
 	diagonals: string;
+	featureFlags: string[];
 }
 
 export interface Sidebar {

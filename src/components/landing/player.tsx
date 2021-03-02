@@ -62,7 +62,8 @@ export class Player extends React.Component<Props, State> {
 		let options: Options = {
 			showMonsterDieRolls: false,
 			theme: 'light',
-			diagonals: 'onepointfive'
+			diagonals: 'onepointfive',
+			featureFlags: []
 		};
 		try {
 			const str = window.localStorage.getItem('data-options');
@@ -74,6 +75,9 @@ export class Player extends React.Component<Props, State> {
 				}
 				if (options.diagonals === undefined) {
 					options.diagonals = 'onepointfive';
+				}
+				if (options.featureFlags === undefined) {
+					options.featureFlags = [];
 				}
 			}
 		} catch (ex) {
@@ -837,6 +841,21 @@ export class Player extends React.Component<Props, State> {
 							setOption={(option, value) => {
 								const options = this.state.options as any;
 								options[option] = value;
+								this.setState({
+									options: options
+								});
+							}}
+							addFlag={flag => {
+								const options = this.state.options;
+								options.featureFlags.push(flag);
+								options.featureFlags.sort();
+								this.setState({
+									options: options
+								});
+							}}
+							removeFlag={flag => {
+								const options = this.state.options;
+								options.featureFlags = options.featureFlags.filter(f => f !== flag);
 								this.setState({
 									options: options
 								});

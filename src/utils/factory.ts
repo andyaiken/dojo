@@ -1,5 +1,6 @@
 import { Utils } from './utils';
 
+import { Adventure, Plot, Scene, SceneLink } from '../models/adventure';
 import { Combat, CombatSetup, CombatSlotInfo, CombatSlotMember, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
@@ -197,6 +198,42 @@ export class Factory {
 			width: 1,
 			height: 1,
 			depth: 1
+		};
+	}
+
+	public static createAdventure(): Adventure {
+		return {
+			id: Utils.guid(),
+			name: '',
+			plot: this.createPlot()
+		};
+	}
+
+	public static createPlot(): Plot {
+		return {
+			id: Utils.guid(),
+			scenes: [],
+			map: null
+		};
+	}
+
+	public static createScene(): Scene {
+		return {
+			id: Utils.guid(),
+			name: '',
+			content: '',
+			tags: [],
+			links: [],
+			plot: this.createPlot(),
+			encounter: null
+		};
+	}
+
+	public static createSceneLink(): SceneLink {
+		return {
+			id: Utils.guid(),
+			text: '',
+			sceneID: ''
 		};
 	}
 

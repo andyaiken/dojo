@@ -118,6 +118,22 @@
 		}
 	}
 
+	&.adventure {
+		border: 1px solid #006565;
+
+		.heading {
+			background-color: #006565;
+		}
+
+		.subheading {
+			color: #006565;
+		}
+
+		hr {
+			border-color: #006565;
+		}
+	}
+
 	&.error {
 		background-color: red;
 		color: $background;

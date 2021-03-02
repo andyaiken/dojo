@@ -171,11 +171,9 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 						</div>
 					</div>
 					<div className='card-content'>
-						<div className='stats'>
-							<PortraitPanel source={this.props.monster} />
-							<div className='section centered'>
-								{tags}
-							</div>
+						<PortraitPanel source={this.props.monster} />
+						<div className='section centered'>
+							{tags}
 						</div>
 						<hr/>
 						{controls}
