@@ -1,3 +1,21 @@
+.breadcrumb-bar {
+	padding: 5px 0;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: flex-start;
+	border-bottom: 1px solid $control-border;
+
+	.group-panel {
+		display: inline-block;
+		margin: 5px 10px;
+
+		&:nth-last-child(1) {
+			pointer-events: none;
+		}
+	}
+}
+
 .plot-panel {
 	width: 100%;
 	margin: 10px 0;
@@ -16,10 +34,10 @@
 	}
 
 	.scene-panel-container {
-		padding: 50px 0;
+		padding: 80px 0;
 
 		.scene-panel {
-			height: 50px;
+			height: 80px;
 			background-color: $background;
 
 			.text-container {
@@ -29,22 +47,28 @@
 				overflow: hidden;
 				border: 1px solid $control-border;
 				border-left-width: 5px;
-				padding: 0 10px;
+				padding: 5px;
 				cursor: pointer;
+
+				.content-then-icons {
+					height: 100%;
+				}
 
 				.scene-name {
 					font-weight: 600;
+					word-break: break-all;
 				}
 			}
 
 			&:hover {
-				border-color: $highlight;
+				.text-container {
+					border-color: $highlight;
+				}
 			}
 
 			&.selected {
-				border-color: $highlight;
-
 				.text-container {
+					border-color: $highlight;
 					background-color: $highlight02;
 				}
 			}
@@ -52,8 +76,12 @@
 	}
 
 	.scene-link {
-		stroke: red;
+		stroke: $control-border;
 		stroke-width: 1px;
+
+		&.selected {
+			stroke: $highlight;
+		}
 	}
 
 	.link-label-container {

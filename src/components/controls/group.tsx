@@ -21,7 +21,7 @@ export class Group extends React.Component<Props> {
 		try {
 			if (this.props.onClick) {
 				return (
-					<div className='group-panel' onClick={() => this.onClick()} role='button'>
+					<div className='group-panel clickable' onClick={() => this.onClick()} role='button'>
 						{this.props.children}
 					</div>
 				);

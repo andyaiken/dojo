@@ -272,16 +272,18 @@ p,
 .content-then-icons {
 	display: flex;
 	align-items: center;
+	width: 100%;
 
 	>.content {
 		flex: 1 1 0;
 		padding-right: 10px;
-		border-right: 1px solid $control-border;
+		border-right: 1px solid $control-border-05;
 		margin-right: 5px;
 	}
 
 	>.icons {
 		flex: 0 0 auto;
+		opacity: 0.5;
 
 		.anticon {
 			font-size: 20px;
@@ -303,6 +305,10 @@ p,
 	&:hover {
 		>.content {
 			border-color: $highlight;
+		}
+
+		>.icons {
+			opacity: 1;
 		}
 	}
 }

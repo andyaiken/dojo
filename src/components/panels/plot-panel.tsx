@@ -1,3 +1,4 @@
+import { VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import React from 'react';
 
@@ -12,6 +13,7 @@ interface Props {
 	mode: 'thumbnail' | 'editor';
 	selectedSceneID: string | null;
 	selectScene: (scene: Scene | null) => void;
+	exploreScene: (scene: Scene) => void;
 	addScene: (sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
 }
 
@@ -20,12 +22,13 @@ export class PlotPanel extends React.Component<Props> {
 		mode: 'editor',
 		selectedSceneID: null,
 		selectScene: () => null,
+		exploreScene: (scene: Scene) => null,
 		addScene: (before: Scene | null, after: Scene | null) => null
 	};
 
 	public render() {
 		try {
-			const rowHeight = this.props.mode === 'editor' ? 150 : 30;
+			const rowHeight = this.props.mode === 'editor' ? 240 : 30;
 
 			const rows = Verne.getRows(this.props.plot);
 			const height = (rowHeight * rows.length) + 'px';
@@ -53,6 +56,7 @@ export class PlotPanel extends React.Component<Props> {
 								mode={this.props.mode}
 								selected={scene.id === this.props.selectedSceneID}
 								onSelect={() => this.props.selectScene(scene)}
+								onExplore={() => this.props.exploreScene(scene)}
 								addSceneBefore={() => this.props.addScene(null, scene)}
 								addSceneAfter={() => this.props.addScene(scene, null)}
 							/>
@@ -71,10 +75,15 @@ export class PlotPanel extends React.Component<Props> {
 					const fromY = fromPosition.y;
 					const toY = toPosition.y;
 
+					let style = 'scene-link';
+					if ((scene.id === this.props.selectedSceneID) || (link.sceneID === this.props.selectedSceneID)) {
+						style += ' selected';
+					}
+
 					links.push(
 						<line
 							key={link.id}
-							className='scene-link'
+							className={style}
 							x1={fromPosition.x + '%'}
 							y1={fromY}
 							x2={toPosition.x + '%'}
@@ -125,6 +134,7 @@ interface ScenePanelProps {
 	mode: 'thumbnail' | 'editor';
 	selected: boolean;
 	onSelect: () => void;
+	onExplore: () => void;
 	addSceneBefore: () => void;
 	addSceneAfter: () => void;
 }
@@ -133,6 +143,11 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 	private onClick(e: React.MouseEvent) {
 		e.stopPropagation();
 		this.props.onSelect();
+	}
+
+	private onExplore(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.props.onExplore();
 	}
 
 	private getPopover() {
@@ -166,7 +181,14 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 				>
 					<div className={style} onClick={e => this.onClick(e)} role='button'>
 						<div className='text-container'>
-							<div className='scene-name'>{this.props.scene.name || 'unnamed scene'}</div>
+							<div className='content-then-icons'>
+								<div className='content'>
+									<div className='scene-name'>{this.props.scene.name || 'unnamed scene'}</div>
+								</div>
+								<div className='icons vertical'>
+									<VerticalAlignBottomOutlined title='explore' onClick={e => this.onExplore(e)} />
+								</div>
+							</div>
 						</div>
 					</div>
 				</Popover>
