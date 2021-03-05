@@ -118,10 +118,14 @@
 
 	.map-area {
 		position: absolute;
+		border: 1px solid $control-border-05;
+
+		&:hover {
+			border-color: $highlight05;
+		}
 
 		&.selected {
-			border: 1px solid black;
-			box-shadow: 0 0 20px 0px black;
+			border: 2px solid $highlight;
 		}
 	}
 

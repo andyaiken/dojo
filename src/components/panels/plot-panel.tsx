@@ -12,7 +12,7 @@ interface Props {
 	plot: Plot;
 	mode: 'thumbnail' | 'editor';
 	selectedSceneID: string | null;
-	selectScene: (scene: Scene | null) => void;
+	selectSceneID: (sceneID: string | null) => void;
 	exploreScene: (scene: Scene) => void;
 	addScene: (sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
 }
@@ -21,7 +21,7 @@ export class PlotPanel extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'editor',
 		selectedSceneID: null,
-		selectScene: () => null,
+		selectSceneID: () => null,
 		exploreScene: (scene: Scene) => null,
 		addScene: (before: Scene | null, after: Scene | null) => null
 	};
@@ -31,7 +31,7 @@ export class PlotPanel extends React.Component<Props> {
 			const rowHeight = this.props.mode === 'editor' ? 240 : 30;
 
 			const rows = Verne.getRows(this.props.plot);
-			const height = (rowHeight * rows.length) + 'px';
+			const height = (rowHeight * Math.max(1, rows.length)) + 'px';
 
 			const positions: { [id: string]: { x: number, y: number } } = {};
 
@@ -55,7 +55,7 @@ export class PlotPanel extends React.Component<Props> {
 								scene={scene}
 								mode={this.props.mode}
 								selected={scene.id === this.props.selectedSceneID}
-								onSelect={() => this.props.selectScene(scene)}
+								onSelect={() => this.props.selectSceneID(scene.id)}
 								onExplore={() => this.props.exploreScene(scene)}
 								addSceneBefore={() => this.props.addScene(null, scene)}
 								addSceneAfter={() => this.props.addScene(scene, null)}
@@ -64,6 +64,20 @@ export class PlotPanel extends React.Component<Props> {
 					)
 				});
 			});
+			if (scenes.length === 0) {
+				scenes.push(
+					<foreignObject
+						key='empty'
+						className='empty'
+						x={0}
+						y={0}
+						width={'100%'}
+						height={rowHeight}
+					>
+						<div className='section centered'>(no scenes)</div>
+					</foreignObject>
+				);
+			}
 
 			const links: JSX.Element[] = [];
 			const linkLabels: JSX.Element[] = [];
@@ -116,7 +130,7 @@ export class PlotPanel extends React.Component<Props> {
 			});
 
 			return (
-				<svg className={'plot-panel ' + this.props.mode} style={{ height: height }} onClick={() => this.props.selectScene(null)}>
+				<svg className={'plot-panel ' + this.props.mode} style={{ height: height }} onClick={() => this.props.selectSceneID(null)}>
 					{links}
 					{linkLabels}
 					{scenes}

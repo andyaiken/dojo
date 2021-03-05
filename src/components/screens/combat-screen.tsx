@@ -387,7 +387,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							<MapPanel
 								key='map'
 								map={this.props.combat.map}
-								mode='combat-player'
+								mode='interactive-player'
 								options={this.props.options}
 								viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
 								combatants={this.props.combat.combatants}
@@ -895,7 +895,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					<div key='map' className='scrollable horizontal-only'>
 						<MapPanel
 							map={this.props.combat.map}
-							mode='combat'
+							mode='interactive-dm'
 							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 							options={this.props.options}
 							viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}

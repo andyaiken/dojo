@@ -390,7 +390,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 		return (
 			<MapPanel
 				map={this.props.exploration.map}
-				mode={playerView ? 'combat-player' : 'combat'}
+				mode={playerView ? 'interactive-player' : 'interactive-dm'}
 				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 				options={this.props.options}
 				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}

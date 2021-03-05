@@ -36,6 +36,7 @@ import { MonsterGroupImportModal } from '../modals/import/monster-group-import-m
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
+import { MapSelectionModal } from '../modals/map-selection-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomEncounterModal } from '../modals/random-encounter-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
@@ -1571,6 +1572,37 @@ export class Main extends React.Component<Props, State> {
 
 	private deleteLink(scene: Scene, link: SceneLink) {
 		scene.links = scene.links.filter(l => l.id !== link.id);
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private addMapToPlot(plot: Plot) {
+		this.setState({
+			drawer: {
+				type: 'add-map-to-plot',
+				plot: plot,
+				accept: (map: Map) => {
+					const clone: Map = JSON.parse(JSON.stringify(map));
+					plot.map = clone;
+					clone.areas.forEach(area => {
+						const scene = Factory.createScene();
+						scene.id = area.id;
+						scene.name = area.name;
+						plot.scenes.push(scene);
+					});
+					this.setState({
+						adventures: this.state.adventures
+					}, () => {
+						this.closeDrawer();
+					});
+				}
+			}
+		});
+	}
+
+	private removeMapFromPlot(plot: Plot) {
+		plot.map = null;
 		this.setState({
 			adventures: this.state.adventures
 		});
@@ -3185,6 +3217,8 @@ export class Main extends React.Component<Props, State> {
 							addLink={(scene, sceneID) => this.addLink(scene, sceneID)}
 							deleteLink={(scene, link) => this.deleteLink(scene, link)}
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
+							addMapToPlot={plot => this.addMapToPlot(plot)}
+							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
 					);
@@ -3630,6 +3664,13 @@ export class Main extends React.Component<Props, State> {
 					);
 					header = 'select image';
 					width = '25%';
+					break;
+				case 'add-map-to-plot':
+					content = (
+						<MapSelectionModal maps={this.state.maps} onSelect={map => this.state.drawer.accept(map)} />
+					);
+					header = 'add map to plot';
+					closable = true;
 					break;
 			}
 		}

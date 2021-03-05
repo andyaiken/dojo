@@ -11,6 +11,7 @@
 		margin: 5px 10px;
 
 		&:nth-last-child(1) {
+			font-weight: 600;
 			pointer-events: none;
 		}
 	}
@@ -30,6 +31,10 @@
 				height: 10px;
 				border: 1px solid $control-border;
 			}
+		}
+
+		.empty {
+			padding: 10px 0;
 		}
 	}
 
@@ -73,6 +78,11 @@
 				}
 			}
 		}
+	}
+
+	.empty {
+		padding: 80px 0;
+		opacity: 0.5;
 	}
 
 	.scene-link {

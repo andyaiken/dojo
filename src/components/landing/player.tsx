@@ -477,7 +477,7 @@ export class Player extends React.Component<Props, State> {
 				<div className='scrollable horizontal-only'>
 					<MapPanel
 						map={combat.map}
-						mode='combat-player'
+						mode='interactive-player'
 						options={this.state.options}
 						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
 						showGrid={this.state.addingToMap}
@@ -529,7 +529,7 @@ export class Player extends React.Component<Props, State> {
 			<div className='scrollable both-ways'>
 				<MapPanel
 					map={exploration.map}
-					mode='combat-player'
+					mode='interactive-player'
 					options={this.state.options}
 					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
 					showGrid={this.state.addingToMap}

@@ -10,7 +10,7 @@ import { Comms } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map, MapDimensions, MapItem } from '../../models/map';
+import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
@@ -26,7 +26,7 @@ import { CombatantTags } from './combat-controls-panel';
 
 interface Props {
 	map: Map;
-	mode: 'edit' | 'thumbnail' | 'combat' | 'combat-player';
+	mode: 'edit' | 'thumbnail' | 'interactive-dm' | 'interactive-player' | 'interactive-plot';
 	features: {
 		highlight: boolean;
 		editFog: boolean;
@@ -51,6 +51,7 @@ interface Props {
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
+	areaClicked: (area: MapArea) => void;
 	changeLighting: (light: string) => void;
 	toggleFeature: (feature: string) => void;
 	fillFog: () => void;
@@ -110,6 +111,7 @@ export class MapPanel extends React.Component<Props, State> {
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
 		gridRectangleSelected: null,
+		areaClicked: () => null,
 		changeLighting: null,
 		toggleFeature: null,
 		fillFog: null,
@@ -264,7 +266,7 @@ export class MapPanel extends React.Component<Props, State> {
 			};
 		}
 
-		if ((this.props.mode === 'thumbnail') || (this.props.mode === 'combat-player')) {
+		if ((this.props.mode === 'thumbnail') || (this.props.mode === 'interactive-player')) {
 			// Invert the fog
 			const visible: { x: number, y: number }[] = [];
 			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
@@ -331,7 +333,7 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.mode !== 'thumbnail') {
 			const controls = [];
 
-			if ((this.props.mode === 'combat') && (this.props.map.areas.length > 0)) {
+			if ((this.props.mode === 'interactive-dm') && (this.props.map.areas.length > 0)) {
 				const areas = [{ id: '', text: 'whole map' }];
 				this.props.map.areas.forEach(a => {
 					areas.push({ id: a.id, text: a.name || 'unnamed area' });
@@ -372,7 +374,7 @@ export class MapPanel extends React.Component<Props, State> {
 				</Popover>
 			);
 
-			if (this.props.mode === 'combat') {
+			if (this.props.mode === 'interactive-dm') {
 				controls.push(
 					<Popover
 						key='light'
@@ -469,20 +471,6 @@ export class MapPanel extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getAreas(dimensions: MapDimensions) {
-		if ((this.props.mode === 'edit') || (this.props.mode === 'combat')) {
-			return this.props.map.areas.map(a => (
-				<Area
-					key={a.id}
-					style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
-					selected={this.props.selectedItemIDs.includes(a.id)}
-				/>
-			));
-		}
-
-		return null;
-	}
-
 	private getTiles(dimensions: MapDimensions) {
 		return this.props.map.items
 			.filter(i => i.type === 'tile')
@@ -496,6 +484,34 @@ export class MapPanel extends React.Component<Props, State> {
 					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
 				/>
 			));
+	}
+
+	private getAreas(dimensions: MapDimensions) {
+		if ((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm')) {
+			return this.props.map.areas
+				.filter(a => this.props.selectedItemIDs.includes(a.id))
+				.map(a => (
+					<Area
+						key={a.id}
+						style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
+						selected={true}
+						onClick={() => this.props.areaClicked(a)}
+					/>
+				));
+		}
+
+		if (this.props.mode === 'interactive-plot') {
+			return this.props.map.areas.map(a => (
+				<Area
+					key={a.id}
+					style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
+					selected={this.props.selectedItemIDs.includes(a.id)}
+					onClick={() => this.props.areaClicked(a)}
+				/>
+			));
+		}
+
+		return null;
 	}
 
 	private getAreaNames(dimensions: MapDimensions) {
@@ -540,7 +556,7 @@ export class MapPanel extends React.Component<Props, State> {
 		if ((this.props.mode !== 'edit') && (this.props.mode !== 'thumbnail')) {
 			return this.props.combatants
 				.filter(c => c.aura.radius > 0)
-				.filter(c => c.showOnMap || (this.props.mode !== 'combat-player'))
+				.filter(c => c.showOnMap || (this.props.mode !== 'interactive-player'))
 				.map(c => {
 					const mi = this.props.map.items.find(i => i.id === c.id);
 					if (mi) {
@@ -564,7 +580,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getSteps(dimensions: MapDimensions) {
-		if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+		if ((this.props.mode === 'interactive-dm') || (this.props.mode === 'interactive-player')) {
 			const steps: (JSX.Element | null)[] = [];
 
 			this.props.map.items.forEach(i => {
@@ -606,7 +622,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getDistances(dimensions: MapDimensions) {
-		if ((this.props.mode === 'combat') || (this.props.mode === 'combat-player')) {
+		if ((this.props.mode === 'interactive-dm') || (this.props.mode === 'interactive-player')) {
 			const distances: (JSX.Element | null)[] = [];
 
 			this.props.map.items.forEach(i => {
@@ -651,7 +667,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getTokens(dimensions: MapDimensions) {
-		if (this.props.mode !== 'edit') {
+		if ((this.props.mode !== 'edit') && (this.props.mode !== 'interactive-plot')) {
 			const tokens: (JSX.Element | null)[] = [];
 
 			// Find the active token
@@ -719,9 +735,9 @@ export class MapPanel extends React.Component<Props, State> {
 							style={tokenStyle}
 							width={miniSize * this.state.size}
 							simple={this.props.mode === 'thumbnail'}
-							showGauge={this.props.mode === 'combat'}
-							showHidden={(this.props.mode === 'combat') || isPC}
-							selectable={this.props.mode === 'combat' || ((this.props.mode === 'combat-player') && isMe)}
+							showGauge={this.props.mode === 'interactive-dm'}
+							showHidden={(this.props.mode === 'interactive-dm') || isPC}
+							selectable={this.props.mode === 'interactive-dm' || ((this.props.mode === 'interactive-player') && isMe)}
 							selected={this.props.selectedItemIDs.includes(i.id)}
 							select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
 							remove={id => this.props.itemRemove(id)}
@@ -740,7 +756,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getFog(dimensions: MapDimensions) {
-		if (this.props.mode !== 'edit') {
+		if ((this.props.mode !== 'edit') && (this.props.mode !== 'interactive-plot')) {
 			return this.props.fog.map(f => (
 				<GridSquare
 					key={'fog ' + f.x + ',' + f.y}
@@ -758,11 +774,11 @@ export class MapPanel extends React.Component<Props, State> {
 	private getLighting(dimensions: MapDimensions) {
 		if (this.props.lighting !== 'bright light') {
 			const actors: Combatant[] = [];
-			if (this.props.mode === 'combat') {
+			if (this.props.mode === 'interactive-dm') {
 				this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
 				this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
 			}
-			if (this.props.mode === 'combat-player') {
+			if (this.props.mode === 'interactive-player') {
 				this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
 			}
 
@@ -887,8 +903,8 @@ export class MapPanel extends React.Component<Props, State> {
 				>
 					{this.getControls()}
 					<div className='grid'>
-						{this.getAreas(mapDimensions)}
 						{this.getTiles(mapDimensions)}
+						{this.getAreas(mapDimensions)}
 						{this.getAreaNames(mapDimensions)}
 						{this.getOverlays(mapDimensions)}
 						{this.getAuras(mapDimensions)}
@@ -912,6 +928,7 @@ export class MapPanel extends React.Component<Props, State> {
 interface AreaProps {
 	style: MapItemStyle;
 	selected: boolean;
+	onClick: () => void;
 }
 
 class Area extends React.Component<AreaProps> {
@@ -925,6 +942,11 @@ class Area extends React.Component<AreaProps> {
 				<div
 					className={style}
 					style={this.props.style}
+					onClick={e => {
+						e.stopPropagation();
+						this.props.onClick();
+					}}
+					role='button'
 				/>
 			);
 		} catch (e) {

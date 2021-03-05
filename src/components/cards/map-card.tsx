@@ -32,7 +32,6 @@ export class MapCard extends React.Component<Props> {
 						<div className='fixed-height'>
 							<MapPanel
 								map={this.props.map}
-								showAreaNames={true}
 							/>
 						</div>
 						<hr/>

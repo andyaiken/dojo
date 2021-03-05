@@ -283,7 +283,6 @@ p,
 
 	>.icons {
 		flex: 0 0 auto;
-		opacity: 0.5;
 
 		.anticon {
 			font-size: 20px;
@@ -305,10 +304,6 @@ p,
 	&:hover {
 		>.content {
 			border-color: $highlight;
-		}
-
-		>.icons {
-			opacity: 1;
 		}
 	}
 }

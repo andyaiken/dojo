@@ -8,6 +8,7 @@ import { Verne } from '../../utils/verne';
 import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
@@ -15,6 +16,7 @@ import { Textbox } from '../controls/textbox';
 import { AdventureOptions } from '../options/adventure-options';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { PlotPanel } from '../panels/plot-panel';
+import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	adventure: Adventure;
@@ -24,6 +26,8 @@ interface Props {
 	addLink: (scene: Scene, sceneID: string) => void;
 	deleteLink: (scene: Scene, link: SceneLink) => void;
 	deleteAdventure: (adventure: Adventure) => void;
+	addMapToPlot: (plot: Plot) => void;
+	removeMapFromPlot: (plot: Plot) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 }
 
@@ -43,9 +47,9 @@ export class AdventureScreen extends React.Component<Props, State> {
 		};
 	}
 
-	private setSelectedScene(scene: Scene | null) {
+	private setSelectedSceneID(sceneID: string | null) {
 		this.setState({
-			selectedSceneID: scene ? scene.id : null
+			selectedSceneID: sceneID
 		});
 	}
 
@@ -98,7 +102,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 									<Textbox placeholder='label' text={link.text} onChange={text => this.props.changeValue(link, 'text', text)} />
 								</div>
 								<div className='icons vertical'>
-									<CaretRightOutlined title='go to' onClick={() => this.setSelectedScene(target)} />
+									<CaretRightOutlined title='go to' onClick={() => this.setSelectedSceneID(target.id)} />
 									<ConfirmButton onConfirm={() => this.props.deleteLink(scene, link)}>
 										<DeleteOutlined title='delete link' />
 									</ConfirmButton>
@@ -126,21 +130,25 @@ export class AdventureScreen extends React.Component<Props, State> {
 						<div className='subheading'>content</div>
 						<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
 					</div>
-					<hr/>
-					<div className='section'>
-						<div className='subheading'>links</div>
-						{links}
-						<Dropdown
-							placeholder='select a scene to link to...'
-							options={Utils.sort(Verne.getPotentialLinks(this.state.plot, scene)).map(s => ({ id: s.id, text: s.name || 'unnamed scene' }))}
-							onSelect={id => this.props.addLink(scene, id)}
-						/>
-					</div>
+					<Conditional display={this.state.plot.map === null}>
+						<hr/>
+						<div className='section'>
+							<div className='subheading'>links</div>
+							{links}
+							<Dropdown
+								placeholder='select a scene to link to...'
+								options={Utils.sort(Verne.getPotentialLinks(this.state.plot, scene)).map(s => ({ id: s.id, text: s.name || 'unnamed scene' }))}
+								onSelect={id => this.props.addLink(scene, id)}
+							/>
+						</div>
+					</Conditional>
 					<hr/>
 					<button className='disabled' onClick={() => null}>add an encounter</button>
-					<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
+					<Conditional display={this.state.plot.map === null}>
+						<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
+					</Conditional>
 					<hr/>
-					<button onClick={() => this.setSelectedScene(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
+					<button onClick={() => this.setSelectedSceneID(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
 				</div>
 			);
 		} else {
@@ -155,8 +163,15 @@ export class AdventureScreen extends React.Component<Props, State> {
 						/>
 					</div>
 					<hr/>
-					<button onClick={() => this.props.addScene(this.state.plot, null, null)}>add a scene</button>
-					<button className='disabled' onClick={() => null}>add a map</button>
+					<Conditional display={this.state.plot.map === null}>
+						<button onClick={() => this.props.addScene(this.state.plot, null, null)}>add a scene</button>
+					</Conditional>
+					<Conditional display={this.state.plot.map !== null}>
+						<button onClick={() => this.props.removeMapFromPlot(this.state.plot)}>remove the map</button>
+					</Conditional>
+					<Conditional display={this.state.plot.scenes.length === 0}>
+						<button onClick={() => this.props.addMapToPlot(this.state.plot)}>add a map</button>
+					</Conditional>
 					<hr/>
 					<AdventureOptions
 						adventure={this.props.adventure}
@@ -167,6 +182,34 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</div>
 			);
 		}
+	}
+
+	private getContent() {
+		if (this.state.plot.map) {
+			return (
+				<MapPanel
+					map={this.state.plot.map}
+					mode='interactive-plot'
+					showAreaNames={true}
+					selectedItemIDs={this.state.selectedSceneID ? [this.state.selectedSceneID] : []}
+					areaClicked={area => {
+						this.setState({
+							selectedSceneID: area.id
+						});
+					}}
+				/>
+			);
+		}
+
+		return (
+			<PlotPanel
+				plot={this.state.plot}
+				selectedSceneID={this.state.selectedSceneID}
+				selectSceneID={sceneID => this.setSelectedSceneID(sceneID)}
+				exploreScene={scene => this.explore(scene)}
+				addScene={(sceneBefore, sceneAfter) => this.props.addScene(this.state.plot, sceneBefore, sceneAfter)}
+			/>
+		);
 	}
 
 	public render() {
@@ -193,13 +236,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 								</div>
 							</div>
 						</div>
-						<PlotPanel
-							plot={this.state.plot}
-							selectedSceneID={this.state.selectedSceneID}
-							selectScene={scene => this.setSelectedScene(scene)}
-							exploreScene={scene => this.explore(scene)}
-							addScene={(sceneBefore, sceneAfter) => this.props.addScene(this.state.plot, sceneBefore, sceneAfter)}
-						/>
+						{this.getContent()}
 					</Col>
 				</Row>
 			);
