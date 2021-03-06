@@ -384,6 +384,43 @@ export class Player extends React.Component<Props, State> {
 		}
 	}
 
+	private toggleTag(combatants: Combatant[], tag: string) {
+		combatants.forEach(c => {
+			if (c.tags.includes(tag)) {
+				c.tags = c.tags.filter(t => t !== tag);
+			} else {
+				c.tags.push(tag);
+			}
+		});
+
+		CommsPlayer.sendSharedUpdate();
+		this.forceUpdate();
+	}
+
+	private toggleCondition(combatants: Combatant[], condition: string) {
+		combatants.forEach(c => {
+			if (c.conditions.some(cnd => cnd.name === condition)) {
+				c.conditions = c.conditions.filter(cnd => cnd.name !== condition);
+			} else {
+				const cnd = Factory.createCondition();
+				cnd.name = condition;
+				c.conditions.push(cnd);
+
+				c.conditions = Utils.sort(c.conditions, [{ field: 'name', dir: 'asc' }]);
+			}
+		});
+
+		CommsPlayer.sendSharedUpdate();
+		this.forceUpdate();
+	}
+
+	private toggleHidden(combatants: Combatant[]) {
+		combatants.forEach(c => c.showOnMap = !c.showOnMap);
+
+		CommsPlayer.sendSharedUpdate();
+		this.forceUpdate();
+	}
+
 	//#endregion
 
 	//#region Rendering helper methods
@@ -547,6 +584,9 @@ export class Player extends React.Component<Props, State> {
 							this.forceUpdate();
 						}
 					}}
+					toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
+					toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
+					toggleHidden={(combatants) => this.toggleHidden(combatants)}
 				/>
 			</div>
 		);

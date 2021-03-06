@@ -585,7 +585,7 @@ export class MapPanel extends React.Component<Props, State> {
 
 			this.props.map.items.forEach(i => {
 				const combatant = this.props.combatants.find(c => c.id === i.id);
-				if (combatant && combatant.path && (combatant.path.length > 0)) {
+				if (combatant && combatant.path && (combatant.path.filter(step => !!step).length > 0)) {
 					try {
 						let s = combatant.displaySize;
 						if (combatant.mountID) {
@@ -596,7 +596,7 @@ export class MapPanel extends React.Component<Props, State> {
 						}
 						const miniSize = Gygax.miniSize(s);
 
-						combatant.path.forEach((step, index) => {
+						combatant.path.filter(step => !!step).forEach((step, index) => {
 							steps.push(
 								<GridSquare
 									key={combatant.id + '-step-' + index}

@@ -1957,6 +1957,7 @@ export class Main extends React.Component<Props, State> {
 					c.active = false;
 					c.defeated = false;
 					c.initiative = 10;
+					c.path = null;
 				});
 
 				// See if we can work out the party ID from the combatants

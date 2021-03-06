@@ -414,10 +414,10 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				toggleFeature={feature => {
 					switch (feature) {
 						case 'highlight':
-							this.toggleEditFog();
+							this.toggleHighlightMapSquare();
 							break;
 						case 'editFog':
-							this.toggleHighlightMapSquare();
+							this.toggleEditFog();
 							break;
 					}
 				}}
