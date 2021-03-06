@@ -21,6 +21,8 @@ import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { MovementPanel } from '../panels/movement-panel';
+import { Tabs } from '../controls/tabs';
+import { Conditional } from '../controls/conditional';
 
 interface Props {
 	map: Map;
@@ -50,7 +52,7 @@ interface Props {
 }
 
 interface State {
-	view: string;
+	sidebarView: string;
 	selectedTileID: string | null;
 	selectedAreaID: string | null;
 	addingTile: boolean;
@@ -61,7 +63,7 @@ export class MapScreen extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			view: 'map',
+			sidebarView: 'tiles',
 			selectedTileID: null,
 			selectedAreaID: null,
 			addingTile: false,
@@ -69,9 +71,9 @@ export class MapScreen extends React.Component<Props, State> {
 		};
 	}
 
-	private setView(view: string) {
+	private setSidebarView(view: string) {
 		this.setState({
-			view: view
+			sidebarView: view
 		});
 	}
 
@@ -208,42 +210,52 @@ export class MapScreen extends React.Component<Props, State> {
 								onChange={value => this.props.changeValue(this.props.map, 'name', value)}
 							/>
 						</div>
-						<Note>
-							<div className='section'>
-								maps are made out of map tiles, arranged together
-							</div>
-							<div className='section'>
-								to add a new tile to the map, click on <b>add a map tile</b> below
-							</div>
-							<div className='section'>
-								to edit an existing tile, click on it to select it
-							</div>
-							<hr/>
-							<div className='section'>
-								if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)
-							</div>
-							<div className='section'>
-								to add a new area to the map, click on <b>add a map area</b> below
-							</div>
-							<div className='section'>
-								to edit an existing area, click on it to select it
-							</div>
-						</Note>
-						<div className='section'>
-							<div className='subheading'>map tiles</div>
-							<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
-							<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
-						</div>
-						<div className='section'>
-							<div className='subheading'>map areas</div>
-							{areas}
-							<button onClick={() => this.toggleAddingArea()}>{addAreaText}</button>
-							<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
-						</div>
+						<Group>
+							<Tabs
+								options={['tiles', 'areas'].map(o => ({ id: o, text: o }))}
+								selectedID={this.state.sidebarView}
+								onSelect={view => this.setSidebarView(view)}
+							/>
+							<Conditional display={this.state.sidebarView === 'tiles'}>
+								<Note>
+									<div className='section'>
+										maps are made out of map tiles, arranged together
+									</div>
+									<div className='section'>
+										to add a new tile to the map, click on <b>add a map tile</b> below
+									</div>
+									<div className='section'>
+										to edit an existing tile, click on it to select it
+									</div>
+								</Note>
+								<div className='section'>
+									<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
+									<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
+								</div>
+							</Conditional>
+							<Conditional display={this.state.sidebarView === 'areas'}>
+								<Note>
+									<div className='section'>
+										if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)
+									</div>
+									<div className='section'>
+										to add a new area to the map, click on <b>add a map area</b> below
+									</div>
+									<div className='section'>
+										to edit an existing area, click on it to select it
+									</div>
+								</Note>
+								<div className='section'>
+									{areas}
+									<hr/>
+									<button onClick={() => this.toggleAddingArea()}>{addAreaText}</button>
+									<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
+								</div>
+							</Conditional>
+						</Group>
 						<hr/>
 						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate the map</button>
 						<button onClick={() => this.props.generateRoom(this.props.map)}>add a random room</button>
-						<hr/>
 						<MapOptions
 							map={this.props.map}
 							parties={this.props.parties}
