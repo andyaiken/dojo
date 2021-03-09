@@ -10,11 +10,15 @@ export class Conditional extends React.Component<Props> {
 	public render() {
 		try {
 			if (this.props.display) {
-				return (
-					<div>
-						{this.props.children}
-					</div>
-				);
+				try {
+					return (
+						<div>
+							{this.props.children}
+						</div>
+					);
+				} catch {
+					return null;
+				}
 			}
 
 			return null;

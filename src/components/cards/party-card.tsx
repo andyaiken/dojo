@@ -8,6 +8,7 @@ import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { PartyOptions } from '../options/party-options';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Group } from '../controls/group';
 
 interface Props {
 	party: Party;
@@ -42,11 +43,17 @@ export class PartyCard extends React.Component<Props> {
 		}
 
 		return this.props.party.pcs.map(pc => (
-			<div key={pc.id} className={pc.active ? 'combatant-row' : 'combatant-row inactive'} onClick={() => this.props.openStatBlock(pc)} role='button'>
-				<PortraitPanel source={pc} inline={true}/>
-				<div className='name'>{this.getText(pc)}</div>
-				<div className='value'>lvl {pc.level}</div>
-			</div>
+			<Group key={pc.id} transparent={true} onClick={() => this.props.openStatBlock(pc)}>
+				<div className='content-then-info'>
+					<div className={pc.active ? 'content' : 'content strikethrough'}>
+						<PortraitPanel source={pc} inline={true}/>
+						{this.getText(pc)}
+					</div>
+					<div className='info'>
+						lvl {pc.level}
+					</div>
+				</div>
+			</Group>
 		));
 	}
 

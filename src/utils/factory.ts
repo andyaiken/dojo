@@ -225,7 +225,7 @@ export class Factory {
 			tags: [],
 			links: [],
 			plot: this.createPlot(),
-			encounter: null
+			encounterIDs: []
 		};
 	}
 

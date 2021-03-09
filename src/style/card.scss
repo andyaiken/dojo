@@ -181,39 +181,6 @@
 		.fixed-height {
 			height: 191px;
 			overflow-y: auto;
-
-			.combatant-row {
-				margin: 5px 0;
-				padding: 3px 5px;
-				min-height: 26px;
-				border-left: 5px solid $control-border;
-				cursor: pointer;
-				display: flex;
-				align-items: center;
-
-				.name {
-					flex-grow: 1;
-				}
-
-				.value {
-					flex-shrink: 0;
-					font-size: 10px;
-				}
-
-				&.inactive {
-					opacity: 0.5;
-
-					.name,
-					.value {
-						text-decoration: line-through;
-					}
-				}
-
-				&:hover {
-					border-color: $highlight;
-					background-color: $highlight01;
-				}
-			}
 		}
 	}
 }

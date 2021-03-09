@@ -308,6 +308,28 @@ p,
 	}
 }
 
+.content-then-info {
+	display: flex;
+	align-items: center;
+	width: 100%;
+
+	>.content {
+		flex: 1 1 0;
+		padding-right: 10px;
+		margin-right: 5px;
+
+		&.strikethrough {
+			opacity: 0.5;
+			text-decoration: line-through;
+		}
+	}
+
+	>.info {
+		flex: 0 0 auto;
+		font-size: 10px;
+	}
+}
+
 .pdf-document {
 	width: 100%;
     overflow-x: auto;

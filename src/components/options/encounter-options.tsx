@@ -1,6 +1,7 @@
 import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import { Adventure } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Party } from '../../models/party';
 
@@ -13,6 +14,7 @@ import { Textbox } from '../controls/textbox';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
+	adventures: Adventure[];
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
@@ -77,7 +79,12 @@ export class EncounterOptions extends React.Component<Props, State> {
 						</div>
 					</Expander>
 					{run}
-					<ConfirmButton onConfirm={() => this.props.deleteEncounter(this.props.encounter)}>delete encounter</ConfirmButton>
+					<ConfirmButton
+						disabled={this.props.adventures.some(adventure => adventure.plot.scenes.some(scene => scene.encounterIDs.includes(this.props.encounter.id)))}
+						onConfirm={() => this.props.deleteEncounter(this.props.encounter)}
+					>
+						delete encounter
+					</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

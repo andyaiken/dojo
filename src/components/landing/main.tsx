@@ -36,9 +36,10 @@ import { MonsterGroupImportModal } from '../modals/import/monster-group-import-m
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
+import { EncounterSelectionModal } from '../modals/encounter-selection-modal';
 import { MapSelectionModal } from '../modals/map-selection-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
-import { RandomEncounterModal } from '../modals/random-encounter-modal';
+import { RandomEncounterOrMapModal } from '../modals/random-encounter-or-map-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { DieRollResultPanel } from '../panels/die-roll-panel';
@@ -1198,6 +1199,10 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private createEncounter(partyID: string | null) {
+		if (!partyID && (this.state.parties.length === 1)) {
+			partyID = this.state.parties[0].id;
+		}
+
 		this.setState({
 			drawer: {
 				type: 'random-encounter',
@@ -1207,25 +1212,27 @@ export class Main extends React.Component<Props, State> {
 					partyID: partyID,
 					difficulty: 'medium',
 					filter: Factory.createMonsterFilter()
+				},
+				canAccept: () => {
+					return (this.state.drawer.data.type !== 'party') || (this.state.drawer.data.partyID !== null);
+				},
+				onAccept: () => {
+					const encounter = Factory.createEncounter();
+
+					Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
+					Napoleon.sortEncounter(encounter, id => this.getMonster(id));
+
+					const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
+					Utils.sort(encounters);
+
+					this.setState({
+						view: 'encounters',
+						encounters: encounters,
+						selectedEncounterID: encounter.id,
+						drawer: null
+					});
 				}
 			}
-		});
-	}
-
-	private createEncounterFromModal() {
-		const encounter = Factory.createEncounter();
-
-		Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
-		Napoleon.sortEncounter(encounter, id => this.getMonster(id));
-
-		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
-		Utils.sort(encounters);
-
-		this.setState({
-			view: 'encounters',
-			drawer: null,
-			encounters: encounters,
-			selectedEncounterID: encounter.id
 		});
 	}
 
@@ -1314,13 +1321,29 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private generateMap(type: string) {
-		const map = Factory.createMap();
-		Mercator.generate(type, map);
-		this.state.maps.push(map);
-
+	private generateMap() {
 		this.setState({
-			maps: this.state.maps
+			drawer: {
+				type: 'random-map',
+				data: {
+					areas: 5
+				},
+				canAccept: () => {
+					return true;
+				},
+				onAccept: () => {
+					const map = Factory.createMap();
+					Mercator.generate(this.state.drawer.data.areas, map);
+					this.state.maps.push(map);
+
+					this.setState({
+						view: 'maps',
+						maps: this.state.maps,
+						selectedMapID: map.id,
+						drawer: null
+					});
+				}
+			}
 		});
 	}
 
@@ -1486,7 +1509,7 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private generateRoom(map: Map) {
-		Mercator.generate('room', map);
+		Mercator.addRoom(map);
 
 		this.setState({
 			maps: this.state.maps
@@ -1592,9 +1615,8 @@ export class Main extends React.Component<Props, State> {
 						plot.scenes.push(scene);
 					});
 					this.setState({
-						adventures: this.state.adventures
-					}, () => {
-						this.closeDrawer();
+						adventures: this.state.adventures,
+						drawer: null
 					});
 				}
 			}
@@ -1603,6 +1625,29 @@ export class Main extends React.Component<Props, State> {
 
 	private removeMapFromPlot(plot: Plot) {
 		plot.map = null;
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private addEncounterToScene(scene: Scene) {
+		this.setState({
+			drawer: {
+				type: 'add-encounter-to-scene',
+				scene: scene,
+				accept: (encounter: Encounter) => {
+					scene.encounterIDs.push(encounter.id);
+					this.setState({
+						adventures: this.state.adventures,
+						drawer: null
+					});
+				}
+			}
+		});
+	}
+
+	private removeEncounterFromScene(scene: Scene, encounterID: string) {
+		scene.encounterIDs = scene.encounterIDs.filter(id => id !== encounterID);
 		this.setState({
 			adventures: this.state.adventures
 		});
@@ -2940,6 +2985,7 @@ export class Main extends React.Component<Props, State> {
 						<EncounterScreen
 							encounter={this.state.encounters.find(e => e.id === this.state.selectedEncounterID) as Encounter}
 							parties={this.state.parties}
+							adventures={this.state.adventures}
 							cloneEncounter={(encounter, name) => this.cloneEncounter(encounter, name)}
 							deleteEncounter={encounter => this.deleteEncounter(encounter)}
 							startEncounter={(partyID, encounterID) => {
@@ -3068,6 +3114,7 @@ export class Main extends React.Component<Props, State> {
 						encounters={this.state.encounters}
 						combats={this.state.combats}
 						parties={this.state.parties}
+						adventures={this.state.adventures}
 						hasMonsters={hasMonsters}
 						createEncounter={() => this.createEncounter(null)}
 						addEncounter={templateID => this.addEncounter(templateID)}
@@ -3191,7 +3238,7 @@ export class Main extends React.Component<Props, State> {
 						explorations={this.state.explorations}
 						addMap={() => this.addMap()}
 						importMap={() => this.importMap()}
-						generateMap={(type) => this.generateMap(type)}
+						generateMap={() => this.generateMap()}
 						openMap={map => this.selectMap(map)}
 						cloneMap={(map, name) => this.cloneMap(map, name)}
 						deleteMap={map => this.deleteMap(map)}
@@ -3212,6 +3259,7 @@ export class Main extends React.Component<Props, State> {
 					return (
 						<AdventureScreen
 							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
+							encounters={this.state.encounters}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
 							deleteScene={(plot, scene) => this.deleteScene(plot, scene)}
@@ -3220,6 +3268,10 @@ export class Main extends React.Component<Props, State> {
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
 							addMapToPlot={plot => this.addMapToPlot(plot)}
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
+							addEncounterToScene={scene => this.addEncounterToScene(scene)}
+							removeEncounterFromScene={(scene, encounterID) => this.removeEncounterFromScene(scene, encounterID)}
+							runEncounter={encounter => this.createCombat('', encounter)}
+							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
 					);
@@ -3435,17 +3487,18 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'random-encounter':
 					content = (
-						<RandomEncounterModal
+						<RandomEncounterOrMapModal
 							parties={this.state.parties}
-							data={this.state.drawer.data}
+							mapData={null}
+							encounterData={this.state.drawer.data}
 							onUpdated={() => this.forceUpdate()}
 						/>
 					);
 					header = 'create a random encounter';
 					footer = (
 						<button
-							className={(this.state.drawer.data.type === 'party') && (this.state.drawer.data.partyID === null) ? 'disabled' : ''}
-							onClick={() => this.createEncounterFromModal()}
+							className={this.state.drawer.canAccept() ? '' : 'disabled'}
+							onClick={() => this.state.drawer.onAccept()}
 						>
 							create the encounter
 						</button>
@@ -3537,6 +3590,26 @@ export class Main extends React.Component<Props, State> {
 					);
 					width = '75%';
 					closable = false;
+					break;
+				case 'random-map':
+					content = (
+						<RandomEncounterOrMapModal
+							parties={[]}
+							mapData={this.state.drawer.data}
+							encounterData={null}
+							onUpdated={() => this.forceUpdate()}
+						/>
+					);
+					header = 'create a random map';
+					footer = (
+						<button
+							className={this.state.drawer.canAccept() ? '' : 'disabled'}
+							onClick={() => this.state.drawer.onAccept()}
+						>
+							create the map
+						</button>
+					);
+					closable = true;
 					break;
 				case 'import-adventure':
 					content = (
@@ -3663,14 +3736,21 @@ export class Main extends React.Component<Props, State> {
 							}}
 						/>
 					);
-					header = 'select image';
+					header = 'choose an image';
 					width = '25%';
 					break;
 				case 'add-map-to-plot':
 					content = (
 						<MapSelectionModal maps={this.state.maps} onSelect={map => this.state.drawer.accept(map)} />
 					);
-					header = 'add map to plot';
+					header = 'choose a map';
+					closable = true;
+					break;
+				case 'add-encounter-to-scene':
+					content = (
+						<EncounterSelectionModal encounters={this.state.encounters} getMonster={id => this.getMonster(id)} onSelect={encounter => this.state.drawer.accept(encounter)} />
+					);
+					header = 'choose an encounter';
 					closable = true;
 					break;
 			}

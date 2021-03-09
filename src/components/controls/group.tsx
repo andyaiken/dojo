@@ -3,11 +3,13 @@ import React from 'react';
 import { RenderError } from '../error';
 
 interface Props {
+	transparent: boolean;
 	onClick: (() => void) | null;
 }
 
 export class Group extends React.Component<Props> {
 	public static defaultProps = {
+		transparent: false,
 		onClick: null
 	};
 
@@ -19,16 +21,21 @@ export class Group extends React.Component<Props> {
 
 	public render() {
 		try {
+			let style = 'group-panel';
+			if (this.props.transparent) {
+				style += ' transparent';
+			}
+
 			if (this.props.onClick) {
 				return (
-					<div className='group-panel clickable' onClick={() => this.onClick()} role='button'>
+					<div className={style + ' clickable'} onClick={() => this.onClick()} role='button'>
 						{this.props.children}
 					</div>
 				);
 			}
 
 			return (
-				<div className='group-panel'>
+				<div className={style}>
 					{this.props.children}
 				</div>
 			);

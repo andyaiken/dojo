@@ -522,6 +522,34 @@ body .react-mde {
 	border: 1px solid $control-border;
 	border-radius: 0;
 
+	.mde-header {
+		padding: 3px;
+
+		.mde-tabs {
+			button {
+				margin: 0 5px;
+				border-radius: 0;
+				padding: 0 5px;
+				min-height: 0;
+			}
+		}
+
+		ul.mde-header-group {
+			margin: 0 5px;
+			padding: 0;
+
+			li.mde-header-item {
+				margin: 0 3px;
+				padding: 3px;
+
+				button {
+					padding: 0;
+					min-height: 0;
+				}
+			}
+		}
+	}
+
 	.mde-textarea-wrapper textarea.mde-text {
 		margin: 0;
 	}

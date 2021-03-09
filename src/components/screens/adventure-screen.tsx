@@ -6,20 +6,26 @@ import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
 import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
+import { Encounter } from '../../models/encounter';
+import { Monster } from '../../models/monster';
 
 import { RenderError } from '../error';
 import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
+import { Note } from '../controls/note';
+import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { AdventureOptions } from '../options/adventure-options';
+import { EncounterInfoPanel } from '../panels/encounter-info-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { PlotPanel } from '../panels/plot-panel';
 import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	adventure: Adventure;
+	encounters: Encounter[];
 	goBack: () => void;
 	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
 	deleteScene: (plot: Plot, scene: Scene) => void;
@@ -28,11 +34,16 @@ interface Props {
 	deleteAdventure: (adventure: Adventure) => void;
 	addMapToPlot: (plot: Plot) => void;
 	removeMapFromPlot: (plot: Plot) => void;
+	addEncounterToScene: (scene: Scene) => void;
+	removeEncounterFromScene: (scene: Scene, encounterID: string) => void;
+	runEncounter: (encounter: Encounter) => void;
+	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 }
 
 interface State {
 	plot: Plot;
+	view: string;
 	breadcrumbs: { name: string, plot: Plot }[];
 	selectedSceneID: string | null;
 }
@@ -42,9 +53,16 @@ export class AdventureScreen extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			plot: props.adventure.plot,
-			breadcrumbs: [{ name: props.adventure.name, plot: props.adventure.plot }],
+			view: 'content',
+			breadcrumbs: [{ name: props.adventure.name || 'adventure', plot: props.adventure.plot }],
 			selectedSceneID: null
 		};
+	}
+
+	private setView(view: string) {
+		this.setState({
+			view: view
+		});
 	}
 
 	private setSelectedSceneID(sceneID: string | null) {
@@ -88,6 +106,31 @@ export class AdventureScreen extends React.Component<Props, State> {
 		}
 	}
 
+	private getEncounters(scene: Scene) {
+		const encounters: JSX.Element[] = [];
+
+		scene.encounterIDs.forEach(encounterID => {
+			const encounter = this.props.encounters.find(enc => enc.id === encounterID);
+			if (encounter) {
+				encounters.push(
+					<Group>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<EncounterInfoPanel encounter={encounter} getMonster={id => this.props.getMonster(id)} />
+							</div>
+							<div className='icons vertical'>
+								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounter(encounter as Encounter)} />
+								<DeleteOutlined title='remove encounter' onClick={() => this.props.removeEncounterFromScene(scene, encounter.id)} />
+							</div>
+						</div>
+					</Group>
+				);
+			}
+		});
+
+		return encounters;
+	}
+
 	private getSidebar() {
 		const scene = this.state.plot.scenes.find(s => s.id === this.state.selectedSceneID);
 		if (scene) {
@@ -126,28 +169,40 @@ export class AdventureScreen extends React.Component<Props, State> {
 						/>
 					</div>
 					<hr/>
-					<div className='section'>
-						<div className='subheading'>content</div>
+					<Tabs
+						options={['content', 'links', 'encounter'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.view}
+						onSelect={view => this.setView(view)}
+					/>
+					<Conditional display={this.state.view === 'content'}>
 						<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
-					</div>
+					</Conditional>
+					<Conditional display={this.state.view === 'links'}>
 					<Conditional display={this.state.plot.map === null}>
-						<hr/>
-						<div className='section'>
-							<div className='subheading'>links</div>
 							{links}
 							<Dropdown
 								placeholder='select a scene to link to...'
 								options={Utils.sort(Verne.getPotentialLinks(this.state.plot, scene)).map(s => ({ id: s.id, text: s.name || 'unnamed scene' }))}
 								onSelect={id => this.props.addLink(scene, id)}
 							/>
-						</div>
+						</Conditional>
+						<Conditional display={this.state.plot.map !== null}>
+							<Note>
+								<div className='section'>
+									links aren't needed between map areas
+								</div>
+							</Note>
+						</Conditional>
+					</Conditional>
+					<Conditional display={this.state.view === 'encounter'}>
+						{this.getEncounters(scene)}
+						<button onClick={() => this.props.addEncounterToScene(scene)}>link an encounter</button>
 					</Conditional>
 					<hr/>
-					<button className='disabled' onClick={() => null}>add an encounter</button>
 					<Conditional display={this.state.plot.map === null}>
 						<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
+						<hr/>
 					</Conditional>
-					<hr/>
 					<button onClick={() => this.setSelectedSceneID(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
 				</div>
 			);

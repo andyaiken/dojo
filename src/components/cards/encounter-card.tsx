@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 
 import { Napoleon } from '../../utils/napoleon';
 
+import { Adventure } from '../../models/adventure';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
@@ -12,10 +13,12 @@ import { Conditional } from '../controls/conditional';
 import { Expander } from '../controls/expander';
 import { EncounterOptions } from '../options/encounter-options';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Group } from '../controls/group';
 
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
+	adventures: Adventure[];
 	openEncounter: (encounter: Encounter) => void;
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
@@ -27,6 +30,7 @@ interface Props {
 export class EncounterCard extends React.Component<Props> {
 	private getText(slot: EncounterSlot) {
 		let name = '';
+
 		if (slot.monsterID !== '') {
 			const monster = this.props.getMonster(slot.monsterID);
 			if (monster) {
@@ -36,11 +40,22 @@ export class EncounterCard extends React.Component<Props> {
 		} else {
 			name = slot.roles.join(', ');
 		}
-		return <div className='name'>{name}</div>;
+
+		return name;
+	}
+
+	private getPortrait(slot: EncounterSlot) {
+		const monster = this.props.getMonster(slot.monsterID);
+		if (monster && monster.portrait) {
+			return <PortraitPanel source={monster} inline={true} />;
+		}
+
+		return null;
 	}
 
 	private getValue(slot: EncounterSlot) {
 		let str = '';
+
 		if (slot.count > 1) {
 			if (str) {
 				str += ' ';
@@ -53,29 +68,24 @@ export class EncounterCard extends React.Component<Props> {
 			}
 			str += '(' + slot.faction + ')';
 		}
-		if (str) {
-			return <div className='value'>{str}</div>;
-		}
-		return null;
-	}
 
-	private getPortrait(slot: EncounterSlot) {
-		const monster = this.props.getMonster(slot.monsterID);
-		if (monster && monster.portrait) {
-			return <PortraitPanel source={monster} inline={true} />;
-		}
-
-		return null;
+		return !!str ? str : null;
 	}
 
 	public render() {
 		try {
 			const slots = this.props.encounter.slots.map(slot => (
-				<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)} role='button'>
-					{this.getPortrait(slot)}
-					{this.getText(slot)}
-					{this.getValue(slot)}
-				</div>
+				<Group key={slot.id} transparent={true} onClick={() => this.props.openStatBlock(slot)}>
+					<div className='content-then-info'>
+						<div className='content'>
+							{this.getPortrait(slot)}
+							{this.getText(slot)}
+						</div>
+						<div className='info'>
+							{this.getValue(slot)}
+						</div>
+					</div>
+				</Group>
 			));
 			if (slots.length === 0) {
 				slots.push(<div key='empty' className='section'>no monsters</div>);
@@ -85,11 +95,17 @@ export class EncounterCard extends React.Component<Props> {
 				slots.push(<div key={'name ' + wave.id} className='section subheading'>{wave.name || 'unnamed wave'}</div>);
 				wave.slots.forEach(slot => {
 					slots.push(
-						<div key={slot.id} className='combatant-row' onClick={() => this.props.openStatBlock(slot)} role='button'>
-							{this.getPortrait(slot)}
-							{this.getText(slot)}
-							{this.getValue(slot)}
-						</div>
+						<Group key={slot.id} transparent={true} onClick={() => this.props.openStatBlock(slot)}>
+							<div className='content-then-info'>
+								<div className='content'>
+									{this.getPortrait(slot)}
+									{this.getText(slot)}
+								</div>
+								<div className='info'>
+									{this.getValue(slot)}
+								</div>
+							</div>
+						</Group>
 					);
 				});
 				if (slots.length === 0) {
@@ -121,6 +137,7 @@ export class EncounterCard extends React.Component<Props> {
 							<EncounterOptions
 								encounter={this.props.encounter}
 								parties={this.props.parties}
+								adventures={this.props.adventures}
 								cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								deleteEncounter={encounter => this.props.deleteEncounter(encounter)}

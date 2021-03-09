@@ -3,6 +3,7 @@ import React from 'react';
 import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
+import { Group } from '../controls/group';
 
 import { RenderError } from '../error';
 import { CombatOptions } from '../options/combat-options';
@@ -20,7 +21,7 @@ export class CombatCard extends React.Component<Props> {
 	private getValue(combatant: Combatant) {
 		switch (combatant.type) {
 			case 'pc':
-				return <div className='value'>pc</div>;
+				return 'pc';
 			case 'monster':
 				const current = combatant.hpCurrent ?? 0;
 				const max = combatant.hpMax ?? 0;
@@ -32,7 +33,7 @@ export class CombatCard extends React.Component<Props> {
 				if (current < max) {
 					str += ' / ' + max;
 				}
-				return <div className='value'>{str} hp</div>;
+				return str + ' hp';
 		}
 
 		return null;
@@ -57,11 +58,17 @@ export class CombatCard extends React.Component<Props> {
 				.filter(c => c.active)
 				.filter(c => c.type !== 'placeholder')
 				.map(c => (
-					<div key={c.id} className='combatant-row' onClick={() => this.props.openStatBlock(c)} role='button'>
-						<PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
-						<div className='name'>{c.displayName}</div>
-						{this.getValue(c)}
-					</div>
+					<Group key={c.id} transparent={true} onClick={() => this.props.openStatBlock(c)}>
+						<div className='content-then-info'>
+							<div className='content'>
+								<PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
+								{c.displayName}
+							</div>
+							<div className='info'>
+								{this.getValue(c)}
+							</div>
+						</div>
+					</Group>
 				));
 
 			return (

@@ -228,30 +228,12 @@ export class Mercator {
 		return 0;
 	}
 
-	public static generate(type: string, map: Map) {
-		switch (type) {
-			case 'dungeon':
-				let dungeonRooms = 0;
-				while (dungeonRooms < 10) {
-					if (Mercator.addRoom(map)) {
-						dungeonRooms += 1;
-					}
-				}
-				break;
-			case 'delve':
-				let delveRooms = 0;
-				while (delveRooms < 3) {
-					if (Mercator.addRoom(map)) {
-						delveRooms += 1;
-					}
-				}
-				break;
-			case 'room':
-				let added = false;
-				while (!added) {
-					added = Mercator.addRoom(map);
-				}
-				break;
+	public static generate(areas: number, map: Map) {
+		let n = 0;
+		while (n < areas) {
+			if (Mercator.addRoom(map)) {
+				n += 1;
+			}
 		}
 	}
 

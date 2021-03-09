@@ -217,34 +217,38 @@ export class MapScreen extends React.Component<Props, State> {
 								onSelect={view => this.setSidebarView(view)}
 							/>
 							<Conditional display={this.state.sidebarView === 'tiles'}>
-								<Note>
-									<div className='section'>
-										maps are made out of map tiles, arranged together
-									</div>
-									<div className='section'>
-										to add a new tile to the map, click on <b>add a map tile</b> below
-									</div>
-									<div className='section'>
-										to edit an existing tile, click on it to select it
-									</div>
-								</Note>
+								<Conditional display={this.props.map.items.length === 0}>
+									<Note>
+										<div className='section'>
+											maps are made out of map tiles, arranged together
+										</div>
+										<div className='section'>
+											to add a new tile to the map, click on <b>add a map tile</b> below
+										</div>
+										<div className='section'>
+											to edit an existing tile, click on it to select it
+										</div>
+									</Note>
+								</Conditional>
 								<div className='section'>
 									<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
 									<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
 								</div>
 							</Conditional>
 							<Conditional display={this.state.sidebarView === 'areas'}>
-								<Note>
-									<div className='section'>
-										if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)
-									</div>
-									<div className='section'>
-										to add a new area to the map, click on <b>add a map area</b> below
-									</div>
-									<div className='section'>
-										to edit an existing area, click on it to select it
-									</div>
-								</Note>
+								<Conditional display={this.props.map.areas.length === 0}>
+									<Note>
+										<div className='section'>
+											if your map is large, you might want to designate different areas (such as rooms in a dungeon, or floors of a building)
+										</div>
+										<div className='section'>
+											to add a new area to the map, click on <b>add a map area</b> below
+										</div>
+										<div className='section'>
+											to edit an existing area, click on it to select it
+										</div>
+									</Note>
+								</Conditional>
 								<div className='section'>
 									{areas}
 									<hr/>

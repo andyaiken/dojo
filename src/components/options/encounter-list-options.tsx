@@ -4,7 +4,7 @@ import { Napoleon } from '../../utils/napoleon';
 
 import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
-import { RadioGroup } from '../controls/radio-group';
+import { Note } from '../controls/note';
 
 interface Props {
 	createEncounter: () => void;
@@ -16,14 +16,21 @@ export class EncounterListOptions extends React.Component<Props> {
 		try {
 			return (
 				<div>
-					<button onClick={() => this.props.addEncounter(null)}>add a new encounter</button>
-					<button onClick={() => this.props.createEncounter()}>create a random encounter</button>
-					<Expander text='use an encounter template'>
-						<RadioGroup
-							items={Napoleon.encounterTemplates().map(t => ({ id: t.name, text: t.name }))}
-							onSelect={id => this.props.addEncounter(id)}
-						/>
+					<Expander text='add a new encounter'>
+						<button onClick={() => this.props.addEncounter(null)}>add a new encounter</button>
+						<hr/>
+						<Note>
+							<div className='section'>
+								these templates give you a good framework for creating an encounter
+							</div>
+						</Note>
+						{
+							Napoleon.encounterTemplates().map(t => (
+								<button key={t.name} onClick={() => this.props.addEncounter(t.name)}>{t.name}</button>
+							))
+						}
 					</Expander>
+					<button onClick={() => this.props.createEncounter()}>create a random encounter</button>
 				</div>
 			);
 		} catch (e) {

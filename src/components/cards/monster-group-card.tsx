@@ -7,6 +7,7 @@ import { Monster, MonsterGroup } from '../../models/monster';
 
 import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
+import { Group } from '../controls/group';
 import { MonsterGroupOptions } from '../options/monster-group-options';
 import { PortraitPanel } from '../panels/portrait-panel';
 
@@ -32,11 +33,17 @@ export class MonsterGroupCard extends React.Component<Props> {
 		}
 
 		return this.props.group.monsters.map(m => (
-			<div key={m.id} className='combatant-row' onClick={() => this.props.openStatBlock(m)} role='button'>
-				<PortraitPanel source={m} inline={true}/>
-				<div className='name'>{m.name || 'unnamed monster'}</div>
-				<div className='value'>cr {Gygax.challenge(m.challenge)}</div>
-			</div>
+			<Group key={m.id} transparent={true} onClick={() => this.props.openStatBlock(m)}>
+				<div className='content-then-info'>
+					<div className='content'>
+						<PortraitPanel source={m} inline={true}/>
+						{m.name || 'unnamed monster'}
+					</div>
+					<div className='info'>
+						cr {Gygax.challenge(m.challenge)}
+					</div>
+				</div>
+			</Group>
 		));
 	}
 

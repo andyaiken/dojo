@@ -6,6 +6,7 @@ import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { AdventureOptions } from '../options/adventure-options';
 import { PlotPanel } from '../panels/plot-panel';
+import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	adventure: Adventure;
@@ -14,6 +15,23 @@ interface Props {
 }
 
 export class AdventureCard extends React.Component<Props> {
+	private getContent() {
+		if (this.props.adventure.plot.map) {
+			return (
+				<MapPanel
+					map={this.props.adventure.plot.map}
+				/>
+			);
+		}
+
+		return (
+			<PlotPanel
+				plot={this.props.adventure.plot}
+				mode='thumbnail'
+			/>
+		);
+	}
+
 	public render() {
 		try {
 			return (
@@ -25,10 +43,7 @@ export class AdventureCard extends React.Component<Props> {
 					</div>
 					<div className='card-content'>
 						<div className='fixed-height'>
-							<PlotPanel
-								plot={this.props.adventure.plot}
-								mode='thumbnail'
-							/>
+							{this.getContent()}
 						</div>
 						<hr/>
 						<button onClick={() => this.props.openAdventure(this.props.adventure)}>open adventure</button>

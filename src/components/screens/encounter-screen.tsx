@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Utils } from '../../utils/utils';
 
+import { Adventure } from '../../models/adventure';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
@@ -24,6 +25,7 @@ import { MarkdownEditor } from '../panels/markdown-editor';
 interface Props {
 	encounter: Encounter;
 	parties: Party[];
+	adventures: Adventure[];
 	cloneEncounter: (encounter: Encounter, name: string) => void;
 	deleteEncounter: (encounter: Encounter) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
@@ -172,6 +174,7 @@ export class EncounterScreen extends React.Component<Props> {
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
+							adventures={this.props.adventures}
 							cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}
 							startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 							deleteEncounter={encounter => this.props.deleteEncounter(encounter)}

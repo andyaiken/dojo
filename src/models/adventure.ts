@@ -1,4 +1,3 @@
-import { Encounter } from './encounter';
 import { Map } from './map';
 
 export interface Adventure {
@@ -20,7 +19,7 @@ export interface Scene {
 	tags: string[];
 	links: SceneLink[];
 	plot: Plot;
-	encounter: Encounter | null
+	encounterIDs: string[];
 }
 
 export interface SceneLink {

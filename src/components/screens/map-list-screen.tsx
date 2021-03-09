@@ -19,7 +19,7 @@ interface Props {
 	explorations: Exploration[];
 	addMap: () => void;
 	importMap: () => void;
-	generateMap: (type: string) => void;
+	generateMap: () => void;
 	openMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	deleteMap: (map: Map) => void;
@@ -73,7 +73,7 @@ export class MapListScreen extends React.Component<Props> {
 						<MapListOptions
 							addMap={() => this.props.addMap()}
 							importMap={() => this.props.importMap()}
-							generateMap={type => this.props.generateMap(type)}
+							generateMap={() => this.props.generateMap()}
 						/>
 					</Col>
 					<Col span={18} className='scrollable'>

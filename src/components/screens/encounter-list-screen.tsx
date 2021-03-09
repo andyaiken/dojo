@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Utils } from '../../utils/utils';
 
+import { Adventure } from '../../models/adventure';
 import { Combat, Combatant } from '../../models/combat';
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
@@ -20,6 +21,7 @@ interface Props {
 	encounters: Encounter[];
 	combats: Combat[];
 	parties: Party[];
+	adventures: Adventure[];
 	hasMonsters: boolean;
 	createEncounter: () => void;
 	addEncounter: (templateID: string | null) => void;
@@ -85,6 +87,7 @@ export class EncounterListScreen extends React.Component<Props> {
 					key={e.id}
 					encounter={e}
 					parties={this.props.parties}
+					adventures={this.props.adventures}
 					openEncounter={encounter => this.props.openEncounter(encounter)}
 					deleteEncounter={encounter => this.props.deleteEncounter(encounter)}
 					cloneEncounter={(encounter, name) => this.props.cloneEncounter(encounter, name)}

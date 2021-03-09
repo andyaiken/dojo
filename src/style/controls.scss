@@ -167,6 +167,10 @@
 	margin: 5px 0;
 	break-inside: avoid-column;
 
+	&.transparent {
+		background-color: transparent;
+	}
+
 	&.clickable {
 		cursor: pointer;
 

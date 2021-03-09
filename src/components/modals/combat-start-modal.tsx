@@ -120,9 +120,9 @@ export class CombatStartModal extends React.Component<Props, State> {
 		}, () => this.props.notify());
 	}
 
-	private generateMap(type: string) {
+	private generateMap(areas: number) {
 		const map = Factory.createMap();
-		Mercator.generate(type, map);
+		Mercator.generate(areas, map);
 
 		const setup = this.state.combatSetup;
 		setup.map = map;
@@ -199,7 +199,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 								maps={this.props.maps}
 								fixed={this.state.mapFixed}
 								setMapID={id => this.setMapID(id)}
-								generateMap={type => this.generateMap(type)}
+								generateMap={areas => this.generateMap(areas)}
 							/>
 						);
 					}
@@ -407,7 +407,7 @@ interface MapSectionProps {
 	maps: Map[];
 	fixed: boolean;
 	setMapID: (id: string | null) => void;
-	generateMap: (type: string) => void;
+	generateMap: (areas: number) => void;
 }
 
 class MapSection extends React.Component<MapSectionProps> {
@@ -439,7 +439,7 @@ class MapSection extends React.Component<MapSectionProps> {
 						</div>
 					</Note>
 					{selector}
-					<button onClick={() => this.props.generateMap('delve')}>generate a random delve</button>
+					<button onClick={() => this.props.generateMap(3)}>generate a random delve</button>
 				</div>
 			);
 		}
