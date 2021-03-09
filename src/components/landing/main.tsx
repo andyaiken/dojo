@@ -559,30 +559,35 @@ export class Main extends React.Component<Props, State> {
 
 	private selectParty(party: Party | null) {
 		this.setState({
+			view: 'parties',
 			selectedPartyID: party ? party.id : null
 		});
 	}
 
 	private selectMonsterGroup(group: MonsterGroup | null) {
 		this.setState({
+			view: 'library',
 			selectedMonsterGroupID: group ? group.id : null
 		});
 	}
 
 	private selectEncounter(encounter: Encounter | null) {
 		this.setState({
+			view: 'encounters',
 			selectedEncounterID: encounter ? encounter.id : null
 		});
 	}
 
 	private selectMap(map: Map | null) {
 		this.setState({
+			view: 'maps',
 			selectedMapID: map ? map.id : null
 		});
 	}
 
 	private selectAdventure(adventure: Adventure | null) {
 		this.setState({
+			view: 'adventures',
 			selectedAdventureID: adventure ? adventure.id : null
 		});
 	}
@@ -1203,12 +1208,20 @@ export class Main extends React.Component<Props, State> {
 			partyID = this.state.parties[0].id;
 		}
 
+		let xp = 1000;
+		if (!partyID) {
+			const party = this.state.parties.find(p => p.id === partyID);
+			if (party) {
+				xp = Napoleon.getXPForDifficulty(party, 'medium');
+			}
+		}
+
 		this.setState({
 			drawer: {
 				type: 'random-encounter',
 				data: {
 					type: (partyID === null) ? 'xp' : 'party',
-					xp: 1000,
+					xp: xp,
 					partyID: partyID,
 					difficulty: 'medium',
 					filter: Factory.createMonsterFilter()
@@ -1539,6 +1552,75 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private generateAdventure() {
+		let partyID: string | null = null;
+		if (this.state.parties.length === 1) {
+			partyID = this.state.parties[0].id;
+		}
+
+		let xp = 1000;
+		if (!partyID) {
+			const party = this.state.parties.find(p => p.id === partyID);
+			if (party) {
+				xp = Napoleon.getXPForDifficulty(party, 'medium');
+			}
+		}
+
+		this.setState({
+			drawer: {
+				type: 'random-adventure',
+				mapData: {
+					areas: 5
+				},
+				encounterData: {
+					type: (partyID === null) ? 'xp' : 'party',
+					xp: xp,
+					partyID: partyID,
+					difficulty: 'medium',
+					filter: Factory.createMonsterFilter()
+				},
+				canAccept: () => {
+					return (this.state.drawer.encounterData.type !== 'party') || (this.state.drawer.encounterData.partyID !== null);
+				},
+				onAccept: () => {
+					const adventure = Factory.createAdventure();
+					this.state.adventures.push(adventure);
+
+					const map = Factory.createMap();
+					Mercator.generate(this.state.drawer.mapData.areas, map);
+					adventure.plot.map = map;
+
+					map.areas.forEach(area => {
+						const scene = Factory.createScene();
+						scene.id = area.id;
+						scene.name = area.name;
+						adventure.plot.scenes.push(scene);
+
+						const encounter = Factory.createEncounter();
+						encounter.name = area.name;
+
+						Napoleon.buildEncounter(encounter, this.state.drawer.encounterData.xp, this.state.drawer.encounterData.filter, this.state.library, id => this.getMonster(id));
+						Napoleon.sortEncounter(encounter, id => this.getMonster(id));
+
+						this.state.encounters.push(encounter);
+						scene.encounterIDs.push(encounter.id);
+					});
+
+					const encounters = Utils.sort(this.state.encounters);
+					const adventures = Utils.sort(this.state.adventures);
+
+					this.setState({
+						view: 'adventures',
+						encounters: encounters,
+						adventures: adventures,
+						selectedAdventureID: adventure.id,
+						drawer: null
+					});
+				}
+			}
+		});
+	}
+
 	private acceptImportedAdventure() {
 		this.state.adventures.push(this.state.drawer.adventure);
 		this.setState({
@@ -1732,6 +1814,7 @@ export class Main extends React.Component<Props, State> {
 		partyID: string,
 		encounter: Encounter | null,
 		map: Map | null = null,
+		mapAreaID: string | null = null,
 		fog: { x: number, y: number }[] = [],
 		lighting: 'bright light' | 'dim light' | 'darkness' = 'bright light',
 		combatants: Combatant[] = []
@@ -1756,9 +1839,10 @@ export class Main extends React.Component<Props, State> {
 		}
 		if (map) {
 			setup.map = map;
+			setup.mapAreaID = mapAreaID;
+			setup.fog = fog;
+			setup.lighting = lighting;
 		}
-		setup.fog = fog;
-		setup.lighting = lighting;
 		setup.combatants = combatants;
 
 		this.setState({
@@ -1810,6 +1894,7 @@ export class Main extends React.Component<Props, State> {
 
 			if (combatSetup.map) {
 				combat.map = JSON.parse(JSON.stringify(combatSetup.map));
+				combat.mapAreaID = combatSetup.mapAreaID;
 				combat.fog = combatSetup.fog;
 				combat.lighting = combatSetup.lighting;
 			}
@@ -2036,6 +2121,7 @@ export class Main extends React.Component<Props, State> {
 						this.state.explorations.push(exploration);
 					}
 					exploration.map = combat.map;
+					exploration.mapAreaID = combat.mapAreaID;
 					exploration.fog = combat.fog;
 					exploration.lighting = combat.lighting;
 					exploration.combatants = combatants;
@@ -3139,7 +3225,7 @@ export class Main extends React.Component<Props, State> {
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
 							library={this.state.library}
 							options={this.state.options}
-							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.fog, ex.lighting, ex.combatants)}
+							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.mapAreaID, ex.fog, ex.lighting, ex.combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.toggleCondition(combatants, condition)}
 							toggleHidden={combatants => this.toggleHidden(combatants)}
@@ -3270,7 +3356,9 @@ export class Main extends React.Component<Props, State> {
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
 							addEncounterToScene={scene => this.addEncounterToScene(scene)}
 							removeEncounterFromScene={(scene, encounterID) => this.removeEncounterFromScene(scene, encounterID)}
+							openEncounter={encounter => this.selectEncounter(encounter)}
 							runEncounter={encounter => this.createCombat('', encounter)}
+							runEncounterWithMap={(encounter, map, areaID) => this.createCombat('', encounter, map, areaID)}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
@@ -3281,6 +3369,7 @@ export class Main extends React.Component<Props, State> {
 						adventures={this.state.adventures}
 						addAdventure={() => this.addAdventure()}
 						importAdventure={() => this.importAdventure()}
+						generateAdventure={() => this.generateAdventure()}
 						openAdventure={adventure => this.selectAdventure(adventure)}
 						deleteAdventure={adventure => this.deleteAdventure(adventure)}
 					/>
@@ -3621,6 +3710,26 @@ export class Main extends React.Component<Props, State> {
 					footer = (
 						<button onClick={() => this.acceptImportedAdventure()}>
 							accept adventure
+						</button>
+					);
+					closable = true;
+					break;
+				case 'random-adventure':
+					content = (
+						<RandomEncounterOrMapModal
+							parties={this.state.parties}
+							mapData={this.state.drawer.mapData}
+							encounterData={this.state.drawer.encounterData}
+							onUpdated={() => this.forceUpdate()}
+						/>
+					);
+					header = 'create a random adventure';
+					footer = (
+						<button
+							className={this.state.drawer.canAccept() ? '' : 'disabled'}
+							onClick={() => this.state.drawer.onAccept()}
+						>
+							create the adventure
 						</button>
 					);
 					closable = true;

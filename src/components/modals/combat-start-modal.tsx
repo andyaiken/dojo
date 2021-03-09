@@ -101,9 +101,9 @@ export class CombatStartModal extends React.Component<Props, State> {
 		let xp = 0;
 		let sumLevel = 0;
 		if (this.state.combatSetup.party) {
+			xp = Napoleon.getXPForDifficulty(this.state.combatSetup.party, diff);
 			const pcs = this.state.combatSetup.party.pcs.filter(pc => pc.active);
 			pcs.forEach(pc => {
-				xp += Gygax.pcExperience(pc.level, diff);
 				sumLevel += pc.level;
 			});
 
@@ -178,9 +178,8 @@ export class CombatStartModal extends React.Component<Props, State> {
 
 			switch (this.props.type) {
 				case 'start':
-					let enc = null;
-					if (!this.state.encounterFixed) {
-						enc = (
+					leftSection = (
+						<div>
 							<EncounterSection
 								combatSetup={this.state.combatSetup}
 								encounters={this.props.encounters}
@@ -189,11 +188,6 @@ export class CombatStartModal extends React.Component<Props, State> {
 								generateEncounter={diff => this.generateEncounter(diff)}
 								getMonster={id => this.props.getMonster(id)}
 							/>
-						);
-					}
-					let map = null;
-					if (!this.state.mapFixed) {
-						map = (
 							<MapSection
 								combatSetup={this.state.combatSetup}
 								maps={this.props.maps}
@@ -201,12 +195,6 @@ export class CombatStartModal extends React.Component<Props, State> {
 								setMapID={id => this.setMapID(id)}
 								generateMap={areas => this.generateMap(areas)}
 							/>
-						);
-					}
-					leftSection = (
-						<div>
-							{enc}
-							{map}
 						</div>
 					);
 					rightSection = (
@@ -450,6 +438,7 @@ class MapSection extends React.Component<MapSectionProps> {
 				<div className='scrollable horizontal-only'>
 					<MapPanel
 						map={this.props.combatSetup.map}
+						viewport={Mercator.getViewport(this.props.combatSetup.map, this.props.combatSetup.mapAreaID)}
 						combatants={this.props.combatSetup.combatants}
 					/>
 				</div>

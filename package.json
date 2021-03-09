@@ -1,6 +1,6 @@
 {
 	"name": "dojo",
-	"version": "14.1.0",
+	"version": "14.2.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
@@ -25,7 +25,7 @@
 		"@types/lz-string": "^1.3.34",
 		"@types/mousetrap": "^1.6.5",
 		"@types/react": "^17.0.3",
-		"@types/react-dom": "^17.0.1",
+		"@types/react-dom": "^17.0.2",
 		"@types/react-pdf": "^5.0.1",
 		"@types/react-router-dom": "^5.1.7",
 		"@types/uuid": "^8.3.0",

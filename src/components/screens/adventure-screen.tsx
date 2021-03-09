@@ -1,4 +1,4 @@
-import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, InfoCircleOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -7,6 +7,7 @@ import { Verne } from '../../utils/verne';
 
 import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
+import { Map } from '../../models/map';
 import { Monster } from '../../models/monster';
 
 import { RenderError } from '../error';
@@ -20,8 +21,8 @@ import { Textbox } from '../controls/textbox';
 import { AdventureOptions } from '../options/adventure-options';
 import { EncounterInfoPanel } from '../panels/encounter-info-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
-import { PlotPanel } from '../panels/plot-panel';
 import { MapPanel } from '../panels/map-panel';
+import { PlotPanel } from '../panels/plot-panel';
 
 interface Props {
 	adventure: Adventure;
@@ -36,7 +37,9 @@ interface Props {
 	removeMapFromPlot: (plot: Plot) => void;
 	addEncounterToScene: (scene: Scene) => void;
 	removeEncounterFromScene: (scene: Scene, encounterID: string) => void;
+	openEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter) => void;
+	runEncounterWithMap: (encounter: Encounter, map: Map, areaID: string) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 }
@@ -106,6 +109,14 @@ export class AdventureScreen extends React.Component<Props, State> {
 		}
 	}
 
+	private runEncounter(encounter: Encounter, scene: Scene) {
+		if (this.state.plot.map) {
+			this.props.runEncounterWithMap(encounter, this.state.plot.map, scene.id);
+		} else {
+			this.props.runEncounter(encounter);
+		}
+	}
+
 	private getEncounters(scene: Scene) {
 		const encounters: JSX.Element[] = [];
 
@@ -113,14 +124,17 @@ export class AdventureScreen extends React.Component<Props, State> {
 			const encounter = this.props.encounters.find(enc => enc.id === encounterID);
 			if (encounter) {
 				encounters.push(
-					<Group>
+					<Group key={encounter.id}>
 						<div className='content-then-icons'>
 							<div className='content'>
 								<EncounterInfoPanel encounter={encounter} getMonster={id => this.props.getMonster(id)} />
 							</div>
 							<div className='icons vertical'>
-								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounter(encounter as Encounter)} />
-								<DeleteOutlined title='remove encounter' onClick={() => this.props.removeEncounterFromScene(scene, encounter.id)} />
+								<InfoCircleOutlined title='open encounter' onClick={() => this.props.openEncounter(encounter)} />
+								<CaretRightOutlined title='run encounter' onClick={() => this.runEncounter(encounter, scene)} />
+								<ConfirmButton onConfirm={() => this.props.removeEncounterFromScene(scene, encounter.id)}>
+									<DeleteOutlined title='remove encounter' />
+								</ConfirmButton>
 							</div>
 						</div>
 					</Group>

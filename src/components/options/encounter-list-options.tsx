@@ -30,7 +30,7 @@ export class EncounterListOptions extends React.Component<Props> {
 							))
 						}
 					</Expander>
-					<button onClick={() => this.props.createEncounter()}>create a random encounter</button>
+					<button onClick={() => this.props.createEncounter()}>generate a random encounter</button>
 				</div>
 			);
 		} catch (e) {

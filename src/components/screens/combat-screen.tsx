@@ -80,7 +80,6 @@ interface State {
 	showOptions: boolean;
 	showDefeatedCombatants: boolean;
 	selectedItemIDs: string[];
-	selectedAreaID: string | null;
 	addingToMapID: string | null;
 	addingOverlay: boolean;
 	editFog: boolean;
@@ -98,7 +97,6 @@ export class CombatScreen extends React.Component<Props, State> {
 			showOptions: false,
 			showDefeatedCombatants: false,
 			selectedItemIDs: [],			// The IDs of the combatants or map items that are selected
-			selectedAreaID: null,			// The ID of the selected map area
 			addingToMapID: null,			// The ID of the combatant we're adding to the map
 			addingOverlay: false,			// True if we're adding a custom overlay to the map
 			editFog: false,
@@ -118,7 +116,6 @@ export class CombatScreen extends React.Component<Props, State> {
 	public componentDidUpdate() {
 		if (Comms.data.shared.type === 'combat') {
 			Comms.data.shared.additional = {
-				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			};
 			CommsDM.sendSharedDiffUpdate();
@@ -156,12 +153,6 @@ export class CombatScreen extends React.Component<Props, State> {
 		} else {
 			this.setSelectedItemIDs(id ? [id] : []);
 		}
-	}
-
-	private setSelectedAreaID(id: string | null) {
-		this.setState({
-			selectedAreaID: id
-		});
 	}
 
 	private setAddingToMapID(id: string | null) {
@@ -389,7 +380,7 @@ export class CombatScreen extends React.Component<Props, State> {
 								map={this.props.combat.map}
 								mode='interactive-player'
 								options={this.props.options}
-								viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
+								viewport={Mercator.getViewport(this.props.combat.map, this.props.combat.mapAreaID)}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
 								fog={this.props.combat.fog}
@@ -872,7 +863,7 @@ export class CombatScreen extends React.Component<Props, State> {
 									to place one on the map, click the <EnvironmentOutlined /> button and then click on a map square
 								</div>
 								<div className='section'>
-									or, click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+									or, click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.props.combat.mapAreaID)}>here</button> to scatter them randomly
 								</div>
 							</Note>
 							{
@@ -898,7 +889,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							mode='interactive-dm'
 							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 							options={this.props.options}
-							viewport={Mercator.getViewport(this.props.combat.map, this.state.selectedAreaID)}
+							viewport={Mercator.getViewport(this.props.combat.map, this.props.combat.mapAreaID)}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}
@@ -911,7 +902,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
 							toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
 							toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
-							areaSelected={id => this.setSelectedAreaID(id)}
+							areaSelected={id => this.props.changeValue(this.props.combat, 'mapAreaID', id)}
 							gridSquareEntered={(x, y) => this.setHighlightedSquare(x, y)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}

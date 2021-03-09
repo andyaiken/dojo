@@ -481,7 +481,6 @@ export class Player extends React.Component<Props, State> {
 
 	private getCombatSection(combat: Combat, additional: any) {
 		const characterID = Comms.getCharacterID(Comms.getID());
-		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
 		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
 
 		let banner = null;
@@ -516,7 +515,7 @@ export class Player extends React.Component<Props, State> {
 						map={combat.map}
 						mode='interactive-player'
 						options={this.state.options}
-						viewport={Mercator.getViewport(combat.map, selectedAreaID)}
+						viewport={Mercator.getViewport(combat.map, combat.mapAreaID)}
 						showGrid={this.state.addingToMap}
 						combatants={combat.combatants}
 						selectedItemIDs={[characterID]}
@@ -559,7 +558,6 @@ export class Player extends React.Component<Props, State> {
 
 	private getExplorationSection(exploration: Exploration, additional: any) {
 		const characterID = Comms.getCharacterID(Comms.getID());
-		const selectedAreaID = additional['selectedAreaID'] as string ?? '';
 		const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
 
 		return (
@@ -568,7 +566,7 @@ export class Player extends React.Component<Props, State> {
 					map={exploration.map}
 					mode='interactive-player'
 					options={this.state.options}
-					viewport={Mercator.getViewport(exploration.map, selectedAreaID)}
+					viewport={Mercator.getViewport(exploration.map, exploration.mapAreaID)}
 					showGrid={this.state.addingToMap}
 					combatants={exploration.combatants}
 					selectedItemIDs={[characterID]}

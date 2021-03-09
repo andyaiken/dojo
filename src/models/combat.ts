@@ -9,6 +9,7 @@ export interface CombatSetup {
 	encounter: Encounter | null;
 	waveID: string | null;
 	map: Map | null;
+	mapAreaID: string | null;
 	fog: { x: number, y: number }[];
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	combatants: Combatant[];
@@ -37,6 +38,7 @@ export interface Combat {
 	encounter: Encounter;
 	combatants: Combatant[];
 	map: Map | null;
+	mapAreaID: string | null;
 	fog: { x: number, y: number }[];
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	round: number;

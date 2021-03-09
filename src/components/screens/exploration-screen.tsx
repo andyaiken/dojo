@@ -69,7 +69,6 @@ interface State {
 	highlightMapSquare: boolean;
 	highlightedSquare: { x: number, y: number} | null;
 	selectedItemIDs: string[];
-	selectedAreaID: string | null;
 }
 
 export class ExplorationScreen extends React.Component<Props, State> {
@@ -83,8 +82,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			editFog: false,
 			highlightMapSquare: false,
 			highlightedSquare: null,
-			selectedItemIDs: [],
-			selectedAreaID: null
+			selectedItemIDs: []
 		};
 	}
 
@@ -97,7 +95,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 	public componentDidUpdate() {
 		if (Comms.data.shared.type === 'exploration') {
 			Comms.data.shared.additional = {
-				selectedAreaID: this.state.selectedAreaID,
 				highlightedSquare: this.state.highlightedSquare
 			};
 			CommsDM.sendSharedDiffUpdate();
@@ -171,12 +168,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 		this.setState({
 			editFog: (ids.length > 0) ? false : this.state.editFog,
 			selectedItemIDs: ids
-		});
-	}
-
-	private setSelectedAreaID(id: string | null) {
-		this.setState({
-			selectedAreaID: id
 		});
 	}
 
@@ -393,7 +384,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				mode={playerView ? 'interactive-player' : 'interactive-dm'}
 				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 				options={this.props.options}
-				viewport={Mercator.getViewport(this.props.exploration.map, this.state.selectedAreaID)}
+				viewport={Mercator.getViewport(this.props.exploration.map, this.props.exploration.mapAreaID)}
 				combatants={this.props.exploration.combatants}
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedItemIDs}
@@ -409,7 +400,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
 				toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
 				toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
-				areaSelected={id => this.setSelectedAreaID(id)}
+				areaSelected={id => this.props.changeValue(this.props.exploration, 'mapAreaID', id)}
 				changeLighting={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
 				toggleFeature={feature => {
 					switch (feature) {
@@ -639,7 +630,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 								to place one on the map, click the <b>place on map</b> button and then click on a map square
 							</div>
 							<div className='section'>
-								or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.state.selectedAreaID)}>here</button> to scatter them randomly
+								or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.props.exploration.mapAreaID)}>here</button> to scatter them randomly
 							</div>
 						</Note>
 						{

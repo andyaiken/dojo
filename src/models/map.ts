@@ -49,6 +49,7 @@ export interface Exploration {
 	id: string;
 	name: string;
 	map: Map;
+	mapAreaID: string | null;
 	partyID: string;
 	fog: { x: number, y: number }[];
 	lighting: 'bright light' | 'dim light' | 'darkness';

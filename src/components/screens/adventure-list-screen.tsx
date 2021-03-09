@@ -15,6 +15,7 @@ interface Props {
 	adventures: Adventure[];
 	addAdventure: () => void;
 	importAdventure: () => void;
+	generateAdventure: () => void;
 	openAdventure: (adventure: Adventure) => void;
 	deleteAdventure: (adventure: Adventure) => void;
 }
@@ -47,6 +48,7 @@ export class AdventureListScreen extends React.Component<Props> {
 						<AdventureListOptions
 							addAdventure={() => this.props.addAdventure()}
 							importAdventure={() => this.props.importAdventure()}
+							generateAdventure={() => this.props.generateAdventure()}
 						/>
 					</Col>
 					<Col span={18} className='scrollable'>

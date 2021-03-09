@@ -10,7 +10,7 @@ import { Combat, Combatant } from '../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
 import { Map } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster';
-import { Companion, PC } from '../models/party';
+import { Companion, Party, PC } from '../models/party';
 
 export class Napoleon {
 	public static getMonsterCount(encounter: Encounter, waveID: string | null) {
@@ -60,6 +60,16 @@ export class Napoleon {
 		const count = this.getMonsterCount(encounter, waveID);
 		const xp = this.getEncounterXP(encounter, waveID, getMonster);
 		return xp * Gygax.experienceFactor(count);
+	}
+
+	public static getXPForDifficulty(party: Party, difficulty: string) {
+		let xp = 0;
+
+		party.pcs.filter(pc => pc.active).forEach(pc => {
+			xp += Gygax.pcExperience(pc.level, difficulty);
+		});
+
+		return xp;
 	}
 
 	public static getCombatXP(combat: Combat) {

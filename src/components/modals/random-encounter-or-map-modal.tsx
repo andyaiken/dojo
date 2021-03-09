@@ -156,10 +156,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 
 		const party = this.props.parties.find(p => p.id === data.partyID);
 		if (party) {
-			const pcs = party.pcs.filter(pc => pc.active);
-			pcs.forEach(pc => {
-				xp += Gygax.pcExperience(pc.level, data.difficulty);
-			});
+			xp = Napoleon.getXPForDifficulty(party, data.difficulty);
 		}
 
 		return xp;
@@ -226,7 +223,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 				</Note>
 				<Row gutter={10}>
 					<Col span={12}>
-						<div className='section heading'>method</div>
+						<div className='section subheading'>method</div>
 						<Selector
 							options={[
 								{
@@ -244,7 +241,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 						{content}
 					</Col>
 					<Col span={12}>
-						<div className='section heading'>monsters</div>
+						<div className='section subheading'>monsters</div>
 						<FilterPanel
 							filter={data.filter}
 							prefix='use'
