@@ -1297,6 +1297,192 @@ export class Shakespeare {
 		return names[index];
 	}
 
+	public static generateRoomDescription() {
+		const lines: string[] = [];
+
+		if (Utils.randomNumber(2) === 0) {
+			lines.push(this.randomWall());
+
+			if (Utils.randomNumber(2) === 0) {
+				lines.push(this.randomWallFinish());
+			}
+		}
+
+		if (Utils.randomNumber(5) === 0) {
+			lines.push(this.randomAir());
+		}
+
+		if (Utils.randomNumber(5) === 0) {
+			lines.push(this.randomSmell());
+		}
+
+		if (Utils.randomNumber(5) === 0) {
+			lines.push(this.randomSound());
+		}
+
+		if (Utils.randomNumber(10) === 0) {
+			lines.push(this.randomActivity());
+		}
+
+		return lines.join(' ');
+	}
+
+	private static randomWall() {
+		const walls: string[] = [
+			'The walls of this area are ' + this.randomWallMaterial() + '.',
+			'The walls of this area are ' + this.randomWallMaterial() + ' and ' + this.randomWallMaterial() + '.',
+			'The floor of this area is made from ' + this.randomWallMaterial() + '.',
+			'The walls of this area are made of ' + this.randomWallMaterial() + ', while the ceiling and floor are ' + this.randomWallMaterial() + '.',
+			'The walls of this area have been hewn out of solid rock.',
+			'The walls of this area have been panelled in dark wood.'
+		];
+
+		const index = Utils.randomNumber(walls.length);
+		return walls[index];
+	}
+
+	private static randomWallMaterial() {
+		const materials: string[] = [
+			'granite',
+			'slate',
+			'sandstone',
+			'brick',
+			'marble',
+			'slabs of rock',
+			'an unfamiliar rock'
+		];
+
+		const index = Utils.randomNumber(materials.length);
+		let material = materials[index];
+
+		if (Utils.randomNumber(2) === 0) {
+			const adjectives: string[] = [
+				'polished',
+				'rough',
+				'chiselled',
+				'uneven',
+				'worked',
+				this.potionColour(false),
+				this.potionColour(false) + ' and ' + this.potionColour(false)
+			];
+
+			const adjIndex = Utils.randomNumber(adjectives.length);
+			material = adjectives[adjIndex] + ' ' + material;
+		}
+
+		return material;
+	}
+
+	private static randomWallFinish() {
+		const finishes: string[] = [
+			'They are covered in black soot.',
+			'They are ' + this.randomStyle() + ' with ' + this.randomDecoration() + '.',
+			'They are covered in claw marks.',
+			'They have been painted ' + this.potionColour(false) + '.',
+			'It is possible to tell that they were once plastered.',
+			'Here and there, graffiti covers them.',
+			'A thick layer of dust covers the room.',
+			'Moss and lichen grows here and there on them.',
+			'The patina of age covers them.',
+			'Childlike drawings and sketches cover them.',
+			'Cryptic signs have been scratched into them.'
+		];
+
+		const index = Utils.randomNumber(finishes.length);
+		return finishes[index];
+	}
+
+	private static randomStyle() {
+		const styles: string[] = [
+			'painted',
+			'engraved'
+		];
+
+		const index = Utils.randomNumber(styles.length);
+		return styles[index];
+	}
+
+	private static randomDecoration() {
+		const deco: string[] = [
+			'abstract artwork',
+			'battle scenes',
+			'landscape scenes',
+			'hunting scenes',
+			'pastoral scenes',
+			'religious symbols',
+			'runes',
+			'glyphs',
+			'sigils',
+			'cryptic signs'
+		];
+
+		const index = Utils.randomNumber(deco.length);
+		return deco[index];
+	}
+
+	private static randomAir() {
+		const air: string[] = [
+			'The room is bitterly cold.',
+			'There is a distinct chill in the air.',
+			'A cold breeze blows through this area.',
+			'A warm draught blows through this area.',
+			'The area is uncomfortably hot.',
+			'The air is dank.',
+			'The air here is warm and humid.',
+			'A strange mist hangs in the air here.',
+			'The room\'s surfaces are covered in frost.'
+		];
+
+		const index = Utils.randomNumber(air.length);
+		return air[index];
+	}
+
+	private static randomSmell() {
+		const smells: string[] = [
+			'A smell of burning hangs in the air.',
+			'The air feels stagnant.',
+			'The air smells ' + this.potionSmell(),
+			'From time to time the smell of blood catches your nostrils.',
+			'The stench of rotting meat is in the air.',
+			'The area has a strange musky smell.',
+			'You notice a strangly acrid smell throughout the area.',
+			'The area is filled with an unpleasant putrid smell.'
+		];
+
+		const index = Utils.randomNumber(smells.length);
+		return smells[index];
+	}
+
+	private static randomSound() {
+		const sounds: string[] = [
+			'You can hear distant chanting.',
+			'You can hear a quiet buzzing sound.',
+			'The sound of running water fills this area.',
+			'A low humming sound can be heard.',
+			'The area is unnaturally quiet.',
+			'A quiet susurration can just be heard.',
+			'Creaking sounds fill the area.',
+			'Scratching sounds can be heard.',
+			'From time to time, a distant voice can be heard.'
+		];
+
+		const index = Utils.randomNumber(sounds.length);
+		return sounds[index];
+	}
+
+	private static randomActivity() {
+		const activities: string[] = [
+			'The dust swirls as if disturbed by movement.',
+			'You catch a sudden movement out of the corner of your eye.',
+			'From time to time tiny pieces of debris fall from the ceiling.',
+			'Water drips slowly from a crack in the ceiling.',
+			'Water drips down the walls.'
+		];
+
+		const index = Utils.randomNumber(activities.length);
+		return activities[index];
+	}
+
 	private static potionColour(complex: boolean) {
 		let values = [
 			'red',

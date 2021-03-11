@@ -1,4 +1,4 @@
-import { VerticalAlignBottomOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, VerticalAlignBottomOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import React from 'react';
 
@@ -13,6 +13,7 @@ interface Props {
 	mode: 'thumbnail' | 'editor';
 	selectedSceneID: string | null;
 	selectSceneID: (sceneID: string | null) => void;
+	showNotes: (scene: Scene) => void;
 	exploreScene: (scene: Scene) => void;
 	addScene: (sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
 }
@@ -22,6 +23,7 @@ export class PlotPanel extends React.Component<Props> {
 		mode: 'editor',
 		selectedSceneID: null,
 		selectSceneID: () => null,
+		showNotes: (scene: Scene) => null,
 		exploreScene: (scene: Scene) => null,
 		addScene: (before: Scene | null, after: Scene | null) => null
 	};
@@ -56,6 +58,7 @@ export class PlotPanel extends React.Component<Props> {
 								mode={this.props.mode}
 								selected={scene.id === this.props.selectedSceneID}
 								onSelect={() => this.props.selectSceneID(scene.id)}
+								onNotes={() => this.props.showNotes(scene)}
 								onExplore={() => this.props.exploreScene(scene)}
 								addSceneBefore={() => this.props.addScene(null, scene)}
 								addSceneAfter={() => this.props.addScene(scene, null)}
@@ -148,6 +151,7 @@ interface ScenePanelProps {
 	mode: 'thumbnail' | 'editor';
 	selected: boolean;
 	onSelect: () => void;
+	onNotes: () => void;
 	onExplore: () => void;
 	addSceneBefore: () => void;
 	addSceneAfter: () => void;
@@ -157,6 +161,11 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 	private onClick(e: React.MouseEvent) {
 		e.stopPropagation();
 		this.props.onSelect();
+	}
+
+	private onNotes(e: React.MouseEvent) {
+		e.stopPropagation();
+		this.props.onNotes();
 	}
 
 	private onExplore(e: React.MouseEvent) {
@@ -186,6 +195,40 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 				style += ' selected';
 			}
 
+			const icons = [];
+			if (this.props.scene.content) {
+				icons.push(
+					<AlignLeftOutlined key='notes' title='notes' onClick={e => this.onNotes(e)} />
+				);
+			}
+			if (this.props.scene.plot.scenes.length > 0) {
+				icons.push(
+					<VerticalAlignBottomOutlined key='explore' title='explore' onClick={e => this.onExplore(e)} />
+				);
+			}
+
+			let content = null;
+			if (icons.length === 0) {
+				content = (
+					<div className='scene-name'>
+						{this.props.scene.name || 'unnamed scene'}
+					</div>
+				);
+			} else {
+				content = (
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div className='scene-name'>
+								{this.props.scene.name || 'unnamed scene'}
+							</div>
+						</div>
+						<div className='icons vertical'>
+							{icons}
+						</div>
+					</div>
+				);
+			}
+
 			return (
 				<Popover
 					content={this.getPopover()}
@@ -195,14 +238,7 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 				>
 					<div className={style} onClick={e => this.onClick(e)} role='button'>
 						<div className='text-container'>
-							<div className='content-then-icons'>
-								<div className='content'>
-									<div className='scene-name'>{this.props.scene.name || 'unnamed scene'}</div>
-								</div>
-								<div className='icons vertical'>
-									<VerticalAlignBottomOutlined title='explore' onClick={e => this.onExplore(e)} />
-								</div>
-							</div>
+							{content}
 						</div>
 					</div>
 				</Popover>

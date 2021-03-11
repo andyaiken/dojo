@@ -19,6 +19,8 @@ import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/ses
 interface Props {
 	view: string;
 	parties: Party[];
+	currentCombat: Combat | null;
+	currentExploration: Exploration | null;
 	setView: (view: string) => void;
 	openImage: (data: string) => void;
 }
@@ -144,9 +146,19 @@ export class SessionSidebar extends React.Component<Props, State> {
 						break;
 				}
 
-				let stopSharingBtn = null;
-				if (Comms.data.shared.type !== 'nothing') {
-					stopSharingBtn = (
+				let action = null;
+				if (Comms.data.shared.type === 'nothing') {
+					if (this.props.currentCombat) {
+						action = (
+							<button onClick={() => CommsDM.shareCombat(this.props.currentCombat as Combat)}>start sharing combat</button>
+						);
+					} else if (this.props.currentExploration) {
+						action = (
+							<button onClick={() => CommsDM.shareExploration(this.props.currentExploration as Exploration)}>start sharing exploration</button>
+						);
+					}
+				} else {
+					action = (
 						<ConfirmButton onConfirm={() => CommsDM.shareNothing()}>stop sharing</ConfirmButton>
 					);
 				}
@@ -176,7 +188,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 						<hr/>
 						<div className='subheading'>currently sharing</div>
 						<div className='section'>{sharing}</div>
-						{stopSharingBtn}
+						{action}
 						<hr/>
 						<div className='subheading'>options</div>
 						<Checkbox

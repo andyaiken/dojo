@@ -12,6 +12,7 @@ import { Napoleon } from '../../utils/napoleon';
 import { Shakespeare } from '../../utils/shakespeare';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
+import { Verne } from '../../utils/verne';
 
 import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
@@ -38,6 +39,7 @@ import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
 import { EncounterSelectionModal } from '../modals/encounter-selection-modal';
 import { MapSelectionModal } from '../modals/map-selection-modal';
+import { MarkdownModal } from '../modals/markdown-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomEncounterOrMapModal } from '../modals/random-encounter-or-map-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
@@ -684,6 +686,16 @@ export class Main extends React.Component<Props, State> {
 
 		this.setState({
 			sidebar: sidebar
+		});
+	}
+
+	private showMarkdown(title: string, content: string) {
+		this.setState({
+			drawer: {
+				type: 'markdown',
+				title: title,
+				content: content
+			}
 		});
 	}
 
@@ -1364,6 +1376,11 @@ export class Main extends React.Component<Props, State> {
 				onAccept: () => {
 					const map = Factory.createMap();
 					Mercator.generate(this.state.drawer.data.areas, map);
+					map.areas.forEach(area => {
+						if (Utils.randomBoolean()) {
+							area.text = Shakespeare.generateRoomDescription();
+						}
+					});
 					this.state.maps.push(map);
 
 					this.setState({
@@ -1607,6 +1624,11 @@ export class Main extends React.Component<Props, State> {
 
 					const map = Factory.createMap();
 					Mercator.generate(this.state.drawer.mapData.areas, map);
+					map.areas.forEach(area => {
+						if (Utils.randomBoolean()) {
+							area.text = Shakespeare.generateRoomDescription();
+						}
+					});
 					adventure.plot.map = map;
 
 					let encounters = this.state.encounters;
@@ -1678,6 +1700,13 @@ export class Main extends React.Component<Props, State> {
 			link.sceneID = sceneAfter.id;
 			newScene.links.push(link);
 		}
+		this.setState({
+			adventures: this.state.adventures
+		});
+	}
+
+	private moveScene(plot: Plot, scene: Scene, dir: 'left' | 'right') {
+		Verne.moveScene(plot, scene, dir);
 		this.setState({
 			adventures: this.state.adventures
 		});
@@ -3200,13 +3229,18 @@ export class Main extends React.Component<Props, State> {
 							}}
 							chooseMonster={(encounter, slot, wave) => {
 								if (slot) {
+									let originalMonster = null;
+									if (slot.monsterID) {
+										originalMonster = this.getMonster(slot.monsterID);
+									}
 									this.setState({
 										drawer: {
 											type: 'encounter-slot-template',
 											encounter: encounter,
 											slot: slot,
 											wave: wave,
-											monster: null
+											originalMonster: originalMonster,
+											monster: originalMonster
 										}
 									});
 								} else {
@@ -3216,6 +3250,7 @@ export class Main extends React.Component<Props, State> {
 											encounter: encounter,
 											slot: slot,
 											wave: wave,
+											originalMonster: null,
 											monster: null
 										}
 									});
@@ -3380,8 +3415,10 @@ export class Main extends React.Component<Props, State> {
 						<AdventureScreen
 							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
 							encounters={this.state.encounters}
+							maps={this.state.maps}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
+							moveScene={(plot, scene, dir) => this.moveScene(plot, scene, dir)}
 							deleteScene={(plot, scene) => this.deleteScene(plot, scene)}
 							addLink={(scene, sceneID) => this.addLink(scene, sceneID)}
 							deleteLink={(scene, link) => this.deleteLink(scene, link)}
@@ -3393,6 +3430,7 @@ export class Main extends React.Component<Props, State> {
 							openEncounter={encounter => this.selectEncounter(encounter)}
 							runEncounter={encounter => this.createCombat('', encounter)}
 							runEncounterWithMap={(encounter, map, areaID) => this.createCombat('', encounter, map, areaID)}
+							showNotes={scene => this.showMarkdown(scene.name || 'unnamed scene', scene.content)}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
@@ -3634,6 +3672,7 @@ export class Main extends React.Component<Props, State> {
 							encounter={this.state.drawer.encounter}
 							wave={this.state.drawer.wave}
 							slot={this.state.drawer.slot}
+							originalMonster={this.state.drawer.originalMonster}
 							monster={this.state.drawer.monster}
 							library={this.state.library}
 							setMonster={monster => {
@@ -3670,6 +3709,7 @@ export class Main extends React.Component<Props, State> {
 							encounter={this.state.drawer.encounter}
 							wave={this.state.drawer.wave}
 							slot={this.state.drawer.slot}
+							originalMonster={this.state.drawer.originalMonster}
 							monster={this.state.drawer.monster}
 							library={this.state.library}
 							setMonster={monster => {
@@ -3881,6 +3921,13 @@ export class Main extends React.Component<Props, State> {
 					);
 					header = 'choose an image';
 					width = '25%';
+					break;
+				case 'markdown':
+					content = (
+						<MarkdownModal content={this.state.drawer.content} />
+					);
+					header = this.state.drawer.title;
+					closable = true;
 					break;
 				case 'add-map-to-plot':
 					content = (

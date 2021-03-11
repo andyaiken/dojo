@@ -217,7 +217,7 @@ export class EncounterScreen extends React.Component<Props> {
 										this.props.changeValue(this.props.encounter, 'notes', vc);
 									}}
 								>
-									set a victory condition
+									set a random victory condition
 								</button>
 							]}
 							columns={1}

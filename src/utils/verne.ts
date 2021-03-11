@@ -53,4 +53,47 @@ export class Verne {
 	public static getScenesWithLinksTo(plot: Plot, ids: string[]) {
 		return plot.scenes.filter(scene => scene.links.some(link => ids.includes(link.sceneID)))
 	}
+
+	public static canMoveScene(plot: Plot, scene: Scene, dir: 'left' | 'right') {
+		const rows = this.getRows(plot);
+		const row = rows.find(r => r.includes(scene));
+		if (row) {
+			const index = row.indexOf(scene);
+			switch (dir) {
+				case 'left':
+					return index !== 0;
+				case 'right':
+					return index !== row.length - 1;
+			}
+		}
+
+		return false;
+	}
+
+	public static moveScene(plot: Plot, scene: Scene, dir: 'left' | 'right') {
+		if (!this.canMoveScene(plot, scene, dir)) {
+			return;
+		}
+
+		const rows = this.getRows(plot);
+		const row = rows.find(r => r.includes(scene));
+		if (row) {
+			const index = row.indexOf(scene);
+			let otherScene = null;
+			switch (dir) {
+				case 'left':
+					otherScene = row[index - 1];
+					break;
+				case 'right':
+					otherScene = row[index + 1];
+					break;
+			}
+			if (otherScene) {
+				const sceneIndex = plot.scenes.indexOf(scene);
+				const otherSceneIndex = plot.scenes.indexOf(otherScene);
+				plot.scenes[otherSceneIndex] = scene;
+				plot.scenes[sceneIndex] = otherScene;
+			}
+		}
+	}
 }

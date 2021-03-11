@@ -180,6 +180,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 						<hr/>
 						<div className='section'>
 							<button onClick={() => this.props.showStatblock(this.props.monster as Monster)}>statblock</button>
+							<button onClick={() => this.props.chooseMonster(this.props.slot)}>choose a different monster</button>
 							{this.getMoveControl()}
 							<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
 						</div>

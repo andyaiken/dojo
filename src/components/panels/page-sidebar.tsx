@@ -422,6 +422,8 @@ export class PageSidebar extends React.Component<Props> {
 								this.props.onUpdateSidebar(sidebar);
 							}}
 							parties={this.props.parties}
+							currentCombat={this.props.currentCombat}
+							currentExploration={this.props.currentExploration}
 							openImage={data => this.props.openImage(data)}
 						/>
 					);

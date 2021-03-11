@@ -357,10 +357,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 						<div className='title'>map tile</div>
 					</div>
 					<div>
-						<div className='section'>
-							<div className='subheading'>move</div>
-							<MovementPanel onMove={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
-						</div>
+						<MovementPanel onMove={(dir, step) => this.props.moveMapTile(this.props.tile, dir, step)} />
 						<div className='section'>
 							<div className='subheading'>size</div>
 							<div className='section'>
@@ -482,7 +479,24 @@ interface MapAreaProps {
 	deleteMapArea: (area: MapArea) => void;
 }
 
-class MapAreaPanel extends React.Component<MapAreaProps> {
+interface MapAreaState {
+	view: string;
+}
+
+class MapAreaPanel extends React.Component<MapAreaProps, MapAreaState> {
+	constructor(props: MapAreaProps) {
+		super(props);
+		this.state = {
+			view: 'main'
+		};
+	}
+
+	private setView(view: string) {
+		this.setState({
+			view: view
+		});
+	}
+
 	private randomName() {
 		const name = Shakespeare.capitalise(Shakespeare.generateRoomName());
 		this.props.changeValue(this.props.area, 'name', name);
@@ -508,29 +522,42 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 								</div>
 							</div>
 						</div>
-						<div className='section'>
-							<div className='subheading'>move</div>
-							<MovementPanel onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
-						</div>
-						<div className='section'>
-							<div className='subheading'>size</div>
-							<NumberSpin
-								value={this.props.area.width + ' sq / ' + (this.props.area.width * 5) + ' ft'}
-								label='width'
-								downEnabled={this.props.area.width > 1}
-								onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'width', delta)}
+						<Group>
+							<Tabs
+								options={['main', 'notes'].map(o => ({ id: o, text: o }))}
+								selectedID={this.state.view}
+								onSelect={view => this.setView(view)}
 							/>
-							<NumberSpin
-								value={this.props.area.height + ' sq  /' + (this.props.area.width * 5) + ' ft'}
-								label='height'
-								downEnabled={this.props.area.height > 1}
-								onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'height', delta)}
-							/>
-						</div>
-						<hr/>
-						<Expander text='notes'>
-							<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
-						</Expander>
+							<Conditional display={this.state.view === 'main'}>
+								<MovementPanel onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
+								<div className='section'>
+									<div className='subheading'>size</div>
+									<NumberSpin
+										value={this.props.area.width + ' sq / ' + (this.props.area.width * 5) + ' ft'}
+										label='width'
+										downEnabled={this.props.area.width > 1}
+										onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'width', delta)}
+									/>
+									<NumberSpin
+										value={this.props.area.height + ' sq  /' + (this.props.area.width * 5) + ' ft'}
+										label='height'
+										downEnabled={this.props.area.height > 1}
+										onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'height', delta)}
+									/>
+								</div>
+							</Conditional>
+							<Conditional display={this.state.view === 'notes'}>
+								<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
+								<button
+									onClick={() => {
+										const desc = Shakespeare.generateRoomDescription();
+										this.props.changeValue(this.props.area, 'text', desc);
+									}}
+								>
+									set a random description
+								</button>
+							</Conditional>
+						</Group>
 						<hr/>
 						<ConfirmButton onConfirm={() => this.props.deleteMapArea(this.props.area)}>delete area</ConfirmButton>
 					</div>

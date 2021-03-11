@@ -528,6 +528,7 @@ button {
 body .react-mde {
 	margin: 5px 0;
 	border: 1px solid $control-border;
+	border-left-width: 5px;
 	border-radius: 0;
 
 	.mde-header {
@@ -560,5 +561,9 @@ body .react-mde {
 
 	.mde-textarea-wrapper textarea.mde-text {
 		margin: 0;
+	}
+
+	.mde-preview {
+		padding: 0 5px;
 	}
 }

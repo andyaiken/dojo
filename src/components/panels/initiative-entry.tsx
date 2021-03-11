@@ -1,4 +1,4 @@
-import { CheckCircleOutlined, EnvironmentOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -10,6 +10,7 @@ import { PC } from '../../models/party';
 import { Gygax } from '../../utils/gygax';
 
 import { RenderError } from '../error';
+import { ConfirmButton } from '../controls/confirm-button';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
@@ -290,14 +291,10 @@ interface PendingProps {
 	changeValue: (combatant: Combatant, field: string, value: number) => void;
 	nudgeValue: (combatant: Combatant, field: string, delta: number) => void;
 	makeActive: (combatant: Combatant) => void;
+	remove: (combatant: Combatant) => void;
 }
 
 export class PendingInitiativeEntry extends React.Component<PendingProps> {
-	private makeActive(e: React.MouseEvent) {
-		e.stopPropagation();
-		this.props.makeActive(this.props.combatant);
-	}
-
 	public render() {
 		try {
 			let portrait = null;
@@ -320,8 +317,11 @@ export class PendingInitiativeEntry extends React.Component<PendingProps> {
 								onNudgeValue={delta => this.props.nudgeValue(this.props.combatant, 'initiative', delta)}
 							/>
 						</div>
-						<div className='icons'>
-							<CheckCircleOutlined title='add to encounter' onClick={e => this.makeActive(e)} />
+						<div className='icons vertical'>
+							<CheckCircleOutlined title='add to encounter' onClick={() => this.props.makeActive(this.props.combatant)} />
+							<ConfirmButton onConfirm={() => this.props.remove(this.props.combatant)}>
+								<CloseCircleOutlined title='remove from encounter' />
+							</ConfirmButton>
 						</div>
 					</div>
 				</Group>

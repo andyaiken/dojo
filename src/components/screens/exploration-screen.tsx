@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, EnvironmentOutlined, SettingOutlined } from '@ant-design/icons';
 import { Col, Drawer, Row } from 'antd';
 import React from 'react';
 
@@ -353,9 +353,19 @@ export class ExplorationScreen extends React.Component<Props, State> {
 		return (
 			<div className='scrollable'>
 				<div className='heading'>exploration</div>
-				<button onClick={() => this.props.startCombat(this.props.exploration)}>stop exploring and start combat</button>
 				<button onClick={() => this.props.pauseExploration()}>pause exploration</button>
 				<ConfirmButton onConfirm={() => this.props.endExploration(this.props.exploration)}>end exploration</ConfirmButton>
+				<ConfirmButton
+					onConfirm={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.startCombat(this.props.exploration);
+						});
+					}}
+				>
+					end exploration and start combat
+				</ConfirmButton>
 				<div className='heading'>map</div>
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 				<Conditional display={this.state.addingOverlay}>
@@ -627,7 +637,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 								these pcs have not yet been placed on the map
 							</div>
 							<div className='section'>
-								to place one on the map, click the <b>place on map</b> button and then click on a map square
+								to place one on the map, click the <EnvironmentOutlined /> button and then click on a map square
 							</div>
 							<div className='section'>
 								or click <button className='link' onClick={() => this.props.scatterCombatants(notOnMap, this.props.exploration.mapAreaID)}>here</button> to scatter them randomly

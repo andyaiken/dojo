@@ -413,18 +413,20 @@ export class CombatScreen extends React.Component<Props, State> {
 			return null;
 		}
 
-		let notes = null;
-		if (this.props.combat.encounter.notes) {
-			notes = (
-				<Expander text='encounter notes'>
-					<ReactMarkdown source={this.props.combat.encounter.notes} />
-				</Expander>
-			);
-		}
 		let exitToMap = null;
 		if (this.props.combat.map) {
 			exitToMap = (
-				<ConfirmButton onConfirm={() => this.props.endCombat(this.props.combat, true)}>end combat and start exploring</ConfirmButton>
+				<ConfirmButton
+					onConfirm={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.endCombat(this.props.combat, true);
+						});
+					}}
+				>
+					end combat and start exploring
+				</ConfirmButton>
 			);
 		}
 
@@ -457,7 +459,17 @@ export class CombatScreen extends React.Component<Props, State> {
 		let addWave = null;
 		if (!!this.props.combat.encounter && (this.props.combat.encounter.waves.length > 0)) {
 			addWave = (
-				<button onClick={() => this.props.addWave()}>add wave</button>
+				<button
+					onClick={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.addWave();
+						});
+					}}
+				>
+					add wave
+				</button>
 			);
 		}
 
@@ -508,7 +520,6 @@ export class CombatScreen extends React.Component<Props, State> {
 			<div className='scrollable'>
 				<div>
 					<div className='heading'>combat</div>
-					{notes}
 					<button onClick={() => this.props.pauseCombat()}>pause combat</button>
 					<ConfirmButton onConfirm={() => this.props.endCombat(this.props.combat, false)}>end combat</ConfirmButton>
 					{exitToMap}
@@ -668,11 +679,23 @@ export class CombatScreen extends React.Component<Props, State> {
 
 		if (this.props.combat.encounter.notes) {
 			sections.push(
-				<Group key='notes'>
+				<Group key='encounter-notes'>
 					<div className='section subheading'>encounter notes</div>
 					<ReactMarkdown source={this.props.combat.encounter.notes} />
 				</Group>
 			);
+		}
+
+		if (this.props.combat.map && this.props.combat.mapAreaID) {
+			const area = this.props.combat.map.areas.find(a => a.id === this.props.combat.mapAreaID);
+			if (area && area.text) {
+				sections.push(
+					<Group key='area-notes'>
+						<div className='section subheading'>map notes</div>
+						<ReactMarkdown source={area.text} />
+					</Group>
+				);
+			}
 		}
 
 		const collatedTraits: { trait: Trait, combatants: string[] }[] = [];
@@ -695,7 +718,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					{
 						traits.map(t => (
 							<div key={t.trait.id} className='section'>
-								{t.combatants.sort().join(', ') + ' have '}
+								{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
 								<Popover
 									content={(
 										<TraitPanel trait={t.trait} />
@@ -869,6 +892,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					changeValue={(c, type, value) => this.props.changeValue(c, type, value)}
 					nudgeValue={(c, type, delta) => this.props.nudgeValue(c, type, delta)}
 					makeActive={c => this.props.makeActive([c])}
+					remove={c => this.props.removeCombatants([c])}
 				/>
 			));
 			if (pending.length !== 0) {
@@ -878,25 +902,29 @@ export class CombatScreen extends React.Component<Props, State> {
 						<button onClick={() => CommsDM.prompt('initiative', null)}>ask for initiative rolls</button>
 					);
 				}
+				// tslint:disable: max-line-length
 				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
-						<div className='section'>set initiative on each of them, then press the <CheckCircleOutlined /> button to add them to the initiative order</div>
+						<div className='section'>set initiative on each of them, then press the <CheckCircleOutlined /> button to add them to the initiative order - or press <CloseCircleOutlined/> to remove someone from the combat</div>
 						<div className='section'>you can hide this section by clicking on the <UpCircleOutlined /> button above</div>
 						{ask}
 					</Note>
 				);
+				// tslint:enable: max-line-length
 			}
 
 			let initHelp = null;
 			if (!initHolder) {
+				// tslint:disable: max-line-length
 				initHelp = (
 					<Note key='init-help'>
-						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right)</div>
+						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right); you can select multiple combatants by holding the <code>ctrl</code> key</div>
 						<div className='section'>they are listed in initiative order (with the highest initiative score at the top of the list, and the lowest at the bottom)</div>
 						<div className='section'>this message will go away when combat starts</div>
 					</Note>
 				);
+				// tslint:enable: max-line-length
 			}
 			const initList = (
 				<InitiativeOrder

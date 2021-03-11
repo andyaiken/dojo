@@ -18,6 +18,7 @@ interface Props {
 	encounter: Encounter;
 	wave: EncounterWave | null;
 	slot: EncounterSlot | null;
+	originalMonster: Monster | null;
 	monster: Monster | null;
 	library: MonsterGroup[];
 	setMonster: (monster: Monster | null) => void;
@@ -30,8 +31,16 @@ interface State {
 export class MonsterSelectionModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
+
+		const filter = Factory.createMonsterFilter();
+		if (props.originalMonster) {
+			filter.category = props.originalMonster.category;
+			filter.challengeMin = props.originalMonster.challenge;
+			filter.challengeMax = props.originalMonster.challenge;
+		}
+
 		this.state = {
-			filter: Factory.createMonsterFilter()
+			filter: filter
 		};
 	}
 
@@ -59,6 +68,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 		try {
 			const monsters: Monster[] = [];
 
+			const hasRoles = !!this.props.slot && (this.props.slot.roles.length > 0);
 			const list = this.props.wave ? this.props.wave.slots : this.props.encounter.slots;
 			this.props.library.forEach(group => {
 				group.monsters.forEach(monster => {
@@ -66,10 +76,13 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 					const matchFilter = Napoleon.matchMonster(monster, this.state.filter);
 
 					// Ignore monsters that don't match the slot's role
-					const matchRole = this.props.slot ? this.props.slot.roles.includes(monster.role) : true;
+					const matchRole = hasRoles ? (this.props.slot as EncounterSlot).roles.includes(monster.role) : true;
 
-					// Ignore monsters that are already in the list
-					const inList = list.some(s => s.monsterID === monster.id);
+					// Ignore monsters that are already in the encounter / wave
+					let inList = list.some(s => s.monsterID === monster.id);
+					if (this.props.originalMonster && (this.props.originalMonster.id === monster.id)) {
+						inList = false;
+					}
 
 					if (matchFilter && matchRole && !inList) {
 						monsters.push(monster);
@@ -82,8 +95,6 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 				if (a.name > b.name) { return 1; }
 				return 0;
 			});
-
-			const hasRoles = !!this.props.slot && (this.props.slot.roles.length > 0);
 
 			let left = (
 				<RadioGroup

@@ -52,7 +52,7 @@
 				overflow: hidden;
 				border: 1px solid $control-border;
 				border-left-width: 5px;
-				padding: 5px;
+				padding: 5px 12px;
 				cursor: pointer;
 
 				.content-then-icons {
@@ -60,6 +60,7 @@
 				}
 
 				.scene-name {
+					font-size: 15px;
 					font-weight: 600;
 					word-break: break-all;
 				}

@@ -27,8 +27,10 @@ import { PlotPanel } from '../panels/plot-panel';
 interface Props {
 	adventure: Adventure;
 	encounters: Encounter[];
+	maps: Map[];
 	goBack: () => void;
 	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
+	moveScene: (plot: Plot, scene: Scene, dir: 'left' | 'right') => void;
 	deleteScene: (plot: Plot, scene: Scene) => void;
 	addLink: (scene: Scene, sceneID: string) => void;
 	deleteLink: (scene: Scene, link: SceneLink) => void;
@@ -40,6 +42,7 @@ interface Props {
 	openEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter) => void;
 	runEncounterWithMap: (encounter: Encounter, map: Map, areaID: string) => void;
+	showNotes: (scene: Scene) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 }
@@ -82,7 +85,8 @@ export class AdventureScreen extends React.Component<Props, State> {
 		});
 		this.setState({
 			plot: scene.plot,
-			breadcrumbs: breadcrumbs
+			breadcrumbs: breadcrumbs,
+			selectedSceneID: null
 		});
 	}
 
@@ -92,7 +96,8 @@ export class AdventureScreen extends React.Component<Props, State> {
 			const last = breadcrumbs[breadcrumbs.length - 1];
 			this.setState({
 				plot: last.plot,
-				breadcrumbs: breadcrumbs
+				breadcrumbs: breadcrumbs,
+				selectedSceneID: null
 			});
 		}
 	}
@@ -104,7 +109,8 @@ export class AdventureScreen extends React.Component<Props, State> {
 			const breadcrumbs = this.state.breadcrumbs.slice(0, index + 1);
 			this.setState({
 				plot: breadcrumb.plot,
-				breadcrumbs: breadcrumbs
+				breadcrumbs: breadcrumbs,
+				selectedSceneID: null
 			});
 		}
 	}
@@ -115,6 +121,14 @@ export class AdventureScreen extends React.Component<Props, State> {
 		} else {
 			this.props.runEncounter(encounter);
 		}
+	}
+
+	private canMoveScene(scene: Scene, dir: 'left' | 'right') {
+		return Verne.canMoveScene(this.state.plot, scene, dir);
+	}
+
+	private moveScene(scene: Scene, dir: 'left' | 'right') {
+		this.props.moveScene(this.state.plot, scene, dir);
 	}
 
 	private getEncounters(scene: Scene) {
@@ -172,6 +186,14 @@ export class AdventureScreen extends React.Component<Props, State> {
 				return null;
 			});
 
+			let options = ['content', 'links', 'encounter'].map(o => ({ id: o, text: o }));
+			if (this.state.plot.map) {
+				options = options.filter(o => o.id !== 'links');
+			}
+			if (this.props.encounters.length === 0) {
+				options = options.filter(o => o.id !== 'encounter');
+			}
+
 			return (
 				<div>
 					<div className='section'>
@@ -183,11 +205,13 @@ export class AdventureScreen extends React.Component<Props, State> {
 						/>
 					</div>
 					<hr/>
-					<Tabs
-						options={['content', 'links', 'encounter'].map(o => ({ id: o, text: o }))}
-						selectedID={this.state.view}
-						onSelect={view => this.setView(view)}
-					/>
+					<Conditional display={options.length > 1}>
+						<Tabs
+							options={options}
+							selectedID={this.state.view}
+							onSelect={view => this.setView(view)}
+						/>
+					</Conditional>
 					<Conditional display={this.state.view === 'content'}>
 						<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
 					</Conditional>
@@ -212,11 +236,21 @@ export class AdventureScreen extends React.Component<Props, State> {
 						{this.getEncounters(scene)}
 						<button onClick={() => this.props.addEncounterToScene(scene)}>link an encounter</button>
 					</Conditional>
-					<hr/>
 					<Conditional display={this.state.plot.map === null}>
-						<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
 						<hr/>
+						<Row gutter={10}>
+							<Col span={12}>
+								<button className={this.canMoveScene(scene, 'left') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'left')}>move left</button>
+							</Col>
+							<Col span={12}>
+								<button className={this.canMoveScene(scene, 'right') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'right')}>move right</button>
+							</Col>
+						</Row>
+						<hr/>
+						<button onClick={() => this.explore(scene)}>explore scene</button>
+						<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
 					</Conditional>
+					<hr/>
 					<button onClick={() => this.setSelectedSceneID(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
 				</div>
 			);
@@ -232,13 +266,23 @@ export class AdventureScreen extends React.Component<Props, State> {
 						/>
 					</div>
 					<hr/>
+					<Conditional display={this.props.adventure.plot.scenes.length === 0}>
+						<Note>
+							<div className='section'>
+								an adventure is made up of scenes which are linked together like a flowchart
+							</div>
+							<div className='section'>
+								press <b>add a scene</b> to add your first scene to this adventure
+							</div>
+						</Note>
+					</Conditional>
 					<Conditional display={this.state.plot.map === null}>
 						<button onClick={() => this.props.addScene(this.state.plot, null, null)}>add a scene</button>
 					</Conditional>
 					<Conditional display={this.state.plot.map !== null}>
 						<button onClick={() => this.props.removeMapFromPlot(this.state.plot)}>remove the map</button>
 					</Conditional>
-					<Conditional display={this.state.plot.scenes.length === 0}>
+					<Conditional display={(this.state.plot.scenes.length === 0) && (this.props.maps.length > 0)}>
 						<button onClick={() => this.props.addMapToPlot(this.state.plot)}>add a map</button>
 					</Conditional>
 					<hr/>
@@ -275,6 +319,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				plot={this.state.plot}
 				selectedSceneID={this.state.selectedSceneID}
 				selectSceneID={sceneID => this.setSelectedSceneID(sceneID)}
+				showNotes={scene => this.props.showNotes(scene)}
 				exploreScene={scene => this.explore(scene)}
 				addScene={(sceneBefore, sceneAfter) => this.props.addScene(this.state.plot, sceneBefore, sceneAfter)}
 			/>
@@ -288,7 +333,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 					<Col span={6} className='scrollable sidebar sidebar-left'>
 						{this.getSidebar()}
 					</Col>
-					<Col span={18} className='scrollable'>
+					<Col span={18} className='scrollable both-ways'>
 						<div className='breadcrumb-bar'>
 							<div className='content-then-icons'>
 								<div className='content'>
