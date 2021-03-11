@@ -14,6 +14,7 @@ import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { Selector } from '../controls/selector';
 import { FilterPanel } from '../panels/filter-panel';
+import { Conditional } from '../controls/conditional';
 
 interface RandomMapData {
 	areas: number;
@@ -53,7 +54,6 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 	private getMapSection(data: RandomMapData) {
 		return (
 			<div>
-				<div className='heading'>random map parameters</div>
 				<Note>
 					<div className='section'>
 						the map will be created by adding tiles until there are <b>{data.areas}</b> rooms
@@ -217,7 +217,6 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 
 		return (
 			<div>
-				<div className='heading'>random encounter parameters</div>
 				<Note>
 					{info}
 				</Note>
@@ -272,8 +271,14 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 
 			return (
 				<div className='scrollable padded'>
-					{encounter}
+					<Conditional display={!!this.state.mapData && !!this.state.encounterData}>
+						<div className='heading'>for the map</div>
+					</Conditional>
 					{map}
+					<Conditional display={!!this.state.mapData && !!this.state.encounterData}>
+						<div className='heading'>for the encounters</div>
+					</Conditional>
+					{encounter}
 				</div>
 			);
 		} catch (e) {

@@ -1,5 +1,5 @@
 import { CheckCircleOutlined, CloseCircleOutlined, EnvironmentOutlined, SettingOutlined, UpCircleOutlined } from '@ant-design/icons';
-import { Col, Drawer, Row } from 'antd';
+import { Col, Drawer, Popover, Row } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -34,7 +34,7 @@ import { NotOnMapInitiativeEntry, PendingInitiativeEntry } from '../panels/initi
 import { InitiativeOrder } from '../panels/initiative-order';
 import { MapPanel } from '../panels/map-panel';
 import { Popout } from '../panels/popout';
-import { TraitsPanel } from '../panels/traits-panel';
+import { TraitPanel, TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
 	combat: Combat;
@@ -589,11 +589,14 @@ export class CombatScreen extends React.Component<Props, State> {
 		// Have we selected only the current combatant?
 		if ((combatants.length > 0) && combatants.every(c => c.current)) {
 			return (
-				<Note>
-					<div className='section'>
-						you've selected the current initiative holder
-					</div>
-				</Note>
+				<div>
+					<Note>
+						<div className='section'>
+							you've selected the current initiative holder
+						</div>
+					</Note>
+					{this.getCheatSheet()}
+				</div>
 			);
 		}
 
@@ -649,12 +652,93 @@ export class CombatScreen extends React.Component<Props, State> {
 		}
 
 		return (
-			<Note>
-				<div className='section'>
-					select a pc or monster from the initiative order (in the middle column) to see its details here
-				</div>
-			</Note>
+			<div>
+				<Note>
+					<div className='section'>
+						select a pc or monster from the initiative order (in the middle column) to see its details here
+					</div>
+				</Note>
+				{this.getCheatSheet()}
+			</div>
 		);
+	}
+
+	private getCheatSheet() {
+		const sections = [];
+
+		if (this.props.combat.encounter.notes) {
+			sections.push(
+				<Group key='notes'>
+					<div className='section subheading'>encounter notes</div>
+					<ReactMarkdown source={this.props.combat.encounter.notes} />
+				</Group>
+			);
+		}
+
+		const collatedTraits: { trait: Trait, combatants: string[] }[] = [];
+		this.props.combat.combatants.filter(c => c.type === 'monster').forEach(c => {
+			const monster = c as Combatant & Monster;
+			monster.traits.filter(trait => (trait.type === 'trait') || (trait.type === 'reaction')).forEach(trait => {
+				const collated = collatedTraits.find(t => t.trait.id === trait.id);
+				if (collated) {
+					collated.combatants.push(monster.displayName);
+				} else {
+					collatedTraits.push({ trait: trait, combatants: [monster.displayName] });
+				}
+			});
+		});
+		const traits = collatedTraits.filter(t => t.trait.type === 'trait');
+		if (traits.length > 0) {
+			sections.push(
+				<Group key='traits'>
+					<div className='section subheading'>traits</div>
+					{
+						traits.map(t => (
+							<div key={t.trait.id} className='section'>
+								{t.combatants.sort().join(', ') + ' have '}
+								<Popover
+									content={(
+										<TraitPanel trait={t.trait} />
+									)}
+									trigger='hover'
+									placement='bottom'
+									overlayClassName='combat-info-tooltip'
+								>
+									<button className='link'>{t.trait.name}</button>
+								</Popover>
+							</div>
+						))
+					}
+				</Group>
+			);
+		}
+		const reactions = collatedTraits.filter(t => t.trait.type === 'reaction');
+		if (reactions.length > 0) {
+			sections.push(
+				<Group key='reactions'>
+					<div className='section subheading'>reactions</div>
+					{
+						reactions.map(t => (
+							<div key={t.trait.id} className='section'>
+								{t.combatants.sort().join(', ') + ' have '}
+								<Popover
+									content={(
+										<TraitPanel trait={t.trait} />
+									)}
+									trigger='hover'
+									placement='bottom'
+									overlayClassName='combat-info-tooltip'
+								>
+									<button className='link'>{t.trait.name}</button>
+								</Popover>
+							</div>
+						))
+					}
+				</Group>
+			);
+		}
+
+		return sections;
 	}
 
 	private createControls(selectedCombatants: Combatant[]) {

@@ -797,8 +797,11 @@ export class Main extends React.Component<Props, State> {
 
 	private addParty() {
 		const party = Factory.createParty();
-		const parties: Party[] = ([] as Party[]).concat(this.state.parties, [party]);
-		Utils.sort(parties);
+
+		let parties = this.state.parties;
+		parties.push(party);
+		parties = Utils.sort(parties);
+
 		this.setState({
 			parties: parties,
 			selectedPartyID: party.id
@@ -965,10 +968,13 @@ export class Main extends React.Component<Props, State> {
 
 	private addMonsterGroup() {
 		const group = Factory.createMonsterGroup();
-		const library = ([] as MonsterGroup[]).concat(this.state.library, [group]);
-		Utils.sort(library);
+
+		let groups = this.state.library;
+		groups.push(group);
+		groups = Utils.sort(groups);
+
 		this.setState({
-			library: library,
+			library: groups,
 			selectedMonsterGroupID: group.id
 		});
 	}
@@ -1194,8 +1200,10 @@ export class Main extends React.Component<Props, State> {
 			}
 		}
 
-		const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
-		Utils.sort(encounters);
+		let encounters = this.state.encounters;
+		encounters.push(encounter);
+		encounters = Utils.sort(encounters);
+
 		this.setState({
 			view: 'encounters',
 			encounters: encounters,
@@ -1235,8 +1243,13 @@ export class Main extends React.Component<Props, State> {
 					Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
 					Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
-					const encounters: Encounter[] = ([] as Encounter[]).concat(this.state.encounters, [encounter]);
-					Utils.sort(encounters);
+					if (Utils.randomBoolean()) {
+						encounter.notes = '**victory condition:** ' + Napoleon.getVictoryCondition(encounter, id => this.getMonster(id));
+					}
+
+					let encounters = this.state.encounters;
+					encounters.push(encounter);
+					encounters = Utils.sort(encounters);
 
 					this.setState({
 						view: 'encounters',
@@ -1326,7 +1339,11 @@ export class Main extends React.Component<Props, State> {
 
 	private addMap() {
 		const map = Factory.createMap();
-		const maps: Map[] = ([] as Map[]).concat(this.state.maps, [map]);
+
+		let maps = this.state.maps;
+		maps.push(map);
+		maps = Utils.sort(maps);
+
 		Utils.sort(maps);
 		this.setState({
 			maps: maps,
@@ -1535,8 +1552,11 @@ export class Main extends React.Component<Props, State> {
 
 	private addAdventure() {
 		const adventure = Factory.createAdventure();
-		const adventures: Adventure[] = ([] as Adventure[]).concat(this.state.adventures, [adventure]);
-		Utils.sort(adventures);
+
+		let adventures = this.state.adventures;
+		adventures.push(adventure);
+		adventures = Utils.sort(adventures);
+
 		this.setState({
 			adventures: adventures,
 			selectedAdventureID: adventure.id
@@ -1584,11 +1604,13 @@ export class Main extends React.Component<Props, State> {
 				},
 				onAccept: () => {
 					const adventure = Factory.createAdventure();
-					this.state.adventures.push(adventure);
 
 					const map = Factory.createMap();
 					Mercator.generate(this.state.drawer.mapData.areas, map);
 					adventure.plot.map = map;
+
+					let encounters = this.state.encounters;
+					let adventures = this.state.adventures;
 
 					map.areas.forEach(area => {
 						const scene = Factory.createScene();
@@ -1602,12 +1624,17 @@ export class Main extends React.Component<Props, State> {
 						Napoleon.buildEncounter(encounter, this.state.drawer.encounterData.xp, this.state.drawer.encounterData.filter, this.state.library, id => this.getMonster(id));
 						Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
-						this.state.encounters.push(encounter);
+						if (Utils.randomBoolean()) {
+							encounter.notes = '**victory condition:** ' + Napoleon.getVictoryCondition(encounter, id => this.getMonster(id));
+						}
+
+						encounters.push(encounter);
 						scene.encounterIDs.push(encounter.id);
 					});
 
-					const encounters = Utils.sort(this.state.encounters);
-					const adventures = Utils.sort(this.state.adventures);
+					encounters = Utils.sort(encounters);
+					adventures.push(adventure);
+					adventures = Utils.sort(adventures);
 
 					this.setState({
 						view: 'adventures',
@@ -1751,11 +1778,14 @@ export class Main extends React.Component<Props, State> {
 				const combatant = Napoleon.convertPCToCombatant(pc);
 				ex.combatants.push(combatant);
 			});
-			this.state.explorations.push(ex);
+
+			let explorations = this.state.explorations;
+			explorations.push(ex);
+			explorations = Utils.sort(explorations);
 
 			this.setState({
 				view: 'maps',
-				explorations: this.state.explorations,
+				explorations: explorations,
 				selectedExplorationID: ex.id
 			});
 		}
@@ -1899,8 +1929,12 @@ export class Main extends React.Component<Props, State> {
 				combat.lighting = combatSetup.lighting;
 			}
 
+			let combats = this.state.combats;
+			combats.push(combat);
+			combats = Utils.sort(combats);
+
 			this.setState({
-				combats: ([] as Combat[]).concat(this.state.combats, [combat]),
+				combats: combats,
 				selectedCombatID: combat.id,
 				drawer: null,
 				view: 'encounters'

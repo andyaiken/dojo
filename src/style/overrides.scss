@@ -440,6 +440,14 @@ button {
 			width: 225px;
 		}
 	}
+
+	&.combat-info-tooltip {
+		pointer-events: none;
+
+		.ant-popover-inner {
+			width: 250px;
+		}
+	}
 }
 
 .ant-message {

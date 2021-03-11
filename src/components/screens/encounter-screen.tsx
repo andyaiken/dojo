@@ -2,6 +2,7 @@ import { CaretLeftOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
 import { Adventure } from '../../models/adventure';
@@ -168,9 +169,6 @@ export class EncounterScreen extends React.Component<Props> {
 							{waves}
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</Expander>
-						<Expander text='notes'>
-							<MarkdownEditor text={this.props.encounter.notes} onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)} />
-						</Expander>
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
@@ -201,6 +199,26 @@ export class EncounterScreen extends React.Component<Props> {
 									parties={this.props.parties}
 									getMonster={id => this.props.getMonster(id)}
 								/>
+							]}
+							columns={1}
+						/>
+						<GridPanel
+							heading='notes'
+							content={[
+								<MarkdownEditor
+									key='notes'
+									text={this.props.encounter.notes}
+									onChange={text => this.props.changeValue(this.props.encounter, 'notes', text)}
+								/>,
+								<button
+									key='vc'
+									onClick={() => {
+										const vc = '**victory condition:** ' + Napoleon.getVictoryCondition(this.props.encounter, id => this.props.getMonster(id));
+										this.props.changeValue(this.props.encounter, 'notes', vc);
+									}}
+								>
+									set a victory condition
+								</button>
 							]}
 							columns={1}
 						/>

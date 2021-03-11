@@ -504,4 +504,59 @@ export class Napoleon {
 			}
 		});
 	}
+
+	public static getVictoryCondition(encounter: Encounter, getMonster: (id: string) => Monster | null) {
+		const conditions = [];
+
+		conditions.push('the party must defeat their opponents within ' + (1 + Gygax.dieRoll(4, 1)) + ' rounds');
+		conditions.push('at least one character must get to a certain area and stay there for ' + (1 + Gygax.dieRoll(4, 1)) + ' consecutive rounds');
+		conditions.push('the party must leave the area within ' + (1 + Gygax.dieRoll(4, 1)) + ' rounds');
+		conditions.push('the party must keep the enemy away from a certain area for the duration of the encounter');
+		conditions.push('the party must escort an NPC safely through the encounter area');
+		conditions.push('the party must rescue an NPC from their opponents');
+		conditions.push('the party must destroy a feature of the area');
+
+		const leaders: string[] = [];
+		encounter.slots.filter(slot => slot.count === 1).forEach(slot => {
+			const m = getMonster(slot.monsterID);
+			if (!!m) {
+				if ((m.role === 'boss') || (m.role === 'controller')) {
+					leaders.push(m.name);
+				}
+			}
+		});
+		encounter.waves.forEach(wave => {
+			wave.slots.filter(slot => slot.count === 1).forEach(slot => {
+				const m = getMonster(slot.monsterID);
+				if (!!m) {
+					if ((m.role === 'boss') || (m.role === 'controller')) {
+						leaders.push(m.name);
+					}
+				}
+			});
+		})
+
+		if (leaders.length !== 0)
+		{
+			const l = Utils.randomNumber(leaders.length);
+			const leader = leaders[l];
+
+			conditions.push('the party must defeat ' + leader);
+			conditions.push('the party must capture ' + leader);
+			conditions.push('the party must defeat ' + leader + ' within ' + Gygax.dieRoll(4, 2) + ' rounds');
+			conditions.push('after ' + Gygax.dieRoll(4, 2) + ' rounds, ' + leader + ' will flee or surrender');
+			conditions.push('at ' + (10 * Gygax.dieRoll(4, 1)) + '% HP, ' + leader + ' will flee or surrender');
+			conditions.push('the party must obtain an item from ' + leader);
+			conditions.push('the party must defeat ' + leader + ' by destroying an object in the area');
+			conditions.push('the party must defeat ' + leader + '; the others will then flee or surrender');
+		}
+
+		const count = Napoleon.getMonsterCount(encounter, null);
+		if (count > 2) {
+			conditions.push('the party must defeat ' + (2 + Utils.randomNumber(count - 2)) + ' opponents; the others will then flee or surrender');
+		}
+
+		const index = Utils.randomNumber(conditions.length);
+		return conditions[index];
+	}
 }
