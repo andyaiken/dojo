@@ -32,12 +32,12 @@ interface Props {
 		editFog: boolean;
 	};
 	options: Options | null;
-	viewport: MapDimensions | null;
 	paddingSquares: number;
 	combatants: Combatant[];
 	showGrid: boolean;
 	showAreaNames: boolean;
 	selectedItemIDs: string[];
+	selectedAreaID: string | null;
 	fog: { x: number, y: number }[];
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	focussedSquare: { x: number, y: number } | null;
@@ -90,12 +90,12 @@ export class MapPanel extends React.Component<Props, State> {
 			editFog: false
 		},
 		options: null,
-		viewport: null,
 		paddingSquares: 0,
 		combatants: [],
 		showGrid: false,
 		showAreaNames: false,
 		selectedItemIDs: [],
+		selectedAreaID: null,
 		fog: [],
 		lighting: 'bright light',
 		focussedSquare: null,
@@ -191,10 +191,10 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getMapDimensions(): MapDimensions | null {
-		let dimensions: MapDimensions | null = this.props.viewport;
+		let dimensions = this.props.selectedAreaID ? Mercator.getViewport(this.props.map, this.props.selectedAreaID) : null;
 
 		if (!dimensions) {
-			// We haven't been given a viewport, so show all the tiles
+			// We haven't specified a map area, so show all the tiles
 
 			const tiles = this.props.map.items.filter(i => {
 				if (this.props.mode === 'edit') {
@@ -344,6 +344,7 @@ export class MapPanel extends React.Component<Props, State> {
 						content={(
 							<RadioGroup
 								items={areas}
+								selectedItemID={this.props.selectedAreaID}
 								onSelect={id => this.props.areaSelected(id)}
 							/>
 						)}

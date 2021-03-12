@@ -515,10 +515,10 @@ export class Player extends React.Component<Props, State> {
 						map={combat.map}
 						mode='interactive-player'
 						options={this.state.options}
-						viewport={Mercator.getViewport(combat.map, combat.mapAreaID)}
 						showGrid={this.state.addingToMap}
 						combatants={combat.combatants}
 						selectedItemIDs={[characterID]}
+						selectedAreaID={combat.mapAreaID}
 						fog={combat.fog}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
@@ -566,10 +566,10 @@ export class Player extends React.Component<Props, State> {
 					map={exploration.map}
 					mode='interactive-player'
 					options={this.state.options}
-					viewport={Mercator.getViewport(exploration.map, exploration.mapAreaID)}
 					showGrid={this.state.addingToMap}
 					combatants={exploration.combatants}
 					selectedItemIDs={[characterID]}
+					selectedAreaID={exploration.mapAreaID}
 					fog={exploration.fog}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}

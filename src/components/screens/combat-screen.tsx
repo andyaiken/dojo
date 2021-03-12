@@ -380,9 +380,9 @@ export class CombatScreen extends React.Component<Props, State> {
 								map={this.props.combat.map}
 								mode='interactive-player'
 								options={this.props.options}
-								viewport={Mercator.getViewport(this.props.combat.map, this.props.combat.mapAreaID)}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.state.selectedItemIDs}
+								selectedAreaID={this.props.combat.mapAreaID}
 								fog={this.props.combat.fog}
 								lighting={this.props.combat.lighting}
 								focussedSquare={this.state.highlightedSquare}
@@ -1001,10 +1001,10 @@ export class CombatScreen extends React.Component<Props, State> {
 							mode='interactive-dm'
 							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 							options={this.props.options}
-							viewport={Mercator.getViewport(this.props.combat.map, this.props.combat.mapAreaID)}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}
+							selectedAreaID={this.props.combat.mapAreaID}
 							fog={this.props.combat.fog}
 							lighting={this.props.combat.lighting}
 							focussedSquare={this.state.highlightedSquare}

@@ -438,8 +438,8 @@ class MapSection extends React.Component<MapSectionProps> {
 				<div className='scrollable horizontal-only'>
 					<MapPanel
 						map={this.props.combatSetup.map}
-						viewport={Mercator.getViewport(this.props.combatSetup.map, this.props.combatSetup.mapAreaID)}
 						combatants={this.props.combatSetup.combatants}
+						selectedAreaID={this.props.combatSetup.mapAreaID}
 					/>
 				</div>
 			);

@@ -394,10 +394,10 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				mode={playerView ? 'interactive-player' : 'interactive-dm'}
 				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
 				options={this.props.options}
-				viewport={Mercator.getViewport(this.props.exploration.map, this.props.exploration.mapAreaID)}
 				combatants={this.props.exploration.combatants}
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
 				selectedItemIDs={this.state.selectedItemIDs}
+				selectedAreaID={this.props.exploration.mapAreaID}
 				fog={this.props.exploration.fog}
 				lighting={this.props.exploration.lighting}
 				focussedSquare={this.state.highlightedSquare}
