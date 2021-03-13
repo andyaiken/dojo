@@ -111,7 +111,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 			filter.challengeMax = Math.max(avgLevel, 5);
 		}
 
-		Napoleon.buildEncounter(encounter, xp, filter, this.props.library, this.props.getMonster);
+		Napoleon.buildEncounter(encounter, xp, '', filter, this.props.library, this.props.getMonster);
 		const setup = this.state.combatSetup;
 		setup.encounter = encounter;
 		setup.slotInfo = Gygax.getCombatSlotData(encounter, this.props.library);

@@ -9,12 +9,14 @@ import { MonsterFilter } from '../../models/encounter';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
+import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { FilterPanel } from '../panels/filter-panel';
-import { Conditional } from '../controls/conditional';
 
 interface RandomMapData {
 	areas: number;
@@ -25,6 +27,7 @@ interface RandomEncounterData {
 	xp: number;
 	partyID: string | null;
 	difficulty: string;
+	template: string;
 	filter: MonsterFilter;
 }
 
@@ -122,6 +125,16 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 		});
 	}
 
+	private setTemplate(template: string) {
+		const data = this.state.encounterData as RandomEncounterData;
+		data.template = template;
+		this.setState({
+			encounterData: data
+		}, () => {
+			this.props.onUpdated();
+		});
+	}
+
 	private changeFilterValue(type: 'name' | 'challenge' | 'category' | 'size' | 'role', value: any) {
 		const data = this.state.encounterData as RandomEncounterData;
 
@@ -165,36 +178,11 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 	private getEncounterSection(data: RandomEncounterData) {
 		const monsters = Napoleon.getFilterDescription(data.filter);
 
-		let info = null;
+		let target = '';
 		let content = null;
 		switch (data.type) {
-			case 'xp':
-				info = (
-					<div className='section'>
-						the encounter will be created by adding <b>random {monsters}</b> until it reaches <b>{data.xp} xp</b>
-					</div>
-				);
-				content = (
-					<div>
-						<div className='section subheading'>xp value</div>
-						<InputNumber
-							value={data.xp}
-							min={1000}
-							step={1000}
-							onChange={value => {
-								const val = parseInt((value ?? 0).toString(), 10);
-								this.setXP(val);
-							}}
-						/>
-					</div>
-				);
-				break;
 			case 'party':
-				info = (
-					<div className='section'>
-						the encounter will be created by adding <b>random {monsters}</b> until it reaches <b>{data.difficulty} difficulty</b>
-					</div>
-				);
+				target =  data.difficulty + ' difficulty';
 				content = (
 					<div>
 						<div className='section subheading'>party</div>
@@ -213,6 +201,39 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 					</div>
 				);
 				break;
+			case 'xp':
+				target = data.xp + ' xp';
+				content = (
+					<div>
+						<div className='section subheading'>xp value</div>
+						<InputNumber
+							value={data.xp}
+							min={1000}
+							step={1000}
+							onChange={value => {
+								const val = parseInt((value ?? 0).toString(), 10);
+								this.setXP(val);
+							}}
+						/>
+					</div>
+				);
+				break;
+		}
+
+		let info = null;
+		if (data.template !== '') {
+			const template = (data.template === 'random') ? 'a random template' : 'the ' + data.template + ' template';
+			info = (
+				<div className='section'>
+					the encounter will be created by adding <b>random {monsters}</b> to <b>{template}</b> until it reaches <b>{target}</b>
+				</div>
+			);
+		} else {
+			info = (
+				<div className='section'>
+					the encounter will be created by adding <b>random {monsters}</b> until it reaches <b>{target}</b>
+				</div>
+			);
 		}
 
 		return (
@@ -221,7 +242,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 					{info}
 				</Note>
 				<Row gutter={10}>
-					<Col span={12}>
+					<Col span={8}>
 						<div className='section subheading'>method</div>
 						<Selector
 							options={[
@@ -239,7 +260,41 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 						/>
 						{content}
 					</Col>
-					<Col span={12}>
+					<Col span={8}>
+						<div className='section subheading'>template</div>
+						<Checkbox label='use an encounter template' checked={data.template !== ''} onChecked={value => this.setTemplate(value ? 'random' : '')}/>
+						<Conditional display={data.template !== ''}>
+							<Note>
+								<div className='section'>select the template you would like to use</div>
+							</Note>
+							<RadioGroup
+								items={
+									Napoleon.encounterTemplates(true).map(t => ({
+										id: t.name,
+										text: t.name,
+										details: (
+											<div className='section'>
+												<Conditional display={t.name === 'random'}>
+													<div>a random template</div>
+												</Conditional>
+												{
+													t.slots.map((s, index) => (
+														<div key={index} className='content-then-info'>
+															<div className='content'>{s.roles.join(' / ')}</div>
+															<div className='info'>min {s.count}</div>
+														</div>
+													))
+												}
+											</div>
+										)
+									}))
+								}
+								selectedItemID={data.template}
+								onSelect={template => this.setTemplate(template)}
+							/>
+						</Conditional>
+					</Col>
+					<Col span={8}>
 						<div className='section subheading'>monsters</div>
 						<FilterPanel
 							filter={data.filter}

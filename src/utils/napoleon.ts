@@ -104,31 +104,62 @@ export class Napoleon {
 		return summary;
 	}
 
-	public static buildEncounter(encounter: Encounter, xp: number, filter: MonsterFilter, groups: MonsterGroup[], getMonster: (id: string) => Monster | null) {
-		const monsters: { id: string, monsterName: string, groupName: string }[] = [];
+	public static buildEncounter(encounter: Encounter, xp: number, templateName: string, filter: MonsterFilter, groups: MonsterGroup[], getMonster: (id: string) => Monster | null) {
+		const monsters: { id: string, role: string }[] = [];
 		groups.forEach(group => {
 			group.monsters
 				.filter(monster => Napoleon.matchMonster(monster, filter))
-				.forEach(monster => monsters.push({ id: monster.id, monsterName: monster.name, groupName: group.name }));
+				.forEach(monster => monsters.push({ id: monster.id, role: monster.role }));
 		});
 
-		while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
-			if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
-				// Increment a slot
-				const index = Utils.randomNumber(encounter.slots.length);
-				const slot = encounter.slots[index];
-				slot.count += 1;
-			} else {
-				// Pick a new monster
-				const candidates = monsters.filter(monster => !encounter.slots.find(slot => slot.monsterID === monster.id));
-				if (candidates.length > 0) {
-					const index = Utils.randomNumber(candidates.length);
+		if (templateName !== '') {
+			if (templateName === 'random') {
+				const index = Utils.randomNumber(this.encounterTemplates().length);
+				templateName = this.encounterTemplates()[index].name;
+			}
+
+			// Add the template slots to the encounter
+			const template = Napoleon.encounterTemplates().find(t => t.name === templateName);
+			if (template) {
+				encounter.slots = template.slots.map(s => {
 					const slot = Factory.createEncounterSlot();
-					slot.monsterID = candidates[index].id;
-					encounter.slots.push(slot);
+					slot.roles = s.roles;
+					slot.count = s.count;
+					return slot;
+				});
+
+				// Fill the slots
+				encounter.slots.forEach(slot => {
+					const slotMonsters = monsters.filter(m => slot.roles.includes(m.role));
+					const index = Utils.randomNumber(slotMonsters.length);
+					slot.monsterID = slotMonsters[index].id;
+				});
+
+				// Until the xp value is met, increment the count of a random slot
+				while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
+					const index = Utils.randomNumber(encounter.slots.length);
+					encounter.slots[index].count += 1;
+				}
+			}
+		} else {
+			while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
+				if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
+					// Increment a slot
+					const index = Utils.randomNumber(encounter.slots.length);
+					const slot = encounter.slots[index];
+					slot.count += 1;
 				} else {
-					if (encounter.slots.length === 0) {
-						break;
+					// Pick a new monster
+					const candidates = monsters.filter(monster => !encounter.slots.find(slot => slot.monsterID === monster.id));
+					if (candidates.length > 0) {
+						const index = Utils.randomNumber(candidates.length);
+						const slot = Factory.createEncounterSlot();
+						slot.monsterID = candidates[index].id;
+						encounter.slots.push(slot);
+					} else {
+						if (encounter.slots.length === 0) {
+							break;
+						}
 					}
 				}
 			}
@@ -391,8 +422,8 @@ export class Napoleon {
 		combatant.url = pc.url;
 	}
 
-	public static encounterTemplates() {
-		return [
+	public static encounterTemplates(includeRandom: boolean = false) {
+		const slots = [
 			{
 				name: 'battlefield control',
 				slots: [
@@ -451,6 +482,15 @@ export class Napoleon {
 				]
 			}
 		];
+
+		if (includeRandom) {
+			slots.unshift({
+				name: 'random',
+				slots: []
+			});
+		}
+
+		return slots;
 	}
 
 	public static getActiveCombatants(combat: Combat, playerView: boolean, showDefeated: boolean) {

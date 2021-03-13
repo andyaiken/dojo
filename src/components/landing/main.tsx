@@ -1208,7 +1208,6 @@ export class Main extends React.Component<Props, State> {
 					slot.count = s.count;
 					return slot;
 				});
-				encounter.waves = [];
 			}
 		}
 
@@ -1229,7 +1228,7 @@ export class Main extends React.Component<Props, State> {
 		}
 
 		let xp = 1000;
-		if (!partyID) {
+		if (partyID) {
 			const party = this.state.parties.find(p => p.id === partyID);
 			if (party) {
 				xp = Napoleon.getXPForDifficulty(party, 'medium');
@@ -1244,6 +1243,7 @@ export class Main extends React.Component<Props, State> {
 					xp: xp,
 					partyID: partyID,
 					difficulty: 'medium',
+					template: '',
 					filter: Factory.createMonsterFilter()
 				},
 				canAccept: () => {
@@ -1252,7 +1252,7 @@ export class Main extends React.Component<Props, State> {
 				onAccept: () => {
 					const encounter = Factory.createEncounter();
 
-					Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
+					Napoleon.buildEncounter(encounter, this.state.drawer.data.xp, this.state.drawer.data.template, this.state.drawer.data.filter, this.state.library, id => this.getMonster(id));
 					Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 					if (Utils.randomBoolean()) {
@@ -1596,7 +1596,7 @@ export class Main extends React.Component<Props, State> {
 		}
 
 		let xp = 1000;
-		if (!partyID) {
+		if (partyID) {
 			const party = this.state.parties.find(p => p.id === partyID);
 			if (party) {
 				xp = Napoleon.getXPForDifficulty(party, 'medium');
@@ -1614,6 +1614,7 @@ export class Main extends React.Component<Props, State> {
 					xp: xp,
 					partyID: partyID,
 					difficulty: 'medium',
+					template: '',
 					filter: Factory.createMonsterFilter()
 				},
 				canAccept: () => {
@@ -1643,7 +1644,7 @@ export class Main extends React.Component<Props, State> {
 						const encounter = Factory.createEncounter();
 						encounter.name = area.name;
 
-						Napoleon.buildEncounter(encounter, this.state.drawer.encounterData.xp, this.state.drawer.encounterData.filter, this.state.library, id => this.getMonster(id));
+						Napoleon.buildEncounter(encounter, this.state.drawer.encounterData.xp, this.state.drawer.data.template, this.state.drawer.encounterData.filter, this.state.library, id => this.getMonster(id));
 						Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 						if (Utils.randomBoolean()) {
