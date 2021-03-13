@@ -35,9 +35,17 @@ export class NumberSpin extends React.Component<Props> {
 
 	public render() {
 		try {
+			let minusStyle = 'spin-button';
 			let valueStyle = 'info-value';
+			let plusStyle = 'spin-button';
+			if (!this.props.downEnabled) {
+				minusStyle += ' disabled';
+			}
 			if (this.props.value === 0) {
 				valueStyle += ' disabled';
+			}
+			if (!this.props.upEnabled) {
+				plusStyle += ' disabled';
 			}
 
 			const minusBtns: JSX.Element[] = [];
@@ -48,7 +56,7 @@ export class NumberSpin extends React.Component<Props> {
 				minusBtns.push(
 					<div
 						key={'minus' + factor}
-						className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
+						className={factor === 1 ? minusStyle : minusStyle + ' multiple'}
 						onTouchEnd={e => this.touchEnd(e, -1 * factor)}
 						onClick={e => this.click(e, -1 * factor)}
 						role='button'
@@ -60,7 +68,7 @@ export class NumberSpin extends React.Component<Props> {
 				plusBtns.push(
 					<div
 						key={'plus' + factor}
-						className={factor === 1 ? 'spin-button' : 'spin-button multiple'}
+						className={factor === 1 ? plusStyle : plusStyle + ' multiple'}
 						onTouchEnd={e => this.touchEnd(e, +1 * factor)}
 						onClick={e => this.click(e, +1 * factor)}
 						role='button'
@@ -72,27 +80,14 @@ export class NumberSpin extends React.Component<Props> {
 
 			minusBtns.reverse();
 
-			let minusStyle = 'minus';
-			let plusStyle = 'plus';
-			if (!this.props.downEnabled) {
-				minusStyle += ' disabled';
-			}
-			if (!this.props.upEnabled) {
-				plusStyle += ' disabled';
-			}
-
 			return (
 				<div className={this.props.disabled ? 'number-spin disabled' : 'number-spin'}>
-					<div className={minusStyle}>
-						{minusBtns}
-					</div>
-					<div className='info' style={{ width: 'calc(100% - ' + (60 * factors.length) + 'px)' }}>
+					{minusBtns}
+					<div className='info'>
 						<div className='info-label'>{this.props.label}</div>
 						<div className={valueStyle}>{this.props.value}</div>
 					</div>
-					<div className={plusStyle}>
-						{plusBtns}
-					</div>
+					{plusBtns}
 				</div>
 			);
 		} catch (e) {

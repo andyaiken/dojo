@@ -313,6 +313,7 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 							placeholder='select party...'
 							selectedID={this.state.selectedPartyID}
 							onSelect={optionID => this.selectParty(optionID)}
+							onClear={() => this.selectParty(null)}
 						/>
 						{customPartySection}
 						{xpThresholds}

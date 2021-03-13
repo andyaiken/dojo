@@ -52,7 +52,7 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 					if (this.props.combatant.legendaryActions > 0) {
 						count = (
 							<div>
-								<div><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
+								<div className='section'><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
 								<hr/>
 							</div>
 						);
@@ -94,9 +94,9 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 					}
 					if (type === 'legendary') {
 						info = (
-							<Note white={true}>
+							<Note>
 								{count}
-								<div>
+								<div className='section'>
 									one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
 								</div>
 								{usage}
@@ -105,16 +105,20 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 					}
 					if (type === 'mythic') {
 						info = (
-							<Note white={true}>
-								while the monster's mythic trait is active, the following can be used as legendary actions
+							<Note>
+								<div className='section'>
+									while the monster's mythic trait is active, the following can be used as legendary actions
+								</div>
 							</Note>
 						);
 					}
 					break;
 				case 'lair':
 					info = (
-						<Note white={true}>
-							one lair action can be taken each round on initiative 20
+						<Note>
+							<div className='section'>
+								one lair action can be taken each round on initiative 20
+							</div>
 						</Note>
 					);
 					break;
@@ -122,15 +126,19 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 		} else {
 			if (type === 'legendary') {
 				info = (
-					<Note white={true}>
-						<b>{this.props.combatant.legendaryActions}</b> legendary actions per round
+					<Note>
+						<div className='section'>
+							<b>{this.props.combatant.legendaryActions}</b> legendary actions per round
+						</div>
 					</Note>
 				);
 			}
 			if (type === 'mythic') {
 				info = (
-					<Note white={true}>
-						while the monster's mythic trait is active, the following can be used as legendary actions
+					<Note>
+						<div className='section'>
+							while the monster's mythic trait is active, the following can be used as legendary actions
+						</div>
 					</Note>
 				);
 			}

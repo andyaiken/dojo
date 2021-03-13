@@ -41,6 +41,8 @@ interface Props {
 interface State {
 	mapData: RandomMapData | null;
 	encounterData: RandomEncounterData | null;
+	customPartySize: number;
+	customPartyLevel: number;
 }
 
 export class RandomEncounterOrMapModal extends React.Component<Props, State> {
@@ -48,7 +50,9 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			mapData: props.mapData,
-			encounterData: props.encounterData
+			encounterData: props.encounterData,
+			customPartySize: 5,
+			customPartyLevel: 1
 		};
 	}
 
@@ -103,12 +107,14 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 		});
 	}
 
-	private setParty(id: string) {
+	private setParty(id: string | null, partySize: number, partyLevel: number) {
 		const data = this.state.encounterData as RandomEncounterData;
 		data.partyID = id;
-		data.xp = this.calculateXP(data);
+		data.xp = this.calculateXP(data, partySize, partyLevel);
 		this.setState({
-			encounterData: data
+			encounterData: data,
+			customPartySize: partySize,
+			customPartyLevel: partyLevel
 		}, () => {
 			this.props.onUpdated();
 		});
@@ -117,7 +123,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 	private setDifficulty(diff: string) {
 		const data = this.state.encounterData as RandomEncounterData;
 		data.difficulty = diff;
-		data.xp = this.calculateXP(data);
+		data.xp = this.calculateXP(data, this.state.customPartySize, this.state.customPartyLevel);
 		this.setState({
 			encounterData: data
 		}, () => {
@@ -164,12 +170,23 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 		});
 	}
 
-	private calculateXP(data: RandomEncounterData) {
+	private calculateXP(data: RandomEncounterData, partySize: number, partyLevel: number) {
 		let xp = 0;
 
-		const party = this.props.parties.find(p => p.id === data.partyID);
-		if (party) {
+		if (data.partyID === '') {
+			// We're using a custom party
+			const party = Factory.createParty();
+			for (let n = 0; n !== partySize; ++n) {
+				const pc = Factory.createPC();
+				pc.level = partyLevel;
+				party.pcs.push(pc);
+			}
 			xp = Napoleon.getXPForDifficulty(party, data.difficulty);
+		} else {
+			const party = this.props.parties.find(p => p.id === data.partyID);
+			if (party) {
+				xp = Napoleon.getXPForDifficulty(party, data.difficulty);
+			}
 		}
 
 		return xp;
@@ -187,10 +204,27 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 					<div>
 						<div className='section subheading'>party</div>
 						<Dropdown
-							options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }))}
+							placeholder='select party...'
+							options={this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' })).concat({ id: '', text: 'custom party' })}
 							selectedID={data.partyID}
-							onSelect={id => this.setParty(id)}
+							onSelect={id => this.setParty(id, this.state.customPartySize, this.state.customPartyLevel)}
+							onClear={() => this.setParty(null, this.state.customPartySize, this.state.customPartyLevel)}
 						/>
+						<Conditional display={data.partyID === ''}>
+							<NumberSpin
+								value={this.state.customPartySize}
+								label='party size'
+								downEnabled={this.state.customPartySize > 1}
+								onNudgeValue={delta => this.setParty('', this.state.customPartySize + delta, this.state.customPartyLevel)}
+							/>
+							<NumberSpin
+								value={this.state.customPartyLevel}
+								label='party level'
+								downEnabled={this.state.customPartyLevel > 1}
+								upEnabled={this.state.customPartyLevel < 20}
+								onNudgeValue={delta => this.setParty('', this.state.customPartySize, this.state.customPartyLevel + delta)}
+							/>
+						</Conditional>
 						<div className='section subheading'>difficulty</div>
 						<NumberSpin
 							value={data.difficulty}
@@ -208,7 +242,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 						<div className='section subheading'>xp value</div>
 						<InputNumber
 							value={data.xp}
-							min={1000}
+							min={100}
 							step={1000}
 							onChange={value => {
 								const val = parseInt((value ?? 0).toString(), 10);

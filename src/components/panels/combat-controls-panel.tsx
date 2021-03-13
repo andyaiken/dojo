@@ -23,6 +23,8 @@ import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
 import { MarkdownEditor } from './markdown-editor';
 import { MovementPanel } from './movement-panel';
+import { CheckCircleOutlined } from '@ant-design/icons';
+import { Conditional } from '../controls/conditional';
 
 interface Props {
 	combatants: Combatant[];
@@ -60,8 +62,8 @@ interface Props {
 
 interface State {
 	view: string;
-	healingValue: number;
-	damageValue: number;
+	damageMode: string;
+	value: number;
 	damageMultipliers: { [id: string]: number };
 }
 
@@ -81,21 +83,15 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 		this.state = {
 			view: props.defaultTab,
-			healingValue: 0,
-			damageValue: 0,
+			damageMode: 'damage',
+			value: 0,
 			damageMultipliers: {}
 		};
 	}
 
-	private nudgeHealing(delta: number) {
+	private nudgeValue(delta: number) {
 		this.setState({
-			healingValue: Math.max(this.state.healingValue + delta, 0)
-		});
-	}
-
-	private nudgeDamage(delta: number) {
-		this.setState({
-			damageValue: Math.max(this.state.damageValue + delta, 0)
+			value: Math.max(this.state.value + delta, 0)
 		});
 	}
 
@@ -118,10 +114,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return;
 		}
 
-		const value = this.state.healingValue;
+		const value = this.state.value;
 
 		this.setState({
-			healingValue: 0
+			value: 0
 		}, () => {
 			const values: { id: string, hp: number, temp: number; damage: number }[] = [];
 			this.props.combatants.forEach(combatant => {
@@ -147,10 +143,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return;
 		}
 
-		const value = this.state.damageValue;
+		const value = this.state.value;
 
 		this.setState({
-			damageValue: 0
+			value: 0
 		}, () => {
 			const values: { id: string, hp: number, temp: number; damage: number }[] = [];
 			this.props.combatants.forEach(combatant => {
@@ -181,6 +177,57 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			this.props.changeHP(values);
 		});
+	}
+
+	private addTempHP() {
+		if (this.props.changeHP === null) {
+			return;
+		}
+
+		const value = this.state.value;
+
+		this.setState({
+			value: 0
+		}, () => {
+			const values: { id: string, hp: number, temp: number; damage: number }[] = [];
+			this.props.combatants.forEach(combatant => {
+				values.push({
+					id: combatant.id,
+					hp: combatant.hpCurrent ?? 0,
+					temp: Math.max(value, combatant.hpTemp ?? 0),
+					damage: 0
+				});
+			});
+
+			this.props.changeHP(values);
+		});
+	}
+
+	private getDamageMultiplier(combatantID: string) {
+		let selected = 'normal';
+		const multiplier = this.state.damageMultipliers[combatantID] ?? 1;
+		if (multiplier < 1) {
+			selected = 'half';
+		}
+		if (multiplier > 1) {
+			selected = 'double';
+		}
+		return (
+			<Selector
+				options={['half', 'normal', 'double'].map(o => ({ id: o, text: o }))}
+				selectedID={selected}
+				onSelect={id => {
+					let value = 1;
+					if (id === 'half') {
+						value = 0.5;
+					}
+					if (id === 'double') {
+						value = 2;
+					}
+					this.setDamageMultiplier(combatantID, value);
+				}}
+			/>
+		);
 	}
 
 	private getMainSection() {
@@ -280,30 +327,6 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return null;
 		}
 
-		let current = null;
-		if (this.props.combatants.length === 1) {
-			const monster = this.props.combatants[0] as Combatant & Monster;
-			current = (
-				<Expander text='current hit points'>
-					<NumberSpin
-						value={monster.hpCurrent ?? 0}
-						label='hp'
-						factors={[1, 10]}
-						downEnabled={(monster.hpCurrent ?? 0) > 0}
-						upEnabled={(monster.hpCurrent ?? 0) < (monster.hpMax ?? 0)}
-						onNudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
-					/>
-					<NumberSpin
-						value={monster.hpTemp ?? 0}
-						label='temp hp'
-						factors={[1, 10]}
-						downEnabled={(monster.hpTemp ?? 0) > 0}
-						onNudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
-					/>
-				</Expander>
-			);
-		}
-
 		const modifiers = this.props.combatants.map(c => {
 			const monster = c as Combatant & Monster;
 			let resist = null;
@@ -351,65 +374,93 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return null;
 		});
 
-		let apply = 'apply damage';
+		let damageSection = null;
 		if (this.props.combatants.length === 1) {
-			const degree = this.state.damageMultipliers[this.props.combatants[0].id];
-			if (degree === 0.5) {
-				apply = 'apply half damage';
-			}
-			if (degree === 2) {
-				apply = 'apply double damage';
-			}
-		}
-
-		const degreeOptions = [
-			{ id: 'half', text: 'half' },
-			{ id: 'normal', text: 'normal' },
-			{ id: 'double', text: 'double' }
-		];
-		const degrees = this.props.combatants.map(c => {
-			let selected = 'normal';
-			const multiplier = this.state.damageMultipliers[c.id] ?? 1;
-			if (multiplier < 1) {
-				selected = 'half';
-			}
-			if (multiplier > 1) {
-				selected = 'double';
-			}
-			const selector = (
-				<Selector
-					options={degreeOptions}
-					selectedID={selected}
-					onSelect={id => {
-						let value = 1;
-						if (id === 'half') {
-							value = 0.5;
-						}
-						if (id === 'double') {
-							value = 2;
-						}
-						this.setDamageMultiplier(c.id, value);
-					}}
-				/>
-			);
-			if (this.props.combatants.length === 1) {
-				return (
-					<div key={c.id}>
-						{selector}
+			damageSection = (
+				<div>
+					<Selector
+						options={['damage', 'healing', 'temp hp'].map(o => ({ id: o, text: o }))}
+						selectedID={this.state.damageMode}
+						onSelect={id => this.setState({ damageMode: id })}
+					/>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<NumberSpin
+								label={this.state.damageMode}
+								value={this.state.value}
+								factors={[1, 10]}
+								downEnabled={this.state.value > 0}
+								onNudgeValue={delta => this.nudgeValue(delta)}
+							/>
+							<Conditional display={this.state.damageMode === 'damage'}>
+								{this.getDamageMultiplier(this.props.combatants[0].id)}
+							</Conditional>
+						</div>
+						<div className='icons'>
+							<Conditional display={this.state.damageMode === 'damage'}>
+								<CheckCircleOutlined className={this.state.value === 0 ? 'disabled' : ''} title='apply damage' onClick={() => this.damage()} />
+							</Conditional>
+							<Conditional display={this.state.damageMode === 'healing'}>
+								<CheckCircleOutlined className={this.state.value === 0 ? 'disabled' : ''} title='apply healing' onClick={() => this.heal()} />
+							</Conditional>
+							<Conditional display={this.state.damageMode === 'temp hp'}>
+								<CheckCircleOutlined className={this.state.value === 0 ? 'disabled' : ''} title='apply temp hp' onClick={() => this.addTempHP()} />
+							</Conditional>
+						</div>
 					</div>
-				);
-			}
-			return (
-				<Row key={c.id} align='middle' justify='center'>
-					<Col span={8}>
-						<div>{c.displayName}</div>
-					</Col>
-					<Col span={16}>
-						{selector}
-					</Col>
-				</Row>
+				</div>
 			);
-		});
+		} else {
+			const degrees = this.props.combatants.map(c => {
+				if (this.props.combatants.length === 1) {
+					return (
+						<div key={c.id}>
+							{this.getDamageMultiplier(c.id)}
+						</div>
+					);
+				}
+				return (
+					<Row key={c.id} align='middle' justify='center'>
+						<Col span={8}>
+							<div>{c.displayName}</div>
+						</Col>
+						<Col span={16}>
+							{this.getDamageMultiplier(c.id)}
+						</Col>
+					</Row>
+				);
+			});
+			damageSection = (
+				<div>
+					<NumberSpin
+						value={this.state.value}
+						label='damage'
+						factors={[1, 10]}
+						downEnabled={this.state.value > 0}
+						onNudgeValue={delta => this.nudgeValue(delta)}
+					/>
+					{degrees}
+					<button className={this.state.value === 0 ? 'disabled' : ''} onClick={() => this.damage()}>apply damage</button>
+					<hr/>
+					<Expander text='healing'>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<NumberSpin
+									value={this.state.value}
+									label='healing'
+									factors={[1, 10]}
+									downEnabled={this.state.value > 0}
+									onNudgeValue={delta => this.nudgeValue(delta)}
+								/>
+							</div>
+							<div className='icons'>
+								<CheckCircleOutlined className={this.state.value === 0 ? 'disabled' : ''} title='apply healing' onClick={() => this.heal()} />
+							</div>
+						</div>
+					</Expander>
+				</div>
+			)
+		}
 
 		let defeatedBtn = null;
 		const atZero = this.props.combatants.filter(c => (c.hpCurrent != null) && (c.hpCurrent <= 0));
@@ -434,28 +485,8 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		return (
 			<div>
 				{modifiers}
-				<NumberSpin
-					value={this.state.damageValue}
-					label='damage'
-					factors={[1, 10]}
-					downEnabled={this.state.damageValue > 0}
-					onNudgeValue={delta => this.nudgeDamage(delta)}
-				/>
-				{degrees}
-				<button className={this.state.damageValue === 0 ? 'disabled' : ''} onClick={() => this.damage()}>{apply}</button>
+				{damageSection}
 				{defeatedBtn}
-				<hr/>
-				<Expander text='healing'>
-					<NumberSpin
-						value={this.state.healingValue}
-						label='healing'
-						factors={[1, 10]}
-						downEnabled={this.state.healingValue > 0}
-						onNudgeValue={delta => this.nudgeHealing(delta)}
-					/>
-					<button className={this.state.healingValue === 0 ? 'disabled' : ''} onClick={() => this.heal()}>apply healing</button>
-				</Expander>
-				{current}
 			</div>
 		);
 	}
@@ -473,7 +504,9 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 			return (
 				<Note key={c.id}>
-					<b>immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+					<div className='section'>
+						<b>immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+					</div>
 				</Note>
 			);
 		});
@@ -625,6 +658,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		}
 
 		let changeName = null;
+		let changeHP = null;
 		let changeSize = null;
 		let changeInit = null;
 		let changeFaction = null;
@@ -642,6 +676,29 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					/>
 				</Expander>
 			);
+
+			if (combatant.type === 'monster') {
+				const monster = combatant as Combatant & Monster;
+				changeHP = (
+					<Expander text='hit points'>
+						<NumberSpin
+							value={monster.hpCurrent ?? 0}
+							label='hp'
+							factors={[1, 10]}
+							downEnabled={(monster.hpCurrent ?? 0) > 0}
+							upEnabled={(monster.hpCurrent ?? 0) < (monster.hpMax ?? 0)}
+							onNudgeValue={delta => this.props.nudgeValue(monster, 'hpCurrent', delta)}
+						/>
+						<NumberSpin
+							value={monster.hpTemp ?? 0}
+							label='temp hp'
+							factors={[1, 10]}
+							downEnabled={(monster.hpTemp ?? 0) > 0}
+							onNudgeValue={delta => this.props.nudgeValue(monster, 'hpTemp', delta)}
+						/>
+					</Expander>
+				);
+			}
 
 			changeSize = (
 				<Expander text='size'>
@@ -804,6 +861,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			<div>
 				{remove}
 				{changeName}
+				{changeHP}
 				{changeSize}
 				{changeInit}
 				{changeFaction}

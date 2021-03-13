@@ -128,7 +128,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 							</div>
 						</div>
 						<div className='card-content'>
-							<Note white={true}>
+							<Note>
 								<div className='section'>
 									this empty slot has been added because you are creating an encounter from a template
 								</div>
