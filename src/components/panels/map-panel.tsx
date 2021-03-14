@@ -913,7 +913,7 @@ export class MapPanel extends React.Component<Props, State> {
 					role='button'
 				>
 					{this.getControls()}
-					<div className='grid'>
+					<div id={this.props.map.id} className='grid'>
 						{this.getTiles(mapDimensions)}
 						{this.getAreas(mapDimensions)}
 						{this.getAreaNames(mapDimensions)}

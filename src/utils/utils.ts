@@ -78,6 +78,13 @@ export class Utils {
 		a.click();
 	}
 
+	public static saveImage(filename: string, canvas: HTMLCanvasElement) {
+		const a = document.createElement('a');
+		a.download = filename;
+		a.href = canvas.toDataURL('image/png').replace(/^data:image\/png/, 'data:application/octet-stream');
+		a.click();
+	}
+
 	public static randomNumber(max: number) {
 		if (max <= 0) {
 			return 0;

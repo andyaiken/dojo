@@ -700,6 +700,7 @@ export class Player extends React.Component<Props, State> {
 					content = (
 						<StatBlockModal
 							source={this.state.drawer.source}
+							options={this.state.options}
 						/>
 					);
 					header = 'statblock';

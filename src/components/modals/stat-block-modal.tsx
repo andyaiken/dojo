@@ -1,8 +1,10 @@
 import React from 'react';
 
+import { Matisse } from '../../utils/matisse';
 import { Streep } from '../../utils/streep';
 
 import { Combatant } from '../../models/combat';
+import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
@@ -13,6 +15,7 @@ import { AwardPanel } from '../panels/award-panel';
 
 interface Props {
 	source: PC | Monster | (Combatant & PC) | (Combatant & Monster) | null;
+	options: Options;
 }
 
 export class StatBlockModal extends React.Component<Props> {
@@ -33,7 +36,7 @@ export class StatBlockModal extends React.Component<Props> {
 			}
 
 			let awards = null;
-			if (this.props.source.type === 'pc') {
+			if (this.props.options.showAwards && (this.props.source.type === 'pc')) {
 				const list = (this.props.source as PC).awards.map(awardID => {
 					const award = Streep.getAward(awardID);
 					if (!award) {
@@ -57,8 +60,11 @@ export class StatBlockModal extends React.Component<Props> {
 
 			return (
 				<div className='scrollable padded'>
-					{content}
+					<div id='statblock'>
+						{content}
+					</div>
 					{awards}
+					<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
 				</div>
 			);
 		} catch (e) {

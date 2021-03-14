@@ -3,6 +3,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
+import { Matisse } from '../../utils/matisse';
 import { Shakespeare } from '../../utils/shakespeare';
 
 import { DOORWAY_TYPES, Map, MapArea, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
@@ -260,6 +261,7 @@ export class MapScreen extends React.Component<Props, State> {
 						<hr/>
 						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate the map</button>
 						<button onClick={() => this.props.generateRoom(this.props.map)}>add a random room</button>
+						<button onClick={() => Matisse.takeScreenshot(this.props.map.id)}>export map image</button>
 						<MapOptions
 							map={this.props.map}
 							parties={this.props.parties}
