@@ -327,6 +327,35 @@ export class MapPanel extends React.Component<Props, State> {
 		};
 	}
 
+	private getActiveToken() {
+		let activeToken: { token: MapItem, name: string } | null = null;
+		const characterID = Comms.getCharacterID(Comms.getID());
+		if (characterID) {
+			// The active token is my character's token
+			const token = this.props.map.items.find(i => i.id === characterID);
+			if (token) {
+				activeToken = {
+					token: token,
+					name: 'you'
+				};
+			}
+		} else {
+			// The active token is the initiative holder
+			const combatant = this.props.combatants.find(c => c.current);
+			if (combatant) {
+				const token = this.props.map.items.find(i => i.id === combatant.id);
+				if (token) {
+					activeToken = {
+						token: token,
+						name: combatant.displayName
+					};
+				}
+			}
+		}
+
+		return activeToken;
+	}
+
 	//#region Rendering
 
 	private getControls() {
@@ -671,32 +700,7 @@ export class MapPanel extends React.Component<Props, State> {
 		if ((this.props.mode !== 'edit') && (this.props.mode !== 'interactive-plot')) {
 			const tokens: (JSX.Element | null)[] = [];
 
-			// Find the active token
-			let activeToken: { token: MapItem, name: string } | null = null;
-			const characterID = Comms.getCharacterID(Comms.getID());
-			if (characterID) {
-				// The active token is my character's token
-				const token = this.props.map.items.find(i => i.id === characterID);
-				if (token) {
-					activeToken = {
-						token: token,
-						name: 'you'
-					};
-				}
-			} else {
-				// The active token is the initiative holder
-				const combatant = this.props.combatants.find(c => c.current);
-				if (combatant) {
-					const token = this.props.map.items.find(i => i.id === combatant.id);
-					if (token) {
-						activeToken = {
-							token: token,
-							name: combatant.displayName
-						};
-					}
-				}
-			}
-
+			const activeToken = this.getActiveToken();
 			const mountIDs = this.props.combatants.map(c => c.mountID || '').filter(id => id !== '');
 			this.props.map.items
 				.filter(i => (i.type === 'monster') || (i.type === 'pc') || (i.type === 'companion') || (i.type === 'token'))
@@ -839,6 +843,11 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.showGrid) {
 			const grid: (JSX.Element | null)[] = [];
 
+			let activeToken = null;
+			if (!this.props.features.highlight && !this.props.features.editFog) {
+				activeToken = this.getActiveToken();
+			}
+
 			for (let yGrid = dimensions.minY; yGrid !== dimensions.maxY + 1; ++yGrid) {
 				for (let xGrid = dimensions.minX; xGrid !== dimensions.maxX + 1; ++xGrid) {
 					grid.push(
@@ -848,6 +857,7 @@ export class MapPanel extends React.Component<Props, State> {
 							y={yGrid}
 							style={this.getStyle(xGrid, yGrid, 1, 1, 'square', dimensions)}
 							selected={this.isSelected(xGrid, yGrid)}
+							showDistanceTo={activeToken}
 							onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
 							onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
 							onMouseEnter={(posX, posY) => this.gridSquareEntered(posX, posY)}
@@ -963,6 +973,7 @@ interface GridSquareProps {
 	style: MapItemStyle;
 	mode: string;
 	selected: boolean;
+	showDistanceTo: { token: MapItem, name: string } | null;
 	content: string | JSX.Element | null;
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
@@ -974,6 +985,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 	public static defaultProps = {
 		mode: 'cell',
 		selected: false,
+		showDistanceTo: null,
 		content: null,
 		onMouseDown: null,
 		onMouseUp: null,
@@ -1018,7 +1030,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 				);
 			}
 
-			return (
+			const square = (
 				<div
 					className={'grid-square ' + this.props.mode + (this.props.selected ? ' selected' : '')}
 					style={this.props.style}
@@ -1031,6 +1043,35 @@ class GridSquare extends React.Component<GridSquareProps> {
 					{content}
 				</div>
 			);
+
+			if (this.props.showDistanceTo) {
+				const mockItem = {
+					x: this.props.x,
+					y: this.props.y,
+					z: this.props.showDistanceTo.token.z,
+					width: 1,
+					height: 1,
+					depth: this.props.showDistanceTo.token.depth
+				};
+				const dist = Mercator.getDistanceBetweenItems(mockItem as MapItem, this.props.showDistanceTo.token) * 5;
+
+				return (
+					<Popover
+						content={(
+							<div className='section'>
+								{dist} ft away from {this.props.showDistanceTo.name}
+							</div>
+						)}
+						trigger='hover'
+						placement='bottom'
+						overlayClassName='map-hover-tooltip'
+					>
+						{square}
+					</Popover>
+				);
+			}
+
+			return square;
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='GridSquare' error={e} />;
@@ -1359,9 +1400,10 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 		const info: JSX.Element[] = [];
 
 		if (this.props.activeToken && (this.props.activeToken.token.id !== this.props.token.id)) {
+			const dist = Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken.token) * 5;
 			info.push(
 				<div key='distance' className='section'>
-					{Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken.token) * 5} ft away from {this.props.activeToken.name}
+					{dist} ft away from {this.props.activeToken.name}
 				</div>
 			);
 		}

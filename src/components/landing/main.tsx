@@ -362,6 +362,7 @@ export class Main extends React.Component<Props, State> {
 
 		let options: Options = {
 			showMonsterDieRolls: false,
+			showAwards: false,
 			theme: 'light',
 			diagonals: 'onepointfive',
 			featureFlags: []
@@ -371,6 +372,9 @@ export class Main extends React.Component<Props, State> {
 			if (str) {
 				options = JSON.parse(str);
 
+				if (options.showAwards === undefined) {
+					options.showAwards = false;
+				}
 				if (options.theme === undefined) {
 					options.theme = 'light';
 				}

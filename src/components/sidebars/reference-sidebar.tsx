@@ -142,6 +142,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 						content = (
 							<PartyReference
 								party={this.props.parties.find(p => p.id === this.props.selectedPartyID) ?? null}
+								showAwards={this.props.showAwards}
 							/>
 						);
 					} else if (this.props.parties.length === 1) {
@@ -153,6 +154,7 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 						content = (
 							<PartyReference
 								party={this.props.parties[0]}
+								showAwards={this.props.showAwards}
 							/>
 						);
 					}
@@ -365,6 +367,7 @@ class MarkdownReference extends React.Component<MarkdownReferenceProps, Markdown
 
 interface PartyReferenceProps {
 	party: Party | null;
+	showAwards: boolean;
 }
 
 class PartyReference extends React.Component<PartyReferenceProps> {
@@ -460,61 +463,74 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 				);
 			}
 
-			const list = Streep.getAwards().filter(award => {
-				let achieved = false;
+			let awards = null;
+			if (this.props.showAwards) {
+				const list = Streep.getAwards().filter(award => {
+					let achieved = false;
 
-				if (this.props.party?.awards.includes(award.id)) {
-					achieved = true;
-				}
-
-				this.props.party?.pcs.forEach(pc => {
-					if (pc.awards.includes(award.id)) {
+					if (this.props.party?.awards.includes(award.id)) {
 						achieved = true;
 					}
-				});
 
-				return achieved;
-			}).map(award => {
-				const awardees = [];
-				if (this.props.party?.awards.includes(award.id)) {
-					awardees.push(this.props.party.name || 'unnamed party');
-				}
-				this.props.party?.pcs.forEach(pc => {
-					if (pc.awards.includes(award.id)) {
-						awardees.push(pc.name || 'unnamed pc');
+					this.props.party?.pcs.forEach(pc => {
+						if (pc.awards.includes(award.id)) {
+							achieved = true;
+						}
+					});
+
+					return achieved;
+				}).map(award => {
+					const awardees = [];
+					if (this.props.party?.awards.includes(award.id)) {
+						awardees.push(this.props.party.name || 'unnamed party');
 					}
+					this.props.party?.pcs.forEach(pc => {
+						if (pc.awards.includes(award.id)) {
+							awardees.push(pc.name || 'unnamed pc');
+						}
+					});
+					let awardeesSection = null;
+					if (awardees.length > 0) {
+						awardeesSection = (
+							<div>
+								<hr/>
+								<div className='section'>
+									awarded to:
+									{awardees.map(awardee => <Tag key={awardee}>{awardee}</Tag>)}
+								</div>
+							</div>
+						);
+					}
+					return (
+						<AwardPanel key={award.id} award={award}>
+							{awardeesSection}
+						</AwardPanel>
+					);
 				});
-				let awardeesSection = null;
-				if (awardees.length > 0) {
-					awardeesSection = (
+				awards = (
+					<div>
+						<hr/>
+						<div className='section subheading'>
+							awards
+						</div>
+						<Note>
+							<div className='section'>
+								no awards yet
+							</div>
+						</Note>
+					</div>
+				);
+				if (list.length > 0) {
+					awards = (
 						<div>
 							<hr/>
-							<div className='section'>
-								awarded to:
-								{awardees.map(awardee => <Tag key={awardee}>{awardee}</Tag>)}
+							<div className='section subheading'>
+								awards
 							</div>
+							{list}
 						</div>
 					);
 				}
-				return (
-					<AwardPanel key={award.id} award={award}>
-						{awardeesSection}
-					</AwardPanel>
-				);
-			});
-			let awards = (
-				<Note>
-					<div className='section'>
-						no awards yet
-					</div>
-				</Note>
-			);
-			if (list.length > 0) {
-				awards = (
-					<div>
-						{list}
-					</div>
-				);
 			}
 
 			return (
@@ -566,10 +582,6 @@ class PartyReference extends React.Component<PartyReferenceProps> {
 							remember that advantage / disadvantage grants +/- 5 to passive rolls
 						</div>
 					</Note>
-					<hr/>
-					<div className='section subheading'>
-						awards
-					</div>
 					{awards}
 				</div>
 			);

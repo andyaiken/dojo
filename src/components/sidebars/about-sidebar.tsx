@@ -120,31 +120,27 @@ export class AboutSidebar extends React.Component<Props, State> {
 					}
 					content = (
 						<div>
-							<Note>
-								<div className='section'>
-									turn this setting on to add die roll buttons to monster stat blocks
-								</div>
-							</Note>
+							<div className='subheading'>
+								optional features
+							</div>
 							<Checkbox
-								label='show monster die rolls'
+								label='add die roll buttons to monster stat blocks'
 								checked={this.props.options.showMonsterDieRolls}
 								onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
 							/>
-							<Note>
-								<div className='section'>
-									you can switch the app between light theme and dark theme
-								</div>
-							</Note>
 							<Checkbox
-								label='use dark theme'
-								checked={this.props.options.theme === 'dark'}
-								onChecked={checked => this.props.setOption('theme', checked ? 'dark' : 'light')}
+								label='show party awards'
+								checked={this.props.options.showAwards}
+								onChecked={checked => this.props.setOption('showAwards', checked)}
 							/>
-							<Note>
-								<div className='section'>
-									this setting controls how diagonal movement is calculated
-								</div>
-							</Note>
+							<div className='subheading'>
+								settings
+							</div>
+							<Dropdown
+								options={['light', 'dark'].map(o => ({ id: o, text: o + ' theme' }))}
+								selectedID={this.props.options.theme}
+								onSelect={value => this.props.setOption('theme', value)}
+							/>
 							<Dropdown
 								options={[
 									{
@@ -161,15 +157,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 								selectedID={this.props.options.diagonals}
 								onSelect={value => this.props.setOption('diagonals', value)}
 							/>
-							<Note>
-								<div className='section'>
-									the browser has a limited amount of image storage space
-								</div>
-								<div className='section'>
-									use this button to delete anything that isn't currently being used
-								</div>
-							</Note>
-							<button onClick={() => this.clearImages()}>remove unused images</button>
 							<hr/>
 							<Expander text='feature flags'>
 								<div className='content-then-icons'>
@@ -199,20 +186,24 @@ export class AboutSidebar extends React.Component<Props, State> {
 							<div className='subheading'>
 								data
 							</div>
-							<div className='section'>
-								<Row>
-									<Col span={16}>total</Col>
-									<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
-								</Row>
-								<Row>
-									<Col span={16}>data</Col>
-									<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
-								</Row>
-								<Row>
-									<Col span={16}>images</Col>
-									<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
-								</Row>
-							</div>
+							<Note>
+								<div className='section'>
+									the browser has a limited amount of image storage space
+								</div>
+							</Note>
+							<button onClick={() => this.clearImages()}>remove unused images</button>
+							<Row>
+								<Col span={16}>total</Col>
+								<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
+							</Row>
+							<Row>
+								<Col span={16}>data</Col>
+								<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
+							</Row>
+							<Row>
+								<Col span={16}>images</Col>
+								<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
+							</Row>
 						</div>
 					);
 					break;

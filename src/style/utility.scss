@@ -52,6 +52,12 @@
 	pointer-events: none;
 }
 
+.anticon.inline-text {
+	font-size: 8px;
+	line-height: 12px;
+	vertical-align: middle;
+}
+
 h1,
 .heading {
 	border-bottom: 1px solid $control-border;

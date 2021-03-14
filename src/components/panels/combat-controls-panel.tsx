@@ -1,3 +1,4 @@
+import { ArrowRightOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row, Tag } from 'antd';
 import React from 'react';
 
@@ -12,6 +13,7 @@ import { Monster } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
@@ -23,8 +25,6 @@ import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
 import { MarkdownEditor } from './markdown-editor';
 import { MovementPanel } from './movement-panel';
-import { CheckCircleOutlined } from '@ant-design/icons';
-import { Conditional } from '../controls/conditional';
 
 interface Props {
 	combatants: Combatant[];
@@ -212,6 +212,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		if (multiplier > 1) {
 			selected = 'double';
 		}
+
 		return (
 			<Selector
 				options={['half', 'normal', 'double'].map(o => ({ id: o, text: o }))}
@@ -376,6 +377,25 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 		let damageSection = null;
 		if (this.props.combatants.length === 1) {
+			const combatantID = this.props.combatants[0].id;
+
+			let value: number | JSX.Element = this.state.value;
+			if ((this.state.damageMode === 'damage') && (this.state.value > 0)) {
+				const multiplier = this.state.damageMultipliers[combatantID] ?? 1;
+				if (multiplier < 1) {
+					// Halved
+					value = (
+						<div>{this.state.value} hp <ArrowRightOutlined className='inline-text'/> {Math.floor(this.state.value / 2)} hp</div>
+					);
+				}
+				if (multiplier > 1) {
+					// Doubled
+					value = (
+						<div>{this.state.value} hp <ArrowRightOutlined className='inline-text'/> {this.state.value * 2} hp</div>
+					);
+				}
+			}
+
 			damageSection = (
 				<div>
 					<Selector
@@ -387,13 +407,13 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 						<div className='content'>
 							<NumberSpin
 								label={this.state.damageMode}
-								value={this.state.value}
+								value={value}
 								factors={[1, 10]}
 								downEnabled={this.state.value > 0}
 								onNudgeValue={delta => this.nudgeValue(delta)}
 							/>
 							<Conditional display={this.state.damageMode === 'damage'}>
-								{this.getDamageMultiplier(this.props.combatants[0].id)}
+								{this.getDamageMultiplier(combatantID)}
 							</Conditional>
 						</div>
 						<div className='icons'>

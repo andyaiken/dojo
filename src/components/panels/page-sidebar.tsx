@@ -187,14 +187,16 @@ export class PageSidebar extends React.Component<Props> {
 								onClick={() => this.props.onSelectSidebar('session-player')}
 							/>
 						);
-						options.push(
-							<TrophyOutlined
-								key='awards-player'
-								className={this.props.sidebar.type === 'awards-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
-								title='awards'
-								onClick={() => this.props.onSelectSidebar('awards-player')}
-							/>
-						);
+						if (this.props.options.showAwards) {
+							options.push(
+								<TrophyOutlined
+									key='awards-player'
+									className={this.props.sidebar.type === 'awards-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
+									title='awards'
+									onClick={() => this.props.onSelectSidebar('awards-player')}
+								/>
+							);
+						}
 					}
 					options.push(
 						<InfoCircleOutlined
@@ -406,7 +408,7 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.selectedMonsterID = id;
 								this.props.onUpdateSidebar(sidebar);
 							}}
-							showAwards={this.props.user === 'dm'}
+							showAwards={this.props.options.showAwards && (this.props.user === 'dm')}
 							addAward={(awardID, awardee) => this.props.addAward(awardID, awardee)}
 							deleteAward={(awardID, awardee) => this.props.deleteAward(awardID, awardee)}
 						/>
