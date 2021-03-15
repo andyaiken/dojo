@@ -1226,7 +1226,7 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private createEncounter(partyID: string | null) {
+	private createEncounter(partyID: string | null, scene: Scene | null = null) {
 		if (!partyID && (this.state.parties.length === 1)) {
 			partyID = this.state.parties[0].id;
 		}
@@ -1263,14 +1263,20 @@ export class Main extends React.Component<Props, State> {
 						encounter.notes = '**victory condition:** ' + Napoleon.getVictoryCondition(encounter, id => this.getMonster(id));
 					}
 
+					if (scene) {
+						encounter.name = scene.name;
+						scene.encounterIDs.push(encounter.id);
+					}
+
 					let encounters = this.state.encounters;
 					encounters.push(encounter);
 					encounters = Utils.sort(encounters);
 
 					this.setState({
-						view: 'encounters',
+						view: scene ? 'adventures' : 'encounters',
 						encounters: encounters,
-						selectedEncounterID: encounter.id,
+						adventures: this.state.adventures,
+						selectedEncounterID: scene ? this.state.selectedEncounterID : encounter.id,
 						drawer: null
 					});
 				}
@@ -1367,7 +1373,7 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private generateMap() {
+	private generateMap(plot: Plot | null = null) {
 		this.setState({
 			drawer: {
 				type: 'random-map',
@@ -1385,12 +1391,27 @@ export class Main extends React.Component<Props, State> {
 							area.text = Shakespeare.generateRoomDescription();
 						}
 					});
-					this.state.maps.push(map);
+
+					if (plot) {
+						plot.map = map;
+						map.areas.forEach(area => {
+							const scene = Factory.createScene();
+							scene.id = area.id;
+							scene.name = area.name;
+							scene.content = area.text;
+							plot.scenes.push(scene);
+
+							area.text = '';
+						});
+					} else {
+						this.state.maps.push(map);
+					}
 
 					this.setState({
-						view: 'maps',
+						view: plot ? 'adventures' : 'maps',
 						maps: this.state.maps,
-						selectedMapID: map.id,
+						adventures: this.state.adventures,
+						selectedMapID: plot ? this.state.selectedMapID : map.id,
 						drawer: null
 					});
 				}
@@ -1573,6 +1594,7 @@ export class Main extends React.Component<Props, State> {
 
 	private addAdventure() {
 		const adventure = Factory.createAdventure();
+		adventure.plot.scenes.push(Factory.createScene())
 
 		let adventures = this.state.adventures;
 		adventures.push(adventure);
@@ -1743,27 +1765,32 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private addMapToPlot(plot: Plot) {
-		this.setState({
-			drawer: {
-				type: 'add-map-to-plot',
-				plot: plot,
-				accept: (map: Map) => {
-					const clone: Map = JSON.parse(JSON.stringify(map));
-					plot.map = clone;
-					clone.areas.forEach(area => {
-						const scene = Factory.createScene();
-						scene.id = area.id;
-						scene.name = area.name;
-						plot.scenes.push(scene);
-					});
-					this.setState({
-						adventures: this.state.adventures,
-						drawer: null
-					});
+	private addMapToPlot(plot: Plot, random: boolean) {
+		if (random) {
+			this.generateMap(plot);
+		} else {
+			this.setState({
+				drawer: {
+					type: 'add-map-to-plot',
+					plot: plot,
+					accept: (map: Map) => {
+						const clone: Map = JSON.parse(JSON.stringify(map));
+						clone.areas.forEach(area => area.text = '');
+						plot.map = clone;
+						clone.areas.forEach(area => {
+							const scene = Factory.createScene();
+							scene.id = area.id;
+							scene.name = area.name;
+							plot.scenes.push(scene);
+						});
+						this.setState({
+							adventures: this.state.adventures,
+							drawer: null
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private removeMapFromPlot(plot: Plot) {
@@ -1773,20 +1800,24 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private addEncounterToScene(scene: Scene) {
-		this.setState({
-			drawer: {
-				type: 'add-encounter-to-scene',
-				scene: scene,
-				accept: (encounter: Encounter) => {
-					scene.encounterIDs.push(encounter.id);
-					this.setState({
-						adventures: this.state.adventures,
-						drawer: null
-					});
+	private addEncounterToScene(scene: Scene, random: boolean) {
+		if (random) {
+			this.createEncounter(null, scene);
+		} else {
+			this.setState({
+				drawer: {
+					type: 'add-encounter-to-scene',
+					scene: scene,
+					accept: (encounter: Encounter) => {
+						scene.encounterIDs.push(encounter.id);
+						this.setState({
+							adventures: this.state.adventures,
+							drawer: null
+						});
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	private removeEncounterFromScene(scene: Scene, encounterID: string) {
@@ -3420,7 +3451,7 @@ export class Main extends React.Component<Props, State> {
 						<AdventureScreen
 							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
 							encounters={this.state.encounters}
-							maps={this.state.maps}
+							maps={this.state.maps.filter(m => m.areas.length > 0)}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
 							moveScene={(plot, scene, dir) => this.moveScene(plot, scene, dir)}
@@ -3428,13 +3459,19 @@ export class Main extends React.Component<Props, State> {
 							addLink={(scene, sceneID) => this.addLink(scene, sceneID)}
 							deleteLink={(scene, link) => this.deleteLink(scene, link)}
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
-							addMapToPlot={plot => this.addMapToPlot(plot)}
+							addMapToPlot={(plot, random) => this.addMapToPlot(plot, random)}
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
-							addEncounterToScene={scene => this.addEncounterToScene(scene)}
+							addEncounterToScene={(scene, random) => this.addEncounterToScene(scene, random)}
 							removeEncounterFromScene={(scene, encounterID) => this.removeEncounterFromScene(scene, encounterID)}
 							openEncounter={encounter => this.selectEncounter(encounter)}
 							runEncounter={encounter => this.createCombat('', encounter)}
 							runEncounterWithMap={(encounter, map, areaID) => this.createCombat('', encounter, map, areaID)}
+							rotateMap={plot => {
+								Mercator.rotateMap(plot.map as Map);
+								this.setState({
+									adventures: this.state.adventures
+								});
+							}}
 							showNotes={scene => this.showMarkdown(scene.name || 'unnamed scene', scene.content)}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
@@ -3459,38 +3496,36 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private getTabs() {
-		const tabs = [{
+		return [{
 			id: 'parties',
 			text: 'pcs',
 			selected: (this.state.view === 'parties'),
 			onSelect: () => this.setView('parties')
-		}, {
+		},
+		{
 			id: 'library',
 			text: 'monsters',
 			selected: (this.state.view === 'library'),
 			onSelect: () => this.setView('library')
-		}, {
+		},
+		{
 			id: 'encounters',
 			text: 'encounters',
 			selected: (this.state.view === 'encounters'),
 			onSelect: () => this.setView('encounters')
-		}, {
+		},
+		{
 			id: 'maps',
 			text: 'maps',
 			selected: (this.state.view === 'maps'),
 			onSelect: () => this.setView('maps')
+		},
+		{
+			id: 'adventures',
+			text: 'adventures',
+			selected: (this.state.view === 'adventures'),
+			onSelect: () => this.setView('adventures')
 		}];
-
-		if (this.state.options.featureFlags.includes('adventures')) {
-			tabs.push({
-				id: 'adventures',
-				text: 'adventures',
-				selected: (this.state.view === 'adventures'),
-				onSelect: () => this.setView('adventures')
-			});
-		}
-
-		return tabs;
 	}
 
 	private getDrawer() {
@@ -3937,7 +3972,7 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'add-map-to-plot':
 					content = (
-						<MapSelectionModal maps={this.state.maps} onSelect={map => this.state.drawer.accept(map)} />
+						<MapSelectionModal maps={this.state.maps.filter(m => m.areas.length > 0)} onSelect={map => this.state.drawer.accept(map)} />
 					);
 					header = 'choose a map';
 					closable = true;
@@ -3997,6 +4032,7 @@ export class Main extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
+							adventures={this.state.adventures}
 							combats={this.state.combats}
 							explorations={this.state.explorations}
 							options={this.state.options}
@@ -4008,6 +4044,7 @@ export class Main extends React.Component<Props, State> {
 							selectMonsterGroup={id => this.selectMonsterGroupByID(id)}
 							selectEncounter={id => this.selectEncounterByID(id)}
 							selectMap={id => this.selectMapByID(id)}
+							selectAdventure={id => this.selectAdventureByID(id)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 							addAward={(awardID, awardee) => {
 								awardee.awards.push(awardID);

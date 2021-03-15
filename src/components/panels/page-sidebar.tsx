@@ -6,6 +6,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { Comms, CommsPlayer } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
+import { Adventure } from '../../models/adventure';
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
@@ -33,6 +34,7 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
+	adventures: Adventure[];
 	combats: Combat[];
 	explorations: Exploration[];
 	options: Options;
@@ -44,6 +46,7 @@ interface Props {
 	selectMonsterGroup: (id: string) => void;
 	selectEncounter: (id: string) => void;
 	selectMap: (id: string) => void;
+	selectAdventure: (id: string) => void;
 	openImage: (data: string) => void;
 	addAward: (awardID: string, awardee: Party | PC) => void;
 	deleteAward: (awardID: string, awardee: Party | PC) => void;
@@ -63,6 +66,7 @@ export class PageSidebar extends React.Component<Props> {
 		library: [],
 		encounters: [],
 		maps: [],
+		adventures: [],
 		combats: [],
 		explorations: [],
 		currentCombat: null,
@@ -71,6 +75,7 @@ export class PageSidebar extends React.Component<Props> {
 		selectMonsterGroup: null,
 		selectEncounter: null,
 		selectMap: null,
+		selectAdventure: null,
 		openImage: null,
 		openStatBlock: null,
 		addAward: null,
@@ -467,10 +472,12 @@ export class PageSidebar extends React.Component<Props> {
 							library={this.props.library}
 							encounters={this.props.encounters}
 							maps={this.props.maps}
+							adventures={this.props.adventures}
 							openParty={id => this.props.selectParty(id)}
 							openGroup={id => this.props.selectMonsterGroup(id)}
 							openEncounter={id => this.props.selectEncounter(id)}
 							openMap={id => this.props.selectMap(id)}
+							openAdventure={id => this.props.selectAdventure(id)}
 							getMonster={id => this.props.getMonster(id)}
 						/>
 					);

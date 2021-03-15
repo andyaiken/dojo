@@ -8,6 +8,10 @@ interface Props {
 export class Note extends React.Component<Props> {
 	public render() {
 		try {
+			if (!this.props.children) {
+				return null;
+			}
+
 			return (
 				<div className='note'>
 					<div className='top-left-roundel' />

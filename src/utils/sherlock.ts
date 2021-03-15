@@ -1,5 +1,6 @@
 // This utility file deals with search
 
+import { Adventure, Plot, Scene } from '../models/adventure';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapArea } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
@@ -137,6 +138,46 @@ export class Sherlock {
 		}
 
 		if (Sherlock.match(filter, area.text)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static matchAdventure(filter: string, adventure: Adventure) {
+		if (Sherlock.match(filter, adventure.name)) {
+			return true;
+		}
+
+		if (Sherlock.matchPlot(filter, adventure.plot)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static matchPlot(filter: string, plot: Plot) {
+		if (plot.scenes.some(scene => Sherlock.matchScene(filter, scene))) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static matchScene(filter: string, scene: Scene) {
+		if (Sherlock.match(filter, scene.name)) {
+			return true;
+		}
+
+		if (Sherlock.match(filter, scene.content)) {
+			return true;
+		}
+
+		if (scene.links.some(link => Sherlock.match(filter, link.text))) {
+			return true;
+		}
+
+		if (Sherlock.matchPlot(filter, scene.plot)) {
 			return true;
 		}
 

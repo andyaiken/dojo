@@ -21,6 +21,10 @@ export class Group extends React.Component<Props> {
 
 	public render() {
 		try {
+			if (!this.props.children) {
+				return null;
+			}
+
 			let style = 'group-panel';
 			if (this.props.transparent) {
 				style += ' transparent';

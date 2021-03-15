@@ -14,6 +14,7 @@ import { RenderError } from '../error';
 import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
+import { Expander } from '../controls/expander';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Tabs } from '../controls/tabs';
@@ -35,13 +36,14 @@ interface Props {
 	addLink: (scene: Scene, sceneID: string) => void;
 	deleteLink: (scene: Scene, link: SceneLink) => void;
 	deleteAdventure: (adventure: Adventure) => void;
-	addMapToPlot: (plot: Plot) => void;
+	addMapToPlot: (plot: Plot, random: boolean) => void;
 	removeMapFromPlot: (plot: Plot) => void;
-	addEncounterToScene: (scene: Scene) => void;
+	addEncounterToScene: (scene: Scene, random: boolean) => void;
 	removeEncounterFromScene: (scene: Scene, encounterID: string) => void;
 	openEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter) => void;
 	runEncounterWithMap: (encounter: Encounter, map: Map, areaID: string) => void;
+	rotateMap: (plot: Plot) => void;
 	showNotes: (scene: Scene) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
@@ -147,7 +149,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 								<InfoCircleOutlined title='open encounter' onClick={() => this.props.openEncounter(encounter)} />
 								<CaretRightOutlined title='run encounter' onClick={() => this.runEncounter(encounter, scene)} />
 								<ConfirmButton onConfirm={() => this.props.removeEncounterFromScene(scene, encounter.id)}>
-									<DeleteOutlined title='remove encounter' />
+									<DeleteOutlined title='remove from scene' />
 								</ConfirmButton>
 							</div>
 						</div>
@@ -186,12 +188,12 @@ export class AdventureScreen extends React.Component<Props, State> {
 				return null;
 			});
 
-			let options = ['content', 'links', 'encounter'].map(o => ({ id: o, text: o }));
+			let options = ['content', 'links', 'encounters'].map(o => ({ id: o, text: o }));
 			if (this.state.plot.map) {
 				options = options.filter(o => o.id !== 'links');
 			}
-			if (this.props.encounters.length === 0) {
-				options = options.filter(o => o.id !== 'encounter');
+			if (this.state.plot.scenes.length < 2) {
+				options = options.filter(o => o.id !== 'links');
 			}
 
 			return (
@@ -205,18 +207,16 @@ export class AdventureScreen extends React.Component<Props, State> {
 						/>
 					</div>
 					<hr/>
-					<Conditional display={options.length > 1}>
-						<Tabs
-							options={options}
-							selectedID={this.state.view}
-							onSelect={view => this.setView(view)}
-						/>
-					</Conditional>
+					<Tabs
+						options={options}
+						selectedID={this.state.view}
+						onSelect={view => this.setView(view)}
+					/>
 					<Conditional display={this.state.view === 'content'}>
 						<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
 					</Conditional>
 					<Conditional display={this.state.view === 'links'}>
-					<Conditional display={this.state.plot.map === null}>
+						<Conditional display={this.state.plot.map === null}>
 							{links}
 							<Dropdown
 								placeholder='select a scene to link to...'
@@ -232,9 +232,12 @@ export class AdventureScreen extends React.Component<Props, State> {
 							</Note>
 						</Conditional>
 					</Conditional>
-					<Conditional display={this.state.view === 'encounter'}>
+					<Conditional display={this.state.view === 'encounters'}>
 						{this.getEncounters(scene)}
-						<button onClick={() => this.props.addEncounterToScene(scene)}>link an encounter</button>
+						<Conditional display={this.props.encounters.length > 0}>
+							<button onClick={() => this.props.addEncounterToScene(scene, false)}>link an encounter</button>
+						</Conditional>
+						<button onClick={() => this.props.addEncounterToScene(scene, true)}>link a new random encounter</button>
 					</Conditional>
 					<Conditional display={this.state.plot.map === null}>
 						<hr/>
@@ -274,16 +277,25 @@ export class AdventureScreen extends React.Component<Props, State> {
 							<div className='section'>
 								press <b>add a scene</b> to add your first scene to this adventure
 							</div>
+							<Conditional display={this.state.plot.scenes.length === 0}>
+								<div className='section'>
+									alternatively, you can <b>use a map</b> to create scenes for each of its areas; this is handy if you're designing a dungeon crawl
+								</div>
+							</Conditional>
 						</Note>
 					</Conditional>
 					<Conditional display={this.state.plot.map === null}>
 						<button onClick={() => this.props.addScene(this.state.plot, null, null)}>add a scene</button>
 					</Conditional>
 					<Conditional display={this.state.plot.map !== null}>
+						<button onClick={() => this.props.rotateMap(this.state.plot)}>rotate the map</button>
 						<button onClick={() => this.props.removeMapFromPlot(this.state.plot)}>remove the map</button>
 					</Conditional>
-					<Conditional display={(this.state.plot.scenes.length === 0) && (this.props.maps.length > 0)}>
-						<button onClick={() => this.props.addMapToPlot(this.state.plot)}>add a map</button>
+					<Conditional display={this.state.plot.scenes.length === 0}>
+						<Expander text='use a map'>
+							<button className={this.props.maps.length === 0 ? 'disabled' : ''} onClick={() => this.props.addMapToPlot(this.state.plot, false)}>use an existing map</button>
+							<button onClick={() => this.props.addMapToPlot(this.state.plot, true)}>use a new random map</button>
+						</Expander>
 					</Conditional>
 					<hr/>
 					<AdventureOptions

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Sherlock } from '../../utils/sherlock';
 
+import { Adventure } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
@@ -17,10 +18,12 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
+	adventures: Adventure[]
 	openParty: (id: string) => void;
 	openGroup: (id: string) => void;
 	openEncounter: (id: string) => void;
 	openMap: (id: string) => void;
+	openAdventure: (id: string) => void;
 	getMonster: (id: string) => Monster | null;
 }
 
@@ -141,7 +144,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 					map.areas.filter(area => Sherlock.matchMapArea(this.state.text, area)).forEach(area => {
 						areas.push(
 							<Group key={area.id}>
-								<div className='section'>map area</div>
+								<div className='section'>{area.name}</div>
 							</Group>
 						);
 					});
@@ -149,6 +152,23 @@ export class SearchSidebar extends React.Component<Props, State> {
 						<Group key={map.id} onClick={() => this.props.openMap(map.id)}>
 							<div className='section'>{map.name}</div>
 							{areas}
+						</Group>
+					);
+				});
+
+				this.props.adventures.filter(adventure => Sherlock.matchAdventure(this.state.text, adventure)).forEach(adventure => {
+					const scenes: JSX.Element[] = [];
+					adventure.plot.scenes.filter(scene => Sherlock.matchScene(this.state.text, scene)).forEach(scene => {
+						scenes.push(
+							<Group key={scene.id}>
+								<div className='section'>{scene.name}</div>
+							</Group>
+						);
+					});
+					results.push(
+						<Group key={adventure.id} onClick={() => this.props.openAdventure(adventure.id)}>
+							<div className='section'>{adventure.name}</div>
+							{scenes}
 						</Group>
 					);
 				});

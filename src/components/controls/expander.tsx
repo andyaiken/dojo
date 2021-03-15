@@ -16,6 +16,10 @@ export class Expander extends React.Component<Props> {
 
 	public render() {
 		try {
+			if (!this.props.children) {
+				return null;
+			}
+
 			let style = 'expander';
 			if (this.props.disabled) {
 				style += ' disabled';

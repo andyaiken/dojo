@@ -16,6 +16,10 @@ export class Tabs extends React.Component<Props> {
 
 	public render() {
 		try {
+			if (this.props.options.length === 0) {
+				return null;
+			}
+
 			const tabs = this.props.options.map(option => {
 				return (
 					<Tab

@@ -21,6 +21,10 @@ export class RadioGroup extends React.Component<Props> {
 
 	public render() {
 		try {
+			if (this.props.items.length === 0) {
+				return null;
+			}
+
 			const content = this.props.items.map(item => {
 				return (
 					<RadioGroupItem
