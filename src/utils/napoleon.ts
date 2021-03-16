@@ -86,6 +86,100 @@ export class Napoleon {
 		return xp;
 	}
 
+	public static getEncounterThresholds(party: Party) {
+		let easy = 0;
+		let medium = 0;
+		let hard = 0;
+		let deadly = 0;
+
+		const pcs = party.pcs.filter(pc => pc.active);
+		pcs.forEach(pc => {
+			easy += Gygax.pcExperience(pc.level, 'easy');
+			medium += Gygax.pcExperience(pc.level, 'medium');
+			hard += Gygax.pcExperience(pc.level, 'hard');
+			deadly += Gygax.pcExperience(pc.level, 'deadly');
+		});
+
+		return {
+			easy: easy,
+			medium: medium,
+			hard: hard,
+			deadly: deadly
+		};
+	}
+
+	public static getEncounterDifficulty(encounter: Encounter, waveID: string | null, party: Party, getMonster: (id: string) => Monster | null) {
+		const thresholds = this.getEncounterThresholds(party);
+		const adjustedXP = this.getAdjustedEncounterXP(encounter, waveID, getMonster);
+
+		let basic = 0;
+		let adjusted = 0;
+
+		if (adjustedXP > 0) {
+			if (adjustedXP >= thresholds.easy) {
+				basic = 1;
+			}
+			if (adjustedXP >= thresholds.medium) {
+				basic = 2;
+			}
+			if (adjustedXP >= thresholds.hard) {
+				basic = 3;
+			}
+			if (adjustedXP >= thresholds.deadly) {
+				basic = 4;
+			}
+			if ((thresholds.deadly > 0) && (adjustedXP >= (thresholds.deadly * 10))) {
+				basic = 5;
+			}
+			if ((thresholds.deadly > 0) && (adjustedXP >= (thresholds.deadly * 20))) {
+				basic = 6;
+			}
+			if ((thresholds.deadly > 0) && (adjustedXP >= (thresholds.deadly * 30))) {
+				basic = 7;
+			}
+			if ((thresholds.deadly > 0) && (adjustedXP >= (thresholds.deadly * 40))) {
+				basic = 8;
+			}
+
+			adjusted = basic;
+			const pcs = party.pcs.filter(pc => pc.active);
+			if (pcs.length < 3) {
+				adjusted = Math.max(0, basic - 1);
+			}
+			if (pcs.length > 5) {
+				adjusted = basic + 1;
+			}
+		}
+
+		return {
+			basic: basic,
+			adjusted: adjusted
+		};
+	}
+
+	public static getDifficultyDescription(difficulty: number) {
+		switch (difficulty) {
+			case 0:
+				return 'trivial';
+			case 1:
+				return 'easy';
+			case 2:
+				return 'medium';
+			case 3:
+				return 'hard';
+			case 4:
+				return 'deadly';
+			case 5:
+				return 'tpk';
+			case 6:
+				return 'dm with a grudge';
+			case 7:
+				return 'now you\'re just being silly';
+		}
+
+		return 'please stop';
+	}
+
 	public static getFilterDescription(filter: MonsterFilter) {
 		let summary = '';
 		if (filter.size !== 'all sizes') {
@@ -108,7 +202,7 @@ export class Napoleon {
 		const monsters: { id: string, role: string }[] = [];
 		groups.forEach(group => {
 			group.monsters
-				.filter(monster => Napoleon.matchMonster(monster, filter))
+				.filter(monster => this.matchMonster(monster, filter))
 				.forEach(monster => monsters.push({ id: monster.id, role: monster.role }));
 		});
 
@@ -119,7 +213,7 @@ export class Napoleon {
 			}
 
 			// Add the template slots to the encounter
-			const template = Napoleon.encounterTemplates().find(t => t.name === templateName);
+			const template = this.encounterTemplates().find(t => t.name === templateName);
 			if (template) {
 				encounter.slots = template.slots.map(s => {
 					const slot = Factory.createEncounterSlot();
@@ -136,13 +230,13 @@ export class Napoleon {
 				});
 
 				// Until the xp value is met, increment the count of a random slot
-				while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
+				while (this.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
 					const index = Utils.randomNumber(encounter.slots.length);
 					encounter.slots[index].count += 1;
 				}
 			}
 		} else {
-			while (Napoleon.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
+			while (this.getAdjustedEncounterXP(encounter, null, id => getMonster(id)) < xp) {
 				if ((encounter.slots.length > 0) && (Gygax.dieRoll(3) > 1)) {
 					// Increment a slot
 					const index = Utils.randomNumber(encounter.slots.length);
@@ -214,8 +308,8 @@ export class Napoleon {
 	}
 
 	public static sortEncounter(encounter: Encounter, getMonster: (id: string) => Monster | null) {
-		Napoleon.sortEncounterSlots(encounter, id => getMonster(id));
-		encounter.waves.forEach(wave => Napoleon.sortEncounterSlots(wave, id => getMonster(id)));
+		this.sortEncounterSlots(encounter, id => getMonster(id));
+		encounter.waves.forEach(wave => this.sortEncounterSlots(wave, id => getMonster(id)));
 	}
 
 	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }, getMonster: (id: string) => Monster | null) {
@@ -518,7 +612,7 @@ export class Napoleon {
 			.filter(c => {
 				// If it's a placeholder, only show it if this encounter has lair actions
 				if (c.type === 'placeholder') {
-					return Napoleon.combatHasLairActions(combat);
+					return this.combatHasLairActions(combat);
 				}
 				return true;
 			});
@@ -591,7 +685,7 @@ export class Napoleon {
 			conditions.push('the party must defeat ' + leader + '; the others will then flee or surrender');
 		}
 
-		const count = Napoleon.getMonsterCount(encounter, null);
+		const count = this.getMonsterCount(encounter, null);
 		if (count > 2) {
 			conditions.push('the party must defeat ' + (2 + Utils.randomNumber(count - 2)) + ' opponents; the others will then flee or surrender');
 		}

@@ -36,6 +36,7 @@ interface Props {
 	combatants: Combatant[];
 	showGrid: boolean;
 	showAreaNames: boolean;
+	areaClassNames: { id: string, className: string }[];
 	selectedItemIDs: string[];
 	selectedAreaID: string | null;
 	fog: { x: number, y: number }[];
@@ -94,6 +95,7 @@ export class MapPanel extends React.Component<Props, State> {
 		combatants: [],
 		showGrid: false,
 		showAreaNames: false,
+		areaClassNames: [],
 		selectedItemIDs: [],
 		selectedAreaID: null,
 		fog: [],
@@ -517,28 +519,24 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getAreas(dimensions: MapDimensions) {
-		if ((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm')) {
-			return this.props.map.areas
-				.filter(a => this.props.selectedItemIDs.includes(a.id))
-				.map(a => (
-					<Area
-						key={a.id}
-						style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
-						selected={true}
-						onClick={() => this.props.areaClicked(a)}
-					/>
-				));
-		}
+		if ((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm') || (this.props.mode === 'interactive-plot')) {
+			let areas = this.props.map.areas.slice();
+			if ((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm')) {
+				areas = areas.filter(a => this.props.selectedItemIDs.includes(a.id));
+			}
 
-		if (this.props.mode === 'interactive-plot') {
-			return this.props.map.areas.map(a => (
-				<Area
-					key={a.id}
-					style={this.getStyle(a.x, a.y, a.width, a.height, 'square', dimensions)}
-					selected={this.props.selectedItemIDs.includes(a.id)}
-					onClick={() => this.props.areaClicked(a)}
-				/>
-			));
+			return areas.map(area => {
+				const areaClassName = this.props.areaClassNames.find(acn => acn.id === area.id);
+				return (
+					<Area
+						key={area.id}
+						className={areaClassName ? areaClassName.className : null}
+						style={this.getStyle(area.x, area.y, area.width, area.height, 'square', dimensions)}
+						selected={this.props.selectedItemIDs.includes(area.id)}
+						onClick={() => this.props.areaClicked(area)}
+					/>
+				);
+			});
 		}
 
 		return null;
@@ -937,6 +935,7 @@ export class MapPanel extends React.Component<Props, State> {
 }
 
 interface AreaProps {
+	className: string | null;
 	style: MapItemStyle;
 	selected: boolean;
 	onClick: () => void;
@@ -946,9 +945,13 @@ class Area extends React.Component<AreaProps> {
 	public render() {
 		try {
 			let style = 'map-area';
+			if (this.props.className) {
+				style += ' ' + this.props.className;
+			}
 			if (this.props.selected) {
 				style += ' selected';
 			}
+
 			return (
 				<div
 					className={style}
@@ -1545,7 +1548,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 					const current = this.props.combatant.hpCurrent || 0;
 					const max = this.props.combatant.hpMax || 0;
 					if (current < max) {
-						let color = 'orange';
+						let color = 'darkorange';
 						if (current >= max) {
 							color = 'green';
 						} else if (current <= (max / 2)) {

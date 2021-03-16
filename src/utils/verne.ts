@@ -96,4 +96,20 @@ export class Verne {
 			}
 		}
 	}
+
+	public static getScenes(plot: Plot) {
+		let scenes = plot.scenes.slice();
+		plot.scenes.forEach(s => {
+			scenes = scenes.concat(this.getScenes(s.plot));
+		});
+		return scenes;
+	}
+
+	public static getEncounterIDs(scene: Scene) {
+		let encounterIDs = scene.encounterIDs.slice();
+		this.getScenes(scene.plot).forEach(s => {
+			encounterIDs = encounterIDs.concat(s.encounterIDs);
+		})
+		return scene.encounterIDs;
+	}
 }

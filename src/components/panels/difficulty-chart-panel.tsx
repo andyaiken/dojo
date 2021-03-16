@@ -2,7 +2,6 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
-import { Gygax } from '../../utils/gygax';
 import { Napoleon } from '../../utils/napoleon';
 
 import { Encounter } from '../../models/encounter';
@@ -130,75 +129,8 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 			let xpThresholds;
 			let diffSection;
 			if (party) {
-				let xpEasy = 0;
-				let xpMedium = 0;
-				let xpHard = 0;
-				let xpDeadly = 0;
-
-				const pcs = party.pcs.filter(pc => pc.active);
-				pcs.forEach(pc => {
-					xpEasy += Gygax.pcExperience(pc.level, 'easy');
-					xpMedium += Gygax.pcExperience(pc.level, 'medium');
-					xpHard += Gygax.pcExperience(pc.level, 'hard');
-					xpDeadly += Gygax.pcExperience(pc.level, 'deadly');
-				});
-
-				let difficulty = 'trivial';
-				let adjustedDifficulty = 'trivial';
-				if (adjustedXP > 0) {
-					if (adjustedXP >= xpEasy) {
-						difficulty = 'easy';
-						adjustedDifficulty = 'easy';
-					}
-					if (adjustedXP >= xpMedium) {
-						difficulty = 'medium';
-						adjustedDifficulty = 'medium';
-					}
-					if (adjustedXP >= xpHard) {
-						difficulty = 'hard';
-						adjustedDifficulty = 'hard';
-					}
-					if (adjustedXP >= xpDeadly) {
-						difficulty = 'deadly';
-						adjustedDifficulty = 'deadly';
-					}
-					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 10))) {
-						difficulty = 'tpk';
-						adjustedDifficulty = 'tpk';
-					}
-					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 20))) {
-						difficulty = 'dm with a grudge';
-						adjustedDifficulty = 'dm with a grudge';
-					}
-					if ((xpDeadly > 0) && (adjustedXP >= (xpDeadly * 30))) {
-						difficulty = 'now you\'re just being silly';
-						adjustedDifficulty = 'now you\'re just being silly';
-					}
-
-					if ((pcs.length < 3) || (pcs.length > 5)) {
-						const small = pcs.length < 3;
-						switch (difficulty) {
-							case 'trivial':
-								adjustedDifficulty = small ? 'easy' : 'trivial';
-								break;
-							case 'easy':
-								adjustedDifficulty = small ? 'medium' : 'trivial';
-								break;
-							case 'medium':
-								adjustedDifficulty = small ? 'hard' : 'easy';
-								break;
-							case 'hard':
-								adjustedDifficulty = small ? 'deadly' : 'medium';
-								break;
-							case 'deadly':
-								adjustedDifficulty = small ? 'deadly' : 'hard';
-								break;
-							default:
-								adjustedDifficulty = '';
-								break;
-						}
-					}
-				}
+				const thresholds = Napoleon.getEncounterThresholds(party);
+				const difficulty = Napoleon.getEncounterDifficulty(this.props.encounter, this.state.selectedWaveID, party, this.props.getMonster);
 
 				xpThresholds = (
 					<div className='table'>
@@ -209,16 +141,16 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 							<div className='table-cell deadly'><b>deadly</b></div>
 						</div>
 						<div className='table-row'>
-							<div className='table-cell'>{xpEasy} xp</div>
-							<div className='table-cell'>{xpMedium} xp</div>
-							<div className='table-cell'>{xpHard} xp</div>
-							<div className='table-cell'>{xpDeadly} xp</div>
+							<div className='table-cell'>{thresholds.easy} xp</div>
+							<div className='table-cell'>{thresholds.medium} xp</div>
+							<div className='table-cell'>{thresholds.hard} xp</div>
+							<div className='table-cell'>{thresholds.deadly} xp</div>
 						</div>
 					</div>
 				);
 
 				const getLeft = (xp: number) => {
-					const max = Math.max(adjustedXP, (xpDeadly * 1.2));
+					const max = Math.max(adjustedXP, (thresholds.deadly * 1.2));
 					return (100 * xp) / max;
 				};
 
@@ -230,19 +162,19 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 					<div>
 						<div className='difficulty-gauge'>
 							<div className='bar-container'>
-								<div className='bar trivial' style={{ left: '0', right: getRight(xpEasy) + '%' }} />
+								<div className='bar trivial' style={{ left: '0', right: getRight(thresholds.easy) + '%' }} />
 							</div>
 							<div className='bar-container'>
-								<div className='bar easy' style={{ left: getLeft(xpEasy) + '%', right: getRight(xpMedium) + '%' }} />
+								<div className='bar easy' style={{ left: getLeft(thresholds.easy) + '%', right: getRight(thresholds.medium) + '%' }} />
 							</div>
 							<div className='bar-container'>
-								<div className='bar medium' style={{ left: getLeft(xpMedium) + '%', right: getRight(xpHard) + '%' }} />
+								<div className='bar medium' style={{ left: getLeft(thresholds.medium) + '%', right: getRight(thresholds.hard) + '%' }} />
 							</div>
 							<div className='bar-container'>
-								<div className='bar hard' style={{ left: getLeft(xpHard) + '%', right: getRight(xpDeadly) + '%' }} />
+								<div className='bar hard' style={{ left: getLeft(thresholds.hard) + '%', right: getRight(thresholds.deadly) + '%' }} />
 							</div>
 							<div className='bar-container'>
-								<div className='bar deadly' style={{ left: getLeft(xpDeadly) + '%', right: '0' }} />
+								<div className='bar deadly' style={{ left: getLeft(thresholds.deadly) + '%', right: '0' }} />
 							</div>
 							<div className='encounter-container'>
 								<div className='encounter' style={{ left: (getLeft(adjustedXP) - 0.5) + '%' }} />
@@ -252,14 +184,14 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 						<div className='section'>
 							<Row>
 								<Col span={16}>difficulty for this party</Col>
-								<Col span={8} className='right-value'>{difficulty}</Col>
+								<Col span={8} className='right-value'>{Napoleon.getDifficultyDescription(difficulty.basic)}</Col>
 							</Row>
 						</div>
-						<Conditional display={adjustedDifficulty !== difficulty}>
+						<Conditional display={difficulty.adjusted !== difficulty.basic}>
 							<div className='section'>
 								<Row>
-									<Col span={16}>effective difficulty for {pcs.length} pc(s)</Col>
-									<Col span={8} className='right-value'>{adjustedDifficulty}</Col>
+									<Col span={16}>effective difficulty for {party.pcs.filter(pc => pc.active).length} pc(s)</Col>
+									<Col span={8} className='right-value'>{Napoleon.getDifficultyDescription(difficulty.adjusted)}</Col>
 								</Row>
 							</div>
 						</Conditional>
@@ -270,16 +202,7 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 			}
 
 			if (!this.props.party) {
-				const partyOptions = [];
-				if (this.props.parties) {
-					for (let n = 0; n !== this.props.parties.length; ++n) {
-						const p = this.props.parties[n];
-						partyOptions.push({
-							id: p.id,
-							text: p.name
-						});
-					}
-				}
+				const partyOptions = this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }));
 				partyOptions.push({
 					id: 'custom',
 					text: 'custom party'

@@ -11,6 +11,7 @@ import { RenderError } from '../error';
 interface Props {
 	plot: Plot;
 	mode: 'thumbnail' | 'editor';
+	sceneClassNames: { id: string, className: string }[];
 	selectedSceneID: string | null;
 	selectSceneID: (sceneID: string | null) => void;
 	showNotes: (scene: Scene) => void;
@@ -21,6 +22,7 @@ interface Props {
 export class PlotPanel extends React.Component<Props> {
 	public static defaultProps = {
 		mode: 'editor',
+		sceneClassNames: [],
 		selectedSceneID: null,
 		selectSceneID: () => null,
 		showNotes: (scene: Scene) => null,
@@ -44,6 +46,7 @@ export class PlotPanel extends React.Component<Props> {
 				row.forEach((scene, sceneIndex) => {
 					const x = sectionWidth * ((sceneIndex * 2) + 1)
 					positions[scene.id] = { x: x + (sectionWidth / 2), y: y + (rowHeight / 2) };
+					const sceneClassName = this.props.sceneClassNames.find(scn => scn.id === scene.id);
 					scenes.push(
 						<foreignObject
 							key={scene.id}
@@ -56,6 +59,7 @@ export class PlotPanel extends React.Component<Props> {
 							<ScenePanel
 								scene={scene}
 								mode={this.props.mode}
+								className={sceneClassName ? sceneClassName.className : null}
 								selected={scene.id === this.props.selectedSceneID}
 								onSelect={() => this.props.selectSceneID(scene.id)}
 								onNotes={() => this.props.showNotes(scene)}
@@ -149,6 +153,7 @@ export class PlotPanel extends React.Component<Props> {
 interface ScenePanelProps {
 	scene: Scene;
 	mode: 'thumbnail' | 'editor';
+	className: string | null;
 	selected: boolean;
 	onSelect: () => void;
 	onNotes: () => void;
@@ -195,6 +200,11 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 				style += ' selected';
 			}
 
+			let containerStyle = 'text-container';
+			if (this.props.className) {
+				containerStyle += ' ' + this.props.className;
+			}
+
 			const icons = [];
 			if (this.props.scene.content) {
 				icons.push(
@@ -237,7 +247,7 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 					overlayClassName='scene-tooltip'
 				>
 					<div className={style} onClick={e => this.onClick(e)} role='button'>
-						<div className='text-container'>
+						<div className={containerStyle}>
 							{content}
 						</div>
 					</div>

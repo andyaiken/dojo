@@ -2,6 +2,8 @@ import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, InfoCircleOutlin
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Factory } from '../../utils/factory';
+import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
@@ -9,6 +11,7 @@ import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster } from '../../models/monster';
+import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Conditional } from '../controls/conditional';
@@ -17,6 +20,7 @@ import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
+import { NumberSpin } from '../controls/number-spin';
 import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { AdventureOptions } from '../options/adventure-options';
@@ -27,6 +31,7 @@ import { PlotPanel } from '../panels/plot-panel';
 
 interface Props {
 	adventure: Adventure;
+	parties: Party[];
 	encounters: Encounter[];
 	maps: Map[];
 	goBack: () => void;
@@ -54,6 +59,9 @@ interface State {
 	view: string;
 	breadcrumbs: { name: string, plot: Plot }[];
 	selectedSceneID: string | null;
+	selectedPartyID: string | null;
+	customPartySize: number;
+	customPartyLevel: number;
 }
 
 export class AdventureScreen extends React.Component<Props, State> {
@@ -63,7 +71,10 @@ export class AdventureScreen extends React.Component<Props, State> {
 			plot: props.adventure.plot,
 			view: 'content',
 			breadcrumbs: [{ name: props.adventure.name || 'adventure', plot: props.adventure.plot }],
-			selectedSceneID: null
+			selectedSceneID: null,
+			selectedPartyID: null,
+			customPartySize: 5,
+			customPartyLevel: 1
 		};
 	}
 
@@ -76,6 +87,12 @@ export class AdventureScreen extends React.Component<Props, State> {
 	private setSelectedSceneID(sceneID: string | null) {
 		this.setState({
 			selectedSceneID: sceneID
+		});
+	}
+
+	private setSelectedPartyID(partyID: string | null) {
+		this.setState({
+			selectedPartyID: partyID
 		});
 	}
 
@@ -258,6 +275,12 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</div>
 			);
 		} else {
+			const partyOptions = this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }));
+			partyOptions.push({
+				id: 'custom',
+				text: 'custom party'
+			});
+
 			return (
 				<div>
 					<div className='section'>
@@ -298,6 +321,35 @@ export class AdventureScreen extends React.Component<Props, State> {
 						</Expander>
 					</Conditional>
 					<hr/>
+					<Expander text='difficulty'>
+						<Note>
+							<div className='section'>
+								select a party to show the difficulty of the encounters in this adventure
+							</div>
+						</Note>
+						<Dropdown
+							placeholder='select a party...'
+							options={partyOptions}
+							selectedID={this.state.selectedPartyID}
+							onSelect={id => this.setSelectedPartyID(id)}
+							onClear={() => this.setSelectedPartyID(null)}
+						/>
+						<Conditional display={this.state.selectedPartyID === 'custom'}>
+							<NumberSpin
+								value={this.state.customPartySize}
+								label='party size'
+								downEnabled={this.state.customPartySize > 1}
+								onNudgeValue={delta => this.setState({ customPartySize: this.state.customPartySize + delta })}
+							/>
+							<NumberSpin
+								value={this.state.customPartyLevel}
+								label='party level'
+								downEnabled={this.state.customPartyLevel > 1}
+								upEnabled={this.state.customPartyLevel < 20}
+								onNudgeValue={delta => this.setState({ customPartyLevel: this.state.customPartyLevel + delta })}
+							/>
+						</Conditional>
+					</Expander>
 					<AdventureOptions
 						adventure={this.props.adventure}
 						deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
@@ -310,18 +362,45 @@ export class AdventureScreen extends React.Component<Props, State> {
 	}
 
 	private getContent() {
+		const sceneClassNames: { id: string, className: string }[] = [];
+		if (this.state.selectedPartyID !== null) {
+			let party: Party | null = null;
+			if (this.state.selectedPartyID === 'custom') {
+				party = Factory.createParty();
+				for (let n = 0; n !== this.state.customPartySize; ++n) {
+					const pc = Factory.createPC();
+					pc.level = this.state.customPartyLevel;
+					party.pcs.push(pc);
+				}
+			} else {
+				party = this.props.parties.find(p => p.id === this.state.selectedPartyID) || null;
+			}
+
+			this.state.plot.scenes.forEach(scene => {
+				const encounterIDs = Verne.getEncounterIDs(scene);
+				encounterIDs.forEach(id => {
+					const encounter = this.props.encounters.find(e => e.id === id);
+					if (encounter) {
+						const diff = Napoleon.getEncounterDifficulty(encounter, null, party as Party, this.props.getMonster);
+						sceneClassNames.push({
+							id: scene.id,
+							className: 'diff-' + Math.min(4, diff.adjusted)
+						});
+					}
+				});
+			});
+		}
+
 		if (this.state.plot.map) {
 			return (
 				<MapPanel
 					map={this.state.plot.map}
 					mode='interactive-plot'
 					showAreaNames={true}
+					areaClassNames={sceneClassNames}
 					selectedItemIDs={this.state.selectedSceneID ? [this.state.selectedSceneID] : []}
-					areaClicked={area => {
-						this.setState({
-							selectedSceneID: area.id
-						});
-					}}
+					areaClicked={area => this.setSelectedSceneID(area.id)}
+					itemSelected={() => this.setSelectedSceneID(null)}
 				/>
 			);
 		}
@@ -329,6 +408,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 		return (
 			<PlotPanel
 				plot={this.state.plot}
+				sceneClassNames={sceneClassNames}
 				selectedSceneID={this.state.selectedSceneID}
 				selectSceneID={sceneID => this.setSelectedSceneID(sceneID)}
 				showNotes={scene => this.props.showNotes(scene)}
@@ -358,7 +438,11 @@ export class AdventureScreen extends React.Component<Props, State> {
 									}
 								</div>
 								<div className='icons'>
-									<VerticalAlignTopOutlined className={this.props.adventure.plot.id === this.state.plot.id ? 'disabled' : ''} title='go up one level' onClick={() => this.goUp()} />
+									<VerticalAlignTopOutlined
+										className={this.props.adventure.plot.id === this.state.plot.id ? 'disabled' : ''}
+										title='go up one level'
+										onClick={() => this.goUp()}
+									/>
 								</div>
 							</div>
 						</div>

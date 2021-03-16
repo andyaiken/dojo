@@ -1670,7 +1670,8 @@ export class Main extends React.Component<Props, State> {
 						const encounter = Factory.createEncounter();
 						encounter.name = area.name;
 
-						Napoleon.buildEncounter(encounter, this.state.drawer.encounterData.xp, this.state.drawer.data.template, this.state.drawer.encounterData.filter, this.state.library, id => this.getMonster(id));
+						const data = this.state.drawer.encounterData;
+						Napoleon.buildEncounter(encounter, data.xp, data.template, data.filter, this.state.library, id => this.getMonster(id));
 						Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 
 						if (Utils.randomBoolean()) {
@@ -3450,6 +3451,7 @@ export class Main extends React.Component<Props, State> {
 					return (
 						<AdventureScreen
 							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
+							parties={this.state.parties}
 							encounters={this.state.encounters}
 							maps={this.state.maps.filter(m => m.areas.length > 0)}
 							goBack={() => this.selectAdventure(null)}
