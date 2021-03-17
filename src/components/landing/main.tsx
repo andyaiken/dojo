@@ -75,18 +75,18 @@ interface State {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
+	adventures: Adventure[];
 	combats: Combat[];
 	explorations: Exploration[];
-	adventures: Adventure[];
 	options: Options;
 
 	selectedPartyID: string | null;
 	selectedMonsterGroupID: string | null;
 	selectedEncounterID: string | null;
 	selectedMapID: string | null;
+	selectedAdventureID: string | null;
 	selectedCombatID: string | null;
 	selectedExplorationID: string | null;
-	selectedAdventureID: string | null;
 }
 
 export class Main extends React.Component<Props, State> {
@@ -207,6 +207,16 @@ export class Main extends React.Component<Props, State> {
 						}
 					});
 				});
+			}
+		} catch (ex) {
+			console.error('Could not parse JSON: ', ex);
+		}
+
+		let adventures: Adventure[] = [];
+		try {
+			const str = window.localStorage.getItem('data-adventures');
+			if (str) {
+				adventures = JSON.parse(str);
 			}
 		} catch (ex) {
 			console.error('Could not parse JSON: ', ex);
@@ -350,16 +360,6 @@ export class Main extends React.Component<Props, State> {
 			console.error('Could not parse JSON: ', ex);
 		}
 
-		let adventures: Adventure[] = [];
-		try {
-			const str = window.localStorage.getItem('data-adventures');
-			if (str) {
-				adventures = JSON.parse(str);
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
 		let options: Options = {
 			showMonsterDieRolls: false,
 			showAwards: false,
@@ -418,17 +418,17 @@ export class Main extends React.Component<Props, State> {
 			library: library,
 			encounters: encounters,
 			maps: maps,
+			adventures: adventures,
 			combats: combats,
 			explorations: explorations,
-			adventures: adventures,
 			options: options,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedEncounterID: null,
 			selectedMapID: null,
+			selectedAdventureID: null,
 			selectedCombatID: null,
-			selectedExplorationID: null,
-			selectedAdventureID: null
+			selectedExplorationID: null
 		};
 
 		Matisse.clearUnusedImages(maps, combats, explorations);
@@ -1831,78 +1831,6 @@ export class Main extends React.Component<Props, State> {
 
 	//#endregion
 
-	//#region Exploration screen
-
-	private startExploration(map: Map, partyID: string) {
-		const party = this.state.parties.find(p => p.id === partyID);
-		if (party) {
-			const mapCopy = JSON.parse(JSON.stringify(map));
-			const ex = Factory.createExploration();
-			ex.name = party.name + ' in ' + map.name;
-			ex.map = mapCopy;
-			ex.partyID = partyID;
-			party.pcs.filter(pc => pc.active).forEach(pc => {
-				const combatant = Napoleon.convertPCToCombatant(pc);
-				ex.combatants.push(combatant);
-			});
-
-			let explorations = this.state.explorations;
-			explorations.push(ex);
-			explorations = Utils.sort(explorations);
-
-			this.setState({
-				view: 'maps',
-				explorations: explorations,
-				selectedExplorationID: ex.id
-			});
-		}
-	}
-
-	private pauseExploration() {
-		if (Comms.data.shared.type === 'exploration') {
-			CommsDM.shareNothing();
-		}
-
-		this.setState({
-			selectedExplorationID: null
-		});
-	}
-
-	private resumeExploration(exploration: Exploration) {
-		this.setState({
-			view: 'maps',
-			selectedExplorationID: exploration.id
-		});
-	}
-
-	private endExploration(exploration: Exploration) {
-		if (Comms.data.shared.type === 'exploration') {
-			CommsDM.shareNothing();
-		}
-
-		const index = this.state.explorations.indexOf(exploration);
-		this.state.explorations.splice(index, 1);
-		this.setState({
-			explorations: this.state.explorations,
-			selectedExplorationID: null
-		});
-	}
-
-	private addCompanionToExploration(companion: Companion) {
-		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
-		if (ex) {
-			ex.combatants.push(Napoleon.convertCompanionToCombatant(companion));
-
-			Utils.sort(ex.combatants, [{ field: 'displayName', dir: 'asc' }]);
-
-			this.setState({
-				explorations: this.state.explorations
-			});
-		}
-	}
-
-	//#endregion
-
 	//#region Combat screen
 
 	// Start combat
@@ -2001,10 +1929,12 @@ export class Main extends React.Component<Props, State> {
 			combats = Utils.sort(combats);
 
 			this.setState({
+				view: 'encounters',
 				combats: combats,
+				explorations: this.state.explorations,
 				selectedCombatID: combat.id,
-				drawer: null,
-				view: 'encounters'
+				selectedExplorationID: null,
+				drawer: null
 			});
 		}
 	}
@@ -2157,6 +2087,8 @@ export class Main extends React.Component<Props, State> {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
 			this.setState({
+				view: 'encounters',
+				combats: this.state.combats,
 				selectedCombatID: null
 			});
 		}
@@ -2165,6 +2097,7 @@ export class Main extends React.Component<Props, State> {
 	private resumeCombat(combat: Combat) {
 		this.setState({
 			view: 'encounters',
+			combats: this.state.combats,
 			selectedCombatID: combat.id
 		});
 	}
@@ -2177,6 +2110,7 @@ export class Main extends React.Component<Props, State> {
 		const index = this.state.combats.indexOf(combat);
 		this.state.combats.splice(index, 1);
 		this.setState({
+			view: 'encounters',
 			combats: this.state.combats,
 			selectedCombatID: null
 		}, () => {
@@ -2233,7 +2167,9 @@ export class Main extends React.Component<Props, State> {
 					// Go to map view
 					this.setState({
 						view: 'maps',
+						combats: this.state.combats,
 						explorations: this.state.explorations,
+						selectedCombatID: null,
 						selectedExplorationID: exploration.id
 					});
 				}
@@ -2612,6 +2548,82 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			combats: this.state.combats
 		});
+	}
+
+	//#endregion
+
+	//#region Exploration screen
+
+	private startExploration(map: Map, partyID: string) {
+		const party = this.state.parties.find(p => p.id === partyID);
+		if (party) {
+			const mapCopy = JSON.parse(JSON.stringify(map));
+			const ex = Factory.createExploration();
+			ex.name = party.name + ' in ' + map.name;
+			ex.map = mapCopy;
+			ex.partyID = partyID;
+			party.pcs.filter(pc => pc.active).forEach(pc => {
+				const combatant = Napoleon.convertPCToCombatant(pc);
+				ex.combatants.push(combatant);
+			});
+
+			let explorations = this.state.explorations;
+			explorations.push(ex);
+			explorations = Utils.sort(explorations);
+
+			this.setState({
+				view: 'maps',
+				explorations: explorations,
+				selectedExplorationID: ex.id
+			});
+		}
+	}
+
+	private pauseExploration() {
+		if (Comms.data.shared.type === 'exploration') {
+			CommsDM.shareNothing();
+		}
+
+		this.setState({
+			view: 'maps',
+			explorations: this.state.explorations,
+			selectedExplorationID: null
+		});
+	}
+
+	private resumeExploration(exploration: Exploration) {
+		this.setState({
+			view: 'maps',
+			explorations: this.state.explorations,
+			selectedExplorationID: exploration.id
+		});
+	}
+
+	private endExploration(exploration: Exploration) {
+		if (Comms.data.shared.type === 'exploration') {
+			CommsDM.shareNothing();
+		}
+
+		const index = this.state.explorations.indexOf(exploration);
+		this.state.explorations.splice(index, 1);
+		this.setState({
+			view: 'maps',
+			explorations: this.state.explorations,
+			selectedExplorationID: null
+		});
+	}
+
+	private addCompanionToExploration(companion: Companion) {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			ex.combatants.push(Napoleon.convertCompanionToCombatant(companion));
+
+			Utils.sort(ex.combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+			this.setState({
+				explorations: this.state.explorations
+			});
+		}
 	}
 
 	//#endregion
