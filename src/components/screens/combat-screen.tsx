@@ -702,7 +702,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		this.props.combat.combatants.filter(c => c.type === 'monster').forEach(c => {
 			const monster = c as Combatant & Monster;
 			monster.traits.filter(trait => (trait.type === 'trait') || (trait.type === 'reaction')).forEach(trait => {
-				const collated = collatedTraits.find(t => t.trait.id === trait.id);
+				const collated = collatedTraits.find(t => (t.trait.name === trait.name) && (t.trait.text === trait.text));
 				if (collated) {
 					collated.combatants.push(monster.displayName);
 				} else {
@@ -743,7 +743,7 @@ export class CombatScreen extends React.Component<Props, State> {
 					{
 						reactions.map(t => (
 							<div key={t.trait.id} className='section'>
-								{t.combatants.sort().join(', ') + ' have '}
+								{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
 								<Popover
 									content={(
 										<TraitPanel trait={t.trait} />
