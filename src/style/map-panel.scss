@@ -99,15 +99,15 @@
 		}
 	}
 
-	&.combat,
-	&.combat-player {
+	&.interactive-dm,
+	&.interactive-player {
 		.overlay:hover,
 		.token:hover {
 			border-color: $highlight;
 		}
 	}
 
-	&.combat {
+	&.interactive-dm {
 		.fog,
 		.light.dim-light,
 		.light.darkness {
