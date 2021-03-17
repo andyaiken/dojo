@@ -82,3 +82,28 @@ h2,
 	font-weight: 600;
 	font-size: 15px;
 }
+
+.diff-0 {
+	border-color: lightgreen;
+	background-color: rgba(144, 238, 144, 0.1);
+}
+
+.diff-1 {
+	border-color: green;
+	background-color: rgba(0, 128, 0, 0.1);
+}
+
+.diff-2 {
+	border-color: darkorange;
+	background-color: rgba(255, 140, 0, 0.1);
+}
+
+.diff-3 {
+	border-color: crimson;
+	background-color: rgba(220, 20, 60, 0.1);
+}
+
+.diff-4 {
+	border-color: black;
+	background-color: rgba(0, 0, 0, 0.1);
+}

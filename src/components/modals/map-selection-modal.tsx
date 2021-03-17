@@ -12,24 +12,30 @@ interface Props {
 }
 
 export class MapSelectionModal extends React.Component<Props> {
+	private getMaps() {
+		const maps: JSX.Element[] = [];
+
+		this.props.maps.forEach(map => {
+			maps.push(
+				<Group key={map.id} onClick={() => this.props.onSelect(map)}>
+					<div className='section subheading'>{map.name || 'unnamed map'}</div>
+					<MapPanel
+						map={map}
+						showAreaNames={true}
+					/>
+				</Group>
+			);
+		});
+
+		return maps;
+	}
+
 	public render() {
 		try {
 			return (
 				<div className='scrollable'>
 					<div className='section heading'>which map do you want to use?</div>
-					<hr/>
-					{
-						this.props.maps.map(map => (
-							<Group key={map.id}>
-								<div className='section subheading'>{map.name || 'unnamed map'}</div>
-								<MapPanel
-									map={map}
-									showAreaNames={true}
-								/>
-								<button onClick={() => this.props.onSelect(map)}>select this map</button>
-							</Group>
-						))
-					}
+					{this.getMaps()}
 				</div>
 			);
 		} catch (e) {

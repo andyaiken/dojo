@@ -3,12 +3,14 @@ import React from 'react';
 import { RenderError } from '../error';
 
 interface Props {
+	className: string | null;
 	transparent: boolean;
 	onClick: (() => void) | null;
 }
 
 export class Group extends React.Component<Props> {
 	public static defaultProps = {
+		className: null,
 		transparent: false,
 		onClick: null
 	};
@@ -26,6 +28,9 @@ export class Group extends React.Component<Props> {
 			}
 
 			let style = 'group-panel';
+			if (this.props.className) {
+				style += ' ' + this.props.className;
+			}
 			if (this.props.transparent) {
 				style += ' transparent';
 			}

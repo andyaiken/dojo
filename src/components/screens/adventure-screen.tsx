@@ -43,7 +43,7 @@ interface Props {
 	deleteAdventure: (adventure: Adventure) => void;
 	addMapToPlot: (plot: Plot, random: boolean) => void;
 	removeMapFromPlot: (plot: Plot) => void;
-	addEncounterToScene: (scene: Scene, random: boolean) => void;
+	addEncounterToScene: (scene: Scene, party: Party | null, random: boolean) => void;
 	removeEncounterFromScene: (scene: Scene, encounterID: string) => void;
 	openEncounter: (encounter: Encounter) => void;
 	runEncounter: (encounter: Encounter) => void;
@@ -150,14 +150,41 @@ export class AdventureScreen extends React.Component<Props, State> {
 		this.props.moveScene(this.state.plot, scene, dir);
 	}
 
+	private getParty() {
+		let party: Party | null = null;
+
+		if (this.state.selectedPartyID !== null) {
+			if (this.state.selectedPartyID === 'custom') {
+				party = Factory.createParty();
+				for (let n = 0; n !== this.state.customPartySize; ++n) {
+					const pc = Factory.createPC();
+					pc.level = this.state.customPartyLevel;
+					party.pcs.push(pc);
+				}
+			} else {
+				party = this.props.parties.find(p => p.id === this.state.selectedPartyID) || null;
+			}
+		}
+
+		return party;
+	}
+
 	private getEncounters(scene: Scene) {
+		const party = this.getParty();
+
 		const encounters: JSX.Element[] = [];
 
 		scene.encounterIDs.forEach(encounterID => {
 			const encounter = this.props.encounters.find(enc => enc.id === encounterID);
 			if (encounter) {
+				let diff = null;
+				if (party) {
+					const d = Napoleon.getEncounterDifficulty(encounter, null, party, this.props.getMonster);
+					diff = 'diff-' + d.adjusted;
+				}
+
 				encounters.push(
-					<Group key={encounter.id}>
+					<Group key={encounter.id} className={diff}>
 						<div className='content-then-icons'>
 							<div className='content'>
 								<EncounterInfoPanel encounter={encounter} getMonster={id => this.props.getMonster(id)} />
@@ -252,9 +279,9 @@ export class AdventureScreen extends React.Component<Props, State> {
 					<Conditional display={this.state.view === 'encounters'}>
 						{this.getEncounters(scene)}
 						<Conditional display={this.props.encounters.length > 0}>
-							<button onClick={() => this.props.addEncounterToScene(scene, false)}>link an encounter</button>
+							<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), false)}>link an encounter</button>
 						</Conditional>
-						<button onClick={() => this.props.addEncounterToScene(scene, true)}>link a new random encounter</button>
+						<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), true)}>link a new random encounter</button>
 					</Conditional>
 					<Conditional display={this.state.plot.map === null}>
 						<hr/>
@@ -321,7 +348,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 						</Expander>
 					</Conditional>
 					<hr/>
-					<Expander text='difficulty'>
+					<Expander text='highlight difficulty'>
 						<Note>
 							<div className='section'>
 								select a party to show the difficulty of the encounters in this adventure
@@ -364,31 +391,22 @@ export class AdventureScreen extends React.Component<Props, State> {
 	private getContent() {
 		const sceneClassNames: { id: string, className: string }[] = [];
 		if (this.state.selectedPartyID !== null) {
-			let party: Party | null = null;
-			if (this.state.selectedPartyID === 'custom') {
-				party = Factory.createParty();
-				for (let n = 0; n !== this.state.customPartySize; ++n) {
-					const pc = Factory.createPC();
-					pc.level = this.state.customPartyLevel;
-					party.pcs.push(pc);
-				}
-			} else {
-				party = this.props.parties.find(p => p.id === this.state.selectedPartyID) || null;
-			}
-
-			this.state.plot.scenes.forEach(scene => {
-				const encounterIDs = Verne.getEncounterIDs(scene);
-				encounterIDs.forEach(id => {
-					const encounter = this.props.encounters.find(e => e.id === id);
-					if (encounter) {
-						const diff = Napoleon.getEncounterDifficulty(encounter, null, party as Party, this.props.getMonster);
-						sceneClassNames.push({
-							id: scene.id,
-							className: 'diff-' + Math.min(4, diff.adjusted)
-						});
-					}
+			const party = this.getParty();
+			if (party) {
+				this.state.plot.scenes.forEach(scene => {
+					const encounterIDs = Verne.getEncounterIDs(scene);
+					encounterIDs.forEach(id => {
+						const encounter = this.props.encounters.find(e => e.id === id);
+						if (encounter) {
+							const diff = Napoleon.getEncounterDifficulty(encounter, null, party as Party, this.props.getMonster);
+							sceneClassNames.push({
+								id: scene.id,
+								className: 'diff-' + Math.min(4, diff.adjusted)
+							});
+						}
+					});
 				});
-			});
+			}
 		}
 
 		if (this.state.plot.map) {

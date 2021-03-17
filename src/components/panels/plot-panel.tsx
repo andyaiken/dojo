@@ -200,7 +200,7 @@ class ScenePanel extends React.Component<ScenePanelProps> {
 				style += ' selected';
 			}
 
-			let containerStyle = 'text-container';
+			let containerStyle = 'scene-text-container';
 			if (this.props.className) {
 				containerStyle += ' ' + this.props.className;
 			}

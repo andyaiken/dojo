@@ -1801,7 +1801,7 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private addEncounterToScene(scene: Scene, random: boolean) {
+	private addEncounterToScene(scene: Scene, party: Party | null, random: boolean) {
 		if (random) {
 			this.createEncounter(null, scene);
 		} else {
@@ -1809,6 +1809,7 @@ export class Main extends React.Component<Props, State> {
 				drawer: {
 					type: 'add-encounter-to-scene',
 					scene: scene,
+					party: party,
 					accept: (encounter: Encounter) => {
 						scene.encounterIDs.push(encounter.id);
 						this.setState({
@@ -3463,7 +3464,7 @@ export class Main extends React.Component<Props, State> {
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
 							addMapToPlot={(plot, random) => this.addMapToPlot(plot, random)}
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
-							addEncounterToScene={(scene, random) => this.addEncounterToScene(scene, random)}
+							addEncounterToScene={(scene, party, random) => this.addEncounterToScene(scene, party, random)}
 							removeEncounterFromScene={(scene, encounterID) => this.removeEncounterFromScene(scene, encounterID)}
 							openEncounter={encounter => this.selectEncounter(encounter)}
 							runEncounter={encounter => this.createCombat('', encounter)}
@@ -3981,7 +3982,7 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'add-encounter-to-scene':
 					content = (
-						<EncounterSelectionModal encounters={this.state.encounters} getMonster={id => this.getMonster(id)} onSelect={encounter => this.state.drawer.accept(encounter)} />
+						<EncounterSelectionModal encounters={this.state.encounters} party={this.state.drawer.party} getMonster={id => this.getMonster(id)} onSelect={encounter => this.state.drawer.accept(encounter)} />
 					);
 					header = 'choose an encounter';
 					closable = true;

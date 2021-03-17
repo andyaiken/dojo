@@ -120,26 +120,6 @@
 		position: absolute;
 		border: 2px solid $control-border-05;
 
-		&.diff-1 {
-			border-color: green;
-			background-color: rgba(0, 128, 0, 0.1);
-		}
-
-		&.diff-2 {
-			border-color: darkorange;
-			background-color: rgba(255, 140, 0, 0.1);
-		}
-
-		&.diff-3 {
-			border-color: crimson;
-			background-color: rgba(220, 20, 60, 0.1);
-		}
-
-		&.diff-4 {
-			border-color: black;
-			background-color: rgba(0, 0, 0, 0.1);
-		}
-
 		&:hover {
 			border-color: $highlight05;
 			background-color: $highlight01;

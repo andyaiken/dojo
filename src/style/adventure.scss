@@ -45,56 +45,15 @@
 			height: 80px;
 			background-color: $background;
 
-			.text-container {
-				height: 100%;
-				display: flex;
-				align-items: center;
-				overflow: hidden;
-				border: 1px solid $control-border;
-				border-left-width: 5px;
-				padding: 5px 12px;
-				cursor: pointer;
-
-				&.diff-1 {
-					border-color: green;
-					background-color: rgba(0, 128, 0, 0.1);
-				}
-
-				&.diff-2 {
-					border-color: darkorange;
-					background-color: rgba(255, 140, 0, 0.1);
-				}
-
-				&.diff-3 {
-					border-color: crimson;
-					background-color: rgba(220, 20, 60, 0.1);
-				}
-
-				&.diff-4 {
-					border-color: black;
-					background-color: rgba(0, 0, 0, 0.1);
-				}
-
-				.content-then-icons {
-					height: 100%;
-				}
-
-				.scene-name {
-					font-size: 15px;
-					font-weight: 600;
-					word-break: break-all;
-				}
-			}
-
 			&:hover {
-				.text-container {
+				.scene-text-container {
 					border-color: $highlight;
 					background-color: $highlight01;
 				}
 			}
 
 			&.selected {
-				.text-container {
+				.scene-text-container {
 					border-color: $highlight;
 					background-color: $highlight02;
 				}
@@ -124,5 +83,26 @@
 			justify-content: center;
 			font-weight: 600;
 		}
+	}
+}
+
+.scene-text-container {
+	height: 100%;
+	display: flex;
+	align-items: center;
+	overflow: hidden;
+	border: 1px solid $control-border;
+	border-left-width: 5px;
+	padding: 5px 12px;
+	cursor: pointer;
+
+	.content-then-icons {
+		height: 100%;
+	}
+
+	.scene-name {
+		font-size: 15px;
+		font-weight: 600;
+		word-break: break-all;
 	}
 }
