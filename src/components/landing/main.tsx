@@ -2134,7 +2134,7 @@ export class Main extends React.Component<Props, State> {
 						partyID = party.id;
 
 						// Make sure there's no-one missing
-						party.pcs.forEach(pc => {
+						party.pcs.filter(pc => pc.active).forEach(pc => {
 							if (!combatants.find(c => c.id === pc.id)) {
 								// Add this PC
 								combatants.push(Napoleon.convertPCToCombatant(pc));

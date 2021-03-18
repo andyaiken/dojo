@@ -611,12 +611,19 @@ export class Mercator {
 	public static getDistanceBetweenItems(a: MapItem, b: MapItem) {
 		let min = Number.MAX_VALUE;
 
-		for (let xa = a.x; xa <= a.x + a.width - 1; ++xa) {
-			for (let ya = a.y; ya <= a.y + a.height - 1; ++ya) {
-				for (let za = a.z; za <= a.z + a.depth - 1; ++za) {
-					for (let xb = b.x; xb <= b.x + b.width - 1; ++xb) {
-						for (let yb = b.y; yb <= b.y + b.height - 1; ++yb) {
-							for (let zb = b.z; zb <= b.z + b.depth - 1; ++zb) {
+		const aMaxX = a.x + Math.max(1, a.width) - 1;
+		const aMaxY = a.y + Math.max(1, a.height) - 1;
+		const aMaxZ = a.z + Math.max(1, a.depth) - 1;
+		const bMaxX = b.x + Math.max(1, b.width) - 1;
+		const bMaxY = b.y + Math.max(1, b.height) - 1;
+		const bMaxZ = b.z + Math.max(1, b.depth) - 1;
+
+		for (let xa = a.x; xa <= aMaxX; ++xa) {
+			for (let ya = a.y; ya <= aMaxY; ++ya) {
+				for (let za = a.z; za <= aMaxZ; ++za) {
+					for (let xb = b.x; xb <= bMaxX; ++xb) {
+						for (let yb = b.y; yb <= bMaxY; ++yb) {
+							for (let zb = b.z; zb <= bMaxZ; ++zb) {
 								const dx = Math.abs(xa - xb);
 								const dy = Math.abs(ya - yb);
 								const dz = Math.abs(za - zb);

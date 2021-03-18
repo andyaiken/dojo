@@ -699,7 +699,7 @@ export class CombatScreen extends React.Component<Props, State> {
 		}
 
 		const collatedTraits: { trait: Trait, combatants: string[] }[] = [];
-		this.props.combat.combatants.filter(c => c.type === 'monster').forEach(c => {
+		this.props.combat.combatants.filter(c => c.active).filter(c => c.type === 'monster').forEach(c => {
 			const monster = c as Combatant & Monster;
 			monster.traits.filter(trait => (trait.type === 'trait') || (trait.type === 'reaction')).forEach(trait => {
 				const collated = collatedTraits.find(t => (t.trait.name === trait.name) && (t.trait.text === trait.text));

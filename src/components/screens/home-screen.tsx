@@ -65,7 +65,18 @@ export class HomeScreen extends React.Component<Props> {
 							<li>track monster hit points, rechargable actions, and legendary actions</li>
 							<li>track conditions, their durations, and the effects they impose</li>
 							<li>easily handle mounted combat</li>
-							<li>if you're using a tactical map, <span className='app-name'>dojo</span> keeps track of everyone's location</li>
+							<li>keep track of everyone's location, if you're using a tactical map</li>
+						</ul>
+					</div>
+					<div key='adventure'>
+						<div className='heading'>
+							devise adventures
+						</div>
+						<ul>
+							<li>keep track of all the information you need to run an adventure</li>
+							<li>see the structure of a scenario as a flow chart - or as a map if you're running a dungeon delve</li>
+							<li>add encounters and check their difficulty for your pcs</li>
+							<li>generate an entire dungeon delve with a single click</li>
 						</ul>
 					</div>
 					<div key='session'>
