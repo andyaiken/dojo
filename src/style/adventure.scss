@@ -86,6 +86,25 @@
 	}
 }
 
+.encounter-info-panel {
+	.subheading {
+		padding-left: 5px;
+	}
+
+	.encounter-slot {
+		margin: 0;
+		padding: 0 5px;
+
+		&.clickable {
+			cursor: pointer;
+
+			&:hover {
+				background-color: $highlight01;
+			}
+		}
+	}
+}
+
 .scene-text-container {
 	height: 100%;
 	display: flex;

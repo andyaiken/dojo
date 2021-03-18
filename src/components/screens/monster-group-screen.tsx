@@ -22,8 +22,9 @@ interface Props {
 	goBack: () => void;
 	deleteMonsterGroup: (group: MonsterGroup) => void;
 	openDemographics: (group: MonsterGroup) => void;
-	addMonster: (monster: Monster | null) => void;
+	addMonster: () => void;
 	importMonster: () => void;
+	generateMonster: () => void;
 	deleteMonster: (monster: Monster) => void;
 	viewMonster: (monster: Monster) => void;
 	editMonster: (monster: Monster) => void;
@@ -111,8 +112,9 @@ export class MonsterGroupScreen extends React.Component<Props> {
 							monsterGroup={this.props.monsterGroup}
 							library={this.props.library}
 							encounters={this.props.encounters}
-							addMonster={monster => this.props.addMonster(monster)}
+							addMonster={() => this.props.addMonster()}
 							importMonster={() => this.props.importMonster()}
+							generateMonster={() => this.props.generateMonster()}
 							openDemographics={group => this.props.openDemographics(group)}
 							createEncounter={monsterIDs => this.props.createEncounter(monsterIDs)}
 							deleteMonsterGroup={group => this.props.deleteMonsterGroup(group)}

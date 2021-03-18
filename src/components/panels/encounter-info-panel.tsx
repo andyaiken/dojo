@@ -8,23 +8,50 @@ import { RenderError } from '../error';
 interface Props {
 	encounter: Encounter;
 	getMonster: (id: string) => Monster | null;
+	onMonsterClicked: (monster: Monster) => void;
 }
 
 export class EncounterInfoPanel extends React.Component<Props> {
-	private getMonsterName(id: string) {
-		const monster = this.props.getMonster(id);
-		if (monster) {
-			return monster.name || 'unnamed monster';
-		}
+	public static defaultProps = {
+		onMonsterClicked: null
+	};
 
-		return 'unknown monster';
+	private monsterClicked(e: React.MouseEvent, monster: Monster | null) {
+		if (!!this.props.onMonsterClicked && !!monster) {
+			e.stopPropagation();
+			this.props.onMonsterClicked(monster);
+		}
 	}
 
 	private getSlot(slot: EncounterSlot) {
+		let monsterName = 'unknown monster';
+
+		const monster = this.props.getMonster(slot.monsterID);
+		if (monster) {
+			monsterName = monster.name || 'unnamed monster';
+		}
+
+		if (!!this.props.onMonsterClicked) {
+			return (
+				<div key={slot.id} className='content-then-info encounter-slot clickable' onClick={e => this.monsterClicked(e, monster)} role='button'>
+					<div className='content'>
+						<div className='section'>
+							{monsterName}
+						</div>
+					</div>
+					<div className='info'>
+						x{slot.count}
+					</div>
+				</div>
+			);
+		}
+
 		return (
-			<div key={slot.id} className='content-then-info'>
+			<div key={slot.id} className='content-then-info encounter-slot'>
 				<div className='content'>
-					<div className='section'>{this.getMonsterName(slot.monsterID)}</div>
+					<div className='section'>
+						{monsterName}
+					</div>
 				</div>
 				<div className='info'>
 					x{slot.count}

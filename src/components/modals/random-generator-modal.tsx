@@ -2,10 +2,12 @@ import { Col, InputNumber, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
+import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
 import { Napoleon } from '../../utils/napoleon';
 
 import { MonsterFilter } from '../../models/encounter';
+import { CATEGORY_TYPES, MonsterGroup, ROLE_TYPES } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
@@ -17,6 +19,13 @@ import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { FilterPanel } from '../panels/filter-panel';
+
+interface RandomMonsterData {
+	cr: number;
+	size: string | null;
+	type: string | null;
+	role: string | null;
+}
 
 interface RandomMapData {
 	areas: number;
@@ -33,22 +42,26 @@ interface RandomEncounterData {
 
 interface Props {
 	parties: Party[];
+	library: MonsterGroup[];
+	monsterData: RandomMonsterData | null;
 	mapData: RandomMapData | null;
 	encounterData: RandomEncounterData | null;
 	onUpdated: () => void;
 }
 
 interface State {
+	monsterData: RandomMonsterData | null;
 	mapData: RandomMapData | null;
 	encounterData: RandomEncounterData | null;
 	customPartySize: number;
 	customPartyLevel: number;
 }
 
-export class RandomEncounterOrMapModal extends React.Component<Props, State> {
+export class RandomGeneratorModal extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
+			monsterData: props.monsterData,
 			mapData: props.mapData,
 			encounterData: props.encounterData,
 			customPartySize: 5,
@@ -56,7 +69,147 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 		};
 	}
 
-	//#region  Map
+	//#region Monster
+
+	private getMonsterSection(data: RandomMonsterData) {
+		const monsters = Frankenstein.filterMonsters(this.props.library, data.cr, data.size, data.type, data.role);
+
+		let desc = 'challenge rating ' + Gygax.challenge(data.cr);
+		if (data.size) {
+			desc += ' ' + data.size;
+		}
+		if (data.type) {
+			desc += ' ' + data.type;
+		}
+		if (data.role) {
+			desc += ' (' + data.role + ')';
+		}
+
+		return (
+			<div>
+				<Note>
+					<Conditional display={monsters.length >= 2}>
+						<div className='section'>
+							a <b>{desc}</b> monster will be created by splicing together <b>{monsters.length} existing monsters</b>
+						</div>
+					</Conditional>
+					<Conditional display={monsters.length < 2}>
+						<div className='section'>
+							there are not enough <b>{desc}</b> monsters to splice together
+						</div>
+					</Conditional>
+				</Note>
+				<Row gutter={10}>
+					<Col span={6}>
+						<div className='subheading'>challenge rating</div>
+						<NumberSpin
+							value={Gygax.challenge(data.cr)}
+							onNudgeValue={delta => {
+								data.cr = Gygax.nudgeChallenge(data.cr, delta);
+								this.setState({
+									monsterData: data
+								}, () => {
+									this.props.onUpdated();
+								});
+							}}
+						/>
+					</Col>
+					<Col span={6}>
+						<div className='subheading'>size</div>
+						<Checkbox
+							label='specify the size'
+							checked={data.size !== null}
+							onChecked={checked => {
+								data.size = checked ? 'medium' : null;
+								this.setState({
+									monsterData: data
+								}, () => {
+									this.props.onUpdated()
+								});
+							}}
+						/>
+						<Conditional display={data.size !== null}>
+							<NumberSpin
+								value={data.size as string}
+								downEnabled={data.size !== 'tiny'}
+								upEnabled={data.size !== 'gargantuan'}
+								onNudgeValue={delta => {
+									data.size = Gygax.nudgeSize(data.size as string, delta);
+									this.setState({
+										monsterData: data
+									}, () => {
+										this.props.onUpdated();
+									});
+								}}
+							/>
+						</Conditional>
+					</Col>
+					<Col span={6}>
+						<div className='subheading'>type</div>
+						<Checkbox
+							label='specify the type'
+							checked={data.type !== null}
+							onChecked={checked => {
+								data.type = checked ? 'humanoid' : null;
+								this.setState({
+									monsterData: data
+								}, () => {
+									this.props.onUpdated()
+								});
+							}}
+						/>
+						<Conditional display={data.type !== null}>
+							<RadioGroup
+								items={CATEGORY_TYPES.map(c => ({ id: c, text: c }))}
+								selectedItemID={data.type}
+								onSelect={id => {
+									data.type = id;
+									this.setState({
+										monsterData: data
+									}, () => {
+										this.props.onUpdated();
+									});
+								}}
+							/>
+						</Conditional>
+					</Col>
+					<Col span={6}>
+						<div className='subheading'>role</div>
+						<Checkbox
+							label='specify the role'
+							checked={data.role !== null}
+							onChecked={checked => {
+								data.role = checked ? 'soldier' : null;
+								this.setState({
+									monsterData: data
+								}, () => {
+									this.props.onUpdated()
+								});
+							}}
+						/>
+						<Conditional display={data.role !== null}>
+							<RadioGroup
+								items={ROLE_TYPES.map(r => ({ id: r, text: r }))}
+								selectedItemID={data.role}
+								onSelect={id => {
+									data.role = id;
+									this.setState({
+										monsterData: data
+									}, () => {
+										this.props.onUpdated();
+									});
+								}}
+							/>
+						</Conditional>
+					</Col>
+				</Row>
+			</div>
+		);
+	}
+
+	//#endregion
+
+	//#region Map
 
 	private getMapSection(data: RandomMapData) {
 		return (
@@ -348,6 +501,11 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			let monster = null;
+			if (this.state.monsterData) {
+				monster = this.getMonsterSection(this.state.monsterData);
+			}
+
 			let encounter = null;
 			if (this.state.encounterData) {
 				encounter = this.getEncounterSection(this.state.encounterData);
@@ -358,13 +516,16 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 				map = this.getMapSection(this.state.mapData);
 			}
 
+			const showHeaders = !!this.state.mapData && !!this.state.encounterData;
+
 			return (
 				<div className='scrollable padded'>
-					<Conditional display={!!this.state.mapData && !!this.state.encounterData}>
+					{monster}
+					<Conditional display={showHeaders}>
 						<div className='heading'>for the map</div>
 					</Conditional>
 					{map}
-					<Conditional display={!!this.state.mapData && !!this.state.encounterData}>
+					<Conditional display={showHeaders}>
 						<div className='heading'>for the encounters</div>
 					</Conditional>
 					{encounter}
@@ -372,7 +533,7 @@ export class RandomEncounterOrMapModal extends React.Component<Props, State> {
 			);
 		} catch (e) {
 			console.error(e);
-			return <RenderError context='RandomEncounterOrMapModal' error={e} />;
+			return <RenderError context='RandomGeneratorModal' error={e} />;
 		}
 	}
 }

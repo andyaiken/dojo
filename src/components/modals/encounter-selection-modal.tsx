@@ -25,12 +25,15 @@ export class EncounterSelectionModal extends React.Component<Props> {
 			let diff = null;
 			if (this.props.party) {
 				const d = Napoleon.getEncounterDifficulty(encounter, null, this.props.party, this.props.getMonster);
-				diff = 'diff-' + d.adjusted;
+				diff = 'diff-' + Math.min(4, d.adjusted);
 			}
 
 			encounters.push(
 				<Group key={encounter.id} className={diff} onClick={() => this.props.onSelect(encounter)}>
-					<EncounterInfoPanel encounter={encounter} getMonster={id => this.props.getMonster(id)} />
+					<EncounterInfoPanel
+						encounter={encounter}
+						getMonster={id => this.props.getMonster(id)}
+					/>
 				</Group>
 			);
 		});

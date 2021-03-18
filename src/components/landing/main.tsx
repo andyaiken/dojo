@@ -41,7 +41,7 @@ import { EncounterSelectionModal } from '../modals/encounter-selection-modal';
 import { MapSelectionModal } from '../modals/map-selection-modal';
 import { MarkdownModal } from '../modals/markdown-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
-import { RandomEncounterOrMapModal } from '../modals/random-encounter-or-map-modal';
+import { RandomGeneratorModal } from '../modals/random-generator-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { DieRollResultPanel } from '../panels/die-roll-panel';
@@ -1071,30 +1071,66 @@ export class Main extends React.Component<Props, State> {
 		}
 	}
 
-	private addMonster(monster: Monster | null) {
-		if (monster) {
-			const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
-			if (group) {
-				group.monsters.push(monster);
-				Utils.sort(group.monsters);
-
-				this.setState({
-					library: this.state.library,
-					drawer: {
-						type: 'statblock',
-						source: monster
-					}
-				});
+	private addMonster() {
+		this.setState({
+			drawer: {
+				type: 'monster',
+				monster: Factory.createMonster(),
+				showAdvancedTools: false
 			}
-		} else {
-			monster = Factory.createMonster();
+		});
+	}
 
-			const copy = JSON.parse(JSON.stringify(monster));
+	private generateMonster() {
+		const group = this.state.library.find(g => g.id === this.state.selectedMonsterGroupID);
+		if (group) {
+			let cr = 1;
+			let sizes: string[] = [];
+			let types: string[] = [];
+			let roles: string[] = [];
+
+			if (group.monsters.length > 0) {
+				cr = Math.round(group.monsters.map(m => m.challenge).reduce((a, b) => a + b, 0) / group.monsters.length);
+				sizes = group.monsters.map(m => m.size).filter((value, index, array) => array.indexOf(value) === index);
+				types = group.monsters.map(m => m.category).filter((value, index, array) => array.indexOf(value) === index);
+				roles = group.monsters.map(m => m.role).filter((value, index, array) => array.indexOf(value) === index);
+			}
+
 			this.setState({
 				drawer: {
-					type: 'monster',
-					monster: copy,
-					showAdvancedTools: false
+					type: 'random-monster',
+					data: {
+						cr: cr,
+						size: sizes.length === 1 ? sizes[0] : null,
+						type: types.length === 1 ? types[0] : null,
+						role: roles.length === 1 ? roles[0] : null
+					},
+					canAccept: () => {
+						const data = this.state.drawer.data;
+						const monsters = Frankenstein.filterMonsters(this.state.library, data.cr, data.size, data.type, data.role);
+						return monsters.length >= 2;
+					},
+					onAccept: () => {
+							const data = this.state.drawer.data;
+							const monsters = Frankenstein.filterMonsters(this.state.library, data.cr, data.size, data.type, data.role);
+
+							const monster = Factory.createMonster();
+							Frankenstein.spliceMonsters(monster, monsters);
+							monster.name = Shakespeare.capitalise(Shakespeare.generateName());
+							monster.challenge = data.cr;
+
+							group.monsters.push(monster);
+							Utils.sort(group.monsters);
+
+							this.setState({
+								view: 'library',
+								library: this.state.library,
+								drawer: {
+									type: 'statblock',
+									source: monster
+								}
+							});
+					}
 				}
 			});
 		}
@@ -3060,7 +3096,8 @@ export class Main extends React.Component<Props, State> {
 							goBack={() => this.selectMonsterGroup(null)}
 							deleteMonsterGroup={group => this.deleteMonsterGroup(group)}
 							openDemographics={group => this.openDemographics(group)}
-							addMonster={monster => this.addMonster(monster)}
+							addMonster={() => this.addMonster()}
+							generateMonster={() => this.generateMonster()}
 							importMonster={() => this.importMonster()}
 							deleteMonster={monster => this.deleteMonster(monster)}
 							changeValue={(monster, type, value) => this.changeValue(monster, type, value)}
@@ -3085,8 +3122,9 @@ export class Main extends React.Component<Props, State> {
 						addOpenGameContent={() => this.addOpenGameContent()}
 						openStatBlock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 						openDemographics={group => this.openDemographics(group)}
-						addMonster={monster => this.addMonster(monster)}
+						addMonster={() => this.addMonster()}
 						importMonster={() => this.importMonster()}
+						generateMonster={() => this.generateMonster()}
 						createEncounter={monsterIDs => this.createEncounterFromMonsters(monsterIDs)}
 					/>
 				);
@@ -3488,6 +3526,7 @@ export class Main extends React.Component<Props, State> {
 								});
 							}}
 							showNotes={scene => this.showMarkdown(scene.name || 'unnamed scene', scene.content)}
+							showMonster={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
@@ -3702,16 +3741,40 @@ export class Main extends React.Component<Props, State> {
 					header = 'demographics';
 					closable = true;
 					break;
+				case 'random-monster':
+					content = (
+						<RandomGeneratorModal
+							parties={[]}
+							library={this.state.library}
+							monsterData={this.state.drawer.data}
+							mapData={null}
+							encounterData={null}
+							onUpdated={() => this.forceUpdate()}
+						/>
+					);
+					header = 'generate a random monster';
+					footer = (
+						<button
+							className={this.state.drawer.canAccept() ? '' : 'disabled'}
+							onClick={() => this.state.drawer.onAccept()}
+						>
+							create the monster
+						</button>
+					);
+					closable = true;
+					break;
 				case 'random-encounter':
 					content = (
-						<RandomEncounterOrMapModal
+						<RandomGeneratorModal
 							parties={this.state.parties}
+							library={[]}
+							monsterData={null}
 							mapData={null}
 							encounterData={this.state.drawer.data}
 							onUpdated={() => this.forceUpdate()}
 						/>
 					);
-					header = 'create a random encounter';
+					header = 'generate a random encounter';
 					footer = (
 						<button
 							className={this.state.drawer.canAccept() ? '' : 'disabled'}
@@ -3812,14 +3875,16 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'random-map':
 					content = (
-						<RandomEncounterOrMapModal
+						<RandomGeneratorModal
 							parties={[]}
+							library={[]}
+							monsterData={null}
 							mapData={this.state.drawer.data}
 							encounterData={null}
 							onUpdated={() => this.forceUpdate()}
 						/>
 					);
-					header = 'create a random map';
+					header = 'generate a random map';
 					footer = (
 						<button
 							className={this.state.drawer.canAccept() ? '' : 'disabled'}
@@ -3846,14 +3911,16 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'random-adventure':
 					content = (
-						<RandomEncounterOrMapModal
+						<RandomGeneratorModal
 							parties={this.state.parties}
+							library={[]}
+							monsterData={null}
 							mapData={this.state.drawer.mapData}
 							encounterData={this.state.drawer.encounterData}
 							onUpdated={() => this.forceUpdate()}
 						/>
 					);
-					header = 'create a random adventure';
+					header = 'generate a random adventure';
 					footer = (
 						<button
 							className={this.state.drawer.canAccept() ? '' : 'disabled'}
@@ -3987,14 +4054,22 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'add-map-to-plot':
 					content = (
-						<MapSelectionModal maps={this.state.maps.filter(m => m.areas.length > 0)} onSelect={map => this.state.drawer.accept(map)} />
+						<MapSelectionModal
+							maps={this.state.maps.filter(m => m.areas.length > 0)}
+							onSelect={map => this.state.drawer.accept(map)}
+						/>
 					);
 					header = 'choose a map';
 					closable = true;
 					break;
 				case 'add-encounter-to-scene':
 					content = (
-						<EncounterSelectionModal encounters={this.state.encounters} party={this.state.drawer.party} getMonster={id => this.getMonster(id)} onSelect={encounter => this.state.drawer.accept(encounter)} />
+						<EncounterSelectionModal
+							encounters={this.state.encounters}
+							party={this.state.drawer.party}
+							getMonster={id => this.getMonster(id)}
+							onSelect={encounter => this.state.drawer.accept(encounter)}
+						/>
 					);
 					header = 'choose an encounter';
 					closable = true;

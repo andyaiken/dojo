@@ -1,4 +1,4 @@
-import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, InfoCircleOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
@@ -50,6 +50,7 @@ interface Props {
 	runEncounterWithMap: (encounter: Encounter, map: Map, areaID: string) => void;
 	rotateMap: (plot: Plot) => void;
 	showNotes: (scene: Scene) => void;
+	showMonster: (monster: Monster) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 }
@@ -180,17 +181,21 @@ export class AdventureScreen extends React.Component<Props, State> {
 				let diff = null;
 				if (party) {
 					const d = Napoleon.getEncounterDifficulty(encounter, null, party, this.props.getMonster);
-					diff = 'diff-' + d.adjusted;
+					diff = 'diff-' + Math.min(4, d.adjusted);
 				}
 
 				encounters.push(
 					<Group key={encounter.id} className={diff}>
 						<div className='content-then-icons'>
 							<div className='content'>
-								<EncounterInfoPanel encounter={encounter} getMonster={id => this.props.getMonster(id)} />
+								<EncounterInfoPanel
+									encounter={encounter}
+									getMonster={id => this.props.getMonster(id)}
+									onMonsterClicked={monster => this.props.showMonster(monster)}
+								/>
 							</div>
 							<div className='icons vertical'>
-								<InfoCircleOutlined title='open encounter' onClick={() => this.props.openEncounter(encounter)} />
+								<EditOutlined title='edit encounter' onClick={() => this.props.openEncounter(encounter)} />
 								<CaretRightOutlined title='run encounter' onClick={() => this.runEncounter(encounter, scene)} />
 								<ConfirmButton onConfirm={() => this.props.removeEncounterFromScene(scene, encounter.id)}>
 									<DeleteOutlined title='remove from scene' />

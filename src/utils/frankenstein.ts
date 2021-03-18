@@ -5,7 +5,7 @@ import { Gygax } from './gygax';
 import { Utils } from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
-import { Monster, Trait, TRAIT_TYPES } from '../models/monster';
+import { Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../models/monster';
 
 export class Frankenstein {
 	public static getTypicalHP(monster: Monster) {
@@ -538,6 +538,39 @@ export class Frankenstein {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Randomisation
+
+	public static filterMonsters(groups: MonsterGroup[], cr: number, size: string | null, type: string | null, role: string | null) {
+		const monsters: Monster[] = [];
+
+		groups.forEach(group => {
+			group.monsters.forEach(m => {
+				let match = true;
+
+				const diff = Math.abs(m.challenge - cr);
+				if (diff > 1) {
+					match = false;
+				}
+
+				if (size && (m.size !== size)) {
+					match = false;
+				}
+
+				if (type && (m.category !== type)) {
+					match = false;
+				}
+
+				if (role && (m.role !== role)) {
+					match = false;
+				}
+
+				if (match) {
+					monsters.push(m);
+				}
+			});
+		});
+
+		return monsters
+	}
 
 	public static spliceMonsters(target: Monster, monsters: Monster[]) {
 		const fields = [
