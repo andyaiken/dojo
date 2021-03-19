@@ -1,6 +1,7 @@
 import { CloseCircleOutlined, CopyOutlined, FileOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Shakespeare } from '../../utils/shakespeare';
 import { Sherlock } from '../../utils/sherlock';
@@ -478,6 +479,8 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 				return 'audio/*';
 			case 'video':
 				return 'video/*';
+			case 'text':
+				return '.txt';
 			case 'pdf':
 				return '.pdf';
 		}
@@ -510,6 +513,18 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 					<video controls={true}>
 						<source src={this.props.handout.src || ''} />
 					</video>
+				);
+			case 'text':
+				return (
+					<ReactMarkdown source={this.props.handout.src} />
+				);
+			case 'readaloud':
+				return (
+					<div className='scrollable'>
+						<Note>
+							<div className='section'>{this.props.handout.src}</div>
+						</Note>
+					</div>
 				);
 			case 'pdf':
 				return (
@@ -564,7 +579,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 							</div>
 						</Note>
 						<Selector
-							options={['image', 'audio', 'video', 'pdf'].map(o => ({ id: o, text: o }))}
+							options={['image', 'audio', 'video', 'text', 'pdf'].map(o => ({ id: o, text: o }))}
 							selectedID={this.state.mode}
 							onSelect={mode => this.setMode(mode)}
 						/>

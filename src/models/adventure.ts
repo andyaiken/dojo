@@ -19,11 +19,18 @@ export interface Scene {
 	tags: string[];
 	links: SceneLink[];
 	plot: Plot;
-	encounterIDs: string[];
+	resources: SceneResource[];
 }
 
 export interface SceneLink {
 	id: string;
 	text: string;
 	sceneID: string;
+}
+
+export interface SceneResource {
+	id: string;
+	name: string;
+	type: 'text' | 'url' | 'encounter' | 'readaloud';
+	content: string;
 }

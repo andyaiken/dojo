@@ -6,11 +6,13 @@ import { RenderError } from '../error';
 
 interface Props {
 	text: string | JSX.Element;
+	className: string | null;
 	disabled: boolean;
 }
 
 export class Expander extends React.Component<Props> {
 	public static defaultProps = {
+		className: null,
 		disabled: false
 	};
 
@@ -21,6 +23,9 @@ export class Expander extends React.Component<Props> {
 			}
 
 			let style = 'expander';
+			if (this.props.className) {
+				style += ' ' + this.props.className;
+			}
 			if (this.props.disabled) {
 				style += ' disabled';
 			}
@@ -28,7 +33,6 @@ export class Expander extends React.Component<Props> {
 			return (
 				<Collapse
 					className={style}
-					bordered={false}
 					defaultActiveKey={[]}
 					expandIcon={p => <DownCircleOutlined rotate={p.isActive ? -180 : 0} />}
 					expandIconPosition={'right'}

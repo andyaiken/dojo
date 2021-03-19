@@ -1,6 +1,8 @@
 import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
+import { Verne } from '../../utils/verne';
+
 import { Adventure } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Party } from '../../models/party';
@@ -80,7 +82,9 @@ export class EncounterOptions extends React.Component<Props, State> {
 					</Expander>
 					{run}
 					<ConfirmButton
-						disabled={this.props.adventures.some(adventure => adventure.plot.scenes.some(scene => scene.encounterIDs.includes(this.props.encounter.id)))}
+						disabled={
+							this.props.adventures.some(adventure => Verne.getScenes(adventure.plot).some(scene => scene.resources.some(r => (r.type === 'encounter') && (r.content === this.props.encounter.id))))
+						}
 						onConfirm={() => this.props.deleteEncounter(this.props.encounter)}
 					>
 						delete encounter

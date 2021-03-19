@@ -213,45 +213,52 @@ button {
 .ant-drawer-body {
 	padding: 0;
 	font-size: 12px;
-	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	font-family: 'Open Sans', sans-serif;
 	height: 100%;
 	user-select: none;
 }
 
 .ant-collapse {
 	font-size: 12px;
-}
-
-.ant-collapse-borderless > .ant-collapse-item {
-	margin: 5px 0;
-	background-color: $background;
 	border: 1px solid $control-border;
+    border-left-width: 5px;
 	border-radius: 0;
-	border-left-width: 5px;
+    margin: 5px 0;
+	background-color: $background;
 
 	&:hover {
 		border-color: $highlight;
+		background-color: $background;
 	}
-}
 
-.ant-collapse > .ant-collapse-item > .ant-collapse-header {
-	padding: 5px 10px;
-	font-weight: 600;
-	line-height: 20px;
-	color: $foreground;
+	&> .ant-collapse-item {
+		border: 0;
 
-	.collapse-header-text {
-		width: calc(100% - 22px);
+		&> .ant-collapse-header {
+			padding: 5px 10px;
+			font-weight: 600;
+			line-height: 20px;
+			color: $foreground;
+
+			&:hover {
+				background-color: $highlight01;
+			}
+
+			.collapse-header-text {
+				width: calc(100% - 22px);
+			}
+		}
+
+		&> .ant-collapse-content {
+			border: 0;
+			color: $foreground;
+
+			&> .ant-collapse-content-box {
+				padding: 5px 10px;
+				overflow-y: auto;
+			}
+		}
 	}
-}
-
-.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content {
-	color: $foreground;
-}
-
-.ant-collapse-borderless > .ant-collapse-item > .ant-collapse-content > .ant-collapse-content-box {
-	padding: 5px 10px;
-	overflow-y: auto;
 }
 
 .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
@@ -259,10 +266,6 @@ button {
 	right: 2px;
 	top: 2px;
 	padding: 5px;
-}
-
-.ant-collapse-header:hover {
-	background-color: $highlight01;
 }
 
 .ant-collapse-item-active:hover > .ant-collapse-header {
@@ -399,7 +402,7 @@ button {
 .ant-popover {
 	user-select: none;
 	font-size: 12px;
-	font-family: 'Open Sans', 'Segoe UI', sans-serif;
+	font-family: 'Open Sans', sans-serif;
 
 	.ant-popover-inner {
 		border-radius: 0;
@@ -472,7 +475,7 @@ button {
 		width: 400px;
 		border: 1px solid $control-border;
 		line-height: unset;
-		font-family: 'Open Sans', 'Segoe UI', sans-serif;
+		font-family: 'Open Sans', sans-serif;
 		user-select: none;
 		padding: 10px;
 		display: flex;

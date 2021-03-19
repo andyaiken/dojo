@@ -1,13 +1,14 @@
-import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined, LinkOutlined, MessageOutlined, ShareAltOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
 import { Napoleon } from '../../utils/napoleon';
+import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
-import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
+import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Monster } from '../../models/monster';
@@ -35,7 +36,7 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	goBack: () => void;
-	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => void;
+	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => Scene;
 	moveScene: (plot: Plot, scene: Scene, dir: 'left' | 'right') => void;
 	deleteScene: (plot: Plot, scene: Scene) => void;
 	addLink: (scene: Scene, sceneID: string) => void;
@@ -43,14 +44,16 @@ interface Props {
 	deleteAdventure: (adventure: Adventure) => void;
 	addMapToPlot: (plot: Plot, random: boolean) => void;
 	removeMapFromPlot: (plot: Plot) => void;
+	addResourceToScene: (scene: Scene, type: 'text' | 'url') => void;
 	addEncounterToScene: (scene: Scene, party: Party | null, random: boolean) => void;
-	removeEncounterFromScene: (scene: Scene, encounterID: string) => void;
-	openEncounter: (encounter: Encounter) => void;
-	runEncounter: (encounter: Encounter) => void;
-	runEncounterWithMap: (encounter: Encounter, map: Map, areaID: string) => void;
+	removeResourceFromScene: (scene: Scene, resourceID: string) => void;
+	openEncounter: (encounterID: string) => void;
+	runEncounter: (encounterID: string) => void;
+	runEncounterWithMap: (encounterID: string, map: Map, areaID: string) => void;
 	rotateMap: (plot: Plot) => void;
 	showNotes: (scene: Scene) => void;
 	showMonster: (monster: Monster) => void;
+	showResource: (resource: SceneResource) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 }
@@ -135,14 +138,6 @@ export class AdventureScreen extends React.Component<Props, State> {
 		}
 	}
 
-	private runEncounter(encounter: Encounter, scene: Scene) {
-		if (this.state.plot.map) {
-			this.props.runEncounterWithMap(encounter, this.state.plot.map, scene.id);
-		} else {
-			this.props.runEncounter(encounter);
-		}
-	}
-
 	private canMoveScene(scene: Scene, dir: 'left' | 'right') {
 		return Verne.canMoveScene(this.state.plot, scene, dir);
 	}
@@ -170,227 +165,352 @@ export class AdventureScreen extends React.Component<Props, State> {
 		return party;
 	}
 
-	private getEncounters(scene: Scene) {
-		const party = this.getParty();
+	private getLinks(scene: Scene) {
+		if (scene.links.length === 0) {
+			return (
+				<Note>
+					<div className='section'>this scene doesn't lead to any other scenes</div>
+				</Note>
+			);
+		}
 
-		const encounters: JSX.Element[] = [];
-
-		scene.encounterIDs.forEach(encounterID => {
-			const encounter = this.props.encounters.find(enc => enc.id === encounterID);
-			if (encounter) {
-				let diff = null;
-				if (party) {
-					const d = Napoleon.getEncounterDifficulty(encounter, null, party, this.props.getMonster);
-					diff = 'diff-' + Math.min(4, d.adjusted);
-				}
-
-				encounters.push(
-					<Group key={encounter.id} className={diff}>
+		return scene.links.map(link => {
+			const target = this.state.plot.scenes.find(sc => sc.id === link.sceneID);
+			if (target) {
+				return (
+					<Group key={link.id}>
 						<div className='content-then-icons'>
 							<div className='content'>
-								<EncounterInfoPanel
-									encounter={encounter}
-									getMonster={id => this.props.getMonster(id)}
-									onMonsterClicked={monster => this.props.showMonster(monster)}
-								/>
+								<div className='section'>link to <b>{target.name || 'unnamed scene'}</b></div>
+								<Textbox placeholder='label' text={link.text} onChange={text => this.props.changeValue(link, 'text', text)} />
 							</div>
 							<div className='icons vertical'>
-								<EditOutlined title='edit encounter' onClick={() => this.props.openEncounter(encounter)} />
-								<CaretRightOutlined title='run encounter' onClick={() => this.runEncounter(encounter, scene)} />
-								<ConfirmButton onConfirm={() => this.props.removeEncounterFromScene(scene, encounter.id)}>
-									<DeleteOutlined title='remove from scene' />
+								<CaretRightOutlined title='go to' onClick={() => this.setSelectedSceneID(target.id)} />
+								<ConfirmButton onConfirm={() => this.props.deleteLink(scene, link)}>
+									<DeleteOutlined title='delete link' />
 								</ConfirmButton>
 							</div>
 						</div>
 					</Group>
 				);
 			}
-		});
 
-		return encounters;
+			return null;
+		});
 	}
 
-	private getSidebar() {
-		const scene = this.state.plot.scenes.find(s => s.id === this.state.selectedSceneID);
-		if (scene) {
-			const links = scene.links.map(link => {
-				const target = this.state.plot.scenes.find(sc => sc.id === link.sceneID);
-				if (target) {
-					return (
-						<Group key={link.id}>
-							<div className='content-then-icons'>
-								<div className='content'>
-									<div className='section'>to <b>{target.name || 'unnamed scene'}</b></div>
-									<Textbox placeholder='label' text={link.text} onChange={text => this.props.changeValue(link, 'text', text)} />
-								</div>
-								<div className='icons vertical'>
-									<CaretRightOutlined title='go to' onClick={() => this.setSelectedSceneID(target.id)} />
-									<ConfirmButton onConfirm={() => this.props.deleteLink(scene, link)}>
-										<DeleteOutlined title='delete link' />
-									</ConfirmButton>
-								</div>
-							</div>
-						</Group>
-					);
-				}
+	private getResources(scene: Scene) {
+		const readaloud: SceneResource[] = Verne.getReadAloudSections(scene).map(text => ({
+			id: Utils.guid(),
+			name: '',
+			type: 'readaloud',
+			content: text
+		}));
 
-				return null;
-			});
-
-			let options = ['content', 'links', 'encounters'].map(o => ({ id: o, text: o }));
-			if (this.state.plot.map) {
-				options = options.filter(o => o.id !== 'links');
-			}
-			if (this.state.plot.scenes.length < 2) {
-				options = options.filter(o => o.id !== 'links');
-			}
-
+		if (readaloud.length + scene.resources.length === 0) {
 			return (
-				<div>
-					<div className='section'>
-						<div className='subheading'>scene title</div>
-						<Textbox
-							text={scene.name}
-							placeholder='scene title'
-							onChange={value => this.props.changeValue(scene, 'name', value)}
-						/>
-					</div>
-					<hr/>
-					<Tabs
-						options={options}
-						selectedID={this.state.view}
-						onSelect={view => this.setView(view)}
-					/>
-					<Conditional display={this.state.view === 'content'}>
-						<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
-					</Conditional>
-					<Conditional display={this.state.view === 'links'}>
-						<Conditional display={this.state.plot.map === null}>
-							{links}
-							<Dropdown
-								placeholder='select a scene to link to...'
-								options={Utils.sort(Verne.getPotentialLinks(this.state.plot, scene)).map(s => ({ id: s.id, text: s.name || 'unnamed scene' }))}
-								onSelect={id => this.props.addLink(scene, id)}
-							/>
-						</Conditional>
-						<Conditional display={this.state.plot.map !== null}>
-							<Note>
-								<div className='section'>
-									links aren't needed between map areas
-								</div>
-							</Note>
-						</Conditional>
-					</Conditional>
-					<Conditional display={this.state.view === 'encounters'}>
-						{this.getEncounters(scene)}
-						<Conditional display={this.props.encounters.length > 0}>
-							<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), false)}>link an encounter</button>
-						</Conditional>
-						<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), true)}>link a new random encounter</button>
-					</Conditional>
-					<Conditional display={this.state.plot.map === null}>
-						<hr/>
-						<Row gutter={10}>
-							<Col span={12}>
-								<button className={this.canMoveScene(scene, 'left') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'left')}>move left</button>
-							</Col>
-							<Col span={12}>
-								<button className={this.canMoveScene(scene, 'right') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'right')}>move right</button>
-							</Col>
-						</Row>
-						<hr/>
-						<button onClick={() => this.explore(scene)}>explore scene</button>
-						<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
-					</Conditional>
-					<hr/>
-					<button onClick={() => this.setSelectedSceneID(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
-				</div>
-			);
-		} else {
-			const partyOptions = this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }));
-			partyOptions.push({
-				id: 'custom',
-				text: 'custom party'
-			});
-
-			return (
-				<div>
-					<div className='section'>
-						<div className='subheading'>adventure name</div>
-						<Textbox
-							text={this.props.adventure.name}
-							placeholder='adventure name'
-							onChange={value => this.props.changeValue(this.props.adventure, 'name', value)}
-						/>
-					</div>
-					<hr/>
-					<Conditional display={this.props.adventure.plot.scenes.length === 0}>
-						<Note>
-							<div className='section'>
-								an adventure is made up of scenes which are linked together like a flowchart
-							</div>
-							<div className='section'>
-								press <b>add a scene</b> to add your first scene to this adventure
-							</div>
-							<Conditional display={this.state.plot.scenes.length === 0}>
-								<div className='section'>
-									alternatively, you can <b>use a map</b> to create scenes for each of its areas; this is handy if you're designing a dungeon crawl
-								</div>
-							</Conditional>
-						</Note>
-					</Conditional>
-					<Conditional display={this.state.plot.map === null}>
-						<button onClick={() => this.props.addScene(this.state.plot, null, null)}>add a scene</button>
-					</Conditional>
-					<Conditional display={this.state.plot.map !== null}>
-						<button onClick={() => this.props.rotateMap(this.state.plot)}>rotate the map</button>
-						<button onClick={() => this.props.removeMapFromPlot(this.state.plot)}>remove the map</button>
-					</Conditional>
-					<Conditional display={this.state.plot.scenes.length === 0}>
-						<Expander text='use a map'>
-							<button className={this.props.maps.length === 0 ? 'disabled' : ''} onClick={() => this.props.addMapToPlot(this.state.plot, false)}>use an existing map</button>
-							<button onClick={() => this.props.addMapToPlot(this.state.plot, true)}>use a new random map</button>
-						</Expander>
-					</Conditional>
-					<hr/>
-					<Expander text='highlight difficulty'>
-						<Note>
-							<div className='section'>
-								select a party to show the difficulty of the encounters in this adventure
-							</div>
-						</Note>
-						<Dropdown
-							placeholder='select a party...'
-							options={partyOptions}
-							selectedID={this.state.selectedPartyID}
-							onSelect={id => this.setSelectedPartyID(id)}
-							onClear={() => this.setSelectedPartyID(null)}
-						/>
-						<Conditional display={this.state.selectedPartyID === 'custom'}>
-							<NumberSpin
-								value={this.state.customPartySize}
-								label='party size'
-								downEnabled={this.state.customPartySize > 1}
-								onNudgeValue={delta => this.setState({ customPartySize: this.state.customPartySize + delta })}
-							/>
-							<NumberSpin
-								value={this.state.customPartyLevel}
-								label='party level'
-								downEnabled={this.state.customPartyLevel > 1}
-								upEnabled={this.state.customPartyLevel < 20}
-								onNudgeValue={delta => this.setState({ customPartyLevel: this.state.customPartyLevel + delta })}
-							/>
-						</Conditional>
-					</Expander>
-					<AdventureOptions
-						adventure={this.props.adventure}
-						deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
-					/>
-					<hr/>
-					<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
-				</div>
+				<Note>
+					<div className='section'>a scene can have different types of resources associated with it - an encounter for example</div>
+					<div className='section'>press one of the buttons below to add a resource to this scene</div>
+				</Note>
 			);
 		}
+
+		return readaloud.concat(scene.resources).map(resource => {
+			let content = null;
+			let diff = null;
+			let canLink = false;
+			let canEditEncounter = false;
+			let canRunEncounter = false;
+			let canRunEncounterWithMap = false;
+			let canHandout = false;
+			let canChat = false;
+			let canDelete = false;
+
+			switch (resource.type) {
+				case 'text':
+					content = (
+						<div>
+							<Textbox placeholder='handout title' text={resource.name} onChange={text => this.props.changeValue(resource, 'name', text)} />
+							<MarkdownEditor text={resource.content} onChange={text => this.props.changeValue(resource, 'content', text)} />
+						</div>
+					);
+					canHandout = true;
+					canChat = true;
+					canDelete = true;
+					break;
+				case 'url':
+					content = (
+						<Textbox placeholder='https://...' text={resource.content} onChange={text => this.props.changeValue(resource, 'content', text)} />
+					);
+					canLink = true;
+					canChat = true;
+					canDelete = true;
+					break;
+				case 'encounter':
+					const encounter = this.props.encounters.find(enc => enc.id === resource.content);
+					if (encounter) {
+						content = (
+							<EncounterInfoPanel
+								encounter={encounter}
+								getMonster={id => this.props.getMonster(id)}
+								onMonsterClicked={monster => this.props.showMonster(monster)}
+							/>
+						);
+						const party = this.getParty();
+						if (party) {
+							const d = Napoleon.getEncounterDifficulty(encounter, null, party, this.props.getMonster);
+							diff = 'diff-' + Math.min(4, d.adjusted);
+						}
+						canEditEncounter = true;
+						canRunEncounter = (this.state.plot.map === null);
+						canRunEncounterWithMap = (this.state.plot.map !== null);
+						canDelete = true;
+					}
+					break;
+				case 'readaloud':
+					content = (
+						<Note>
+							<div className='section'>
+								{resource.content}
+							</div>
+						</Note>
+					);
+					canHandout = true;
+					canChat = true;
+					break;
+			}
+
+			if (content === null) {
+				return null;
+			}
+
+			return (
+				<Expander key={resource.id} className={diff} text={resource.name || resource.type}>
+					<div className='content-then-icons'>
+						<div className='content'>
+							{content}
+						</div>
+						<div className='icons vertical'>
+							<Conditional display={canLink}>
+								<LinkOutlined className={resource.content === '' ? 'disabled' : ''} title='follow link' onClick={() => window.open(resource.content, '_blank')} />
+							</Conditional>
+							<Conditional display={canEditEncounter}>
+								<EditOutlined title='edit encounter' onClick={() => this.props.openEncounter(resource.content)} />
+							</Conditional>
+							<Conditional display={canRunEncounter}>
+								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounter(resource.content)} />
+							</Conditional>
+							<Conditional display={canRunEncounterWithMap}>
+								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounterWithMap(resource.content, this.state.plot.map as Map, scene.id)} />
+							</Conditional>
+							<Conditional display={canHandout}>
+								<ShareAltOutlined className={resource.content === '' ? 'disabled' : ''} title='show' onClick={() => this.props.showResource(resource)} />
+							</Conditional>
+							<Conditional display={canChat && (CommsDM.getState() === 'started') && Comms.data.options.allowChat}>
+								<MessageOutlined
+									title='send in chat'
+									onClick={() => {
+										switch (resource.type) {
+											case 'text':
+											case 'readaloud':
+												CommsDM.sendMessage([], resource.content, '', '');
+												break;
+											case 'url':
+												CommsDM.sendLink([], resource.content);
+												break;
+										}
+									}}
+								/>
+							</Conditional>
+							<Conditional display={canDelete}>
+								<ConfirmButton onConfirm={() => this.props.removeResourceFromScene(scene, resource.id)}>
+									<DeleteOutlined title='remove from scene' />
+								</ConfirmButton>
+							</Conditional>
+						</div>
+					</div>
+				</Expander>
+			);
+		});
+	}
+
+	private getSidebarForScene(scene: Scene) {
+		let options = ['content', 'links', 'resources'].map(o => ({ id: o, text: o }));
+		if (this.state.plot.map) {
+			options = options.filter(o => o.id !== 'links');
+		}
+		if ((scene.links.length === 0) && (Verne.getPotentialLinks(this.state.plot, scene).length === 0)) {
+			options = options.filter(o => o.id !== 'links');
+		}
+
+		let view = this.state.view;
+		if (!options.find(o => o.id === view)) {
+			view = options[0].id;
+		}
+
+		return (
+			<div>
+				<div className='section'>
+					<div className='subheading'>scene title</div>
+					<Textbox
+						text={scene.name}
+						placeholder='scene title'
+						onChange={value => this.props.changeValue(scene, 'name', value)}
+					/>
+				</div>
+				<hr/>
+				<Tabs
+					options={options}
+					selectedID={view}
+					onSelect={id => this.setView(id)}
+				/>
+				<Conditional display={view === 'content'}>
+					<MarkdownEditor text={scene.content} onChange={value => this.props.changeValue(scene, 'content', value)} />
+				</Conditional>
+				<Conditional display={(view === 'links') && (this.state.plot.map === null)}>
+					<Group transparent={true}>
+						{this.getLinks(scene)}
+						<hr/>
+						<Dropdown
+							placeholder='select a scene to link to...'
+							options={Utils.sort(Verne.getPotentialLinks(this.state.plot, scene)).map(s => ({ id: s.id, text: s.name || 'unnamed scene' }))}
+							onSelect={id => this.props.addLink(scene, id)}
+						/>
+					</Group>
+				</Conditional>
+				<Conditional display={(view === 'links') && (this.state.plot.map !== null)}>
+					<Note>
+						<div className='section'>
+							links aren't needed between map areas
+						</div>
+					</Note>
+				</Conditional>
+				<Conditional display={view === 'resources'}>
+					<Group transparent={true}>
+						{this.getResources(scene)}
+						<hr/>
+						<button onClick={() => this.props.addResourceToScene(scene, 'text')}>add a text handout</button>
+						<button onClick={() => this.props.addResourceToScene(scene, 'url')}>add a url</button>
+						<Conditional display={this.props.encounters.length > 0}>
+							<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), false)}>link to an encounter</button>
+						</Conditional>
+						<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), true)}>link to a new random encounter</button>
+					</Group>
+				</Conditional>
+				<Conditional display={this.state.plot.map === null}>
+					<hr/>
+					<Row gutter={10}>
+						<Col span={12}>
+							<button className={this.canMoveScene(scene, 'left') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'left')}>move left</button>
+						</Col>
+						<Col span={12}>
+							<button className={this.canMoveScene(scene, 'right') ? '' : 'disabled'} onClick={() => this.moveScene(scene, 'right')}>move right</button>
+						</Col>
+					</Row>
+					<hr/>
+					<button onClick={() => this.explore(scene)}>explore scene</button>
+					<ConfirmButton onConfirm={() => this.props.deleteScene(this.state.plot, scene)}>delete scene</ConfirmButton>
+				</Conditional>
+				<hr/>
+				<button onClick={() => this.setSelectedSceneID(null)}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the adventure</button>
+			</div>
+		);
+	}
+
+	private getSidebarForPlot() {
+		const partyOptions = this.props.parties.map(p => ({ id: p.id, text: p.name || 'unnamed party' }));
+		partyOptions.push({
+			id: 'custom',
+			text: 'custom party'
+		});
+
+		return (
+			<div>
+				<div className='section'>
+					<div className='subheading'>adventure name</div>
+					<Textbox
+						text={this.props.adventure.name}
+						placeholder='adventure name'
+						onChange={value => this.props.changeValue(this.props.adventure, 'name', value)}
+					/>
+				</div>
+				<hr/>
+				<Conditional display={this.props.adventure.plot.scenes.length === 0}>
+					<Note>
+						<div className='section'>
+							an adventure is made up of scenes which are linked together like a flowchart
+						</div>
+						<div className='section'>
+							press <b>add a scene</b> to add your first scene to this adventure
+						</div>
+						<Conditional display={this.state.plot.scenes.length === 0}>
+							<div className='section'>
+								alternatively, you can <b>use a map</b> to create scenes for each of its areas; this is handy if you're designing a dungeon crawl
+							</div>
+						</Conditional>
+					</Note>
+				</Conditional>
+				<Conditional display={this.state.plot.map === null}>
+					<button
+						onClick={() => {
+							const scene = this.props.addScene(this.state.plot, null, null);
+							this.setState({
+								selectedSceneID: scene.id
+							});
+						}}
+					>
+						add a scene
+					</button>
+				</Conditional>
+				<Conditional display={this.state.plot.map !== null}>
+					<button onClick={() => this.props.rotateMap(this.state.plot)}>rotate the map</button>
+					<button onClick={() => this.props.removeMapFromPlot(this.state.plot)}>remove the map</button>
+				</Conditional>
+				<Conditional display={this.state.plot.scenes.length === 0}>
+					<Expander text='use a map'>
+						<button className={this.props.maps.length === 0 ? 'disabled' : ''} onClick={() => this.props.addMapToPlot(this.state.plot, false)}>use an existing map</button>
+						<button onClick={() => this.props.addMapToPlot(this.state.plot, true)}>use a new random map</button>
+					</Expander>
+				</Conditional>
+				<hr/>
+				<Expander text='highlight difficulty'>
+					<Note>
+						<div className='section'>
+							select a party to show the difficulty of the encounters in this adventure
+						</div>
+					</Note>
+					<Dropdown
+						placeholder='select a party...'
+						options={partyOptions}
+						selectedID={this.state.selectedPartyID}
+						onSelect={id => this.setSelectedPartyID(id)}
+						onClear={() => this.setSelectedPartyID(null)}
+					/>
+					<Conditional display={this.state.selectedPartyID === 'custom'}>
+						<NumberSpin
+							value={this.state.customPartySize}
+							label='party size'
+							downEnabled={this.state.customPartySize > 1}
+							onNudgeValue={delta => this.setState({ customPartySize: this.state.customPartySize + delta })}
+						/>
+						<NumberSpin
+							value={this.state.customPartyLevel}
+							label='party level'
+							downEnabled={this.state.customPartyLevel > 1}
+							upEnabled={this.state.customPartyLevel < 20}
+							onNudgeValue={delta => this.setState({ customPartyLevel: this.state.customPartyLevel + delta })}
+						/>
+					</Conditional>
+				</Expander>
+				<AdventureOptions
+					adventure={this.props.adventure}
+					deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
+				/>
+				<hr/>
+				<button onClick={() => this.props.goBack()}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
+			</div>
+		);
 	}
 
 	private getContent() {
@@ -436,17 +556,23 @@ export class AdventureScreen extends React.Component<Props, State> {
 				selectSceneID={sceneID => this.setSelectedSceneID(sceneID)}
 				showNotes={scene => this.props.showNotes(scene)}
 				exploreScene={scene => this.explore(scene)}
-				addScene={(sceneBefore, sceneAfter) => this.props.addScene(this.state.plot, sceneBefore, sceneAfter)}
+				addScene={(sceneBefore, sceneAfter) => {
+					const scene = this.props.addScene(this.state.plot, sceneBefore, sceneAfter);
+					this.setState({
+						selectedSceneID: scene.id
+					});
+				}}
 			/>
 		);
 	}
 
 	public render() {
 		try {
+			const scene = this.state.plot.scenes.find(s => s.id === this.state.selectedSceneID);
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>
-						{this.getSidebar()}
+						{scene ? this.getSidebarForScene(scene) : this.getSidebarForPlot()}
 					</Col>
 					<Col span={18} className='scrollable both-ways'>
 						<div className='breadcrumb-bar'>

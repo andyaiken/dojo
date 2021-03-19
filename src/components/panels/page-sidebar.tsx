@@ -1,4 +1,4 @@
-import { BookOutlined, BulbOutlined, CommentOutlined, ControlOutlined, InfoCircleOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
+import { BookOutlined, BulbOutlined, ControlOutlined, InfoCircleOutlined, MessageOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -157,7 +157,7 @@ export class PageSidebar extends React.Component<Props> {
 					if (CommsPlayer.getState() === 'connected') {
 						if (Comms.data.options.allowChat) {
 							options.push(
-								<CommentOutlined
+								<MessageOutlined
 									key='session-chat'
 									className={this.props.sidebar.type === 'session-chat' ? 'sidebar-icon selected' : 'sidebar-icon'}
 									title='chat'

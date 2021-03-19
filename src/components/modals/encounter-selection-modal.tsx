@@ -30,6 +30,7 @@ export class EncounterSelectionModal extends React.Component<Props> {
 
 			encounters.push(
 				<Group key={encounter.id} className={diff} onClick={() => this.props.onSelect(encounter)}>
+					<div className='section subheading'>{encounter.name || 'unnamed encounter'}</div>
 					<EncounterInfoPanel
 						encounter={encounter}
 						getMonster={id => this.props.getMonster(id)}

@@ -87,15 +87,11 @@
 }
 
 .encounter-info-panel {
-	.subheading {
-		padding-left: 5px;
-	}
-
 	.encounter-slot {
 		margin: 0;
-		padding: 0 5px;
 
 		&.clickable {
+			padding: 0 5px;
 			cursor: pointer;
 
 			&:hover {

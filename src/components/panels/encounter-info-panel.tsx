@@ -64,7 +64,6 @@ export class EncounterInfoPanel extends React.Component<Props> {
 		try {
 			return (
 				<div className='encounter-info-panel'>
-					<div className='section subheading'>{this.props.encounter.name || 'unnamed encounter'}</div>
 					{
 						this.props.encounter.slots.map(slot => this.getSlot(slot))
 					}

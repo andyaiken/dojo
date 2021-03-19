@@ -211,13 +211,14 @@ export class MapScreen extends React.Component<Props, State> {
 								onChange={value => this.props.changeValue(this.props.map, 'name', value)}
 							/>
 						</div>
-						<Group>
-							<Tabs
-								options={['tiles', 'areas'].map(o => ({ id: o, text: o }))}
-								selectedID={this.state.sidebarView}
-								onSelect={view => this.setSidebarView(view)}
-							/>
-							<Conditional display={this.state.sidebarView === 'tiles'}>
+						<hr/>
+						<Tabs
+							options={['tiles', 'areas'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.sidebarView}
+							onSelect={view => this.setSidebarView(view)}
+						/>
+						<Conditional display={this.state.sidebarView === 'tiles'}>
+							<Group transparent={true}>
 								<Conditional display={this.props.map.items.length === 0}>
 									<Note>
 										<div className='section'>
@@ -235,8 +236,10 @@ export class MapScreen extends React.Component<Props, State> {
 									<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
 									<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
 								</div>
-							</Conditional>
-							<Conditional display={this.state.sidebarView === 'areas'}>
+							</Group>
+						</Conditional>
+						<Conditional display={this.state.sidebarView === 'areas'}>
+							<Group transparent={true}>
 								<Conditional display={this.props.map.areas.length === 0}>
 									<Note>
 										<div className='section'>
@@ -256,8 +259,8 @@ export class MapScreen extends React.Component<Props, State> {
 									<button onClick={() => this.toggleAddingArea()}>{addAreaText}</button>
 									<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
 								</div>
-							</Conditional>
-						</Group>
+							</Group>
+						</Conditional>
 						<hr/>
 						<button onClick={() => this.props.rotateMap(this.props.map)}>rotate the map</button>
 						<button onClick={() => this.props.generateRoom(this.props.map)}>add a random room</button>

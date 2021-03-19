@@ -106,10 +106,45 @@ export class Verne {
 	}
 
 	public static getEncounterIDs(scene: Scene) {
-		let encounterIDs = scene.encounterIDs.slice();
+		let resources = scene.resources.slice();
 		this.getScenes(scene.plot).forEach(s => {
-			encounterIDs = encounterIDs.concat(s.encounterIDs);
+			resources = resources.concat(s.resources);
 		})
-		return scene.encounterIDs;
+		return resources.filter(r => r.type === 'encounter').map(r => r.content);
+	}
+
+	public static getReadAloudSections(scene: Scene) {
+		const sections: string[] = [];
+
+		let currentSection: string | null = null;
+
+		scene.content.split('\n').map(line => line.trim()).forEach(line => {
+			if (line === '') {
+				// If we're in a section, finish it
+				if (currentSection) {
+					sections.push(currentSection);
+					currentSection = null;
+				}
+			} else if (line.startsWith('>')) {
+				// If we're in a section, finish it
+				if (currentSection) {
+					sections.push(currentSection);
+					currentSection = null;
+				}
+				// Start a new section with this line
+				currentSection = line.substring(1).trim();
+			} else {
+				// If we're in a section, add this line to it
+				if (currentSection) {
+					currentSection += ' ' + line;
+				}
+			}
+		});
+
+		if (currentSection) {
+			sections.push(currentSection);
+		}
+
+		return sections;
 	}
 }

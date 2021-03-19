@@ -1,7 +1,8 @@
-import { CheckCircleOutlined, CloseCircleOutlined, CommentOutlined, ControlOutlined, UserOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, CloseCircleOutlined, ControlOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row, Tag } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
@@ -616,6 +617,20 @@ export class Player extends React.Component<Props, State> {
 						<source src={handout.src} />
 					</video>
 				);
+			case 'text':
+				return (
+					<div className='scrollable'>
+						<ReactMarkdown source={handout.src} />
+					</div>
+				);
+			case 'readaloud':
+				return (
+					<div className='scrollable'>
+						<Note>
+							<div className='section'>{handout.src}</div>
+						</Note>
+					</div>
+				);
 			case 'pdf':
 				return (
 					<div className='scrollable'>
@@ -797,7 +812,7 @@ export class Player extends React.Component<Props, State> {
 
 			if (Comms.data.options.allowChat) {
 				shortcuts.push(
-					<CommentOutlined
+					<MessageOutlined
 						key='chat'
 						title='open chat'
 						onClick={() => {

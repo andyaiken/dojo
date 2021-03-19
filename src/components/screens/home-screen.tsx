@@ -76,6 +76,7 @@ export class HomeScreen extends React.Component<Props> {
 							<li>keep track of all the information you need to run an adventure</li>
 							<li>see the structure of a scenario as a flow chart - or as a map if you're running a dungeon delve</li>
 							<li>add encounters and check their difficulty for your pcs</li>
+							<li>keep handouts ready to show to your players</li>
 							<li>generate an entire dungeon delve with a single click</li>
 						</ul>
 					</div>

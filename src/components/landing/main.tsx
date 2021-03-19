@@ -14,7 +14,7 @@ import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
-import { Adventure, Plot, Scene, SceneLink } from '../../models/adventure';
+import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
 import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
@@ -543,6 +543,22 @@ export class Main extends React.Component<Props, State> {
 		sidebar.dice = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => sidebar.dice[n] = 0);
 		sidebar.dice[6] = 1;
+
+		this.setState({
+			sidebar: sidebar
+		});
+	}
+
+	private openSceneResource(resource: SceneResource) {
+		const sidebar = this.state.sidebar;
+		sidebar.visible = true;
+		sidebar.type = 'tools';
+		sidebar.subtype = 'handout';
+		sidebar.handout = {
+			type: resource.type,
+			filename: '',
+			src: resource.content
+		};
 
 		this.setState({
 			sidebar: sidebar
@@ -1301,7 +1317,12 @@ export class Main extends React.Component<Props, State> {
 
 					if (scene) {
 						encounter.name = scene.name;
-						scene.encounterIDs.push(encounter.id);
+
+						const resource = Factory.createSceneResource();
+						resource.type = 'encounter';
+						resource.name = encounter.name;
+						resource.content = encounter.id;
+						scene.resources.push(resource);
 					}
 
 					let encounters = this.state.encounters;
@@ -1423,9 +1444,7 @@ export class Main extends React.Component<Props, State> {
 					const map = Factory.createMap();
 					Mercator.generate(this.state.drawer.data.areas, map);
 					map.areas.forEach(area => {
-						if (Utils.randomBoolean()) {
-							area.text = Shakespeare.generateRoomDescription();
-						}
+						area.text = Shakespeare.generateRoomDescription();
 					});
 
 					if (plot) {
@@ -1434,7 +1453,9 @@ export class Main extends React.Component<Props, State> {
 							const scene = Factory.createScene();
 							scene.id = area.id;
 							scene.name = area.name;
-							scene.content = area.text;
+							if (area.text) {
+								scene.content = '> ' + area.text;
+							}
 							plot.scenes.push(scene);
 
 							area.text = '';
@@ -1687,11 +1708,6 @@ export class Main extends React.Component<Props, State> {
 
 					const map = Factory.createMap();
 					Mercator.generate(this.state.drawer.mapData.areas, map);
-					map.areas.forEach(area => {
-						if (Utils.randomBoolean()) {
-							area.text = Shakespeare.generateRoomDescription();
-						}
-					});
 					adventure.plot.map = map;
 
 					let encounters = this.state.encounters;
@@ -1701,6 +1717,7 @@ export class Main extends React.Component<Props, State> {
 						const scene = Factory.createScene();
 						scene.id = area.id;
 						scene.name = area.name;
+						scene.content = '> ' + Shakespeare.generateRoomDescription();
 						adventure.plot.scenes.push(scene);
 
 						const encounter = Factory.createEncounter();
@@ -1715,7 +1732,12 @@ export class Main extends React.Component<Props, State> {
 						}
 
 						encounters.push(encounter);
-						scene.encounterIDs.push(encounter.id);
+
+						const resource = Factory.createSceneResource();
+						resource.type = 'encounter';
+						resource.name = encounter.name;
+						resource.content = encounter.id;
+						scene.resources.push(resource);
 					});
 
 					encounters = Utils.sort(encounters);
@@ -1767,6 +1789,7 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			adventures: this.state.adventures
 		});
+		return newScene;
 	}
 
 	private moveScene(plot: Plot, scene: Scene, dir: 'left' | 'right') {
@@ -1837,6 +1860,18 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private addResourceToScene(scene: Scene, type: 'text' | 'url') {
+		const handout = Factory.createSceneResource();
+		handout.type = type;
+		scene.resources.push(handout);
+
+		this.setState({
+			adventures: this.state.adventures
+		});
+
+		return handout;
+	}
+
 	private addEncounterToScene(scene: Scene, party: Party | null, random: boolean) {
 		if (random) {
 			this.createEncounter(null, scene);
@@ -1847,7 +1882,12 @@ export class Main extends React.Component<Props, State> {
 					scene: scene,
 					party: party,
 					accept: (encounter: Encounter) => {
-						scene.encounterIDs.push(encounter.id);
+						const resource = Factory.createSceneResource();
+						resource.type = 'encounter';
+						resource.name = encounter.name;
+						resource.content = encounter.id;
+						scene.resources.push(resource);
+
 						this.setState({
 							adventures: this.state.adventures,
 							drawer: null
@@ -1858,8 +1898,8 @@ export class Main extends React.Component<Props, State> {
 		}
 	}
 
-	private removeEncounterFromScene(scene: Scene, encounterID: string) {
-		scene.encounterIDs = scene.encounterIDs.filter(id => id !== encounterID);
+	private removeResourceFromScene(scene: Scene, resourceID: string) {
+		scene.resources = scene.resources.filter(r => r.id !== resourceID);
 		this.setState({
 			adventures: this.state.adventures
 		});
@@ -3514,11 +3554,22 @@ export class Main extends React.Component<Props, State> {
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
 							addMapToPlot={(plot, random) => this.addMapToPlot(plot, random)}
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
+							addResourceToScene={(scene, type) => this.addResourceToScene(scene, type)}
 							addEncounterToScene={(scene, party, random) => this.addEncounterToScene(scene, party, random)}
-							removeEncounterFromScene={(scene, encounterID) => this.removeEncounterFromScene(scene, encounterID)}
-							openEncounter={encounter => this.selectEncounter(encounter)}
-							runEncounter={encounter => this.createCombat('', encounter)}
-							runEncounterWithMap={(encounter, map, areaID) => this.createCombat('', encounter, map, areaID)}
+							removeResourceFromScene={(scene, resourceID) => this.removeResourceFromScene(scene, resourceID)}
+							openEncounter={encounterID => this.selectEncounterByID(encounterID)}
+							runEncounter={encounterID => {
+								const encounter = this.state.encounters.find(e => e.id === encounterID);
+								if (encounter) {
+									this.createCombat('', encounter);
+								}
+							}}
+							runEncounterWithMap={(encounterID, map, areaID) => {
+								const encounter = this.state.encounters.find(e => e.id === encounterID);
+								if (encounter) {
+									this.createCombat('', encounter, map, areaID);
+								}
+							}}
 							rotateMap={plot => {
 								Mercator.rotateMap(plot.map as Map);
 								this.setState({
@@ -3527,6 +3578,7 @@ export class Main extends React.Component<Props, State> {
 							}}
 							showNotes={scene => this.showMarkdown(scene.name || 'unnamed scene', scene.content)}
 							showMonster={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+							showResource={resource => this.openSceneResource(resource)}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(adventure, type, value) => this.changeValue(adventure, type, value)}
 						/>
