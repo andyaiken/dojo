@@ -531,14 +531,9 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				lighting={this.props.exploration.lighting}
 				defaultTab='map'
 				// Main tab
-				makeCurrent={combatant => null}
-				makeActive={combatants => null}
-				makeDefeated={combatants => null}
 				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
 				toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
 				toggleHidden={combatants => this.props.toggleHidden(combatants)}
-				// HP tab
-				changeHP={values => null}
 				// Cond tab
 				addCondition={combatants => this.props.addCondition(combatants)}
 				editCondition={(combatant, condition) => this.props.editCondition(combatant, condition)}

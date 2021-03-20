@@ -780,6 +780,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				makeCurrent={combatant => this.props.makeCurrent(combatant)}
 				makeActive={combatants => this.props.makeActive(combatants)}
 				makeDefeated={combatants => this.defeatCombatants(combatants)}
+				nextTurn={() => this.nextTurn()}
 				toggleTag={(combatants, tag) => this.props.toggleTag(combatants, tag)}
 				toggleCondition={(combatants, condition) => this.props.toggleCondition(combatants, condition)}
 				toggleHidden={combatants => this.props.toggleHidden(combatants)}

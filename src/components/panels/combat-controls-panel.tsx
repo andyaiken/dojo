@@ -38,6 +38,7 @@ interface Props {
 	makeCurrent: (combatant: Combatant) => void;
 	makeActive: (combatants: Combatant[]) => void;
 	makeDefeated: (combatants: Combatant[]) => void;
+	nextTurn: () => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
 	toggleCondition: (combatants: Combatant[], condition: string) => void;
 	toggleHidden: (combatants: Combatant[]) => void;
@@ -74,6 +75,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		makeCurrent: null,
 		makeActive: null,
 		makeDefeated: null,
+		nextTurn: null,
 		changeHP: null,
 		removeCombatants: null
 	};
@@ -235,6 +237,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		const actions: JSX.Element[] = [];
 		const engaged: JSX.Element[] = [];
 		const notes: JSX.Element[] = [];
+
+		if (this.props.nextTurn && this.props.combatants.every(c => c.current)) {
+			actions.push(<button key='endTurn' onClick={() => this.props.nextTurn()}>end turn</button>);
+		}
 
 		if (this.props.combatants.every(c => c.active)) {
 			if (this.props.makeCurrent && this.props.makeDefeated) {
