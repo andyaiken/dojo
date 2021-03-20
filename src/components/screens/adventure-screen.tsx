@@ -3,6 +3,7 @@ import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
+import { Matisse } from '../../utils/matisse';
 import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
@@ -11,6 +12,7 @@ import { Verne } from '../../utils/verne';
 import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
+import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -35,6 +37,7 @@ interface Props {
 	parties: Party[];
 	encounters: Encounter[];
 	maps: Map[];
+	options: Options;
 	goBack: () => void;
 	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => Scene;
 	moveScene: (plot: Plot, scene: Scene, dir: 'left' | 'right') => void;
@@ -44,7 +47,7 @@ interface Props {
 	deleteAdventure: (adventure: Adventure) => void;
 	addMapToPlot: (plot: Plot, random: boolean) => void;
 	removeMapFromPlot: (plot: Plot) => void;
-	addResourceToScene: (scene: Scene, type: 'text' | 'url') => void;
+	addResourceToScene: (scene: Scene, type: 'text' | 'url' | 'image') => void;
 	addEncounterToScene: (scene: Scene, party: Party | null, random: boolean) => void;
 	removeResourceFromScene: (scene: Scene, resourceID: string) => void;
 	openEncounter: (encounterID: string) => void;
@@ -210,7 +213,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 		if (readaloud.length + scene.resources.length === 0) {
 			return (
 				<Note>
-					<div className='section'>a scene can have different types of resources associated with it - an encounter for example</div>
+					<div className='section'>a scene can have different types of resources associated with it - an encounter or an image for example</div>
 					<div className='section'>press one of the buttons below to add a resource to this scene</div>
 				</Note>
 			);
@@ -246,6 +249,21 @@ export class AdventureScreen extends React.Component<Props, State> {
 					canLink = true;
 					canChat = true;
 					canDelete = true;
+					break;
+				case 'image':
+					const img = Matisse.getImage(resource.content);
+					if (img) {
+						content = (
+							<img
+								className='nonselectable-image borderless'
+								src={img.data}
+								alt='resource'
+							/>
+						);
+						canHandout = true;
+						canChat = true;
+						canDelete = true;
+					}
 					break;
 				case 'encounter':
 					const encounter = this.props.encounters.find(enc => enc.id === resource.content);
@@ -315,6 +333,12 @@ export class AdventureScreen extends React.Component<Props, State> {
 											case 'text':
 											case 'readaloud':
 												CommsDM.sendMessage([], resource.content, '', '');
+												break;
+											case 'image':
+												const img = Matisse.getImage(resource.content);
+												if (img) {
+													CommsDM.sendImage([], img.data);
+												}
 												break;
 											case 'url':
 												CommsDM.sendLink([], resource.content);
@@ -392,6 +416,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 						<hr/>
 						<button onClick={() => this.props.addResourceToScene(scene, 'text')}>add a text handout</button>
 						<button onClick={() => this.props.addResourceToScene(scene, 'url')}>add a url</button>
+						<button onClick={() => this.props.addResourceToScene(scene, 'image')}>add an image</button>
 						<Conditional display={this.props.encounters.length > 0}>
 							<button onClick={() => this.props.addEncounterToScene(scene, this.getParty(), false)}>link to an encounter</button>
 						</Conditional>
@@ -569,6 +594,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 	public render() {
 		try {
 			const scene = this.state.plot.scenes.find(s => s.id === this.state.selectedSceneID);
+
 			return (
 				<Row className='full-height'>
 					<Col span={6} className='scrollable sidebar sidebar-left'>

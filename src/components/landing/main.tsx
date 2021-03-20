@@ -431,7 +431,7 @@ export class Main extends React.Component<Props, State> {
 			selectedExplorationID: null
 		};
 
-		Matisse.clearUnusedImages(maps, combats, explorations);
+		Matisse.clearUnusedImages(maps, adventures, combats, explorations);
 	}
 
 	//#endregion
@@ -550,14 +550,21 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private openSceneResource(resource: SceneResource) {
+		let src = resource.content;
+		if (resource.type === 'image') {
+			const img = Matisse.getImage(resource.content);
+			if (img) {
+				src = img.data;
+			}
+		}
+
 		const sidebar = this.state.sidebar;
 		sidebar.visible = true;
 		sidebar.type = 'tools';
 		sidebar.subtype = 'handout';
 		sidebar.handout = {
 			type: resource.type,
-			filename: '',
-			src: resource.content
+			src: src
 		};
 
 		this.setState({
@@ -1531,7 +1538,10 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			drawer: {
 				type: 'select-image',
-				tile: tile
+				onAccept: (id: string) => {
+					this.changeValue(tile, 'customBackground', id);
+					this.closeDrawer();
+				}
 			}
 		});
 	}
@@ -1860,16 +1870,33 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private addResourceToScene(scene: Scene, type: 'text' | 'url') {
-		const handout = Factory.createSceneResource();
-		handout.type = type;
-		scene.resources.push(handout);
+	private addResourceToScene(scene: Scene, type: 'text' | 'url' | 'image') {
+		if (type === 'image') {
+			this.setState({
+				drawer: {
+					type: 'select-image',
+					onAccept: (id: string) => {
+						const resource = Factory.createSceneResource();
+						resource.type = type;
+						resource.content = id;
+						scene.resources.push(resource);
 
-		this.setState({
-			adventures: this.state.adventures
-		});
+						this.setState({
+							adventures: this.state.adventures,
+							drawer: null
+						});
+					}
+				}
+			});
+		} else {
+			const resource = Factory.createSceneResource();
+			resource.type = type;
+			scene.resources.push(resource);
 
-		return handout;
+			this.setState({
+				adventures: this.state.adventures
+			});
+		}
 	}
 
 	private addEncounterToScene(scene: Scene, party: Party | null, random: boolean) {
@@ -3545,6 +3572,7 @@ export class Main extends React.Component<Props, State> {
 							parties={this.state.parties}
 							encounters={this.state.encounters}
 							maps={this.state.maps.filter(m => m.areas.length > 0)}
+							options={this.state.options}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
 							moveScene={(plot, scene, dir) => this.moveScene(plot, scene, dir)}
@@ -4087,12 +4115,7 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'select-image':
 					content = (
-						<ImageSelectionModal
-							select={id => {
-								this.changeValue(this.state.drawer.tile, 'customBackground', id);
-								this.closeDrawer();
-							}}
-						/>
+						<ImageSelectionModal select={id => this.state.drawer.onAccept(id)} />
 					);
 					header = 'choose an image';
 					width = '25%';

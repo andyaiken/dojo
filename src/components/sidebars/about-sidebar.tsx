@@ -5,6 +5,7 @@ import React from 'react';
 import { Matisse } from '../../utils/matisse';
 import { Utils } from '../../utils/utils';
 
+import { Adventure } from '../../models/adventure';
 import { Combat } from '../../models/combat';
 import { Exploration, Map } from '../../models/map';
 import { Options } from '../../models/misc';
@@ -26,6 +27,7 @@ interface Props {
 	parties: Party[];
 	library: MonsterGroup[];
 	maps: Map[];
+	adventures: Adventure[];
 	combats: Combat[];
 	explorations: Exploration[];
 	options: Options;
@@ -70,7 +72,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 	}
 
 	private clearImages() {
-		Matisse.clearUnusedImages(this.props.maps, this.props.combats, this.props.explorations);
+		Matisse.clearUnusedImages(this.props.maps, this.props.adventures, this.props.combats, this.props.explorations);
 
 		this.setState({
 			view: this.state.view

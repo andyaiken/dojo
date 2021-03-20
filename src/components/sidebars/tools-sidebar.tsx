@@ -444,7 +444,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 			if (progress.target) {
 				this.props.setHandout({
 					type: this.state.mode,
-					filename: file.name,
 					src: progress.target.result as string
 				});
 			}
@@ -499,7 +498,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 					<img
 						className='nonselectable-image'
 						src={this.props.handout.src || ''}
-						alt={this.props.handout.filename || ''}
+						alt='handout'
 					/>
 				);
 			case 'audio':

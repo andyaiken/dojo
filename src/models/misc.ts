@@ -66,6 +66,5 @@ export interface CardDraw {
 
 export interface Handout {
 	type: string;
-	filename: string;
 	src: string;
 }

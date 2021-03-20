@@ -488,6 +488,7 @@ export class PageSidebar extends React.Component<Props> {
 							parties={this.props.parties}
 							library={this.props.library}
 							maps={this.props.maps}
+							adventures={this.props.adventures}
 							combats={this.props.combats}
 							explorations={this.props.explorations}
 							options={this.props.options}

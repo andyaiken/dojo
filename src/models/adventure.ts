@@ -31,6 +31,6 @@ export interface SceneLink {
 export interface SceneResource {
 	id: string;
 	name: string;
-	type: 'text' | 'url' | 'encounter' | 'readaloud';
+	type: 'text' | 'url' | 'image' | 'encounter' | 'readaloud';
 	content: string;
 }

@@ -81,7 +81,9 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 
 			if (images.length === 0) {
 				images.push(
-					<Note key='empty'>no images</Note>
+					<Note key='empty'>
+						<div className='section'>no images</div>
+					</Note>
 				);
 			}
 
