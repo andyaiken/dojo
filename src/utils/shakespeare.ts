@@ -1324,7 +1324,7 @@ export class Shakespeare {
 			lines.push(this.randomActivity());
 		}
 
-		return lines.join(' ');
+		return lines.join(' ').trim();
 	}
 
 	private static randomWall() {

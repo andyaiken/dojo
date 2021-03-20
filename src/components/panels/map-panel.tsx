@@ -23,6 +23,7 @@ import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { CombatantTags } from './combat-controls-panel';
+import { MessagePanel } from './session-panel';
 
 interface Props {
 	map: Map;
@@ -734,6 +735,7 @@ export class MapPanel extends React.Component<Props, State> {
 							key={i.id}
 							token={i}
 							combatant={combatant || null}
+							user={this.props.mode === 'interactive-player' ? 'player' : 'dm'}
 							activeToken={activeToken}
 							style={tokenStyle}
 							width={miniSize * this.state.size}
@@ -1346,6 +1348,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
+	user: 'dm' | 'player';
 	activeToken: { token: MapItem, name: string } | null;
 	style: MapItemStyle;
 	width: number;
@@ -1482,6 +1485,16 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			info.push(
 				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from the map</button>
 			);
+		}
+
+		if (this.props.combatant) {
+			const messages = Comms.getMessagesFromCharacter(this.props.combatant.id);
+			if (messages.length > 0) {
+				const last = messages[messages.length - 1];
+				info.push(
+					<MessagePanel key='chat' user={this.props.user} message={last} showByline={false} openImage={data => null} />
+				);
+			}
 		}
 
 		return (

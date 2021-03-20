@@ -202,6 +202,7 @@ export class Player extends React.Component<Props, State> {
 						<MessagePanel
 							user='player'
 							message={message}
+							showByline={true}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 						/>
 					),

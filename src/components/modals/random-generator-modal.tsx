@@ -216,7 +216,7 @@ export class RandomGeneratorModal extends React.Component<Props, State> {
 			<div>
 				<Note>
 					<div className='section'>
-						the map will be created by adding tiles until there are <b>{data.areas}</b> rooms
+						the map will be created by adding tiles until there are <b>{data.areas} areas</b>
 					</div>
 				</Note>
 				<NumberSpin

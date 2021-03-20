@@ -32,6 +32,7 @@ export interface Person {
 
 export interface Message {
 	id: string;
+	timestamp: number;
 	from: string;
 	to: string[];
 	type: 'text' | 'link' | 'image' | 'roll' | 'card';
@@ -154,11 +155,27 @@ export class Comms {
 		return null;
 	}
 
+	public static getMessagesFromCharacter(characterID: string) {
+		const person = Comms.data.people.find(p => p.characterID === characterID);
+		if (!person) {
+			return [];
+		}
+
+		const fifteenSecondsAgo = Date.now() - (15 * 1000);
+
+		return Comms.data.messages
+			.filter(msg => msg.from === person.id)
+			.filter(msg => msg.to.length === 0)
+			.filter(msg => msg.type === 'text')
+			.filter(msg => msg.timestamp >= fifteenSecondsAgo);
+	}
+
 	public static createTextPacket(to: string[], text: string, language: string, untranslated: string): Packet {
 		return {
 			type: 'message',
 			payload: {
 				id: Utils.guid(),
+				timestamp: Date.now(),
 				from: Comms.getID(),
 				to: to,
 				type: 'text',
@@ -176,6 +193,7 @@ export class Comms {
 			type: 'message',
 			payload: {
 				id: Utils.guid(),
+				timestamp: Date.now(),
 				from: Comms.getID(),
 				to: to,
 				type: 'link',
@@ -191,6 +209,7 @@ export class Comms {
 			type: 'message',
 			payload: {
 				id: Utils.guid(),
+				timestamp: Date.now(),
 				from: Comms.getID(),
 				to: to,
 				type: 'image',
@@ -206,6 +225,7 @@ export class Comms {
 			type: 'message',
 			payload: {
 				id: Utils.guid(),
+				timestamp: Date.now(),
 				from: Comms.getID(),
 				to: to,
 				type: 'roll',
@@ -221,6 +241,7 @@ export class Comms {
 			type: 'message',
 			payload: {
 				id: Utils.guid(),
+				timestamp: Date.now(),
 				from: Comms.getID(),
 				to: to,
 				type: 'card',
@@ -301,6 +322,7 @@ export class Comms {
 			case 'message':
 				const msg: Message = {
 					id: packet.payload['id'],
+					timestamp: packet.payload['timestamp'],
 					from: packet.payload['from'],
 					to: packet.payload['to'],
 					type: packet.payload['type'],

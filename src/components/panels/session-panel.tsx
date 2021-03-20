@@ -14,6 +14,7 @@ import { CardDraw, PlayingCard } from '../../models/misc';
 
 import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
@@ -196,6 +197,7 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 						key={message.id}
 						user={this.props.user}
 						message={message}
+						showByline={true}
 						openImage={data => this.props.openImage(data)}
 					/>
 				));
@@ -230,6 +232,7 @@ export class MessagesPanel extends React.Component<MessagesPanelProps> {
 interface MessagePanelProps {
 	user: 'dm' | 'player';
 	message: Message;
+	showByline: boolean;
 	openImage: (data: string) => void;
 }
 
@@ -330,10 +333,12 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 
 			return (
 				<div className={mainStyle}>
-					<div className={bylineStyle}>
-						{byline}
-						{icon}
-					</div>
+					<Conditional display={this.props.showByline}>
+						<div className={bylineStyle}>
+							{byline}
+							{icon}
+						</div>
+					</Conditional>
 					<div className={contentStyle}>
 						{content}
 					</div>

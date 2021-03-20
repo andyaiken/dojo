@@ -468,6 +468,7 @@ export class Main extends React.Component<Props, State> {
 						<MessagePanel
 							user='dm'
 							message={message}
+							showByline={true}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
 						/>
 					),
