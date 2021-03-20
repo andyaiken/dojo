@@ -1481,12 +1481,6 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			}
 		}
 
-		if (clicked) {
-			info.push(
-				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from the map</button>
-			);
-		}
-
 		if (this.props.combatant) {
 			const messages = Comms.getMessagesFromCharacter(this.props.combatant.id);
 			if (messages.length > 0) {
@@ -1495,6 +1489,12 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 					<MessagePanel key='chat' user={this.props.user} message={last} showByline={false} openImage={data => null} />
 				);
 			}
+		}
+
+		if (clicked) {
+			info.push(
+				<button key='remove' onClick={() => this.props.remove(this.props.token.id)}>remove from the map</button>
+			);
 		}
 
 		return (
