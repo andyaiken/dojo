@@ -68,13 +68,12 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 			const images = this.state.images
 				.filter(img => Sherlock.match(this.state.filter, img.name))
 				.map(img => (
-					<Group key={img.id}>
+					<Group key={img.id} onClick={() => this.props.select ? this.props.select(img.id) : null}>
 						<div className='subheading'>{img.name}</div>
 						<img
-							className='section selectable-image'
+							className='section nonselectable-image'
 							src={img.data}
 							alt={img.name}
-							onClick={() => this.props.select ? this.props.select(img.id) : null}
 						/>
 					</Group>
 				));

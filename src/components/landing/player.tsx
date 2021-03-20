@@ -38,7 +38,6 @@ import { MapPanel } from '../panels/map-panel';
 import { PageFooter } from '../panels/page-footer';
 import { PageHeader } from '../panels/page-header';
 import { PageSidebar } from '../panels/page-sidebar';
-import { PDF } from '../panels/pdf';
 import { PortraitPanel } from '../panels/portrait-panel';
 import { MessagePanel } from '../panels/session-panel';
 
@@ -600,7 +599,7 @@ export class Player extends React.Component<Props, State> {
 			case 'image':
 				return (
 					<img
-						className='nonselectable-image borderless'
+						className='nonselectable-image'
 						src={handout.src}
 						alt='handout'
 					/>
@@ -629,12 +628,6 @@ export class Player extends React.Component<Props, State> {
 						<Note>
 							<div className='section'>{handout.src}</div>
 						</Note>
-					</div>
-				);
-			case 'pdf':
-				return (
-					<div className='scrollable'>
-						<PDF src={handout.src} />
 					</div>
 				);
 		}

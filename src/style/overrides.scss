@@ -211,9 +211,11 @@ button {
 }
 
 .ant-drawer-body {
-	padding: 0;
-	font-size: 12px;
 	font-family: 'Open Sans', sans-serif;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	padding: 0;
 	height: 100%;
 	user-select: none;
 }
@@ -400,9 +402,11 @@ button {
 }
 
 .ant-popover {
-	user-select: none;
-	font-size: 12px;
 	font-family: 'Open Sans', sans-serif;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 12px;
+	user-select: none;
 
 	.ant-popover-inner {
 		border-radius: 0;
@@ -472,10 +476,13 @@ button {
 .ant-notification-notice {
 
 	&.ant-notification-notice-closable {
+		font-family: 'Open Sans', sans-serif;
+		font-style: normal;
+		font-weight: normal;
+		font-size: 12px;
 		width: 400px;
 		border: 1px solid $control-border;
 		line-height: unset;
-		font-family: 'Open Sans', sans-serif;
 		user-select: none;
 		padding: 10px;
 		display: flex;

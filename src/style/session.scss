@@ -80,7 +80,8 @@
 			text-align: center;
 		}
 
-		.selectable-image {
+		.selectable-image,
+		.nonselectable-image {
 			max-height: 100px;
 		}
 
@@ -117,6 +118,7 @@
 		}
 	}
 
+	.selectable-image,
 	.nonselectable-image {
 		max-height: 100px;
 	}

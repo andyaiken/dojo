@@ -60,7 +60,7 @@ export class Matisse {
 	}
 
 	public static clearUnusedImages(maps: Map[], adventures: Adventure[], combats: Combat[], explorations: Exploration[]) {
-		const images = Matisse.allImages();
+		const images = this.allImages();
 		images.forEach(img => {
 			let used = false;
 

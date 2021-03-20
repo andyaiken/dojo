@@ -163,6 +163,8 @@ code {
 
 .dragged {
 	font-family: 'Open Sans', sans-serif;
+	font-style: normal;
+	font-weight: normal;
 	font-size: 12px;
 	background-color: $background;
 	box-sizing: border-box;
@@ -220,18 +222,14 @@ p,
 
 .selectable-image,
 .nonselectable-image {
-	border: 1px solid $control-border;
 	padding: 5px;
 	width: 100%;
 	object-fit: contain;
 	max-height: 100%;
-
-	&.borderless {
-		border: none;
-	}
 }
 
 .selectable-image {
+	border: 1px solid $control-border;
 	cursor: pointer;
 
 	&:hover {
@@ -324,11 +322,4 @@ p,
 		flex: 0 0 auto;
 		font-size: 10px;
 	}
-}
-
-.pdf-document {
-	width: 100%;
-    overflow-x: auto;
-	overflow-y: hidden;
-	margin: 5px 0;
 }

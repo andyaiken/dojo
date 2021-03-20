@@ -21,7 +21,6 @@ import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { DieRollPanel, DieRollResultPanel } from '../panels/die-roll-panel';
-import { PDF } from '../panels/pdf';
 import { PlayingCardPanel } from '../panels/playing-card-panel';
 import { Popout } from '../panels/popout';
 
@@ -480,8 +479,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 				return 'video/*';
 			case 'text':
 				return '.txt';
-			case 'pdf':
-				return '.pdf';
 		}
 
 		return undefined;
@@ -524,10 +521,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 							<div className='section'>{this.props.handout.src}</div>
 						</Note>
 					</div>
-				);
-			case 'pdf':
-				return (
-					<PDF src={this.props.handout.src || ''} />
 				);
 		}
 
@@ -578,7 +571,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 							</div>
 						</Note>
 						<Selector
-							options={['image', 'audio', 'video', 'text', 'pdf'].map(o => ({ id: o, text: o }))}
+							options={['image', 'audio', 'video', 'text'].map(o => ({ id: o, text: o }))}
 							selectedID={this.state.mode}
 							onSelect={mode => this.setMode(mode)}
 						/>

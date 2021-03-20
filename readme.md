@@ -50,7 +50,7 @@ You can use Dojo as a virtual game table, allowing your players to move their ow
 
 ![Player App](./public/screenshots/sessioncombat.png)
 
-It's also got built-in chat, die roll sharing, and the ability to show handouts (as images or PDFs) to your players.
+It's also got built-in chat, die roll sharing, and the ability to show handouts to your players.
 
 ![Chat](./public/screenshots/sessionchat.png)
 

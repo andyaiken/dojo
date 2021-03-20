@@ -255,7 +255,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 					if (img) {
 						content = (
 							<img
-								className='nonselectable-image borderless'
+								className='nonselectable-image'
 								src={img.data}
 								alt='resource'
 							/>
