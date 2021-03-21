@@ -44,6 +44,16 @@ If you're using a tactical map for your encounter, you can move tokens around th
 
 If you have a second display, the app can show a separate window including the initiative list (which includes relevant condition information) and a copy of the map, if you're using one.
 
+### Adventure View
+
+You can write your own adventures in Dojo. An adventure looks like a flowchart, to which you can add encounters and handouts.
+
+![Adventure Flowchart](./public/screenshots/adventure.png)
+
+You can even generate an entire dungeon delve, with a map and encounters, with a single click, and get a quick visual indication of how difficult it will be.
+
+![Dungeon Delve](./public/screenshots/delve.png)
+
 ### For Players
 
 You can use Dojo as a virtual game table, allowing your players to move their own PCs around the map.
@@ -62,5 +72,6 @@ Who needs a DM screen, when you have all this at your fingertips?
 - a **name generator** for NPCs
 - **references** for skills, conditions, and combat actions
 - a **text generator** that can quickly give you whole paragraphs of Elvish, Dwarvish, Orcish, Draconic, and so on
+- a **party reference screen** to show you the party's spoken languages and passive skills at a glance
 
 ![DM tools](./public/screenshots/dmtools.png)

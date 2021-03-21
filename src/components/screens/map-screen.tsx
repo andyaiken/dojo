@@ -171,36 +171,7 @@ export class MapScreen extends React.Component<Props, State> {
 				}
 			}
 
-			if (this.state.selectedAreaID) {
-				const area = this.props.map.areas.find(a => a.id === this.state.selectedAreaID);
-				if (area) {
-					sidebar = (
-						<div>
-							<MapAreaPanel
-								area={area}
-								changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-								nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-								moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
-								deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
-							/>
-							<hr/>
-							<button onClick={() => this.setSelectedAreaID(null)}>
-								<CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the editor
-							</button>
-						</div>
-					);
-				}
-			}
-
 			if (!sidebar) {
-				const addTileText = this.state.addingTile ? 'click and drag on the map to create a tile, or click here to cancel' : 'add a map tile';
-				const addAreaText = this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area';
-				const areas = this.props.map.areas.map(a => (
-					<Group key={a.id} onClick={() => this.setSelectedAreaID(a.id)}>
-						{a.name || 'unnamed area'}
-					</Group>
-				));
-
 				sidebar = (
 					<div>
 						<div className='section'>
@@ -233,7 +204,9 @@ export class MapScreen extends React.Component<Props, State> {
 									</Note>
 								</Conditional>
 								<div className='section'>
-									<button onClick={() => this.toggleAddingTile()}>{addTileText}</button>
+									<button onClick={() => this.toggleAddingTile()}>
+										{this.state.addingTile ? 'click and drag on the map to create a tile, or click here to cancel' : 'add a map tile'}
+									</button>
 									<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
 								</div>
 							</Group>
@@ -254,9 +227,25 @@ export class MapScreen extends React.Component<Props, State> {
 									</Note>
 								</Conditional>
 								<div className='section'>
-									{areas}
+									{
+										this.props.map.areas.map(area => (
+											<div key={area.id} onMouseEnter={() => this.setSelectedAreaID(area.id)} onMouseLeave={() => this.setSelectedAreaID(null)}>
+												<Expander text={area.name || 'unnamed area'}>
+													<MapAreaPanel
+														area={area}
+														changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+														nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
+														moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
+														deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
+													/>
+												</Expander>
+											</div>
+										))
+									}
 									<hr/>
-									<button onClick={() => this.toggleAddingArea()}>{addAreaText}</button>
+									<button onClick={() => this.toggleAddingArea()}>
+										{this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area'}
+									</button>
 									<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
 								</div>
 							</Group>
@@ -484,24 +473,7 @@ interface MapAreaProps {
 	deleteMapArea: (area: MapArea) => void;
 }
 
-interface MapAreaState {
-	view: string;
-}
-
-class MapAreaPanel extends React.Component<MapAreaProps, MapAreaState> {
-	constructor(props: MapAreaProps) {
-		super(props);
-		this.state = {
-			view: 'main'
-		};
-	}
-
-	private setView(view: string) {
-		this.setState({
-			view: view
-		});
-	}
-
+class MapAreaPanel extends React.Component<MapAreaProps> {
 	private randomName() {
 		const name = Shakespeare.capitalise(Shakespeare.generateRoomName());
 		this.props.changeValue(this.props.area, 'name', name);
@@ -511,61 +483,45 @@ class MapAreaPanel extends React.Component<MapAreaProps, MapAreaState> {
 		try {
 			return (
 				<div>
-					<div className='heading'>
-						<div className='title'>map area</div>
-					</div>
-					<div>
-						<div className='section'>
-							<div className='subheading'>name</div>
-							<div className='control-with-icons'>
-								<Textbox
-									text={this.props.area.name}
-									onChange={value => this.props.changeValue(this.props.area, 'name', value)}
-								/>
-								<div className='icons'>
-									<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
-								</div>
-							</div>
+					<div className='subheading'>name</div>
+					<div className='control-with-icons'>
+						<Textbox
+							text={this.props.area.name}
+							onChange={value => this.props.changeValue(this.props.area, 'name', value)}
+						/>
+						<div className='icons'>
+							<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
 						</div>
-						<Group>
-							<Tabs
-								options={['main', 'notes'].map(o => ({ id: o, text: o }))}
-								selectedID={this.state.view}
-								onSelect={view => this.setView(view)}
-							/>
-							<Conditional display={this.state.view === 'main'}>
-								<MovementPanel onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
-								<div className='section'>
-									<div className='subheading'>size</div>
-									<NumberSpin
-										value={this.props.area.width + ' sq / ' + (this.props.area.width * 5) + ' ft'}
-										label='width'
-										downEnabled={this.props.area.width > 1}
-										onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'width', delta)}
-									/>
-									<NumberSpin
-										value={this.props.area.height + ' sq  /' + (this.props.area.width * 5) + ' ft'}
-										label='height'
-										downEnabled={this.props.area.height > 1}
-										onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'height', delta)}
-									/>
-								</div>
-							</Conditional>
-							<Conditional display={this.state.view === 'notes'}>
-								<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
-								<button
-									onClick={() => {
-										const desc = Shakespeare.generateRoomDescription();
-										this.props.changeValue(this.props.area, 'text', desc);
-									}}
-								>
-									set a random description
-								</button>
-							</Conditional>
-						</Group>
-						<hr/>
-						<ConfirmButton onConfirm={() => this.props.deleteMapArea(this.props.area)}>delete area</ConfirmButton>
 					</div>
+					<div className='subheading'>move</div>
+					<MovementPanel onMove={(dir, step) => this.props.moveMapArea(this.props.area, dir, step)} />
+					<div className='subheading'>size</div>
+					<NumberSpin
+						value={this.props.area.width + ' sq / ' + (this.props.area.width * 5) + ' ft'}
+						label='width'
+						downEnabled={this.props.area.width > 1}
+						onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'width', delta)}
+					/>
+					<NumberSpin
+						value={this.props.area.height + ' sq  /' + (this.props.area.width * 5) + ' ft'}
+						label='height'
+						downEnabled={this.props.area.height > 1}
+						onNudgeValue={delta => this.props.nudgeValue(this.props.area, 'height', delta)}
+					/>
+					<hr/>
+					<Expander text='notes'>
+						<MarkdownEditor text={this.props.area.text} onChange={text => this.props.changeValue(this.props.area, 'text', text)} />
+						<button
+							onClick={() => {
+								const desc = Shakespeare.generateRoomDescription();
+								this.props.changeValue(this.props.area, 'text', desc);
+							}}
+						>
+							set a random description
+						</button>
+					</Expander>
+					<hr/>
+					<ConfirmButton onConfirm={() => this.props.deleteMapArea(this.props.area)}>delete area</ConfirmButton>
 				</div>
 			);
 		} catch (e) {

@@ -541,6 +541,10 @@ body .react-mde {
 	border-left-width: 5px;
 	border-radius: 0;
 
+	&:hover {
+		border-color: $highlight;
+	}
+
 	.mde-header {
 		padding: 3px;
 
