@@ -1,48 +1,9 @@
 .trait-header-bar {
-	background-color: $control-border-05;
-	margin: 2px 0;
-	padding-left: 5px;
+	background-color: $control-border-02;
+	margin: 5px 0;
+	padding: 5px;
 }
 
 .trait-bar {
-	margin: 5px 0;
-	padding: 2px 2px 2px 5px;
-	border-left: 5px solid $control-border;
-	cursor: pointer;
 	z-index: 2000;
-	display: flex;
-	align-items: center;
-
-	&:hover {
-		background-color: $highlight01;
-		border-color: $highlight;
-	}
-
-	&.selected {
-		background-color: $highlight02;
-		border-color: $highlight;
-		font-weight: 600;
-		cursor: default;
-	}
-
-	.anticon {
-		flex-grow: 0;
-		flex-shrink: 0;
-		flex-basis: auto;
-	}
-
-	.name {
-		flex-grow: 1;
-		flex-shrink: 1;
-		flex-basis: 0;
-	}
-}
-
-.grabber {
-	margin-right: 5px;
-	cursor: ns-resize;
-	display: inline-block;
-	vertical-align: top;
-	font-size: 15px;
-	padding: 3px 0;
 }

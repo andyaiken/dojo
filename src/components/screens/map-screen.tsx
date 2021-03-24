@@ -484,11 +484,13 @@ class MapAreaPanel extends React.Component<MapAreaProps> {
 			return (
 				<div>
 					<div className='subheading'>name</div>
-					<div className='control-with-icons'>
-						<Textbox
-							text={this.props.area.name}
-							onChange={value => this.props.changeValue(this.props.area, 'name', value)}
-						/>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Textbox
+								text={this.props.area.name}
+								onChange={value => this.props.changeValue(this.props.area, 'name', value)}
+							/>
+						</div>
 						<div className='icons'>
 							<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
 						</div>

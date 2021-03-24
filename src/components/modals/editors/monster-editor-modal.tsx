@@ -20,17 +20,17 @@ import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
+import { Conditional } from '../../controls/conditional';
 import { Expander } from '../../controls/expander';
+import { Group } from '../../controls/group';
 import { Note } from '../../controls/note';
 import { NumberSpin } from '../../controls/number-spin';
 import { Selector } from '../../controls/selector';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
-import { AbilityScorePanel } from '../../panels/ability-score-panel';
 import { FilterPanel } from '../../panels/filter-panel';
 import { PortraitPanel } from '../../panels/portrait-panel';
 import { TraitEditorPanel, TraitPanel } from '../../panels/traits-panel';
-import { Conditional } from '../../controls/conditional';
 
 interface Props {
 	monster: Monster;
@@ -42,6 +42,7 @@ interface Props {
 interface State {
 	monster: Monster;
 	page: string;
+	selectedTraitID: string | null;
 	sidebarView: string;
 	helpSection: string;
 	similarFilter: {
@@ -65,6 +66,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		this.state = {
 			monster: props.monster,
 			page: 'overview',
+			selectedTraitID: null,
 			sidebarView: 'statblock',
 			helpSection: 'type',
 			similarFilter: {
@@ -97,10 +99,11 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	}
 
 	private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
-		Frankenstein.addTrait(this.state.monster, type);
+		const trait = Frankenstein.addTrait(this.state.monster, type);
 		this.recalculateRole();
 		this.setState({
-			monster: this.state.monster
+			monster: this.state.monster,
+			selectedTraitID: trait.id
 		});
 	}
 
@@ -110,16 +113,18 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		Frankenstein.moveTrait(this.state.monster, oldIndex, newIndex);
 		this.recalculateRole();
 		this.setState({
-			monster: this.state.monster
+			monster: this.state.monster,
+			page: 'features'
 		});
 	}
 
-	private copyTrait(trait: Trait) {
-		Frankenstein.copyTrait(this.state.monster, trait);
+	private copyTrait(trait: Trait, sourceMonster: Monster | null) {
+		const newTrait = Frankenstein.copyTrait(trait, this.state.monster, sourceMonster);
 		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster,
-			page: 'features'
+			page: 'features',
+			selectedTraitID: newTrait.id
 		});
 	}
 
@@ -127,7 +132,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		(trait as any)[field] = value;
 		this.recalculateRole();
 		this.setState({
-			monster: this.state.monster
+			monster: this.state.monster,
+			page: 'features'
 		});
 	}
 
@@ -135,7 +141,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		Frankenstein.removeTrait(this.state.monster, trait);
 		this.recalculateRole();
 		this.setState({
-			monster: this.state.monster
+			monster: this.state.monster,
+			page: 'features',
+			selectedTraitID: null
 		});
 	}
 
@@ -439,10 +447,10 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			}
 		}
 
-		const valueSections = distinct.map(d => {
+		const valueSections = distinct.map((d, index) => {
 			const width = 100 * d.count / this.state.scratchpadList.length;
 			return (
-				<Row gutter={10} className='value-list' key={distinct.indexOf(d)}>
+				<Row gutter={10} className='value-list' key={index}>
 					<Col span={8} className='text-container'>
 						{d.value || '(none specified)'}
 					</Col>
@@ -459,7 +467,6 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		return (
 			<div>
 				{valueSections}
-				<button onClick={() => this.setRandomValue(field)}>select random value</button>
 			</div>
 		);
 	}
@@ -530,7 +537,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					<MonsterTemplateCard
 						monster={m}
 						section={this.state.page}
-						copyTrait={trait => this.copyTrait(trait)}
+						copyTrait={trait => this.copyTrait(trait, m)}
 						deselectMonster={monster => this.removeFromScratchpad(monster)}
 						showMonster={monster => this.setState({ inspectedMonster: monster })}
 					/>
@@ -544,6 +551,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						<Note>
 							<div className='section'>
 								select one of the following fields to see its values from your scratchpad monsters
+							</div>
+							<div className='section'>
+								you can also press the <ThunderboltOutlined/> button beside a field to select a random value for that field
 							</div>
 						</Note>
 						<Selector
@@ -619,34 +629,42 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return (
 					<OverviewTab
 						monster={this.state.monster}
+						allowRandomize={this.state.scratchpadList.length > 0}
 						changeValue={(field, value) => this.changeValue(field, value)}
 						nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+						randomValue={field => this.setRandomValue(field)}
 					/>
 				);
 			case 'abilities':
 				return (
 					<AbilitiesTab
 						monster={this.state.monster}
+						allowRandomize={this.state.scratchpadList.length > 0}
 						changeValue={(field, value) => this.changeValue(field, value)}
 						nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+						randomValue={field => this.setRandomValue(field)}
 					/>
 				);
 			case 'combat':
 				return (
 					<CombatTab
 						monster={this.state.monster}
+						allowRandomize={this.state.scratchpadList.length > 0}
 						changeValue={(field, value) => this.changeValue(field, value)}
 						nudgeValue={(field, delta) => this.nudgeValue(field, delta)}
+						randomValue={field => this.setRandomValue(field)}
 					/>
 				);
 			case 'features':
 				return (
 					<FeaturesTab
 						monster={this.state.monster}
+						selectedTraitID={this.state.selectedTraitID}
 						addTrait={type => this.addTrait(type)}
-						copyTrait={trait => this.copyTrait(trait)}
+						copyTrait={trait => this.copyTrait(trait, null)}
 						moveTrait={(trait, moveBefore) => this.moveTrait(trait, moveBefore)}
 						deleteTrait={trait => this.deleteTrait(trait)}
+						selectTrait={trait => this.setState({ selectedTraitID: trait.id })}
 						changeValue={(trait, type, value) => this.changeTrait(trait, type, value)}
 					/>
 				);
@@ -669,7 +687,11 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return this.getScratchpad();
 			case 'features':
 				return (
-					<FeatureBrowser monster={this.state.monster} library={this.props.library} copyTrait={t => this.copyTrait(t)} />
+					<FeatureBrowser
+						monster={this.state.monster}
+						library={this.props.library}
+						importTrait={(trait, sourceMonster) => this.copyTrait(trait, sourceMonster)}
+					/>
 				);
 		}
 
@@ -899,8 +921,10 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 
 interface OverviewTabProps {
 	monster: Monster;
+	allowRandomize: boolean;
 	changeValue: (field: string, value: any) => void;
 	nudgeValue: (field: string, delta: number) => void;
+	randomValue: (field: string) => void;
 }
 
 class OverviewTab extends React.Component<OverviewTabProps> {
@@ -915,70 +939,90 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 				<Row gutter={10} key='overview'>
 					<Col span={24}>
 						<div className='subheading'>name</div>
-						<div className='control-with-icons'>
-							<Textbox
-								text={this.props.monster.name}
-								onChange={value => this.props.changeValue('name', value)}
-							/>
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									text={this.props.monster.name}
+									onChange={value => this.props.changeValue('name', value)}
+								/>
+							</div>
 							<div className='icons'>
 								<ThunderboltOutlined onClick={() => this.randomName()} title='generate a random name' />
 							</div>
 						</div>
 						<div className='subheading'>type</div>
-						<Selector
-							options={CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }))}
-							selectedID={this.props.monster.category}
-							itemsPerRow={5}
-							onSelect={optionID => this.props.changeValue('category', optionID)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('category')}>
+							<Selector
+								options={CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }))}
+								selectedID={this.props.monster.category}
+								itemsPerRow={5}
+								onSelect={optionID => this.props.changeValue('category', optionID)}
+							/>
+						</FieldPanel>
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>subtype</div>
-						<Textbox
-							text={this.props.monster.tag}
-							placeholder='none'
-							onChange={value => this.props.changeValue('tag', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('tag')}>
+							<Textbox
+								text={this.props.monster.tag}
+								placeholder='none'
+								onChange={value => this.props.changeValue('tag', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>size</div>
-						<NumberSpin
-							value={this.props.monster.size}
-							downEnabled={this.props.monster.size !== 'tiny'}
-							upEnabled={this.props.monster.size !== 'gargantuan'}
-							onNudgeValue={delta => this.props.nudgeValue('size', delta)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('size')}>
+							<NumberSpin
+								value={this.props.monster.size}
+								downEnabled={this.props.monster.size !== 'tiny'}
+								upEnabled={this.props.monster.size !== 'gargantuan'}
+								onNudgeValue={delta => this.props.nudgeValue('size', delta)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>alignment</div>
-						<Textbox
-							text={this.props.monster.alignment}
-							onChange={value => this.props.changeValue('alignment', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('alignment')}>
+							<Textbox
+								text={this.props.monster.alignment}
+								onChange={value => this.props.changeValue('alignment', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>challenge rating</div>
-						<NumberSpin
-							value={Gygax.challenge(this.props.monster.challenge)}
-							downEnabled={this.props.monster.challenge > 0}
-							onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('challenge')}>
+							<NumberSpin
+								value={Gygax.challenge(this.props.monster.challenge)}
+								downEnabled={this.props.monster.challenge > 0}
+								onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>speed</div>
-						<Textbox
-							text={this.props.monster.speed}
-							onChange={value => this.props.changeValue('speed', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('speed')}>
+							<Textbox
+								text={this.props.monster.speed}
+								onChange={value => this.props.changeValue('speed', value)}
+							/>
+						</FieldPanel>
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>senses</div>
-						<Textbox
-							text={this.props.monster.senses}
-							onChange={value => this.props.changeValue('senses', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('senses')}>
+							<Textbox
+								text={this.props.monster.senses}
+								onChange={value => this.props.changeValue('senses', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>languages</div>
-						<Textbox
-							text={this.props.monster.languages}
-							onChange={value => this.props.changeValue('languages', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('languages')}>
+							<Textbox
+								text={this.props.monster.languages}
+								onChange={value => this.props.changeValue('languages', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>equipment</div>
-						<Textbox
-							text={this.props.monster.equipment}
-							onChange={value => this.props.changeValue('equipment', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('equipment')}>
+							<Textbox
+								text={this.props.monster.equipment}
+								onChange={value => this.props.changeValue('equipment', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>portrait</div>
 						<PortraitPanel
 							source={this.props.monster}
@@ -997,8 +1041,10 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 
 interface AbilitiesTabProps {
 	monster: Monster;
+	allowRandomize: boolean;
 	changeValue: (field: string, value: any) => void;
 	nudgeValue: (field: string, delta: number) => void;
+	randomValue: (field: string) => void;
 }
 
 class AbilitiesTab extends React.Component<AbilitiesTabProps> {
@@ -1007,24 +1053,70 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 			return (
 				<Row gutter={10} key='abilities'>
 					<Col span={12}>
-						<div className='subheading'>ability scores</div>
-						<AbilityScorePanel
-							edit={true}
-							combatant={this.props.monster}
-							onNudgeValue={(source, type, delta) => this.props.nudgeValue(type, delta)}
-						/>
+						<div className='subheading'>strength</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.str')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.str + ' (' + Gygax.modifier(this.props.monster.abilityScores.str) + ')'}
+								downEnabled={this.props.monster.abilityScores.str > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.str', delta)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>dexterity</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.dex')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.dex + ' (' + Gygax.modifier(this.props.monster.abilityScores.dex) + ')'}
+								downEnabled={this.props.monster.abilityScores.dex > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.dex', delta)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>constitution</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.con')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.con + ' (' + Gygax.modifier(this.props.monster.abilityScores.con) + ')'}
+								downEnabled={this.props.monster.abilityScores.con > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.con', delta)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>intelligence</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.int')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.int + ' (' + Gygax.modifier(this.props.monster.abilityScores.int) + ')'}
+								downEnabled={this.props.monster.abilityScores.int > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.int', delta)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>wisdom</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.wis')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.wis + ' (' + Gygax.modifier(this.props.monster.abilityScores.wis) + ')'}
+								downEnabled={this.props.monster.abilityScores.wis > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.wis', delta)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>charisma</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('abilityScores.cha')}>
+							<NumberSpin
+								value={this.props.monster.abilityScores.cha + ' (' + Gygax.modifier(this.props.monster.abilityScores.cha) + ')'}
+								downEnabled={this.props.monster.abilityScores.cha > 0}
+								onNudgeValue={delta => this.props.nudgeValue('abilityScores.cha', delta)}
+							/>
+						</FieldPanel>
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>saving throws</div>
-						<Textbox
-							text={this.props.monster.savingThrows}
-							onChange={value => this.props.changeValue('savingThrows', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('savingThrows')}>
+							<Textbox
+								text={this.props.monster.savingThrows}
+								onChange={value => this.props.changeValue('savingThrows', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>skills</div>
-						<Textbox
-							text={this.props.monster.skills}
-							onChange={value => this.props.changeValue('skills', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('skills')}>
+							<Textbox
+								text={this.props.monster.skills}
+								onChange={value => this.props.changeValue('skills', value)}
+							/>
+						</FieldPanel>
 					</Col>
 				</Row>
 			);
@@ -1037,8 +1129,10 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 
 interface CombatTabProps {
 	monster: Monster;
+	allowRandomize: boolean;
 	changeValue: (field: string, value: any) => void;
 	nudgeValue: (field: string, delta: number) => void;
+	randomValue: (field: string) => void;
 }
 
 class CombatTab extends React.Component<CombatTabProps> {
@@ -1048,22 +1142,28 @@ class CombatTab extends React.Component<CombatTabProps> {
 				<Row gutter={10} key='combat'>
 					<Col span={12}>
 						<div className='subheading'>armor class</div>
-						<NumberSpin
-							value={this.props.monster.ac}
-							downEnabled={this.props.monster.ac > 0}
-							onNudgeValue={delta => this.props.nudgeValue('ac', delta)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('ac')}>
+							<NumberSpin
+								value={this.props.monster.ac}
+								downEnabled={this.props.monster.ac > 0}
+								onNudgeValue={delta => this.props.nudgeValue('ac', delta)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>armor type</div>
-						<Textbox
-							text={this.props.monster.acInfo}
-							onChange={value => this.props.changeValue('acInfo', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('acInfo')}>
+							<Textbox
+								text={this.props.monster.acInfo}
+								onChange={value => this.props.changeValue('acInfo', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>hit dice</div>
-						<NumberSpin
-							value={this.props.monster.hitDice}
-							downEnabled={this.props.monster.hitDice > 1}
-							onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('hitDice')}>
+							<NumberSpin
+								value={this.props.monster.hitDice}
+								downEnabled={this.props.monster.hitDice > 1}
+								onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
+							/>
+						</FieldPanel>
 						<Note>
 							<div className='section'>
 								to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier
@@ -1076,31 +1176,41 @@ class CombatTab extends React.Component<CombatTabProps> {
 					</Col>
 					<Col span={12}>
 						<div className='subheading'>damage resistances</div>
-						<Textbox
-							text={this.props.monster.damage.resist}
-							onChange={value => this.props.changeValue('damage.resist', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('damage.resist')}>
+							<Textbox
+								text={this.props.monster.damage.resist}
+								onChange={value => this.props.changeValue('damage.resist', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>damage vulnerabilities</div>
-						<Textbox
-							text={this.props.monster.damage.vulnerable}
-							onChange={value => this.props.changeValue('damage.vulnerable', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('damage.vulnerable')}>
+							<Textbox
+								text={this.props.monster.damage.vulnerable}
+								onChange={value => this.props.changeValue('damage.vulnerable', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>damage immunities</div>
-						<Textbox
-							text={this.props.monster.damage.immune}
-							onChange={value => this.props.changeValue('damage.immune', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('damage.immune')}>
+							<Textbox
+								text={this.props.monster.damage.immune}
+								onChange={value => this.props.changeValue('damage.immune', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>condition immunities</div>
-						<Textbox
-							text={this.props.monster.conditionImmunities}
-							onChange={value => this.props.changeValue('conditionImmunities', value)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('conditionImmunities')}>
+							<Textbox
+								text={this.props.monster.conditionImmunities}
+								onChange={value => this.props.changeValue('conditionImmunities', value)}
+							/>
+						</FieldPanel>
 						<div className='subheading'>legendary actions</div>
-						<NumberSpin
-							value={this.props.monster.legendaryActions}
-							downEnabled={this.props.monster.legendaryActions > 0}
-							onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
-						/>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('legendaryActions')}>
+							<NumberSpin
+								value={this.props.monster.legendaryActions}
+								downEnabled={this.props.monster.legendaryActions > 0}
+								onNudgeValue={delta => this.props.nudgeValue('legendaryActions', delta)}
+							/>
+						</FieldPanel>
 					</Col>
 				</Row>
 			);
@@ -1113,31 +1223,16 @@ class CombatTab extends React.Component<CombatTabProps> {
 
 interface FeaturesTabProps {
 	monster: Monster;
+	selectedTraitID: string | null;
 	addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') => void;
 	copyTrait: (trait: Trait) => void;
 	moveTrait: (trait: Trait, moveBefore: Trait) => void;
 	deleteTrait: (trait: Trait) => void;
+	selectTrait: (trait: Trait) => void;
 	changeValue: (trait: Trait, field: string, value: any) => void;
 }
 
-interface FeaturesTabState {
-	selectedTraitID: string | null;
-}
-
-class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
-	constructor(props: FeaturesTabProps) {
-		super(props);
-		this.state = {
-			selectedTraitID: null
-		};
-	}
-
-	private setSelectedTraitID(id: string | null) {
-		this.setState({
-			selectedTraitID: id
-		});
-	}
-
+class FeaturesTab extends React.Component<FeaturesTabProps> {
 	private createSection(traitsByType: { [id: string]: Trait[] }, type: string) {
 		const traits = traitsByType[type];
 
@@ -1168,8 +1263,8 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 							<TraitBarPanel
 								key={value.id}
 								trait={value}
-								isSelected={value.id === this.state.selectedTraitID}
-								select={id => this.setSelectedTraitID(id)}
+								isSelected={value.id === this.props.selectedTraitID}
+								select={trait => this.props.selectTrait(trait)}
 							/>
 						</div>
 					)}
@@ -1188,7 +1283,7 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 				traitsByType[type] = this.props.monster.traits.filter(t => t.type === type);
 			});
 
-			const selectedTrait = this.props.monster.traits.find(t => t.id === this.state.selectedTraitID);
+			const selectedTrait = this.props.monster.traits.find(t => t.id === this.props.selectedTraitID);
 			let selection = null;
 			if (selectedTrait) {
 				selection = (
@@ -1228,22 +1323,55 @@ class FeaturesTab extends React.Component<FeaturesTabProps, FeaturesTabState> {
 	}
 }
 
+interface FieldPanelProps {
+	allowRandomize: boolean;
+	onRandomize: () => void;
+}
+
+class FieldPanel extends React.Component<FieldPanelProps> {
+	public render() {
+		try {
+			if (this.props.allowRandomize) {
+				return (
+					<div className='content-then-icons'>
+						<div className='content'>
+							{this.props.children}
+						</div>
+						<div className='icons'>
+							<ThunderboltOutlined title='use a value from your scratchpad' onClick={() => this.props.onRandomize()} />
+						</div>
+					</div>
+				);
+			}
+
+			return this.props.children;
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='FieldPanel' error={e} />;
+		}
+	}
+}
+
 interface TraitBarProps {
 	trait: Trait;
 	isSelected: boolean;
-	select: (id: string) => void;
+	select: (trait: Trait) => void;
 }
 
 class TraitBarPanel extends React.Component<TraitBarProps> {
 	public render() {
 		try {
 			return (
-				<div className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait.id)} role='button'>
-					<div className='name'>
-						{this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false)}
+				<Group className={this.props.isSelected ? 'trait-bar selected' : 'trait-bar'} onClick={() => this.props.select(this.props.trait)}>
+					<div className='content-then-icons'>
+						<div className='content'>
+							{this.props.trait.name || 'unnamed ' + Gygax.traitType(this.props.trait.type, false)}
+						</div>
+						<div className='icons'>
+							<MenuOutlined className='grabber' title='drag to reorder' data-movable-handle={true} />
+						</div>
 					</div>
-					<MenuOutlined className='grabber' data-movable-handle={true} />
-				</div>
+				</Group>
 			);
 		} catch (e) {
 			console.error(e);
@@ -1367,13 +1495,13 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 interface FeatureBrowserProps {
 	monster: Monster;
 	library: MonsterGroup[];
-	copyTrait: (trait: Trait) => void;
+	importTrait: (trait: Trait, sourceMonster: Monster) => void;
 }
 
 interface FeatureBrowserState {
 	mode: string;
 	query: string;
-	randomTraits: Trait[];
+	randomTraits: { trait: Trait, monster: Monster }[];
 }
 
 class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowserState> {
@@ -1387,12 +1515,12 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 	}
 
 	private chooseRandomTraits() {
-		const traits: Trait[] = [];
+		const traits: { name: string, trait: Trait, monster: Monster }[] = [];
 		this.props.library.forEach(group => {
 			group.monsters.forEach(m => {
 				if (m.id !== this.props.monster.id) {
 					m.traits.forEach(t => {
-						traits.push(t);
+						traits.push({ name: t.name, trait: t, monster: m });
 					});
 				}
 			});
@@ -1412,14 +1540,14 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 	}
 
 	private getSearchSection() {
-		const traits: Trait[] = [];
+		const traits: { name: string, trait: Trait, monster: Monster }[] = [];
 		if (this.state.query.length >= 2) {
 			this.props.library.forEach(group => {
 				group.monsters.forEach(m => {
 					if (m.id !== this.props.monster.id) {
 						m.traits.forEach(t => {
 							if (Sherlock.matchTrait(this.state.query, t)) {
-								traits.push(t);
+								traits.push({ name: t.name, trait: t, monster: m });
 							}
 						});
 					}
@@ -1442,9 +1570,9 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 			} else {
 				const traitsByType: { [id: string]: JSX.Element[] } = {};
 				TRAIT_TYPES.forEach(type => {
-					traitsByType[type] = traits.filter(t => t.type === type).map(trait => (
-						<div className='card monster' key={trait.id}>
-							<TraitPanel trait={trait} mode='template' copyTrait={t => this.props.copyTrait(t)} />
+					traitsByType[type] = traits.filter(t => t.trait.type === type).map(trait => (
+						<div className='card monster' key={trait.trait.id}>
+							<TraitPanel trait={trait.trait} mode='template' copyTrait={t => this.props.importTrait(t, trait.monster)} />
 						</div>
 					));
 				});
@@ -1480,9 +1608,13 @@ class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowser
 	private getRandomSection() {
 		const traitsByType: { [id: string]: JSX.Element[] } = {};
 		TRAIT_TYPES.forEach(type => {
-			traitsByType[type] = this.state.randomTraits.filter(t => t.type === type).map(trait => (
-				<div className='card monster' key={trait.id}>
-					<TraitPanel trait={trait} mode='template' copyTrait={t => this.props.copyTrait(t)} />
+			traitsByType[type] = this.state.randomTraits.filter(t => t.trait.type === type).map(trait => (
+				<div className='card monster' key={trait.trait.id}>
+					<TraitPanel
+						trait={trait.trait}
+						mode='template'
+						copyTrait={t => this.props.importTrait(trait.trait, trait.monster)}
+					/>
 				</div>
 			));
 		});

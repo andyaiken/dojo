@@ -11,8 +11,8 @@ import { Monster, Trait, TRAIT_TYPES } from '../../models/monster';
 
 import { RenderError } from '../error';
 import { ConfirmButton } from '../controls/confirm-button';
+import { Dropdown } from '../controls/dropdown';
 import { Note } from '../controls/note';
-import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
 import { MarkdownEditor } from './markdown-editor';
 
@@ -374,25 +374,8 @@ interface TraitEditorPanelProps {
 export class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 	public render() {
 		try {
-			const typeOptions = TRAIT_TYPES.map(t => ({ id: t, text: t }));
-			typeOptions.forEach(o => {
-				if (o.id === 'reaction') {
-					o.text = 'react';
-				}
-				if (o.id === 'legendary') {
-					o.text = 'legend';
-				}
-			});
-
 			return (
 				<div key={this.props.trait.id} className='section'>
-					<Selector
-						options={typeOptions}
-						selectedID={this.props.trait.type}
-						itemsPerRow={4}
-						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
-					/>
-					<hr/>
 					<div className='subheading'>feature name</div>
 					<Textbox
 						text={this.props.trait.name}
@@ -405,6 +388,12 @@ export class TraitEditorPanel extends React.Component<TraitEditorPanelProps> {
 					/>
 					<div className='subheading'>details</div>
 					<MarkdownEditor text={this.props.trait.text} onChange={text => this.props.changeValue(this.props.trait, 'text', text)} />
+					<hr/>
+					<Dropdown
+						placeholder='move to...'
+						options={TRAIT_TYPES.map(t => ({ id: t, text: Gygax.traitType(t, true), disabled: this.props.trait.type === t }))}
+						onSelect={id => this.props.changeValue(this.props.trait, 'type', id)}
+					/>
 					<hr/>
 					<button onClick={() => this.props.copyTrait(this.props.trait)}>create a copy of this feature</button>
 					<ConfirmButton onConfirm={() => this.props.deleteTrait(this.props.trait)}>delete this feature</ConfirmButton>

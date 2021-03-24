@@ -237,32 +237,6 @@ p,
 	}
 }
 
-.control-with-icons {
-	position: relative;
-	margin: 5px 0;
-
-	>input,
-	>textarea {
-		margin: 0;
-	}
-
-	>.icons {
-		position: absolute;
-		right: 0;
-		top: 0;
-
-		.anticon {
-			font-size: 16px;
-			padding: 8px;
-
-			&:hover,
-			&:focus {
-				background-color: $highlight01;
-			}
-		}
-	}
-}
-
 .content-then-icons {
 	display: flex;
 	align-items: center;
@@ -285,6 +259,15 @@ p,
 			&:hover,
 			&:focus {
 				background-color: $highlight01;
+			}
+
+			&.active {
+				color: $highlight;
+				background-color: $highlight01;
+			}
+
+			&.grabber {
+				cursor: ns-resize;
 			}
 		}
 

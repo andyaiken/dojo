@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, UnlockOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, DeleteOutlined, ExpandOutlined, FileOutlined, LockOutlined, SendOutlined, UnlockOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -374,7 +374,7 @@ interface SendMessagePanelState {
 	dice: { [sides: number]: number };
 	constant: number;
 	deck: string;
-	mode: string;
+	showSettings: boolean;
 	recipients: string[];
 }
 
@@ -396,7 +396,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 			dice: dice,
 			constant: 0,
 			deck: 'tarot deck',
-			mode: 'public',
+			showSettings: false,
 			recipients: []
 		};
 	}
@@ -463,12 +463,6 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		});
 	}
 
-	private setDeck(deck: string) {
-		this.setState({
-			deck: deck
-		});
-	}
-
 	private resetDice() {
 		const dice = this.state.dice;
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
@@ -478,43 +472,43 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 		});
 	}
 
-	private setMode(mode: string) {
+	private setDeck(deck: string) {
 		this.setState({
-			mode: mode,
-			recipients: mode === 'public' ? [] : this.state.recipients
+			deck: deck
 		});
 	}
 
-	private addRecipient(id: string) {
-		const rec = this.state.recipients;
-		rec.push(id);
-
+	private toggleSettings() {
 		this.setState({
-			recipients: rec
+			showSettings: !this.state.showSettings
 		});
 	}
 
-	private removeRecipient(id: string) {
-		const rec = this.state.recipients;
-		const index = rec.indexOf(id);
-		rec.splice(index, 1);
+	private toggleRecipient(id: string) {
+		let list = this.state.recipients.slice();
+
+		// If none, expand to all (but ignore me)
+		if (list.length === 0) {
+			list = Comms.data.people.filter(p => p.id !== Comms.getID()).map(p => p.id);
+		}
+
+		if (list.includes(id)) {
+			list = list.filter(r => r !== id);
+		} else {
+			list.push(id);
+		}
+
+		// If all, reduce to []
+		if (list.length >= Comms.data.people.filter(p => p.id !== Comms.getID()).length) {
+			list = [];
+		}
 
 		this.setState({
-			recipients: rec
+			recipients: list
 		});
 	}
 
 	private canSend() {
-		let validRecipients = false;
-		switch (this.state.mode) {
-			case 'public':
-				validRecipients = true;
-				break;
-			case 'private':
-				validRecipients = (this.state.recipients.length > 0);
-				break;
-		}
-
 		let validContent = false;
 		switch (this.state.type) {
 			case 'text':
@@ -534,7 +528,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				break;
 		}
 
-		return validRecipients && validContent;
+		return validContent;
 	}
 
 	private async sendMessage() {
@@ -651,8 +645,8 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					);
 				}
 				return (
-					<div>
-						<div className='control-with-icons'>
+					<div className='content-then-icons'>
+						<div className='content'>
 							<Textbox
 								placeholder='send a message'
 								multiLine={this.state.multiline}
@@ -661,33 +655,35 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 								onChange={msg => this.setMessage(msg)}
 								onPressEnter={() => this.sendMessage()}
 							/>
-							<div className='icons'>
-								<ExpandOutlined
-									onClick={() => this.toggleMultiline()}
-									title={'expand'}
-									className={this.state.multiline ? 'active' : ''}
-								/>
-								<SendOutlined
-									onClick={() => this.sendMessage()}
-									title='send message'
-									className={this.canSend() ? '' : 'disabled'}
-								/>
-							</div>
+							{languageSection}
 						</div>
-						{languageSection}
+						<div className='icons vertical'>
+							<SendOutlined
+								onClick={() => this.sendMessage()}
+								title='send message'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+							<ExpandOutlined
+								onClick={() => this.toggleMultiline()}
+								title={'expand'}
+								className={this.state.multiline ? 'active' : ''}
+							/>
+						</div>
 					</div>
 				);
 			case 'link':
 				return (
-					<div className='control-with-icons'>
-						<Textbox
-							placeholder='send a link'
-							debounce={false}
-							text={this.state.url}
-							onChange={url => this.setURL(url)}
-							onPressEnter={() => this.sendLink()}
-						/>
-						<div className='icons'>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Textbox
+								placeholder='send a link'
+								debounce={false}
+								text={this.state.url}
+								onChange={url => this.setURL(url)}
+								onPressEnter={() => this.sendLink()}
+							/>
+						</div>
+						<div className='icons vertical'>
 							<SendOutlined
 								onClick={() => this.sendLink()}
 								title='send link'
@@ -697,23 +693,9 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					</div>
 				);
 			case 'image':
-				if (this.state.image !== '') {
-					return (
-						<div>
-							<img className='nonselectable-image' src={this.state.image} alt='shared' />
-							<Row gutter={10}>
-								<Col span={12}>
-									<button onClick={() => this.setImage('')}>clear</button>
-								</Col>
-								<Col span={12}>
-									<button className={this.canSend() ? '' : 'disabled'} onClick={() => this.sendImage()}>send</button>
-								</Col>
-							</Row>
-						</div>
-					);
-				}
-				return (
-					<div>
+				let content = null;
+				if (this.state.image === '') {
+					content = (
 						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
 							<p className='ant-upload-drag-icon'>
 								<FileOutlined />
@@ -722,6 +704,29 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 								click here, or drag a file here, to upload it
 							</p>
 						</Upload.Dragger>
+					);
+				} else {
+					content = (
+						<img className='nonselectable-image' src={this.state.image} alt='shared' />
+					);
+				}
+				return (
+					<div className='content-then-icons'>
+						<div className='content'>
+							{content}
+						</div>
+						<div className='icons vertical'>
+							<SendOutlined
+								onClick={() => this.sendImage()}
+								title='send image'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+							<DeleteOutlined
+								onClick={() => this.setImage('')}
+								title='clear'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+						</div>
 					</div>
 				);
 			case 'roll':
@@ -754,55 +759,31 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 						<button onClick={() => this.sendCard()}>draw a card</button>
 					</div>
 				);
-			case 'settings':
-				return this.getSettingsSection();
 		}
 
 		return null;
 	}
 
 	private getSettingsSection() {
-		let recipients = null;
-		if (this.state.mode === 'private') {
-			const list = Comms.data.people
-				.filter(person => person.id !== Comms.getID())
-				.map(person => (
-					<Checkbox
-						key={person.id}
-						label={Comms.getCurrentName(person.id)}
-						checked={this.state.recipients.includes(person.id)}
-						onChecked={value => value ? this.addRecipient(person.id) : this.removeRecipient(person.id)}
-					/>
-				));
-
-			let info = null;
-			if (this.state.recipients.length === 0) {
-				info = (
-					<Note>
-						<div className='section'>
-							for a private message, you must select at least one person
-						</div>
-					</Note>
-				);
-			}
-
-			recipients = (
-				<div>
-					<div className='subheading'>choose who to send your message to</div>
-					{list}
-					{info}
-				</div>
-			);
+		if (!this.state.showSettings) {
+			return null;
 		}
+
+		const list = Comms.data.people
+			.filter(person => person.id !== Comms.getID())
+			.map(person => (
+				<Checkbox
+					key={person.id}
+					label={'to ' + Comms.getCurrentName(person.id)}
+					checked={(this.state.recipients.length === 0) || this.state.recipients.includes(person.id)}
+					onChecked={value => this.toggleRecipient(person.id)}
+				/>
+			));
 
 		return (
 			<div>
-				<Selector
-					options={['public', 'private'].map(o => ({ id: o, text: o }))}
-					selectedID={this.state.mode}
-					onSelect={mode => this.setMode(mode)}
-				/>
-				{recipients}
+				<hr/>
+				{list}
 			</div>
 		);
 	}
@@ -814,27 +795,41 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				return null;
 			}
 
-			let icon = null;
-			if (this.state.mode === 'public') {
-				icon = (
-					<UnlockOutlined title='message is public' onClick={() => this.setType('settings')} />
-				);
-			} else {
-				icon = (
-					<LockOutlined title='message is private' onClick={() => this.setType('settings')} />
-				);
+			let isPublic = false;
+			if (Comms.data.party) {
+				const all = Comms.data.party.pcs.filter(pc => pc.active).length + 1;
+				isPublic = (this.state.recipients.length === 0) || (this.state.recipients.length === all);
 			}
 
 			return (
 				<div className='send-message-panel'>
-					<div className='message-controls'>
-						<Selector
-							options={['text', 'link', 'image', 'roll', 'card'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.type}
-							onSelect={type => this.setType(type)}
-						/>
-						{icon}
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Selector
+								options={['text', 'link', 'image', 'roll', 'card'].map(o => ({ id: o, text: o }))}
+								selectedID={this.state.type}
+								onSelect={type => this.setType(type)}
+							/>
+						</div>
+						<div className='icons vertical'>
+							<Conditional display={isPublic}>
+								<UnlockOutlined
+									title='message is public'
+									onClick={() => this.toggleSettings()}
+									className={this.state.showSettings ? 'active' : ''}
+								/>
+							</Conditional>
+							<Conditional display={!isPublic}>
+								<LockOutlined
+									title='message is private'
+									onClick={() => this.toggleSettings()}
+									className={this.state.showSettings ? 'active' : ''}
+								/>
+							</Conditional>
+						</div>
 					</div>
+					{this.getSettingsSection()}
+					<hr/>
 					{this.getMessageSection()}
 				</div>
 			);

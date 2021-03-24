@@ -2,6 +2,7 @@
 
 import { Factory } from './factory';
 import { Gygax } from './gygax';
+import { Shakespeare } from './shakespeare';
 import { Utils } from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
@@ -507,16 +508,33 @@ export class Frankenstein {
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Traits
 
-	public static copyTrait(target: Monster, trait: Trait) {
+	public static copyTrait(trait: Trait, targetMonster: Monster, sourceMonster: Monster | null) {
 		const copy = JSON.parse(JSON.stringify(trait)) as Trait;
 		copy.id = Utils.guid();
-		target.traits.push(copy);
+
+		if (sourceMonster && sourceMonster.name) {
+			const sourceName = sourceMonster.name.toLowerCase();
+			const targetName = targetMonster.name.toLowerCase() || 'monster';
+			copy.text = copy.text.replaceAll(' ' + sourceName, ' ' + targetName);
+			copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(sourceName), ' ' + targetName);
+
+			if (sourceName.includes(' ')) {
+				sourceName.split(' ').forEach(token => {
+					copy.text = copy.text.replaceAll(' ' + token.toLowerCase(), ' ' + targetName);
+					copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(token), ' ' + targetName);
+				});
+			}
+		}
+
+		targetMonster.traits.push(copy);
+		return copy;
 	}
 
 	public static addTrait(target: Monster, type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
 		const trait = Factory.createTrait();
 		trait.type = type;
 		target.traits.push(trait);
+		return trait;
 	}
 
 	public static moveTrait(target: Monster, oldIndex: number, newIndex: number) {
@@ -607,21 +625,22 @@ export class Frankenstein {
 
 		TRAIT_TYPES.forEach(type => {
 			// Get all traits of this type
-			const traits: Trait[] = [];
+			const traits: { trait: Trait, monster: Monster }[] = [];
 			monsters.forEach(m => {
 				m.traits.filter(t => t.type === type)
-					.forEach(t => traits.push(t));
+					.forEach(t => traits.push({ trait: t, monster: m }));
 			});
 
 			// Collate by name
-			const distinct: { trait: Trait, count: number }[] = [];
+			const distinct: { trait: Trait, monster: Monster, count: number }[] = [];
 			traits.forEach(t => {
-				const current = distinct.find(d => d.trait.name === t.name);
+				const current = distinct.find(d => d.trait.name === t.trait.name);
 				if (current) {
 					current.count += 1;
 				} else {
 					distinct.push({
-						trait: t,
+						trait: t.trait,
+						monster: t.monster,
 						count: 1
 					});
 				}
@@ -631,7 +650,7 @@ export class Frankenstein {
 			const addedIDs: string[] = [];
 			distinct.filter(d => d.count === monsters.length)
 				.forEach(d => {
-					this.copyTrait(target, d.trait);
+					this.copyTrait(d.trait, target, d.monster);
 					addedIDs.push(d.trait.id);
 				});
 			addedIDs.forEach(id => {
@@ -643,7 +662,8 @@ export class Frankenstein {
 			while (target.traits.filter(t => t.type === type).length < avg) {
 				const index = Utils.randomNumber(distinct.length);
 				const t = distinct[index].trait;
-				this.copyTrait(target, t);
+				const m = distinct[index].monster;
+				this.copyTrait(t, target, m);
 				distinct.splice(index, 1);
 			}
 		});
@@ -674,18 +694,18 @@ export class Frankenstein {
 	}
 
 	public static addRandomTrait(target: Monster, type: string, monsters: Monster[]) {
-		const traits: Trait[] = [];
+		const traits: { trait: Trait, monster: Monster }[] = [];
 		monsters.forEach(m => {
 			m.traits.filter(t => t.type === type)
 				.forEach(t => {
-					traits.push(t);
+					traits.push({ trait: t, monster: m });
 				});
 		});
 
 		const index = Utils.randomNumber(traits.length);
 		const trait = traits[index];
 
-		this.copyTrait(target, trait);
+		this.copyTrait(trait.trait, target, trait.monster);
 	}
 
 	public static getToHitExpressions(trait: Trait) {
