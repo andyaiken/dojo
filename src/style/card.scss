@@ -190,7 +190,7 @@
 	align-items: center;
 	padding-right: 5px;
 
-	.copy-trait-button {
+	.trait-template-button {
 		flex: 0 0 auto;
 		margin: 2px 5px;
 		padding: 3px;
@@ -200,9 +200,5 @@
 		&:hover {
 			background-color: $highlight02;
 		}
-	}
-
-	.trait-content {
-		flex: 1 1 0;
 	}
 }

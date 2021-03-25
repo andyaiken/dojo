@@ -24,7 +24,6 @@ import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
 import { ErrorBoundary, RenderError } from '../error';
-import { Checkbox } from '../controls/checkbox';
 import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
@@ -1099,8 +1098,7 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			drawer: {
 				type: 'monster',
-				monster: Factory.createMonster(),
-				showAdvancedTools: false
+				monster: Factory.createMonster()
 			}
 		});
 	}
@@ -1165,8 +1163,7 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			drawer: {
 				type: 'monster',
-				monster: copy,
-				showAdvancedTools: false
+				monster: copy
 			}
 		});
 	}
@@ -3768,12 +3765,11 @@ export class Main extends React.Component<Props, State> {
 					content = (
 						<MonsterEditorModal
 							monster={this.state.drawer.monster}
-							showAdvancedTools={this.state.drawer.showAdvancedTools}
 							library={this.state.library}
 							options={this.state.options}
 						/>
 					);
-					header = 'monster editor';
+					header = 'monster designer';
 					footer = (
 						<Row gutter={20}>
 							<Col span={6}>
@@ -3782,19 +3778,7 @@ export class Main extends React.Component<Props, State> {
 							<Col span={6}>
 								<button onClick={() => this.closeDrawer()}>discard changes</button>
 							</Col>
-							<Col span={3} />
-							<Col span={6}>
-								<Checkbox
-									label='show advanced tools'
-									checked={this.state.drawer.showAdvancedTools}
-									onChecked={() => {
-										const drawer = this.state.drawer;
-										drawer.showAdvancedTools = !drawer.showAdvancedTools;
-										this.setState({ drawer: drawer });
-									}}
-								/>
-							</Col>
-							<Col span={3} />
+							<Col span={12} />
 						</Row>
 					);
 					width = '85%';

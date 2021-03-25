@@ -380,7 +380,6 @@ export class MapPanel extends React.Component<Props, State> {
 								onSelect={id => this.props.areaSelected(id)}
 							/>
 						)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-control-tooltip'
 					>
@@ -399,7 +398,6 @@ export class MapPanel extends React.Component<Props, State> {
 							onNudgeValue={delta => this.setState({ size: Math.max(this.state.size + (delta * 3), 3) })}
 						/>
 					)}
-					trigger='hover'
 					placement='bottom'
 					overlayClassName='map-control-tooltip'
 				>
@@ -419,7 +417,6 @@ export class MapPanel extends React.Component<Props, State> {
 								onNudgeValue={delta => this.props.changeLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
 							/>
 						)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-control-tooltip'
 					>
@@ -449,7 +446,6 @@ export class MapPanel extends React.Component<Props, State> {
 								</Conditional>
 							</div>
 						)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-control-tooltip'
 					>
@@ -485,7 +481,6 @@ export class MapPanel extends React.Component<Props, State> {
 								</Conditional>
 							</div>
 						)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-control-tooltip'
 					>
@@ -1067,7 +1062,6 @@ class GridSquare extends React.Component<GridSquareProps> {
 								{dist} ft away from {this.props.showDistanceTo.name}
 							</div>
 						)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-hover-tooltip'
 					>
@@ -1632,7 +1626,6 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 				return (
 					<Popover
 						content={this.getPopoverContent(false)}
-						trigger='hover'
 						placement='bottom'
 						overlayClassName='map-hover-tooltip'
 					>
@@ -1644,7 +1637,6 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			return (
 				<Popover
 					content={this.getPopoverContent(false)}
-					trigger='hover'
 					placement='bottom'
 					overlayClassName='map-hover-tooltip'
 					visible={this.state.hovered}

@@ -64,6 +64,7 @@ export class StatBlockModal extends React.Component<Props> {
 						{content}
 					</div>
 					{awards}
+					<hr/>
 					<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
 				</div>
 			);

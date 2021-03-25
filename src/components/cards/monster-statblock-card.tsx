@@ -173,7 +173,6 @@ export class MonsterStatblockCard extends React.Component<Props> {
 				{this.statSection('damage immunities', this.props.monster.damage.immune)}
 				{this.statSection('condition immunities', this.props.monster.conditionImmunities)}
 				{this.statSection('languages', this.props.monster.languages)}
-				{this.statSection('equipment', this.props.monster.equipment)}
 				<hr/>
 				<TraitsPanel
 					combatant={this.props.monster}

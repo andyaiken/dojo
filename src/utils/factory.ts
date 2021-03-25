@@ -99,7 +99,6 @@ export class Factory {
 			skills: '',
 			senses: '',
 			languages: '',
-			equipment: '',
 			traits: [],
 			conditionImmunities: '',
 			portrait: '',

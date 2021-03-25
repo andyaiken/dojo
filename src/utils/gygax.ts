@@ -106,7 +106,19 @@ export class Gygax {
 			return 5;
 		}
 
-		return 6;
+		if (level < 21) {
+			return 6;
+		}
+
+		if (level < 25) {
+			return 7;
+		}
+
+		if (level < 29) {
+			return 8;
+		}
+
+		return 9;
 	}
 
 	public static challenge(cr: number): string {

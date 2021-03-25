@@ -601,26 +601,28 @@ export class AdventureScreen extends React.Component<Props, State> {
 						{scene ? this.getSidebarForScene(scene) : this.getSidebarForPlot()}
 					</Col>
 					<Col span={18} className='scrollable both-ways'>
-						<div className='breadcrumb-bar'>
-							<div className='content-then-icons'>
-								<div className='content'>
-									{
-										this.state.breadcrumbs.map(bc => (
-											<Group key={bc.plot.id} onClick={() => this.goToBreadcrumb(bc.plot.id)}>
-												{bc.name || 'unnamed scene'}
-											</Group>
-										))
-									}
-								</div>
-								<div className='icons'>
-									<VerticalAlignTopOutlined
-										className={this.props.adventure.plot.id === this.state.plot.id ? 'disabled' : ''}
-										title='go up one level'
-										onClick={() => this.goUp()}
-									/>
+						<Conditional display={this.state.plot.id !== this.props.adventure.plot.id}>
+							<div className='breadcrumb-bar'>
+								<div className='content-then-icons'>
+									<div className='content'>
+										{
+											this.state.breadcrumbs.map(bc => (
+												<Group key={bc.plot.id} onClick={() => this.goToBreadcrumb(bc.plot.id)}>
+													{bc.name || 'unnamed scene'}
+												</Group>
+											))
+										}
+									</div>
+									<div className='icons'>
+										<VerticalAlignTopOutlined
+											className={this.props.adventure.plot.id === this.state.plot.id ? 'disabled' : ''}
+											title='go up one level'
+											onClick={() => this.goUp()}
+										/>
+									</div>
 								</div>
 							</div>
-						</div>
+						</Conditional>
 						{this.getContent()}
 					</Col>
 				</Row>

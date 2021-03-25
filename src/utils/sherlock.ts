@@ -72,10 +72,6 @@ export class Sherlock {
 			return true;
 		}
 
-		if (Sherlock.match(filter, monster.equipment)) {
-			return true;
-		}
-
 		return monster.traits.some(trait => Sherlock.matchTrait(filter, trait));
 	}
 

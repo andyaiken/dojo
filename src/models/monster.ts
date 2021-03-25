@@ -35,7 +35,6 @@ export interface Monster {
 	skills: string;
 	senses: string;
 	languages: string;
-	equipment: string;
 	traits: Trait[];
 	conditionImmunities: string;
 	portrait: string;

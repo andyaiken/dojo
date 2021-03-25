@@ -1,5 +1,5 @@
-import { MenuOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Col, Drawer, Row } from 'antd';
+import { DeleteOutlined, InfoCircleOutlined, MenuOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Col, Drawer, Popover, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
 
@@ -34,7 +34,6 @@ import { TraitEditorPanel, TraitPanel } from '../../panels/traits-panel';
 
 interface Props {
 	monster: Monster;
-	showAdvancedTools: boolean;
 	library: MonsterGroup[];
 	options: Options;
 }
@@ -223,9 +222,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getHelpOptionsForPage(page: string) {
 		switch (page) {
 			case 'overview':
-				return ['type', 'subtype', 'align', 'challenge', 'size', 'speed', 'senses', 'lang', 'equip'];
+				return ['type', 'subtype', 'align', 'challenge', 'size', 'speed', 'lang'];
 			case 'abilities':
-				return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills'];
+				return ['str', 'dex', 'con', 'int', 'wis', 'cha', 'saves', 'skills', 'senses'];
 			case 'combat':
 				return ['armor class', 'hit dice', 'resist', 'vulnerable', 'immune', 'conditions'];
 			case 'features':
@@ -331,12 +330,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return this.getValueSection('size', 'text');
 			case 'speed':
 				return this.getValueSection('speed', 'text');
-			case 'senses':
-				return this.getValueSection('senses', 'text');
 			case 'lang':
 				return this.getValueSection('languages', 'text');
-			case 'equip':
-				return this.getValueSection('equipment', 'text');
 			case 'str':
 				return this.getValueSection('abilityScores.str', 'number');
 			case 'dex':
@@ -353,6 +348,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				return this.getValueSection('savingThrows', 'text');
 			case 'skills':
 				return this.getValueSection('skills', 'text');
+			case 'senses':
+				return this.getValueSection('senses', 'text');
 			case 'armor class':
 				return this.getValueSection('ac', 'number');
 			case 'hit dice':
@@ -533,14 +530,18 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 
 		if (this.state.scratchpadList.length > 0) {
 			const list = Utils.sort(this.state.scratchpadList).map(m => (
-				<div className='section' key={m.id}>
-					<MonsterTemplateCard
-						monster={m}
-						section={this.state.page}
-						copyTrait={trait => this.copyTrait(trait, m)}
-						deselectMonster={monster => this.removeFromScratchpad(monster)}
-						showMonster={monster => this.setState({ inspectedMonster: monster })}
-					/>
+				<div className='content-then-icons' key={m.id}>
+					<div className='content'>
+						<MonsterTemplateCard
+							monster={m}
+							section={this.state.page}
+							copyTrait={trait => this.copyTrait(trait, m)}
+						/>
+					</div>
+					<div className='icons vertical'>
+						<InfoCircleOutlined title='show statblock' onClick={() => this.setState({ inspectedMonster: m })} />
+						<DeleteOutlined title='remove monster' onClick={() => this.removeFromScratchpad(m)} />
+					</div>
 				</div>
 			));
 
@@ -567,7 +568,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 
 			content = (
 				<div>
-					<Expander text='scratchpad list'>
+					<Expander text='scratchpad monsters'>
 						<Row gutter={10}>
 							<Col span={12}>
 								<button
@@ -596,7 +597,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		} else {
 			content = (
 				<button onClick={() => this.setState({ addingToScratchpad: true })}>
-					add monsters to your scratchpad list
+					add monsters to your scratchpad
 				</button>
 			);
 		}
@@ -605,7 +606,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			<div>
 				<Note>
 					<div className='section'>
-						this is your scratchpad list; you can add monsters to it to see their combined statistics
+						this is your <b>scratchpad</b>; you can add monsters to it to see their combined statistics
 					</div>
 					<div className='section'>
 						you might find this useful if, for example, you want your monster to have similar abilities to other monsters
@@ -865,25 +866,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const content = this.getContent();
 			const drawer = this.getDrawer();
-
-			let right = (
-				<MonsterStatblockCard monster={this.state.monster} />
-			);
-			if (this.props.showAdvancedTools) {
-				const sidebar = this.getSidebar();
-				right = (
-					<div>
-						<Tabs
-							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
-							selectedID={this.state.sidebarView}
-							onSelect={option => this.setState({ sidebarView: option })}
-						/>
-						{sidebar}
-					</div>
-				);
-			}
 
 			return (
 				<Row className='full-height'>
@@ -893,10 +876,15 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							selectedID={this.state.page}
 							onSelect={optionID => this.setPage(optionID)}
 						/>
-						{content}
+						{this.getContent()}
 					</Col>
 					<Col span={12} className='scrollable sidebar sidebar-right'>
-						{right}
+						<Tabs
+							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
+							selectedID={this.state.sidebarView}
+							onSelect={option => this.setState({ sidebarView: option })}
+						/>
+						{this.getSidebar()}
 					</Col>
 					<Drawer
 						className={this.props.options.theme}
@@ -993,20 +981,33 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 								onNudgeValue={delta => this.props.nudgeValue('challenge', delta)}
 							/>
 						</FieldPanel>
-						<div className='subheading'>speed</div>
+					</Col>
+					<Col span={12}>
+						<div className='subheading'>
+							speed
+							&nbsp;
+							<Popover
+								content={(
+									<div>
+										<div className='section'>
+											this can include special movement modes, which are:
+										</div>
+										<ul>
+											<li>burrow speed</li>
+											<li>climb speed</li>
+											<li>fly speed (which might include the ability to hover)</li>
+											<li>swim speed</li>
+										</ul>
+									</div>
+								)}
+							>
+								<InfoCircleOutlined />
+							</Popover>
+						</div>
 						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('speed')}>
 							<Textbox
 								text={this.props.monster.speed}
 								onChange={value => this.props.changeValue('speed', value)}
-							/>
-						</FieldPanel>
-					</Col>
-					<Col span={12}>
-						<div className='subheading'>senses</div>
-						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('senses')}>
-							<Textbox
-								text={this.props.monster.senses}
-								onChange={value => this.props.changeValue('senses', value)}
 							/>
 						</FieldPanel>
 						<div className='subheading'>languages</div>
@@ -1014,13 +1015,6 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 							<Textbox
 								text={this.props.monster.languages}
 								onChange={value => this.props.changeValue('languages', value)}
-							/>
-						</FieldPanel>
-						<div className='subheading'>equipment</div>
-						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('equipment')}>
-							<Textbox
-								text={this.props.monster.equipment}
-								onChange={value => this.props.changeValue('equipment', value)}
 							/>
 						</FieldPanel>
 						<div className='subheading'>portrait</div>
@@ -1050,6 +1044,9 @@ interface AbilitiesTabProps {
 class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 	public render() {
 		try {
+			const challenge = Gygax.challenge(this.props.monster.challenge);
+			const prof = Gygax.proficiency(this.props.monster.challenge);
+
 			return (
 				<Row gutter={10} key='abilities'>
 					<Col span={12}>
@@ -1103,6 +1100,11 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 						</FieldPanel>
 					</Col>
 					<Col span={12}>
+						<Note>
+							<div className='section'>
+								for skills and saving throws, remember that the proficiency bonus for a <b>cr {challenge}</b> monster is <b>+{prof}</b>
+							</div>
+						</Note>
 						<div className='subheading'>saving throws</div>
 						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('savingThrows')}>
 							<Textbox
@@ -1115,6 +1117,33 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 							<Textbox
 								text={this.props.monster.skills}
 								onChange={value => this.props.changeValue('skills', value)}
+							/>
+						</FieldPanel>
+						<div className='subheading'>
+							senses
+							&nbsp;
+							<Popover
+								content={(
+									<div>
+										<div className='section'>
+											this should include the monster's passive perception and the range of any special senses, which are:
+										</div>
+										<ul>
+											<li>blindsight</li>
+											<li>darkvision</li>
+											<li>tremorsense</li>
+											<li>truesight</li>
+										</ul>
+									</div>
+								)}
+							>
+								<InfoCircleOutlined/>
+							</Popover>
+						</div>
+						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('senses')}>
+							<Textbox
+								text={this.props.monster.senses}
+								onChange={value => this.props.changeValue('senses', value)}
 							/>
 						</FieldPanel>
 					</Col>
@@ -1159,7 +1188,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 						<div className='subheading'>hit dice</div>
 						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('hitDice')}>
 							<NumberSpin
-								value={this.props.monster.hitDice}
+								value={this.props.monster.hitDice + 'd' + Gygax.hitDieType(this.props.monster.size)}
 								downEnabled={this.props.monster.hitDice > 1}
 								onNudgeValue={delta => this.props.nudgeValue('hitDice', delta)}
 							/>

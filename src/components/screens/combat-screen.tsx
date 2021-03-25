@@ -723,7 +723,6 @@ export class CombatScreen extends React.Component<Props, State> {
 									content={(
 										<TraitPanel trait={t.trait} />
 									)}
-									trigger='hover'
 									placement='bottom'
 									overlayClassName='combat-info-tooltip'
 								>
@@ -748,7 +747,6 @@ export class CombatScreen extends React.Component<Props, State> {
 									content={(
 										<TraitPanel trait={t.trait} />
 									)}
-									trigger='hover'
 									placement='bottom'
 									overlayClassName='combat-info-tooltip'
 								>

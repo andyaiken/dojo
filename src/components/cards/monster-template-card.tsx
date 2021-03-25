@@ -1,4 +1,3 @@
-import { MinusCircleOutlined } from '@ant-design/icons';
 import { Tag } from 'antd';
 import React from 'react';
 
@@ -16,8 +15,6 @@ interface Props {
 	monster: Monster;
 	section: string;
 	copyTrait: (trait: Trait) => void;
-	deselectMonster: (monster: Monster) => void;
-	showMonster: (monster: Monster) => void;
 }
 
 export class MonsterTemplateCard extends React.Component<Props> {
@@ -78,7 +75,6 @@ export class MonsterTemplateCard extends React.Component<Props> {
 						{this.statSection('speed', this.props.monster.speed)}
 						{this.statSection('senses', this.props.monster.senses)}
 						{this.statSection('languages', this.props.monster.languages)}
-						{this.statSection('equipment', this.props.monster.equipment)}
 					</div>
 				);
 			case 'abilities':
@@ -123,12 +119,9 @@ export class MonsterTemplateCard extends React.Component<Props> {
 						<div className='title' title={name}>
 							{name}
 						</div>
-						<MinusCircleOutlined onClick={() => this.props.deselectMonster(this.props.monster)} />
 					</div>
 					<div className='card-content'>
 						{this.getStats()}
-						<hr/>
-						<button onClick={() => this.props.showMonster(this.props.monster)}>show full statblock</button>
 					</div>
 				</div>
 			);

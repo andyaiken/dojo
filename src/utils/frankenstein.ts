@@ -107,7 +107,6 @@ export class Frankenstein {
 		monster.skills = '';
 		monster.senses = '';
 		monster.languages = '';
-		monster.equipment = '';
 		monster.traits = [];
 		monster.conditionImmunities = '';
 		monster.portrait = '';
@@ -600,7 +599,6 @@ export class Frankenstein {
 			'speed',
 			'senses',
 			'languages',
-			'equipment',
 			'abilityScores.str',
 			'abilityScores.dex',
 			'abilityScores.con',
