@@ -42,6 +42,14 @@ export class Utils {
 		return collection;
 	}
 
+	public static distinct(list: any[], key: (item: any) => any = item => JSON.stringify(item)): any[] {
+		const seen = new Set();
+		return list.filter(item => {
+			const k = key(item);
+			return seen.has(k) ? false : seen.add(k);
+		});
+	}
+
 	public static debounce(func: () => void, delay: number = 500) {
 		let timeout: NodeJS.Timeout;
 		return () => {

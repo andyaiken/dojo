@@ -33,8 +33,12 @@ export class EncounterCard extends React.Component<Props> {
 
 		if (slot.monsterID !== '') {
 			const monster = this.props.getMonster(slot.monsterID);
-			if (monster) {
+			if (monster && monster.name) {
 				name = monster.name;
+				const theme = this.props.getMonster(slot.monsterThemeID);
+				if (theme && theme.name) {
+					name += ' ' + theme.name;
+				}
 			}
 			name = name || 'unnamed monster';
 		} else {
@@ -114,7 +118,7 @@ export class EncounterCard extends React.Component<Props> {
 			});
 
 			return (
-				<div className='card encounter'>
+				<div key={this.props.encounter.id} className='card encounter'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.encounter.name || 'unnamed encounter'}
@@ -125,7 +129,7 @@ export class EncounterCard extends React.Component<Props> {
 							<div className='subheading'>monsters</div>
 							{slots}
 							<div className='subheading'>xp</div>
-							{Napoleon.getEncounterXP(this.props.encounter, null, this.props.getMonster)}
+							{Napoleon.getEncounterXP(this.props.encounter, null, id => this.props.getMonster(id))}
 							<Conditional display={!!this.props.encounter.notes}>
 								<div className='subheading'>notes</div>
 								<ReactMarkdown source={this.props.encounter.notes} />

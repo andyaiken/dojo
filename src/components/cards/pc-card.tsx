@@ -28,7 +28,7 @@ export class PCCard extends React.Component<Props> {
 				|| 'unnamed pc';
 
 			return (
-				<div className='card pc'>
+				<div key={this.props.pc.id} className='card pc'>
 					<div className='heading'>
 						<div className='title' title={pcName}>
 							{pcName}

@@ -5,7 +5,7 @@ import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
 import { Napoleon } from '../../utils/napoleon';
 
-import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../../models/encounter';
+import { EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { RenderError } from '../error';
@@ -15,8 +15,6 @@ import { RadioGroup } from '../controls/radio-group';
 import { FilterPanel } from '../panels/filter-panel';
 
 interface Props {
-	encounter: Encounter;
-	wave: EncounterWave | null;
 	slot: EncounterSlot | null;
 	originalMonster: Monster | null;
 	monster: Monster | null;
@@ -69,7 +67,6 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 			const monsters: Monster[] = [];
 
 			const hasRoles = !!this.props.slot && (this.props.slot.roles.length > 0);
-			const list = this.props.wave ? this.props.wave.slots : this.props.encounter.slots;
 			this.props.library.forEach(group => {
 				group.monsters.forEach(monster => {
 					// Ignore monsters that don't match the filter
@@ -78,13 +75,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 					// Ignore monsters that don't match the slot's role
 					const matchRole = hasRoles ? (this.props.slot as EncounterSlot).roles.includes(monster.role) : true;
 
-					// Ignore monsters that are already in the encounter / wave
-					let inList = list.some(s => s.monsterID === monster.id);
-					if (this.props.originalMonster && (this.props.originalMonster.id === monster.id)) {
-						inList = false;
-					}
-
-					if (matchFilter && matchRole && !inList) {
+					if (matchFilter && matchRole) {
 						monsters.push(monster);
 					}
 				});
@@ -107,7 +98,7 @@ export class MonsterSelectionModal extends React.Component<Props, State> {
 				const desc = Napoleon.getFilterDescription(this.state.filter);
 				left = (
 					<Note key='empty'>
-						there are no monsters that meet the criteria <i>{desc}</i> (or they are all already part of the encounter)
+						there are no monsters that meet the criteria <i>{desc}</i>
 					</Note>
 				);
 			}

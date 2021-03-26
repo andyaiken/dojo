@@ -2,6 +2,7 @@ import { CheckCircleOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
+import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
 import { Adventure } from '../../models/adventure';
@@ -38,7 +39,7 @@ interface Props {
 
 export class EncounterListScreen extends React.Component<Props> {
 	private openStatBlock(slot: EncounterSlot) {
-		const monster = this.props.getMonster(slot.monsterID);
+		const monster = Napoleon.slotToMonster(slot, id => this.props.getMonster(id));
 		if (monster) {
 			this.props.openStatBlock(monster);
 		}

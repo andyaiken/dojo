@@ -36,6 +36,10 @@ interface Props {
 	moveEncounterSlot: (encounter: Encounter, slot: EncounterSlot, count: number, fromWave: EncounterWave | null, toWave: EncounterWave | null) => void;
 	deleteEncounterSlot: (encounter: Encounter, slot: EncounterSlot, wave: EncounterWave | null) => void;
 	chooseMonster: (encounter: Encounter, slot: EncounterSlot | null, wave: EncounterWave | null) => void;
+	chooseTheme: (encounter: Encounter, slot: EncounterSlot) => void;
+	chooseRandomTheme: (encounter: Encounter, slot: EncounterSlot) => void;
+	splitTheme: (parent: Encounter | EncounterWave, slot: EncounterSlot) => void;
+	removeTheme: (encounter: Encounter, slot: EncounterSlot) => void;
 	showStatblock: (monster: Monster) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
@@ -53,10 +57,15 @@ export class EncounterScreen extends React.Component<Props> {
 				<EncounterSlotCard
 					slot={slot}
 					monster={this.props.getMonster(slot.monsterID)}
+					theme={this.props.getMonster(slot.monsterThemeID)}
 					encounter={this.props.encounter}
 					changeValue={(source, type, value) => this.props.changeValue(source, type, value)}
 					nudgeValue={(source, type, delta) => this.props.nudgeValue(source, type, delta)}
 					chooseMonster={s => this.props.chooseMonster(this.props.encounter, s, wave)}
+					chooseTheme={s => this.props.chooseTheme(this.props.encounter, s)}
+					chooseRandomTheme={s => this.props.chooseRandomTheme(this.props.encounter, s)}
+					splitTheme={s => this.props.splitTheme(wave ? wave : this.props.encounter, s)}
+					removeTheme={s => this.props.removeTheme(this.props.encounter, s)}
 					deleteEncounterSlot={s => this.props.deleteEncounterSlot(this.props.encounter, s, wave)}
 					moveToWave={(s, count, toWave) => this.props.moveEncounterSlot(this.props.encounter, s, count, wave, toWave)}
 					showStatblock={monster => this.props.showStatblock(monster)}

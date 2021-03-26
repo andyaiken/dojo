@@ -1,6 +1,7 @@
 import { Slider, Tag } from 'antd';
 import React from 'react';
 
+import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
 
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
@@ -18,10 +19,15 @@ import { PortraitPanel } from '../panels/portrait-panel';
 interface Props {
 	slot: EncounterSlot;
 	monster: Monster | null;
+	theme: Monster | null;
 	encounter: Encounter;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	chooseMonster: (slot: EncounterSlot) => void;
+	chooseTheme: (slot: EncounterSlot) => void;
+	chooseRandomTheme: (slot: EncounterSlot) => void;
+	splitTheme: (slot: EncounterSlot) => void;
+	removeTheme: (slot: EncounterSlot) => void;
 	deleteEncounterSlot: (slot: EncounterSlot) => void;
 	moveToWave: (slot: EncounterSlot, count: number, wave: EncounterWave | null) => void;
 	showStatblock: (monster: Monster) => void;
@@ -93,11 +99,37 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 		);
 	}
 
+	private getThemeControl() {
+		return (
+			<Expander text='theme options'>
+				<button onClick={() => this.props.chooseTheme(this.props.slot)}>
+					{this.props.slot.monsterThemeID === '' ? 'choose a theme' : 'change theme'}
+				</button>
+				<button onClick={() => this.props.chooseRandomTheme(this.props.slot)}>
+					apply a random theme
+				</button>
+				<button className={(this.props.slot.monsterThemeID === '') && (this.props.slot.count > 1) ? '' : 'disabled'} onClick={() => this.props.splitTheme(this.props.slot)}>
+					split into themed versions
+				</button>
+				<button className={this.props.slot.monsterThemeID !== '' ? '' : 'disabled'} onClick={() => this.props.removeTheme(this.props.slot)}>
+					remove theme
+				</button>
+			</Expander>
+		);
+	}
+
 	public render() {
 		try {
+			let monster = this.props.monster;
+			if (monster) {
+				if (this.props.theme) {
+					monster = Frankenstein.applyTheme(monster, this.props.theme);
+				}
+			}
+
 			let name = 'monster';
-			if (this.props.monster) {
-				name = this.props.monster.name || 'unnamed monster';
+			if (monster) {
+				name = monster.name || 'unnamed monster';
 			}
 			if (this.props.slot.count > 1) {
 				name += ' (x' + this.props.slot.count + ')';
@@ -119,9 +151,9 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 				</div>
 			);
 
-			if (!this.props.monster) {
+			if (!monster) {
 				return (
-					<div className={'card ' + this.props.slot.faction}>
+					<div key={this.props.slot.id} className={'card ' + this.props.slot.faction}>
 						<div className='heading'>
 							<div className='title'>
 								{name}
@@ -153,37 +185,36 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 			}
 
 			const tags = [];
-			let sizeAndType = (this.props.monster.size + ' ' + this.props.monster.category).toLowerCase();
-			if (this.props.monster.tag) {
-				sizeAndType += ' (' + this.props.monster.tag.toLowerCase() + ')';
+			let sizeAndType = (monster.size + ' ' + monster.category).toLowerCase();
+			if (monster.tag) {
+				sizeAndType += ' (' + monster.tag.toLowerCase() + ')';
 			}
 			tags.push(<Tag key='tag-main'>{sizeAndType}</Tag>);
-			if (this.props.monster.alignment) {
-				tags.push(<Tag key='tag-align'>{this.props.monster.alignment.toLowerCase()}</Tag>);
+			if (monster.alignment) {
+				tags.push(<Tag key='tag-align'>{monster.alignment.toLowerCase()}</Tag>);
 			}
-			tags.push(<Tag key='tag-cr'>cr {Gygax.challenge(this.props.monster.challenge)}</Tag>);
+			tags.push(<Tag key='tag-cr'>cr {Gygax.challenge(monster.challenge)}</Tag>);
 
 			return (
-				<div className={'card ' + this.props.slot.faction}>
+				<div key={this.props.slot.id} className={'card ' + this.props.slot.faction}>
 					<div className='heading'>
 						<div className='title'>
 							{name}
 						</div>
 					</div>
 					<div className='card-content'>
-						<PortraitPanel source={this.props.monster} />
+						<PortraitPanel source={monster} />
 						<div className='section centered'>
 							{tags}
 						</div>
 						<hr/>
 						{controls}
 						<hr/>
-						<div className='section'>
-							<button onClick={() => this.props.showStatblock(this.props.monster as Monster)}>statblock</button>
-							<button onClick={() => this.props.chooseMonster(this.props.slot)}>choose a different monster</button>
-							{this.getMoveControl()}
-							<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
-						</div>
+						<button onClick={() => this.props.showStatblock(monster as Monster)}>statblock</button>
+						<button onClick={() => this.props.chooseMonster(this.props.slot)}>choose a different monster</button>
+						{this.getMoveControl()}
+						{this.getThemeControl()}
+						<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
 					</div>
 				</div>
 			);

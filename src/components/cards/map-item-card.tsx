@@ -29,7 +29,7 @@ export class MapItemCard extends React.Component<Props> {
 			});
 
 			return (
-				<div className='card map' key='selected'>
+				<div key={this.props.item.id} className='card map'>
 					<div className='heading'>
 						<div className='title'>map item</div>
 					</div>

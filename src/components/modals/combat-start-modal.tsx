@@ -65,7 +65,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 		const setup = this.state.combatSetup;
 		const encounter = this.props.encounters.find(e => e.id === encounterID);
 		setup.encounter = encounter ? JSON.parse(JSON.stringify(encounter)) : null;
-		setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.props.library);
+		setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, id => this.props.getMonster(id));
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());
@@ -86,7 +86,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 		if (setup.encounter) {
 			const wave = setup.encounter.waves.find(w => w.id === waveID);
 			if (wave) {
-				setup.slotInfo = Gygax.getCombatSlotData(wave, this.props.library);
+				setup.slotInfo = Gygax.getCombatSlotData(wave, id => this.props.getMonster(id));
 			}
 		}
 		this.setState({
@@ -111,10 +111,10 @@ export class CombatStartModal extends React.Component<Props, State> {
 			filter.challengeMax = Math.max(avgLevel, 5);
 		}
 
-		Napoleon.buildEncounter(encounter, xp, '', filter, this.props.library, this.props.getMonster);
+		Napoleon.buildEncounter(encounter, xp, '', filter, this.props.library, id => this.props.getMonster(id));
 		const setup = this.state.combatSetup;
 		setup.encounter = encounter;
-		setup.slotInfo = Gygax.getCombatSlotData(encounter, this.props.library);
+		setup.slotInfo = Gygax.getCombatSlotData(encounter, id => this.props.getMonster(id));
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());
@@ -160,10 +160,10 @@ export class CombatStartModal extends React.Component<Props, State> {
 			if (setup.waveID) {
 				const wave = setup.encounter.waves.find(w => w.id === setup.waveID);
 				if (wave) {
-					setup.slotInfo = Gygax.getCombatSlotData(wave, this.props.library);
+					setup.slotInfo = Gygax.getCombatSlotData(wave, id => this.props.getMonster(id));
 				}
 			} else {
-				setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.props.library);
+				setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, id => this.props.getMonster(id));
 			}
 			this.setState({
 				combatSetup: setup
@@ -325,12 +325,11 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 		let encounterContent = null;
 		if (this.props.combatSetup.encounter) {
 			const monsterSections = this.props.combatSetup.encounter.slots.map(slot => {
+				const monster = Napoleon.slotToMonster(slot, id => this.props.getMonster(id));
 				let name = '';
-				const monster = this.props.getMonster(slot.monsterID);
 				if (monster) {
-					name = monster.name;
+					name = monster.name || 'unnamed monster';
 				}
-				name = name || 'unnamed monster';
 				if (slot.count > 1) {
 					name += ' (x' + slot.count + ')';
 				}

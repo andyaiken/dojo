@@ -40,6 +40,7 @@ export class HomeScreen extends React.Component<Props> {
 						</div>
 						<ul>
 							<li>quickly add monsters to your encounter and see its xp value and difficulty level change</li>
+							<li>add themes to your monsters to make them more unique</li>
 							<li>split your encounter into multiple waves</li>
 							<li>set specific victory conditions</li>
 							<li>let <span className='app-name'>dojo</span> build a random encounter on the fly - or use one of its encounter templates to get started</li>

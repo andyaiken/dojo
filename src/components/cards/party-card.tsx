@@ -60,7 +60,7 @@ export class PartyCard extends React.Component<Props> {
 	public render() {
 		try {
 			return (
-				<div className='card pc'>
+				<div key={this.props.party.id} className='card pc'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.party.name || 'unnamed party'}

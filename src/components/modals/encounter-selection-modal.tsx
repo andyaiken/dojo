@@ -24,7 +24,7 @@ export class EncounterSelectionModal extends React.Component<Props> {
 		this.props.encounters.forEach(encounter => {
 			let diff = null;
 			if (this.props.party) {
-				const d = Napoleon.getEncounterDifficulty(encounter, null, this.props.party, this.props.getMonster);
+				const d = Napoleon.getEncounterDifficulty(encounter, null, this.props.party, id => this.props.getMonster(id));
 				diff = 'diff-' + Math.min(4, d.adjusted);
 			}
 

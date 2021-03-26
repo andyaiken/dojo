@@ -42,6 +42,7 @@ import { MarkdownModal } from '../modals/markdown-modal';
 import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomGeneratorModal } from '../modals/random-generator-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
+import { ThemeSelectionModal } from '../modals/theme-selection-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { DieRollResultPanel } from '../panels/die-roll-panel';
 import { PageFooter } from '../panels/page-footer';
@@ -1961,7 +1962,7 @@ export class Main extends React.Component<Props, State> {
 		setup.party = JSON.parse(JSON.stringify(party));
 		setup.encounter = JSON.parse(JSON.stringify(encounter));
 		if (enc) {
-			setup.slotInfo = Gygax.getCombatSlotData(enc, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(enc, id => this.getMonster(id));
 		}
 		if (map) {
 			setup.map = map;
@@ -2002,14 +2003,14 @@ export class Main extends React.Component<Props, State> {
 			});
 
 			combat.encounter.slots.forEach(slot => {
-				const monster = this.getMonster(slot.monsterID);
-				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
-				if (monster && slotInfo) {
-					slotInfo.members.forEach(m => {
-						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
-					});
-				} else {
-					combat.issues.push('unknown monster');
+				const monster = Napoleon.slotToMonster(slot, id => this.getMonster(id));
+				if (monster) {
+					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+					if (slotInfo) {
+						slotInfo.members.forEach(m => {
+							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+						});
+					}
 				}
 			});
 
@@ -2047,7 +2048,7 @@ export class Main extends React.Component<Props, State> {
 		if (combat) {
 			const setup = Factory.createCombatSetup();
 			setup.encounter = combat.encounter;
-			setup.slotInfo = Gygax.getCombatSlotData(combat.encounter, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(combat.encounter, id => this.getMonster(id));
 
 			this.setState({
 				drawer: {
@@ -2065,14 +2066,14 @@ export class Main extends React.Component<Props, State> {
 			const wave = combatSetup.encounter.waves.find(w => w.id === combatSetup.waveID);
 			if (wave) {
 				wave.slots.forEach(slot => {
-					const monster = this.getMonster(slot.monsterID);
-					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
-					if (monster && slotInfo) {
-						slotInfo.members.forEach(m => {
-							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
-						});
-					} else {
-						combat.issues.push('unknown monster');
+					const monster = Napoleon.slotToMonster(slot, id => this.getMonster(id));
+					if (monster) {
+						const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+						if (slotInfo) {
+							slotInfo.members.forEach(m => {
+								combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+							});
+						}
 					}
 				});
 
@@ -2093,7 +2094,7 @@ export class Main extends React.Component<Props, State> {
 		if (combat) {
 			const setup = Factory.createCombatSetup();
 			setup.encounter = Factory.createEncounter();
-			setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, this.state.library);
+			setup.slotInfo = Gygax.getCombatSlotData(setup.encounter, id => this.getMonster(id));
 
 			this.setState({
 				drawer: {
@@ -2113,7 +2114,7 @@ export class Main extends React.Component<Props, State> {
 				slot.monsterID = monster.id;
 				combatSetup.encounter.slots.push(slot);
 
-				combatSetup.slotInfo = Gygax.getCombatSlotData(combatSetup.encounter, this.state.library);
+				combatSetup.slotInfo = Gygax.getCombatSlotData(combatSetup.encounter, id => this.getMonster(id));
 
 				this.setState({
 					drawer: this.state.drawer
@@ -2127,14 +2128,14 @@ export class Main extends React.Component<Props, State> {
 		const combatSetup: CombatSetup = this.state.drawer.combatSetup;
 		if (combat && combatSetup && combatSetup.encounter) {
 			combatSetup.encounter.slots.forEach(slot => {
-				const monster = this.getMonster(slot.monsterID);
-				const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
-				if (monster && slotInfo) {
-					slotInfo.members.forEach(m => {
-						combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
-					});
-				} else {
-					combat.issues.push('unknown monster');
+				const monster = Napoleon.slotToMonster(slot, id => this.getMonster(id));
+				if (monster) {
+					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
+					if (slotInfo) {
+						slotInfo.members.forEach(m => {
+							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+						});
+					}
 				}
 			});
 
@@ -3354,6 +3355,7 @@ export class Main extends React.Component<Props, State> {
 								} else {
 									const newSlot = Factory.createEncounterSlot();
 									newSlot.monsterID = slot.monsterID;
+									newSlot.monsterThemeID = slot.monsterThemeID;
 									newSlot.roles = [...slot.roles];
 									newSlot.count = count;
 									newSlot.faction = slot.faction;
@@ -3408,6 +3410,81 @@ export class Main extends React.Component<Props, State> {
 										}
 									});
 								}
+							}}
+							chooseTheme={(encounter, slot) => {
+								const themes: Monster[] = [];
+								this.state.library.forEach(group => {
+									group.monsters.forEach(m => {
+										if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
+											themes.push(m);
+										}
+									});
+								});
+								this.setState({
+									drawer: {
+										type: 'encounter-slot-theme',
+										monster: this.getMonster(slot.monsterID),
+										themes: themes,
+										selectedThemeID: slot.monsterThemeID,
+										onAccept: () => {
+											slot.monsterThemeID = this.state.drawer.selectedThemeID;
+											Napoleon.sortEncounter(encounter, id => this.getMonster(id));
+											this.setState({
+												encounters: this.state.encounters,
+												drawer: null
+											});
+										}
+									}
+								});
+							}}
+							chooseRandomTheme={(encounter, slot) => {
+								const themes: Monster[] = [];
+								this.state.library.forEach(group => {
+									group.monsters.forEach(m => {
+										if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
+											themes.push(m);
+										}
+									});
+								});
+								const index = Utils.randomNumber(themes.length);
+								const theme = themes[index];
+								slot.monsterThemeID = theme.id;
+								Napoleon.sortEncounter(encounter, id => this.getMonster(id));
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							splitTheme={(parent, slot) => {
+								const themes: Monster[] = [];
+								this.state.library.forEach(group => {
+									group.monsters.forEach(m => {
+										if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
+											themes.push(m);
+										}
+									});
+								});
+								parent.slots = parent.slots.filter(s => s.id !== slot.id);
+								for (let n = 0; n !== slot.count; ++n) {
+									const copy: EncounterSlot = JSON.parse(JSON.stringify(slot));
+									copy.id = Utils.guid();
+									copy.count = 1;
+									const index = Utils.randomNumber(themes.length);
+									const theme = themes[index];
+									copy.monsterThemeID = theme.id;
+									parent.slots.push(copy);
+								}
+								Napoleon.sortEncounterSlots(parent, id => this.getMonster(id));
+								this.setState({
+									encounters: this.state.encounters
+								});
+							}}
+							removeTheme={(encounter, slot) => {
+								slot.monsterThemeID = '';
+								Napoleon.sortEncounter(encounter, id => this.getMonster(id));
+								this.setState({
+									encounters: this.state.encounters,
+									drawer: null
+								});
 							}}
 							showStatblock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
 							getMonster={id => this.getMonster(id)}
@@ -3853,8 +3930,6 @@ export class Main extends React.Component<Props, State> {
 				case 'encounter-slot':
 					content = (
 						<MonsterSelectionModal
-							encounter={this.state.drawer.encounter}
-							wave={this.state.drawer.wave}
 							slot={this.state.drawer.slot}
 							originalMonster={this.state.drawer.originalMonster}
 							monster={this.state.drawer.monster}
@@ -3887,11 +3962,37 @@ export class Main extends React.Component<Props, State> {
 					);
 					width = '75%';
 					break;
+				case 'encounter-slot-theme':
+					content = (
+						<ThemeSelectionModal
+							monster={this.state.drawer.monster}
+							themes={this.state.drawer.themes}
+							selectedThemeID={this.state.drawer.selectedThemeID}
+							selectTheme={id => {
+								const drawer = this.state.drawer;
+								drawer.selectedThemeID = id;
+								this.setState({
+									drawer: drawer
+								});
+							}}
+						/>
+					);
+					header = 'choose a theme';
+					footer = (
+						<Row gutter={10}>
+							<Col span={12}>
+								<button onClick={() => this.state.drawer.onAccept()}>accept</button>
+							</Col>
+							<Col span={12}>
+								<button onClick={() => this.closeDrawer()}>cancel</button>
+							</Col>
+						</Row>
+					);
+					width = '75%';
+					break;
 				case 'encounter-slot-template':
 					content = (
 						<MonsterSelectionModal
-							encounter={this.state.drawer.encounter}
-							wave={this.state.drawer.wave}
 							slot={this.state.drawer.slot}
 							originalMonster={this.state.drawer.originalMonster}
 							monster={this.state.drawer.monster}

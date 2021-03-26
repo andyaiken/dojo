@@ -42,7 +42,6 @@ export interface Combat {
 	fog: { x: number, y: number }[];
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	round: number;
-	issues: string[];
 }
 
 export interface Combatant {

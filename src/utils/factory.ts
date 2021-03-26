@@ -131,6 +131,7 @@ export class Factory {
 		return {
 			id: Utils.guid(),
 			monsterID: '',
+			monsterThemeID: '',
 			roles: [],
 			count: 1,
 			faction: 'foe'
@@ -302,8 +303,7 @@ export class Factory {
 			mapAreaID: null,
 			fog: [],
 			lighting: 'bright light',
-			round: 1,
-			issues: []
+			round: 1
 		};
 	}
 

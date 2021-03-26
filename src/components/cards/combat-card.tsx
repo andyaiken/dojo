@@ -72,7 +72,7 @@ export class CombatCard extends React.Component<Props> {
 				));
 
 			return (
-				<div className='card encounter'>
+				<div key={this.props.combat.id} className='card encounter'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.combat.name || 'unnamed combat'}

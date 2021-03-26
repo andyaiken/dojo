@@ -35,7 +35,7 @@ export class AdventureCard extends React.Component<Props> {
 	public render() {
 		try {
 			return (
-				<div className='card adventure'>
+				<div key={this.props.adventure.id} className='card adventure'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.adventure.name || 'unnamed adventure'}

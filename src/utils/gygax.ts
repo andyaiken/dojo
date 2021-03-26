@@ -2,13 +2,14 @@
 
 import { Factory } from './factory';
 import { Frankenstein } from './frankenstein';
+import { Napoleon } from './napoleon';
 import { Utils } from './utils';
 
 import { Combatant, CombatSlotInfo } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { DieRollResult } from '../models/dice';
 import { Encounter, EncounterWave } from '../models/encounter';
-import { Monster, MonsterGroup } from '../models/monster';
+import { Monster } from '../models/monster';
 import { PC } from '../models/party';
 
 export class Gygax {
@@ -623,16 +624,11 @@ export class Gygax {
 		return null;
 	}
 
-	public static getCombatSlotData(encounter: Encounter | EncounterWave | null, library: MonsterGroup[]): CombatSlotInfo[] {
-		const monsters: Monster[] = [];
-		library.forEach(group => {
-			group.monsters.forEach(monster => monsters.push(monster));
-		});
-
+	public static getCombatSlotData(encounter: Encounter | EncounterWave | null, getMonster: (id: string) => Monster | null): CombatSlotInfo[] {
 		const data: CombatSlotInfo[] = [];
 		if (encounter) {
 			encounter.slots.forEach(slot => {
-				const monster = monsters.find(m => m.id === slot.monsterID);
+				const monster = Napoleon.slotToMonster(slot, id => getMonster(id));
 				if (monster) {
 					const slotInfo = Factory.createCombatSlotInfo();
 					slotInfo.id = slot.id;

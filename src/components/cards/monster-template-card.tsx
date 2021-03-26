@@ -114,7 +114,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 
 		try {
 			return (
-				<div className='card monster'>
+				<div key={this.props.monster.id} className='card monster'>
 					<div className='heading'>
 						<div className='title' title={name}>
 							{name}

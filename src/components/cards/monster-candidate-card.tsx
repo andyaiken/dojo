@@ -38,7 +38,7 @@ export class MonsterCandidateCard extends React.Component<Props> {
 			const name = this.props.monster.name || 'unnamed monster';
 
 			return (
-				<div className='card monster'>
+				<div key={this.props.monster.id} className='card monster'>
 					<div className='heading'>
 						<div className='title' title={name}>
 							{name}

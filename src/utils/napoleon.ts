@@ -7,7 +7,7 @@ import { Sherlock } from './sherlock';
 import { Utils } from './utils';
 
 import { Combat, Combatant } from '../models/combat';
-import { Encounter, EncounterSlot, MonsterFilter } from '../models/encounter';
+import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Map } from '../models/map';
 import { Monster, MonsterGroup } from '../models/monster';
 import { Companion, Party, PC } from '../models/party';
@@ -47,7 +47,7 @@ export class Napoleon {
 		});
 
 		slots.filter(slot => slot.faction === 'foe').forEach(slot => {
-			const monster = getMonster(slot.monsterID);
+			const monster = this.slotToMonster(slot, id => getMonster(id));
 			if (monster) {
 				xp += Gygax.experience(monster.challenge) * slot.count;
 			}
@@ -58,7 +58,7 @@ export class Napoleon {
 
 	public static getAdjustedEncounterXP(encounter: Encounter, waveID: string | null, getMonster: (id: string) => Monster | null) {
 		const count = this.getMonsterCount(encounter, waveID);
-		const xp = this.getEncounterXP(encounter, waveID, getMonster);
+		const xp = this.getEncounterXP(encounter, waveID, id => getMonster(id));
 		return xp * Gygax.experienceFactor(count);
 	}
 
@@ -110,7 +110,7 @@ export class Napoleon {
 
 	public static getEncounterDifficulty(encounter: Encounter, waveID: string | null, party: Party, getMonster: (id: string) => Monster | null) {
 		const thresholds = this.getEncounterThresholds(party);
-		const adjustedXP = this.getAdjustedEncounterXP(encounter, waveID, getMonster);
+		const adjustedXP = this.getAdjustedEncounterXP(encounter, waveID, id => getMonster(id));
 
 		let basic = 0;
 		let adjusted = 0;
@@ -312,10 +312,10 @@ export class Napoleon {
 		encounter.waves.forEach(wave => this.sortEncounterSlots(wave, id => getMonster(id)));
 	}
 
-	private static sortEncounterSlots(slotContainer: { slots: EncounterSlot[] }, getMonster: (id: string) => Monster | null) {
+	public static sortEncounterSlots(slotContainer: Encounter | EncounterWave, getMonster: (id: string) => Monster | null) {
 		const uniqueSlots: EncounterSlot[] = [];
 		slotContainer.slots.forEach(slot => {
-			let current = uniqueSlots.find(s => (s.monsterID === slot.monsterID) && (s.roles.join(',') === slot.roles.join(',')));
+			let current = uniqueSlots.find(s => (s.monsterID === slot.monsterID) && (s.monsterThemeID === slot.monsterThemeID) && (s.faction === slot.faction) && (s.roles.join(',') === slot.roles.join(',')));
 			if (!current) {
 				current = slot;
 				uniqueSlots.push(slot);
@@ -327,12 +327,12 @@ export class Napoleon {
 
 		slotContainer.slots.sort((a, b) => {
 			let nameA = a.monsterID;
-			const monsterA = getMonster(a.monsterID);
+			const monsterA = this.slotToMonster(a, id => getMonster(id));
 			if (monsterA && monsterA.name) {
 				nameA = monsterA.name;
 			}
 			let nameB = b.monsterID;
-			const monsterB = getMonster(b.monsterID);
+			const monsterB = this.slotToMonster(b, id => getMonster(id));
 			if (monsterB && monsterB.name) {
 				nameB = monsterB.name;
 			}
@@ -371,10 +371,28 @@ export class Napoleon {
 
 	public static encounterHasMonster(encounter: Encounter, monsterID: string) {
 		let ids = encounter.slots.map(s => s.monsterID);
+		ids = ids.concat(encounter.slots.map(s => s.monsterThemeID));
+
 		encounter.waves.forEach(w => {
 			ids = ids.concat(w.slots.map(s => s.monsterID));
+			ids = ids.concat(w.slots.map(s => s.monsterThemeID));
 		});
+
 		return !!ids.find(id => id === monsterID);
+	}
+
+	public static slotToMonster(slot: EncounterSlot, getMonster: (id: string) => Monster | null) {
+		let monster = getMonster(slot.monsterID);
+		if (monster) {
+			if (slot.monsterThemeID) {
+				const theme = getMonster(slot.monsterThemeID);
+				if (theme) {
+					monster = Frankenstein.applyTheme(monster, theme);
+				}
+			}
+		}
+
+		return monster;
 	}
 
 	public static convertPCToCombatant(pc: PC): Combatant {

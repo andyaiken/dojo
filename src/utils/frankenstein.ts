@@ -113,6 +113,15 @@ export class Frankenstein {
 		monster.legendaryActions = 0;
 	}
 
+	public static sortTraits(monster: Monster) {
+		Utils.sort(monster.traits);
+
+		// Multiattack traits should be first
+		const multi = monster.traits.filter(t => t.name.toLowerCase().startsWith('multiattack'));
+		const others = monster.traits.filter(t => !t.name.toLowerCase().startsWith('multiattack'));
+		monster.traits = multi.concat(others);
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Monster creation
 
@@ -505,6 +514,281 @@ export class Frankenstein {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Monster creation
+
+	public static applyTheme(target: Monster, theme: Monster) {
+		const clone: Monster = JSON.parse(JSON.stringify(target));
+
+		// These things don't change:
+		// Type
+		// Size
+		// Role
+		// Category
+		// Tag
+		// Alignment
+		// Languages
+		// Portrait
+
+		clone.id = Utils.guid();
+
+		if ((clone.name !== '') && (theme.name !== '')) {
+			clone.name = clone.name + ' ' + theme.name;
+		}
+
+		clone.challenge = Math.max(clone.challenge, theme.challenge);
+
+		if (theme.ac > clone.ac) {
+			clone.ac = theme.ac;
+			clone.acInfo = theme.acInfo;
+		}
+
+		clone.hitDice = Math.max(clone.hitDice, theme.hitDice);
+
+		clone.abilityScores.str = Math.max(clone.abilityScores.str, theme.abilityScores.str);
+		clone.abilityScores.dex = Math.max(clone.abilityScores.dex, theme.abilityScores.dex);
+		clone.abilityScores.con = Math.max(clone.abilityScores.con, theme.abilityScores.con);
+		clone.abilityScores.int = Math.max(clone.abilityScores.int, theme.abilityScores.int);
+		clone.abilityScores.wis = Math.max(clone.abilityScores.wis, theme.abilityScores.wis);
+		clone.abilityScores.cha = Math.max(clone.abilityScores.cha, theme.abilityScores.cha);
+
+		const immuneA = this.parseDamageMods(clone.damage.immune);
+		const immuneB = this.parseDamageMods(theme.damage.immune);
+		clone.damage.immune = Utils.distinct(immuneA.concat(immuneB)).sort().join('; ');
+		const resistA = this.parseDamageMods(clone.damage.resist);
+		const resistB = this.parseDamageMods(theme.damage.resist);
+		clone.damage.resist = Utils.distinct(resistA.concat(resistB)).filter(dt => !clone.damage.immune.includes(dt)).sort().join('; ');
+		const vulnerableA = this.parseDamageMods(clone.damage.vulnerable);
+		const vulnerableB = this.parseDamageMods(theme.damage.vulnerable);
+		clone.damage.vulnerable = Utils.distinct(vulnerableA.concat(vulnerableB)).filter(dt => !clone.damage.immune.includes(dt) && !clone.damage.resist.includes(dt)).sort().join('; ');
+
+		const ciA = clone.conditionImmunities.split(/[,;]/).map(s => s.trim());
+		const ciB = target.conditionImmunities.split(/[,;]/).map(s => s.trim());
+		clone.conditionImmunities = Utils.distinct(ciA.concat(ciB)).sort().join(', ');
+
+		const savesA = this.parseSavingThrows(clone.savingThrows);
+		const savesB = this.parseSavingThrows(theme.savingThrows);
+		const combinedSaves = Utils.sort(Utils.distinct(savesA.concat(savesB)));
+		clone.savingThrows = combinedSaves.map(save => {
+			const score = clone.abilityScores[save.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(clone.challenge);
+			return save.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
+		}).join(', ');
+
+		const skillsA = this.parseSkills(clone.skills);
+		const skillsB = this.parseSkills(theme.skills);
+		const combinedSkills = Utils.sort(Utils.distinct(skillsA.concat(skillsB)));
+		clone.skills = combinedSkills.map(skill => {
+			const score = clone.abilityScores[skill.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(clone.challenge);
+			return skill.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
+		}).join(', ');
+
+		const speedA = this.parseSpeeds(clone.speed);
+		const speedB = this.parseSpeeds(theme.speed);
+		const walk = Math.max(speedA.walk, speedB.walk);
+		const burrow = Math.max(speedA.walk, speedB.walk);
+		const climb = Math.max(speedA.walk, speedB.walk);
+		const fly = Math.max(speedA.walk, speedB.walk);
+		const swim = Math.max(speedA.walk, speedB.walk);
+		const hover = speedA.hover || speedB.hover;
+		const speeds = [];
+		if (walk > 0) {
+			speeds.push(walk + ' ft');
+		}
+		if (burrow > 0) {
+			speeds.push('burrow ' + burrow + ' ft');
+		}
+		if (climb > 0) {
+			speeds.push('climb ' + climb + ' ft');
+		}
+		if (fly > 0) {
+			speeds.push('fly ' + fly + ' ft' + (hover ? ' (hover)' : ''));
+		}
+		if (swim > 0) {
+			speeds.push('swim ' + swim + ' ft');
+		}
+		clone.speed = speeds.join(', ');
+
+		const sensesA = this.parseSenses(clone.senses);
+		const sensesB = this.parseSenses(theme.senses);
+		const blindsight = Math.max(sensesA.blindsight, sensesB.blindsight);
+		const darkvision = Math.max(sensesA.darkvision, sensesB.darkvision);
+		const tremorsense = Math.max(sensesA.tremorsense, sensesB.tremorsense);
+		const truesight = Math.max(sensesA.truesight, sensesB.truesight);
+		const senses = [];
+		if (blindsight > 0) {
+			senses.push('blindsight ' + blindsight + ' ft');
+		}
+		if (darkvision > 0) {
+			senses.push('darkvision ' + darkvision + ' ft');
+		}
+		if (tremorsense > 0) {
+			senses.push('tremorsense ' + tremorsense + ' ft');
+		}
+		if (truesight > 0) {
+			senses.push('truesight ' + truesight + ' ft');
+		}
+		clone.senses = senses.join(', ');
+		if (clone.senses !== '') {
+			clone.senses += ', ';
+		}
+		let perc = 10 + Gygax.modifierValue(clone.abilityScores.wis);
+		if (clone.skills.includes('Perception')) {
+			perc += Gygax.proficiency(clone.challenge);
+		}
+		clone.senses += 'passive Perception ' + perc;
+
+		clone.traits.forEach(t => {
+			if (this.getToHitExpressions(t).length + this.getDiceExpressions(t).length + this.getSaveExpressions(t).length > 0) {
+				const profDelta = Gygax.proficiency(clone.challenge) - Gygax.proficiency(target.challenge);
+				if (profDelta > 0) {
+					t.text += '\n\n*Increase attack bonus, damage, and save DC by +' + profDelta + '*';
+				}
+			}
+		});
+		theme.traits.forEach(t => {
+			const nameClash = clone.traits.find(tr => tr.name === t.name);
+			const copied = this.copyTrait(t, clone, theme);
+			if (nameClash) {
+				copied.name += ' (' + (theme.name || 'theme') + ')';
+			}
+			if (this.getToHitExpressions(copied).length + this.getDiceExpressions(copied).length + this.getSaveExpressions(copied).length > 0) {
+				const profDelta = Gygax.proficiency(clone.challenge) - Gygax.proficiency(theme.challenge);
+				if (profDelta > 0) {
+					copied.text += '\n\n*Increase attack bonus, damage, and save DC by +' + profDelta + '*';
+				}
+			}
+		});
+		this.sortTraits(clone);
+
+		if (clone.traits.some(t => t.type === 'legendary')) {
+			clone.legendaryActions = Math.max(clone.legendaryActions, 3);
+		}
+
+		return clone;
+	}
+
+	public static parseDamageMods(str: string) {
+		const types = ['acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder'];
+
+		const result: string[] = [];
+
+		str.toLowerCase().split(/[;]/).map(section => section.trim()).forEach(section => {
+			const tokens = section.split(/[,]/).map(token => token.trim());
+			// If the token contains any word that isn't a damage type, it's one single phrase
+			const isPhrase = tokens.some(token => !types.includes(token));
+			if (isPhrase) {
+				result.push(section);
+			} else {
+				tokens.forEach(token => result.push(token));
+			}
+		});
+
+		return result;
+	}
+
+	public static parseSpeeds(str: string) {
+		const values = {
+			walk: 0,
+			burrow: 0,
+			climb: 0,
+			fly: 0,
+			swim: 0,
+			hover: false
+		};
+
+		const sections = str.split(/[,;]/).map(token => token.trim());
+		sections.forEach(token => {
+			const val = token.match(/\d+/);
+			if (val) {
+				const ft = parseInt(val[0], 10);
+
+				if (token.startsWith('burrow')) {
+					values.burrow = ft;
+				} else if (token.startsWith('climb')) {
+					values.climb = ft;
+				} else if (token.startsWith('fly')) {
+					values.fly = ft;
+					values.hover = token.includes('hover');
+				} else if (token.startsWith('swim')) {
+					values.swim = ft;
+				} else {
+					values.walk = ft;
+				}
+			}
+		});
+
+		return values;
+	}
+
+	public static parseSenses(str: string) {
+		const values = {
+			blindsight: 0,
+			darkvision: 0,
+			tremorsense: 0,
+			truesight: 0
+		};
+
+		const sections = str.split(/[,;]/).map(token => token.trim());
+		sections.forEach(token => {
+			const val = token.match(/\d+/);
+			if (val) {
+				const ft = parseInt(val[0], 10);
+
+				if (token.startsWith('blindsight')) {
+					values.blindsight = ft;
+				} else if (token.startsWith('darkvision')) {
+					values.darkvision = ft;
+				} else if (token.startsWith('tremorsense')) {
+					values.tremorsense = ft;
+				} else if (token.startsWith('truesight')) {
+					values.truesight = ft;
+				}
+			}
+		});
+
+		return values;
+	}
+
+	public static parseSavingThrows(str: string) {
+		const list = [
+			{ name: 'Strength', ability: 'str' },
+			{ name: 'Dexterity', ability: 'dex' },
+			{ name: 'Constitution', ability: 'con' },
+			{ name: 'Intelligence', ability: 'int' },
+			{ name: 'Wisdom', ability: 'wis' },
+			{ name: 'Charisma', ability: 'cha' }
+		];
+
+		return list.filter(item => str.toLowerCase().includes(item.name.toLowerCase()));
+	}
+
+	public static parseSkills(str: string) {
+		const list = [
+			{ name: 'Acrobatics', ability: 'dex' },
+			{ name: 'Animal handling', ability: 'wis' },
+			{ name: 'Arcana', ability: 'int' },
+			{ name: 'Athletics', ability: 'str' },
+			{ name: 'Deception', ability: 'cha' },
+			{ name: 'History', ability: 'int' },
+			{ name: 'Insight', ability: 'wis' },
+			{ name: 'Intimidation', ability: 'cha' },
+			{ name: 'Investigation', ability: 'int' },
+			{ name: 'Medicine', ability: 'wis' },
+			{ name: 'Nature', ability: 'wis' },
+			{ name: 'Perception', ability: 'wis' },
+			{ name: 'Performance', ability: 'cha' },
+			{ name: 'Persuasion', ability: 'cha' },
+			{ name: 'Religion', ability: 'int' },
+			{ name: 'Sleight of hand', ability: 'dex' },
+			{ name: 'Stealth', ability: 'dex' },
+			{ name: 'Survival', ability: 'wis' }
+		];
+
+		return list.filter(item => str.toLowerCase().includes(item.name.toLowerCase()));
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Traits
 
 	public static copyTrait(trait: Trait, targetMonster: Monster, sourceMonster: Monster | null) {
@@ -516,13 +800,6 @@ export class Frankenstein {
 			const targetName = targetMonster.name.toLowerCase() || 'monster';
 			copy.text = copy.text.replaceAll(' ' + sourceName, ' ' + targetName);
 			copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(sourceName), ' ' + targetName);
-
-			if (sourceName.includes(' ')) {
-				sourceName.split(' ').forEach(token => {
-					copy.text = copy.text.replaceAll(' ' + token.toLowerCase(), ' ' + targetName);
-					copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(token), ' ' + targetName);
-				});
-			}
 		}
 
 		targetMonster.traits.push(copy);
@@ -620,7 +897,6 @@ export class Frankenstein {
 		});
 
 		target.traits = [];
-
 		TRAIT_TYPES.forEach(type => {
 			// Get all traits of this type
 			const traits: { trait: Trait, monster: Monster }[] = [];
@@ -665,6 +941,7 @@ export class Frankenstein {
 				distinct.splice(index, 1);
 			}
 		});
+		this.sortTraits(target);
 
 		if (target.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic'))) {
 			target.legendaryActions = 3;
@@ -754,6 +1031,9 @@ export class Frankenstein {
 			};
 		});
 	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// Role
 
 	public static getRole(monster: Monster) {
 		// If it has legendary actions, it's a boss

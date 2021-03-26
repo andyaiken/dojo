@@ -51,7 +51,7 @@ export class MonsterGroupCard extends React.Component<Props> {
 	public render() {
 		try {
 			return (
-				<div className='card monster'>
+				<div key={this.props.group.id} className='card monster'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.group.name || 'unnamed group'}

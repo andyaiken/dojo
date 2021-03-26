@@ -66,8 +66,8 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 	public render() {
 		try {
 			const monsterCount = Napoleon.getMonsterCount(this.props.encounter, this.state.selectedWaveID);
-			const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.state.selectedWaveID, this.props.getMonster);
-			const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.state.selectedWaveID, this.props.getMonster);
+			const monsterXP = Napoleon.getEncounterXP(this.props.encounter, this.state.selectedWaveID, id => this.props.getMonster(id));
+			const adjustedXP = Napoleon.getAdjustedEncounterXP(this.props.encounter, this.state.selectedWaveID, id => this.props.getMonster(id));
 
 			let waveSelection = null;
 			if (this.props.encounter.waves.length > 0) {
@@ -130,7 +130,7 @@ export class DifficultyChartPanel extends React.Component<Props, State> {
 			let diffSection;
 			if (party) {
 				const thresholds = Napoleon.getEncounterThresholds(party);
-				const difficulty = Napoleon.getEncounterDifficulty(this.props.encounter, this.state.selectedWaveID, party, this.props.getMonster);
+				const difficulty = Napoleon.getEncounterDifficulty(this.props.encounter, this.state.selectedWaveID, party, id => this.props.getMonster(id));
 
 				xpThresholds = (
 					<div className='table'>

@@ -277,7 +277,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 						);
 						const party = this.getParty();
 						if (party) {
-							const d = Napoleon.getEncounterDifficulty(encounter, null, party, this.props.getMonster);
+							const d = Napoleon.getEncounterDifficulty(encounter, null, party, id => this.props.getMonster(id));
 							diff = 'diff-' + Math.min(4, d.adjusted);
 						}
 						canEditEncounter = true;
@@ -545,10 +545,10 @@ export class AdventureScreen extends React.Component<Props, State> {
 			if (party) {
 				this.state.plot.scenes.forEach(scene => {
 					const encounterIDs = Verne.getEncounterIDs(scene);
-					encounterIDs.forEach(id => {
-						const encounter = this.props.encounters.find(e => e.id === id);
+					encounterIDs.forEach(encounterID => {
+						const encounter = this.props.encounters.find(e => e.id === encounterID);
 						if (encounter) {
-							const diff = Napoleon.getEncounterDifficulty(encounter, null, party as Party, this.props.getMonster);
+							const diff = Napoleon.getEncounterDifficulty(encounter, null, party as Party, id => this.props.getMonster(id));
 							sceneClassNames.push({
 								id: scene.id,
 								className: 'diff-' + Math.min(4, diff.adjusted)

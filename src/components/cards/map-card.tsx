@@ -22,7 +22,7 @@ export class MapCard extends React.Component<Props> {
 	public render() {
 		try {
 			return (
-				<div className='card map'>
+				<div key={this.props.map.id} className='card map'>
 					<div className='heading'>
 						<div className='title'>
 							{this.props.map.name || 'unnamed map'}
