@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Napoleon } from '../../utils/napoleon';
+
 import { Encounter, EncounterSlot } from '../../models/encounter';
 import { Monster } from '../../models/monster';
 
@@ -26,7 +28,7 @@ export class EncounterInfoPanel extends React.Component<Props> {
 	private getSlot(slot: EncounterSlot) {
 		let monsterName = 'unknown monster';
 
-		const monster = this.props.getMonster(slot.monsterID);
+		const monster = Napoleon.slotToMonster(slot, id => this.props.getMonster(id));
 		if (monster) {
 			monsterName = monster.name || 'unnamed monster';
 		}

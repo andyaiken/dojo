@@ -6,6 +6,7 @@ import { Shakespeare } from './shakespeare';
 import { Utils } from './utils';
 
 import { CONDITION_TYPES } from '../models/condition';
+import { EncounterSlot } from '../models/encounter';
 import { Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../models/monster';
 
 export class Frankenstein {
@@ -515,6 +516,32 @@ export class Frankenstein {
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	// Monster creation
+
+	public static getThemes(library: MonsterGroup[], slot: EncounterSlot) {
+		const themes: Monster[] = [];
+		let monster: Monster | null = null;
+
+		library.forEach(group => {
+			group.monsters.forEach(m => {
+				if (m.id === slot.monsterID) {
+					monster = m;
+				}
+
+				if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
+					themes.push(m);
+				}
+			});
+		});
+
+		if (monster) {
+			const similar = themes.filter(theme => theme.challenge <= (monster as Monster).challenge);
+			if (similar.length > 0) {
+				return similar;
+			}
+		}
+
+		return themes;
+	}
 
 	public static applyTheme(target: Monster, theme: Monster) {
 		const clone: Monster = JSON.parse(JSON.stringify(target));

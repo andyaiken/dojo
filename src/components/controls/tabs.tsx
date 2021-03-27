@@ -3,7 +3,7 @@ import React from 'react';
 import { RenderError } from '../error';
 
 interface Props {
-	options: { id: string; text: string; disabled?: boolean, display?: JSX.Element }[];
+	options: { id: string; text: string; disabled?: boolean }[];
 	selectedID: string | null;
 	disabled: boolean;
 	onSelect: (optionID: string) => void;
@@ -20,20 +20,18 @@ export class Tabs extends React.Component<Props> {
 				return null;
 			}
 
-			const tabs = this.props.options.map(option => {
-				return (
-					<Tab
-						key={option.id}
-						option={option}
-						selected={option.id === this.props.selectedID}
-						onSelect={(optionID: string) => this.props.onSelect(optionID)}
-					/>
-				);
-			});
-
 			return (
 				<div className={(this.props.disabled) ? 'tabs disabled' : 'tabs'}>
-					{tabs}
+					{
+						this.props.options.map(option => (
+							<Tab
+								key={option.id}
+								option={option}
+								selected={option.id === this.props.selectedID}
+								onSelect={(optionID: string) => this.props.onSelect(optionID)}
+							/>
+						))
+					}
 				</div>
 			);
 		} catch (e) {
@@ -44,7 +42,7 @@ export class Tabs extends React.Component<Props> {
 }
 
 interface TabProps {
-	option: { id: string; text: string; disabled?: boolean, display?: JSX.Element };
+	option: { id: string; text: string; disabled?: boolean };
 	selected: boolean;
 	onSelect: (optionID: string) => void;
 }
@@ -67,18 +65,9 @@ class Tab extends React.Component<TabProps> {
 				style += ' disabled';
 			}
 
-			let content = null;
-			if (this.props.option.display) {
-				content = this.props.option.display;
-			} else {
-				content = (
-					<div>{this.props.option.text}</div>
-				);
-			}
-
 			return (
 				<div key={this.props.option.id} className={style} title={this.props.option.text} onClick={e => this.click(e)} role='button'>
-					{content}
+					{this.props.option.text}
 				</div>
 			);
 		} catch (e) {

@@ -3438,14 +3438,7 @@ export class Main extends React.Component<Props, State> {
 								});
 							}}
 							chooseRandomTheme={(encounter, slot) => {
-								const themes: Monster[] = [];
-								this.state.library.forEach(group => {
-									group.monsters.forEach(m => {
-										if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
-											themes.push(m);
-										}
-									});
-								});
+								const themes = Frankenstein.getThemes(this.state.library, slot);
 								const index = Utils.randomNumber(themes.length);
 								const theme = themes[index];
 								slot.monsterThemeID = theme.id;
@@ -3455,14 +3448,7 @@ export class Main extends React.Component<Props, State> {
 								});
 							}}
 							splitTheme={(parent, slot) => {
-								const themes: Monster[] = [];
-								this.state.library.forEach(group => {
-									group.monsters.forEach(m => {
-										if ((m.id !== slot.monsterID) && (m.tag === 'any race')) {
-											themes.push(m);
-										}
-									});
-								});
+								const themes = Frankenstein.getThemes(this.state.library, slot);
 								parent.slots = parent.slots.filter(s => s.id !== slot.id);
 								for (let n = 0; n !== slot.count; ++n) {
 									const copy: EncounterSlot = JSON.parse(JSON.stringify(slot));
