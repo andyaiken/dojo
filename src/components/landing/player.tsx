@@ -1139,7 +1139,7 @@ class RollPrompt extends React.Component<RollPromptProps, RollPromptState> {
 				<div>
 					<div className='heading'>{this.props.type}</div>
 					<Selector
-						options={['roll', 'enter'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['roll', 'enter'])}
 						selectedID={this.state.mode}
 						onSelect={mode => this.setMode(mode)}
 					/>

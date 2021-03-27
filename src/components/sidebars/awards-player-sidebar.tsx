@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Streep } from '../../utils/streep';
 import { Comms } from '../../utils/uhura';
+import { Utils } from '../../utils/utils';
 
 import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
@@ -43,8 +44,8 @@ export class AwardsPlayerSidebar extends React.Component<Props, State> {
 				return null;
 			}
 
-			const categoryOptions = Streep.getCategories().map(o => ({ id: o, text: o }));
-			categoryOptions.unshift({ id: '', text: 'all' });
+			const categoryOptions = Utils.arrayToItems(Streep.getCategories());
+			categoryOptions.unshift({ id: '', text: 'all', disabled: false });
 
 			const awards = Streep.getAwards().filter(award => (this.state.selectedCategory === null) || (award.category === this.state.selectedCategory));
 

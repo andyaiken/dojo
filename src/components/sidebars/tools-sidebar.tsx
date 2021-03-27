@@ -8,6 +8,7 @@ import { Sherlock } from '../../utils/sherlock';
 import { Svengali } from '../../utils/svengali';
 import { Comms, CommsDM } from '../../utils/uhura';
 import { Ustinov } from '../../utils/ustinov';
+import { Utils } from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
 import { CardDraw, Handout, PlayingCard } from '../../models/misc';
@@ -242,17 +243,10 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 			let content = null;
 			switch (this.props.mode) {
 				case 'common':
-					const presetOptions = Shakespeare.getLanguagePresets().map(p => {
-						return {
-							id: p.name,
-							text: p.name
-						};
-					});
-
 					content = (
 						<div id='common'>
 							<Selector
-								options={presetOptions}
+								options={Utils.arrayToItems(Shakespeare.getLanguagePresets().map(p => p.name))}
 								selectedID={this.props.selectedLanguagePreset}
 								itemsPerRow={4}
 								onSelect={optionID => this.props.selectLanguagePreset(optionID)}
@@ -352,7 +346,7 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 						</div>
 					</Note>
 					<Selector
-						options={['common', 'custom', 'random'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['common', 'custom', 'random'])}
 						selectedID={this.props.mode}
 						onSelect={mode => this.props.setMode(mode)}
 					/>
@@ -571,7 +565,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 							</div>
 						</Note>
 						<Selector
-							options={['image', 'audio', 'video', 'text'].map(o => ({ id: o, text: o }))}
+							options={Utils.arrayToItems(['image', 'audio', 'video', 'text'])}
 							selectedID={this.state.mode}
 							onSelect={mode => this.setMode(mode)}
 						/>
@@ -739,7 +733,7 @@ class OracleTool extends React.Component<OracleToolProps, OracleToolState> {
 						</div>
 					</Note>
 					<Dropdown
-						options={[
+						options={Utils.arrayToItems([
 							'tarot deck',
 							'tarot deck (major arcana)',
 							'tarot deck (minor arcana)',
@@ -747,7 +741,7 @@ class OracleTool extends React.Component<OracleToolProps, OracleToolState> {
 							'standard deck (with jokers)',
 							'deck of many things',
 							'deck of many things (13 cards)'
-						].map(o => ({ id: o, text: o }))}
+						])}
 						selectedID={this.state.deck}
 						onSelect={id => this.setState({ deck: id })}
 					/>

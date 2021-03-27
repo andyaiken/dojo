@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
+import { Utils } from '../../utils/utils';
 
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Monster } from '../../models/monster';
@@ -144,7 +145,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 						onNudgeValue={delta => this.props.nudgeValue(this.props.slot, 'count', delta)}
 					/>
 					<Selector
-						options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['foe', 'neutral', 'ally'])}
 						selectedID={this.props.slot.faction}
 						onSelect={id => this.props.changeValue(this.props.slot, 'faction', id)}
 					/>

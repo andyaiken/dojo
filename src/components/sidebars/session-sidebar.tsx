@@ -2,6 +2,7 @@ import { CopyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Comms, CommsDM } from '../../utils/uhura';
+import { Utils } from '../../utils/utils';
 
 import { Combat } from '../../models/combat';
 import { Exploration } from '../../models/map';
@@ -67,7 +68,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 				</Note>
 				<Dropdown
 					placeholder='select a party...'
-					options={this.props.parties.map(party => ({ id: party.id, text: party.name }))}
+					options={this.props.parties.map(party => ({ id: party.id, text: party.name || 'unnamed party' }))}
 					selectedID={this.state.selectedPartyID}
 					onSelect={id => this.setSelectedPartyID(id)}
 				/>
@@ -223,7 +224,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 
 		return (
 			<Selector
-				options={options.map(o => ({ id: o, text: o }))}
+				options={Utils.arrayToItems(options)}
 				selectedID={this.props.view}
 				onSelect={view => this.props.setView(view)}
 			/>

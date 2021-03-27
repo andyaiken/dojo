@@ -558,7 +558,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							</div>
 						</Note>
 						<Selector
-							options={this.getHelpOptionsForPage(this.state.page).map(s => ({ id: s, text: s }))}
+							options={Utils.arrayToItems(this.getHelpOptionsForPage(this.state.page))}
 							selectedID={this.state.helpSection}
 							onSelect={optionID => this.setHelpSection(optionID)}
 						/>
@@ -872,7 +872,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				<Row className='full-height'>
 					<Col span={12} className='scrollable'>
 						<Tabs
-							options={['overview', 'abilities', 'combat', 'features'].map(o => ({ id: o, text: o }))}
+							options={Utils.arrayToItems(['overview', 'abilities', 'combat', 'features'])}
 							selectedID={this.state.page}
 							onSelect={optionID => this.setPage(optionID)}
 						/>
@@ -880,7 +880,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					</Col>
 					<Col span={12} className='scrollable sidebar sidebar-right'>
 						<Tabs
-							options={['statblock', 'guidelines', 'scratchpad', 'features'].map(o => ({ id: o, text: o }))}
+							options={Utils.arrayToItems(['statblock', 'guidelines', 'scratchpad', 'features'])}
 							selectedID={this.state.sidebarView}
 							onSelect={option => this.setState({ sidebarView: option })}
 						/>
@@ -941,7 +941,7 @@ class OverviewTab extends React.Component<OverviewTabProps> {
 						<div className='subheading'>type</div>
 						<FieldPanel allowRandomize={this.props.allowRandomize} onRandomize={() => this.props.randomValue('category')}>
 							<Selector
-								options={CATEGORY_TYPES.map(cat => ({ id: cat, text: cat }))}
+								options={Utils.arrayToItems(CATEGORY_TYPES)}
 								selectedID={this.props.monster.category}
 								itemsPerRow={5}
 								onSelect={optionID => this.props.changeValue('category', optionID)}

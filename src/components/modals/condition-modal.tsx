@@ -167,7 +167,6 @@ export class ConditionModal extends React.Component<Props, State> {
 				};
 			});
 
-			const saveOptions = ['str', 'dex', 'con', 'int', 'wis', 'cha', 'death'].map(c => ({ id: c, text: c }));
 			const pointOptions = [
 				{
 					id: 'start',
@@ -239,7 +238,7 @@ export class ConditionModal extends React.Component<Props, State> {
 							<div className='section'>
 								<div className='subheading'>type of save</div>
 								<Selector
-									options={saveOptions}
+									options={Utils.arrayToItems(['str', 'dex', 'con', 'int', 'wis', 'cha', 'death'])}
 									selectedID={
 										(this.props.condition.duration as ConditionDurationSaves)
 										? (this.props.condition.duration as ConditionDurationSaves).saveType

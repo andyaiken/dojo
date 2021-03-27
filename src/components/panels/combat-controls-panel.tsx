@@ -217,7 +217,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 		return (
 			<Selector
-				options={['half', 'normal', 'double'].map(o => ({ id: o, text: o }))}
+				options={Utils.arrayToItems(['half', 'normal', 'double'])}
 				selectedID={selected}
 				onSelect={id => {
 					let value = 1;
@@ -405,7 +405,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			damageSection = (
 				<div>
 					<Selector
-						options={['damage', 'healing', 'temp hp'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['damage', 'healing', 'temp hp'])}
 						selectedID={this.state.damageMode}
 						onSelect={id => this.setState({ damageMode: id })}
 					/>
@@ -596,24 +596,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				}
 				let auraDetails = null;
 				if (combatant.aura.radius > 0) {
-					const auraStyleOptions = [
-						{
-							id: 'square',
-							text: 'square'
-						},
-						{
-							id: 'rounded',
-							text: 'rounded'
-						},
-						{
-							id: 'circle',
-							text: 'circle'
-						}
-					];
 					auraDetails = (
 						<div>
 							<Selector
-								options={auraStyleOptions}
+								options={Utils.arrayToItems(['square', 'rounded', 'circle'])}
 								selectedID={combatant.aura.style}
 								onSelect={optionID => this.props.changeValue(combatant.aura, 'style', optionID)}
 							/>
@@ -753,7 +739,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			changeFaction = (
 				<Expander text='faction'>
 					<Selector
-						options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['foe', 'neutral', 'ally'])}
 						selectedID={combatant.faction}
 						onSelect={id => this.props.changeValue(combatant, 'faction', id)}
 					/>
@@ -786,7 +772,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			changeLight = (
 				<Expander text='light source'>
 					<Selector
-						options={['none', 'candle', 'torch', 'lantern'].map(o => ({ id: o, text: o }))}
+						options={Utils.arrayToItems(['none', 'candle', 'torch', 'lantern'])}
 						selectedID={source}
 						onSelect={id => {
 							switch (id) {
@@ -842,12 +828,11 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				}
 				let mountType = null;
 				if (!!combatant.mountID) {
-					const mountTypeOptions = ['controlled', 'independent'].map(o => ({ id: o, text: o }));
 					mountType = (
 						<div>
 							<div className='subheading'>mount is:</div>
 							<Selector
-								options={mountTypeOptions}
+								options={Utils.arrayToItems(['controlled', 'independent'])}
 								selectedID={combatant.mountType}
 								onSelect={id => this.props.changeValue(combatant, 'mountType', id)}
 							/>
@@ -979,7 +964,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return (
 				<div className='combat-controls'>
 					<Tabs
-						options={views.map(v => ({ id: v, text: v }))}
+						options={Utils.arrayToItems(views)}
 						selectedID={currentView}
 						onSelect={option => this.setView(option)}
 					/>

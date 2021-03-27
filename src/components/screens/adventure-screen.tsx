@@ -360,7 +360,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 	}
 
 	private getSidebarForScene(scene: Scene) {
-		let options = ['content', 'links', 'resources'].map(o => ({ id: o, text: o }));
+		let options = Utils.arrayToItems(['content', 'links', 'resources']);
 		if (this.state.plot.map) {
 			options = options.filter(o => o.id !== 'links');
 		}

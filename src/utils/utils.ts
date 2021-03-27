@@ -50,6 +50,10 @@ export class Utils {
 		});
 	}
 
+	public static arrayToItems(array: string[]) {
+		return array.map(o => ({ id: o, text: o, disabled: false }));
+	}
+
 	public static debounce(func: () => void, delay: number = 500) {
 		let timeout: NodeJS.Timeout;
 		return () => {

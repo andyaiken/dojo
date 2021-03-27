@@ -515,7 +515,7 @@ export class Frankenstein {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	// Monster creation
+	// Themes
 
 	public static getThemes(library: MonsterGroup[], slot: EncounterSlot) {
 		const themes: Monster[] = [];
@@ -613,10 +613,10 @@ export class Frankenstein {
 		const speedA = this.parseSpeeds(clone.speed);
 		const speedB = this.parseSpeeds(theme.speed);
 		const walk = Math.max(speedA.walk, speedB.walk);
-		const burrow = Math.max(speedA.walk, speedB.walk);
-		const climb = Math.max(speedA.walk, speedB.walk);
-		const fly = Math.max(speedA.walk, speedB.walk);
-		const swim = Math.max(speedA.walk, speedB.walk);
+		const burrow = Math.max(speedA.burrow, speedB.burrow);
+		const climb = Math.max(speedA.climb, speedB.climb);
+		const fly = Math.max(speedA.fly, speedB.fly);
+		const swim = Math.max(speedA.swim, speedB.swim);
 		const hover = speedA.hover || speedB.hover;
 		const speeds = [];
 		if (walk > 0) {

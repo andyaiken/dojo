@@ -2,6 +2,7 @@ import { Slider } from 'antd';
 import React from 'react';
 
 import { Napoleon } from '../../utils/napoleon';
+import { Utils } from '../../utils/utils';
 
 import { MonsterFilter } from '../../models/encounter';
 import { CATEGORY_TYPES, ROLE_TYPES, SIZE_TYPES } from '../../models/monster';
@@ -30,9 +31,7 @@ export class FilterPanel extends React.Component<Props> {
 
 	public render() {
 		try {
-			const sizeOptions = ['all sizes'].concat(SIZE_TYPES).map(size => ({ id: size, text: size }));
-
-			const catOptions = ['all types'].concat(CATEGORY_TYPES).map(cat => ({ id: cat, text: cat }));
+			const catOptions = Utils.arrayToItems(['all types'].concat(CATEGORY_TYPES));
 			const aberr = catOptions.find(o => o.id === 'aberration');
 			if (aberr) {
 				aberr.text = 'aberr.';
@@ -73,12 +72,9 @@ export class FilterPanel extends React.Component<Props> {
 
 			let roleSection = null;
 			if (this.props.showRoles) {
-				const roles = ['all roles'].concat(ROLE_TYPES);
-				const roleOptions = roles.map(role => ({ id: role, text: role }));
-
 				roleSection = (
 					<Selector
-						options={roleOptions}
+						options={Utils.arrayToItems(['all roles'].concat(ROLE_TYPES))}
 						selectedID={this.props.filter.role}
 						itemsPerRow={2}
 						onSelect={optionID => this.props.changeValue('role', optionID)}
@@ -98,7 +94,7 @@ export class FilterPanel extends React.Component<Props> {
 							onChange={value => this.props.changeValue('challenge', value)}
 						/>
 						<Dropdown
-							options={sizeOptions}
+							options={Utils.arrayToItems(['all sizes'].concat(SIZE_TYPES))}
 							placeholder='filter by size...'
 							selectedID={this.props.filter.size}
 							onSelect={optionID => this.props.changeValue('size', optionID)}

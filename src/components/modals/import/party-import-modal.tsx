@@ -78,8 +78,6 @@ export class PartyImportModal extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const options = ['paste', 'upload'].map(o => ({ id: o, text: o}));
-
 			let content = null;
 			switch (this.state.view) {
 				case 'paste':
@@ -135,7 +133,7 @@ export class PartyImportModal extends React.Component<Props, State> {
 			return (
 				<Row className='full-height'>
 					<Col span={12} className='scrollable'>
-						<Tabs options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
+						<Tabs options={Utils.arrayToItems(['paste', 'upload'])} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 						{content}
 					</Col>
 					<Col span={12} className='scrollable'>

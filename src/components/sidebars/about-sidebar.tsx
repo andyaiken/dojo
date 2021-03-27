@@ -81,8 +81,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const options = ['dojo', 'settings', 'ogl'].map(o => ({ id: o, text: o}));
-
 			let content = null;
 			switch (this.state.view) {
 				case 'dojo':
@@ -139,7 +137,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 								settings
 							</div>
 							<Dropdown
-								options={['light', 'dark'].map(o => ({ id: o, text: o + ' theme' }))}
+								options={Utils.arrayToItems(['light', 'dark'])}
 								selectedID={this.props.options.theme}
 								onSelect={value => this.props.setOption('theme', value)}
 							/>
@@ -246,7 +244,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 				<div className='sidebar-container'>
 					<div className='sidebar-header'>
 						<div className='heading'>about</div>
-						<Selector options={options} selectedID={this.state.view} onSelect={id => this.setView(id)} />
+						<Selector options={Utils.arrayToItems(['dojo', 'settings', 'ogl'])} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 					</div>
 					<div className='sidebar-content'>
 						{content}

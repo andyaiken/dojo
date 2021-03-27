@@ -5,11 +5,13 @@ import React from 'react';
 import { Factory } from '../../utils/factory';
 import { Matisse } from '../../utils/matisse';
 import { Shakespeare } from '../../utils/shakespeare';
+import { Utils } from '../../utils/utils';
 
 import { DOORWAY_TYPES, Map, MapArea, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Expander } from '../controls/expander';
 import { Group } from '../controls/group';
@@ -17,13 +19,12 @@ import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
+import { Tabs } from '../controls/tabs';
 import { Textbox } from '../controls/textbox';
 import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { MovementPanel } from '../panels/movement-panel';
-import { Tabs } from '../controls/tabs';
-import { Conditional } from '../controls/conditional';
 
 interface Props {
 	map: Map;
@@ -184,7 +185,7 @@ export class MapScreen extends React.Component<Props, State> {
 						</div>
 						<hr/>
 						<Tabs
-							options={['tiles', 'areas'].map(o => ({ id: o, text: o }))}
+							options={Utils.arrayToItems(['tiles', 'areas'])}
 							selectedID={this.state.sidebarView}
 							onSelect={view => this.setSidebarView(view)}
 						/>
@@ -374,7 +375,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 							<div className='section'>
 								<div className='subheading'>terrain</div>
 								<Selector
-									options={TERRAIN_TYPES.map(t => ({ id: t, text: t }))}
+									options={Utils.arrayToItems(TERRAIN_TYPES)}
 									selectedID={this.props.tile.terrain}
 									itemsPerRow={3}
 									onSelect={optionID => this.props.changeValue(this.props.tile, 'terrain', optionID)}
@@ -384,7 +385,7 @@ class MapTilePanel extends React.Component<MapTileProps> {
 							<div className='section'>
 								<div className='subheading'>shape</div>
 								<Selector
-									options={['square', 'rounded', 'circle'].map(t => ({ id: t, text: t }))}
+									options={Utils.arrayToItems(['square', 'rounded', 'circle'])}
 									selectedID={this.props.tile.style}
 									onSelect={optionID => this.props.changeValue(this.props.tile, 'style', optionID)}
 								/>
@@ -398,13 +399,13 @@ class MapTilePanel extends React.Component<MapTileProps> {
 											<div>
 												<div><b>style</b></div>
 												<Selector
-													options={DOORWAY_TYPES.map(o => ({ id: o, text: o }))}
+													options={Utils.arrayToItems(DOORWAY_TYPES)}
 													selectedID={this.props.tile.content ? this.props.tile.content.style : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
 												/>
 												<div><b>orientation</b></div>
 												<Selector
-													options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
+													options={Utils.arrayToItems(['horizontal', 'vertical'])}
 													selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
 												/>
@@ -414,13 +415,13 @@ class MapTilePanel extends React.Component<MapTileProps> {
 											<div>
 												<div><b>style</b></div>
 												<Selector
-													options={STAIRWAY_TYPES.map(o => ({ id: o, text: o }))}
+													options={Utils.arrayToItems(STAIRWAY_TYPES)}
 													selectedID={this.props.tile.content ? this.props.tile.content.style : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
 												/>
 												<div><b>orientation</b></div>
 												<Selector
-													options={['horizontal', 'vertical'].map(o => ({ id: o, text: o }))}
+													options={Utils.arrayToItems(['horizontal', 'vertical'])}
 													selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
 												/>

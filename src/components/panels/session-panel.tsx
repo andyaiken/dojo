@@ -637,7 +637,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					languageSection = (
 						<Dropdown
 							placeholder='(no language specified)'
-							options={languages.map(lang => ({ id: lang, text: lang }))}
+							options={Utils.arrayToItems(languages)}
 							selectedID={this.state.language}
 							onSelect={lang => this.setLanguage(lang)}
 							onClear={() => this.setLanguage('')}
@@ -744,7 +744,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				return (
 					<div>
 						<Dropdown
-							options={[
+							options={Utils.arrayToItems([
 								'tarot deck',
 								'tarot deck (major arcana)',
 								'tarot deck (minor arcana)',
@@ -752,7 +752,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 								'standard deck (with jokers)',
 								'deck of many things',
 								'deck of many things (13 cards)'
-							].map(o => ({ id: o, text: o }))}
+							])}
 							selectedID={this.state.deck}
 							onSelect={deck => this.setDeck(deck)}
 						/>
@@ -806,7 +806,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					<div className='content-then-icons'>
 						<div className='content'>
 							<Selector
-								options={['text', 'link', 'image', 'roll', 'card'].map(o => ({ id: o, text: o }))}
+								options={Utils.arrayToItems(['text', 'link', 'image', 'roll', 'card'])}
 								selectedID={this.state.type}
 								onSelect={type => this.setType(type)}
 							/>

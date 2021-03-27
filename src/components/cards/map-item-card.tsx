@@ -1,6 +1,8 @@
 import { Slider } from 'antd';
 import React from 'react';
 
+import { Utils } from '../../utils/utils';
+
 import { MapItem } from '../../models/map';
 
 import { RenderError } from '../error';
@@ -20,14 +22,6 @@ interface Props {
 export class MapItemCard extends React.Component<Props> {
 	public render() {
 		try {
-			const typeOptions = ['overlay', 'token'].map(t => {
-				return { id: t, text: t };
-			});
-
-			const styleOptions = ['square', 'rounded', 'circle'].map(t => {
-				return { id: t, text: t };
-			});
-
 			return (
 				<div key={this.props.item.id} className='card map'>
 					<div className='heading'>
@@ -36,7 +30,7 @@ export class MapItemCard extends React.Component<Props> {
 					<div className='card-content'>
 						<div className='subheading'>type</div>
 						<Selector
-							options={typeOptions}
+							options={Utils.arrayToItems(['overlay', 'token'])}
 							selectedID={this.props.item.type}
 							onSelect={optionID => this.props.changeValue(this.props.item, 'type', optionID)}
 						/>
@@ -62,7 +56,7 @@ export class MapItemCard extends React.Component<Props> {
 						<Conditional display={this.props.item.type === 'overlay'}>
 							<div className='subheading'>shape</div>
 							<Selector
-								options={styleOptions}
+								options={Utils.arrayToItems(['square', 'rounded', 'circle'])}
 								selectedID={this.props.item.style}
 								onSelect={optionID => this.props.changeValue(this.props.item, 'style', optionID)}
 							/>

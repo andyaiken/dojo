@@ -299,7 +299,7 @@ export class MapImportModal extends React.Component<Props, State> {
 			return (
 				<Row className='full-height'>
 					<Col span={8} className='scrollable'>
-						<Tabs options={['link', 'upload'].map(o => ({ id: o, text: o }))} selectedID={this.state.mode} onSelect={mode => this.setState({ mode: mode })} />
+						<Tabs options={Utils.arrayToItems(['link', 'upload'])} selectedID={this.state.mode} onSelect={mode => this.setState({ mode: mode })} />
 						{content}
 					</Col>
 					<Col span={16} className='scrollable both-ways'>

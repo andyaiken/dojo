@@ -7,6 +7,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { Sherlock } from '../../utils/sherlock';
 import { Streep } from '../../utils/streep';
 import { Comms, CommsDM } from '../../utils/uhura';
+import { Utils } from '../../utils/utils';
 
 import { Monster } from '../../models/monster';
 import { Award, Party, PC } from '../../models/party';
@@ -84,31 +85,18 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const options = [
-				{
-					id: 'skills',
-					text: 'skills'
-				},
-				{
-					id: 'conditions',
-					text: 'conditions'
-				},
-				{
-					id: 'actions',
-					text: 'actions'
-				}
-			];
+			const options = Utils.arrayToItems(['skills', 'conditions', 'actions']);
 
 			if (this.props.parties.length > 0) {
-				options.push({ id: 'party', text: 'party' });
+				options.push({ id: 'party', text: 'party', disabled: false });
 			}
 
 			if (this.props.monsters.length > 0) {
-				options.push({ id: 'monster', text: 'monster' });
+				options.push({ id: 'monster', text: 'monster', disabled: false });
 			}
 
 			if (this.props.showAwards) {
-				options.push({ id: 'awards', text: 'awards' });
+				options.push({ id: 'awards', text: 'awards', disabled: false });
 			}
 
 			let header = null;
@@ -176,8 +164,8 @@ export class ReferenceSidebar extends React.Component<Props, State> {
 					);
 					break;
 				case 'awards':
-					const categoryOptions = Streep.getCategories().map(o => ({ id: o, text: o }));
-					categoryOptions.unshift({ id: '', text: 'all' });
+					const categoryOptions = Utils.arrayToItems(Streep.getCategories());
+					categoryOptions.unshift({ id: '', text: 'all', disabled: false });
 
 					let awards = Streep.getAwards();
 

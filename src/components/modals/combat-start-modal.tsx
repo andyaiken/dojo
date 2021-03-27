@@ -7,6 +7,7 @@ import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
 import { Mercator } from '../../utils/mercator';
 import { Napoleon } from '../../utils/napoleon';
+import { Utils } from '../../utils/utils';
 
 import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
@@ -803,7 +804,7 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 						onChecked={checked => this.setState({ additionalOptions: checked })}
 					/>
 					<Conditional display={this.state.additionalOptions}>
-						<Selector options={['count', 'names', 'faction'].map(s => ({ id: s, text: s }))} selectedID={this.state.view} onSelect={id => this.setView(id)} />
+						<Selector options={Utils.arrayToItems(['count', 'names', 'faction'])} selectedID={this.state.view} onSelect={id => this.setView(id)} />
 						{this.getSlots(slotsContainer, this.state.view)}
 					</Conditional>
 				</div>
@@ -983,7 +984,7 @@ class MonsterSlotSection extends React.Component<MonsterSlotSectionProps> {
 		return (
 			<div>
 				<Selector
-					options={['foe', 'neutral', 'ally'].map(o => ({ id: o, text: o }))}
+					options={Utils.arrayToItems(['foe', 'neutral', 'ally'])}
 					selectedID={this.props.encounterSlot.faction}
 					onSelect={id => this.props.changeValue(this.props.encounterSlot, 'faction', id)}
 				/>
