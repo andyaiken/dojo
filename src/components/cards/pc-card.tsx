@@ -15,7 +15,6 @@ interface Props {
 	changeValue: (pc: any, field: string, value: any) => void;
 	deletePC: (pc: PC) => void;
 	editPC: (pc: PC) => void;
-	updatePC: (pc: PC) => void;
 	clonePC: (pc: PC, name: string) => void;
 	moveToParty: (pc: PC, partyID: string) => void;
 }
@@ -53,7 +52,6 @@ export class PCCard extends React.Component<Props> {
 							pc={this.props.pc}
 							parties={this.props.parties}
 							editPC={pc => this.props.editPC(pc)}
-							updatePC={pc => this.props.updatePC(pc)}
 							removePC={pc => this.props.deletePC(pc)}
 							clonePC={(pc, name) => this.props.clonePC(pc, name)}
 							moveToParty={(pc, partyID) => this.props.moveToParty(pc, partyID)}

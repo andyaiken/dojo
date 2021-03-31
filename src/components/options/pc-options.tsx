@@ -1,8 +1,6 @@
 import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
-import { Utils } from '../../utils/utils';
-
 import { Party, PC } from '../../models/party';
 
 import { RenderError } from '../error';
@@ -15,7 +13,6 @@ interface Props {
 	pc: PC;
 	parties: Party[];
 	editPC: (pc: PC) => void;
-	updatePC: (pc: PC) => void;
 	removePC: (pc: PC) => void;
 	clonePC: (pc: PC, name: string) => void;
 	moveToParty: (pc: PC, partyID: string) => void;
@@ -40,18 +37,8 @@ export class PCOptions extends React.Component<Props, State> {
 		});
 	}
 
-	private export(pc: PC) {
-		const filename = pc.name + '.pc';
-		Utils.saveFile(filename, pc);
-	}
-
 	public render() {
 		try {
-			let update = null;
-			if (this.props.pc.url) {
-				update = (<button onClick={() => this.props.updatePC(this.props.pc)}>update pc from d&amp;d beyond</button>);
-			}
-
 			let active = null;
 			if (this.props.pc.active) {
 				active = (
@@ -80,9 +67,7 @@ export class PCOptions extends React.Component<Props, State> {
 			return (
 				<div>
 					<button key='edit' onClick={() => this.props.editPC(this.props.pc)}>edit pc</button>
-					{update}
 					{active}
-					<button key='export' onClick={() => this.export(this.props.pc)}>export pc</button>
 					<Expander text='copy pc'>
 						<div className='content-then-icons'>
 							<div className='content'>

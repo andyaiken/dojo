@@ -1,19 +1,14 @@
-import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import { DeleteOutlined, FileOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
-import { Matisse } from '../../utils/matisse';
 import { Utils } from '../../utils/utils';
 
-import { Adventure } from '../../models/adventure';
-import { Combat } from '../../models/combat';
-import { Exploration, Map } from '../../models/map';
 import { Options } from '../../models/misc';
-import { MonsterGroup } from '../../models/monster';
-import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
 import { Expander } from '../controls/expander';
 import { Group } from '../controls/group';
@@ -24,14 +19,12 @@ import { Textbox } from '../controls/textbox';
 import pkg from '../../../package.json';
 
 interface Props {
-	parties: Party[];
-	library: MonsterGroup[];
-	maps: Map[];
-	adventures: Adventure[];
-	combats: Combat[];
-	explorations: Exploration[];
+	user: 'dm' | 'player';
 	options: Options;
 	setOption: (option: string, value: any) => void;
+	clearUnusedImages: () => void;
+	exportAll: () => void;
+	importAll: (json: string) => void;
 	addFlag: (flag: string) => void;
 	removeFlag: (flag: string) => void;
 }
@@ -72,11 +65,16 @@ export class AboutSidebar extends React.Component<Props, State> {
 	}
 
 	private clearImages() {
-		Matisse.clearUnusedImages(this.props.maps, this.props.adventures, this.props.combats, this.props.explorations);
+		this.props.clearUnusedImages();
 
 		this.setState({
 			view: this.state.view
 		});
+	}
+
+	private readFile(file: File) {
+		file.text().then(json => this.props.importAll(json));
+		return false;
 	}
 
 	public render() {
@@ -102,6 +100,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 					);
 					break;
 				case 'settings':
+					const themeOptions = ['light', 'dark'].map(o => ({ id: o, text: o + ' theme' }));
 					let data = 0;
 					let images = 0;
 					for (let n = 0; n !== window.localStorage.length; ++n) {
@@ -137,7 +136,7 @@ export class AboutSidebar extends React.Component<Props, State> {
 								settings
 							</div>
 							<Dropdown
-								options={Utils.arrayToItems(['light', 'dark'])}
+								options={themeOptions}
 								selectedID={this.props.options.theme}
 								onSelect={value => this.props.setOption('theme', value)}
 							/>
@@ -182,28 +181,49 @@ export class AboutSidebar extends React.Component<Props, State> {
 									))
 								}
 							</Expander>
-							<hr/>
-							<div className='subheading'>
-								data
-							</div>
-							<Note>
-								<div className='section'>
-									the browser has a limited amount of image storage space
-								</div>
-							</Note>
-							<button onClick={() => this.clearImages()}>remove unused images</button>
-							<Row>
-								<Col span={16}>total</Col>
-								<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
-							</Row>
-							<Row>
-								<Col span={16}>data</Col>
-								<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
-							</Row>
-							<Row>
-								<Col span={16}>images</Col>
-								<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
-							</Row>
+							<Conditional display={this.props.user === 'dm'}>
+								<Expander text='stored data'>
+									<div className='section'>
+										<Row>
+											<Col span={16}>total</Col>
+											<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
+										</Row>
+										<Row>
+											<Col span={16}>data</Col>
+											<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
+										</Row>
+										<Row>
+											<Col span={16}>images</Col>
+											<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
+										</Row>
+									</div>
+									<Note>
+										<div className='section'>
+											the browser has a limited amount of storage space; if you run into problems, try removing any unused images
+										</div>
+									</Note>
+									<button onClick={() => this.clearImages()}>remove unused images</button>
+									<Note>
+										<div className='section'>
+											make a backup of your data, or move it between computers, by exporting it
+										</div>
+									</Note>
+									<button onClick={() => this.props.exportAll()}>export all data</button>
+									<Note>
+										<div className='section'>
+											import a backup
+										</div>
+									</Note>
+									<Upload.Dragger accept='.dojo' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+										<p className='ant-upload-drag-icon'>
+											<FileOutlined />
+										</p>
+										<p className='ant-upload-text'>
+											click here, or drag a file here, to upload it
+										</p>
+									</Upload.Dragger>
+								</Expander>
+							</Conditional>
 						</div>
 					);
 					break;

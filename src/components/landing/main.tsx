@@ -19,7 +19,7 @@ import { Combat, Combatant, CombatSetup, Notification } from '../../models/comba
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Exploration, Map, MapArea, MapItem } from '../../models/map';
-import { Options, Sidebar } from '../../models/misc';
+import { Options, SavedImage, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
@@ -30,9 +30,7 @@ import { DemographicsModal } from '../modals/demographics-modal';
 import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
 import { ImageSelectionModal } from '../modals/image-selection-modal';
-import { AdventureImportModal } from '../modals/import/adventure-import-modal';
 import { MapImportModal } from '../modals/import/map-import-modal';
-import { MonsterGroupImportModal } from '../modals/import/monster-group-import-modal';
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
@@ -973,16 +971,6 @@ export class Main extends React.Component<Props, State> {
 		}
 	}
 
-	private updatePC(pc: PC) {
-		const copy = JSON.parse(JSON.stringify(pc));
-		this.setState({
-			drawer: {
-				type: 'update-pc',
-				pc: copy
-			}
-		});
-	}
-
 	private savePC() {
 		Utils.sort(this.state.drawer.pc.companions);
 		const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
@@ -1016,23 +1004,6 @@ export class Main extends React.Component<Props, State> {
 		this.setState({
 			library: groups,
 			selectedMonsterGroupID: group.id
-		});
-	}
-
-	private importMonsterGroup() {
-		this.setState({
-			drawer: {
-				type: 'import-group',
-				group: Factory.createMonsterGroup()
-			}
-		});
-	}
-
-	private acceptImportedGroup() {
-		this.state.library.push(this.state.drawer.group);
-		this.setState({
-			library: this.state.library,
-			drawer: null
 		});
 	}
 
@@ -1672,15 +1643,6 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private importAdventure() {
-		this.setState({
-			drawer: {
-				type: 'import-adventure',
-				adventure: Factory.createAdventure()
-			}
-		});
-	}
-
 	private generateAdventure() {
 		let partyID: string | null = null;
 		if (this.state.parties.length === 1) {
@@ -1762,14 +1724,6 @@ export class Main extends React.Component<Props, State> {
 					});
 				}
 			}
-		});
-	}
-
-	private acceptImportedAdventure() {
-		this.state.adventures.push(this.state.drawer.adventure);
-		this.setState({
-			adventures: this.state.adventures,
-			drawer: null
 		});
 	}
 
@@ -2973,6 +2927,56 @@ export class Main extends React.Component<Props, State> {
 		}
 	}
 
+	private exportAll() {
+		const data = {
+			parties: this.state.parties,
+			library: this.state.library,
+			encounters: this.state.encounters,
+			maps: this.state.maps,
+			adventures: this.state.adventures,
+			combats: this.state.combats,
+			explorations: this.state.explorations,
+			options: this.state.options,
+			images: Matisse.allImages()
+		};
+
+		Utils.saveFile('data.dojo', data);
+	}
+
+	private importAll(json: string) {
+		const data = JSON.parse(json);
+
+		data.images.forEach((img: SavedImage) => {
+			Matisse.saveImage(img.id, img.name, img.data);
+		});
+
+		const sidebar = this.state.sidebar;
+		sidebar.visible = false;
+
+		this.setState({
+			view: 'home',
+			drawer: null,
+			sidebar: this.state.sidebar,
+			parties: data.parties,
+			library: data.library,
+			encounters: data.encounters,
+			maps: data.maps,
+			adventures: data.adventures,
+			combats: data.combats,
+			explorations: data.explorations,
+			options: data.options,
+			selectedPartyID: null,
+			selectedMonsterGroupID: null,
+			selectedEncounterID: null,
+			selectedMapID: null,
+			selectedAdventureID: null,
+			selectedCombatID: null,
+			selectedExplorationID: null
+		}, () => {
+			this.saveAll();
+		});
+	}
+
 	//#endregion
 
 	//#region Rendering
@@ -3107,7 +3111,6 @@ export class Main extends React.Component<Props, State> {
 							addPC={() => this.editPC(null)}
 							importPC={() => this.importPC()}
 							editPC={pc => this.editPC(pc)}
-							updatePC={pc => this.updatePC(pc)}
 							deletePC={pc => this.deletePC(pc)}
 							clonePC={(pc, name) => this.clonePC(pc, name)}
 							moveToParty={(pc, partyID) => this.moveToParty(pc, partyID)}
@@ -3182,7 +3185,6 @@ export class Main extends React.Component<Props, State> {
 						encounters={this.state.encounters}
 						hasMonsters={hasMonsters}
 						addMonsterGroup={() => this.addMonsterGroup()}
-						importMonsterGroup={() => this.importMonsterGroup()}
 						openMonsterGroup={group => this.selectMonsterGroup(group)}
 						deleteMonsterGroup={group => this.deleteMonsterGroup(group)}
 						addOpenGameContent={() => this.addOpenGameContent()}
@@ -3677,7 +3679,6 @@ export class Main extends React.Component<Props, State> {
 					<AdventureListScreen
 						adventures={this.state.adventures}
 						addAdventure={() => this.addAdventure()}
-						importAdventure={() => this.importAdventure()}
 						generateAdventure={() => this.generateAdventure()}
 						openAdventure={adventure => this.selectAdventure(adventure)}
 						deleteAdventure={adventure => this.deleteAdventure(adventure)}
@@ -3792,34 +3793,6 @@ export class Main extends React.Component<Props, State> {
 					footer = (
 						<button onClick={() => this.acceptImportedPC()}>
 							accept pc
-						</button>
-					);
-					closable = true;
-					break;
-				case 'update-pc':
-					content = (
-						<PCImportModal
-							pc={this.state.drawer.pc}
-						/>
-					);
-					header = 'update pc';
-					footer = (
-						<button onClick={() => this.savePC()}>
-							accept pc
-						</button>
-					);
-					closable = true;
-					break;
-				case 'import-group':
-					content = (
-						<MonsterGroupImportModal
-							group={this.state.drawer.group}
-						/>
-					);
-					header = 'import monster group';
-					footer = (
-						<button onClick={() => this.acceptImportedGroup()}>
-							accept group
 						</button>
 					);
 					closable = true;
@@ -4047,20 +4020,6 @@ export class Main extends React.Component<Props, State> {
 					);
 					closable = true;
 					break;
-				case 'import-adventure':
-					content = (
-						<AdventureImportModal
-							adventure={this.state.drawer.adventure}
-						/>
-					);
-					header = 'import adventure';
-					footer = (
-						<button onClick={() => this.acceptImportedAdventure()}>
-							accept adventure
-						</button>
-					);
-					closable = true;
-					break;
 				case 'random-adventure':
 					content = (
 						<RandomGeneratorModal
@@ -4270,8 +4229,6 @@ export class Main extends React.Component<Props, State> {
 							encounters={this.state.encounters}
 							maps={this.state.maps}
 							adventures={this.state.adventures}
-							combats={this.state.combats}
-							explorations={this.state.explorations}
 							options={this.state.options}
 							currentCombat={this.state.combats.find(c => c.id === this.state.selectedCombatID) ?? null}
 							currentExploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) ?? null}
@@ -4310,6 +4267,9 @@ export class Main extends React.Component<Props, State> {
 									options: options
 								});
 							}}
+							clearUnusedImages={() => Matisse.clearUnusedImages(this.state.maps, this.state.adventures, this.state.combats, this.state.explorations)}
+							exportAll={() => this.exportAll()}
+							importAll={json => this.importAll(json)}
 							addFlag={flag => {
 								const options = this.state.options;
 								options.featureFlags.push(flag);

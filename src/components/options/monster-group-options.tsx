@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Napoleon } from '../../utils/napoleon';
-import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { MonsterGroup } from '../../models/monster';
@@ -22,11 +21,6 @@ interface Props {
 }
 
 export class MonsterGroupOptions extends React.Component<Props> {
-	private export() {
-		const filename = this.props.monsterGroup.name + '.monstergroup';
-		Utils.saveFile(filename, this.props.monsterGroup);
-	}
-
 	public render() {
 		try {
 			return (
@@ -35,7 +29,6 @@ export class MonsterGroupOptions extends React.Component<Props> {
 					<button onClick={() => this.props.importMonster()}>import a monster</button>
 					<button onClick={() => this.props.generateMonster()}>generate a random monster</button>
 					<button onClick={() => this.props.openDemographics(this.props.monsterGroup)}>show demographics</button>
-					<button onClick={() => this.export()}>export group</button>
 					<button onClick={() => this.props.createEncounter(this.props.monsterGroup.monsters.map(m => m.id))}>create an encounter</button>
 					<ConfirmButton
 						disabled={this.props.monsterGroup.monsters.some(monster => this.props.encounters.some(enc => Napoleon.encounterHasMonster(enc, monster.id)))}

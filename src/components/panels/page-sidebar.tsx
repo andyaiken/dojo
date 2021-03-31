@@ -35,8 +35,6 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	adventures: Adventure[];
-	combats: Combat[];
-	explorations: Exploration[];
 	options: Options;
 	currentCombat: Combat | null;
 	currentExploration: Exploration | null;
@@ -55,6 +53,9 @@ interface Props {
 	toggleAddingToMap: () => void;
 	onUpdated: () => void;
 	setOption: (option: string, value: any) => void;
+	clearUnusedImages: () => void;
+	exportAll: () => void;
+	importAll: (json: string) => void;
 	addFlag: (flag: string) => void;
 	removeFlag: (flag: string) => void;
 	getMonster: (id: string) => Monster | null;
@@ -67,8 +68,6 @@ export class PageSidebar extends React.Component<Props> {
 		encounters: [],
 		maps: [],
 		adventures: [],
-		combats: [],
-		explorations: [],
 		currentCombat: null,
 		currentExploration: null,
 		selectParty: null,
@@ -84,6 +83,9 @@ export class PageSidebar extends React.Component<Props> {
 		editCondition: null,
 		toggleAddingToMap: null,
 		onUpdated: null,
+		clearUnusedImages: null,
+		exportAll: null,
+		importAll: null,
 		getMonster: null
 	};
 
@@ -485,14 +487,12 @@ export class PageSidebar extends React.Component<Props> {
 				case 'about':
 					content = (
 						<AboutSidebar
-							parties={this.props.parties}
-							library={this.props.library}
-							maps={this.props.maps}
-							adventures={this.props.adventures}
-							combats={this.props.combats}
-							explorations={this.props.explorations}
+							user={this.props.user}
 							options={this.props.options}
 							setOption={(option, value) => this.props.setOption(option, value)}
+							clearUnusedImages={() => this.props.clearUnusedImages()}
+							exportAll={() => this.props.exportAll()}
+							importAll={json => this.props.importAll(json)}
 							addFlag={flag => this.props.addFlag(flag)}
 							removeFlag={flag => this.props.removeFlag(flag)}
 						/>

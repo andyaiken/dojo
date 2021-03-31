@@ -562,62 +562,90 @@ export class Frankenstein {
 			clone.name = clone.name + ' ' + theme.name;
 		}
 
-		clone.challenge = Math.max(clone.challenge, theme.challenge);
-
 		if (theme.ac > clone.ac) {
 			clone.ac = theme.ac;
 			clone.acInfo = theme.acInfo;
 		}
 
+		clone.challenge = Math.max(clone.challenge, theme.challenge);
 		clone.hitDice = Math.max(clone.hitDice, theme.hitDice);
 
-		clone.abilityScores.str = Math.max(clone.abilityScores.str, theme.abilityScores.str);
-		clone.abilityScores.dex = Math.max(clone.abilityScores.dex, theme.abilityScores.dex);
-		clone.abilityScores.con = Math.max(clone.abilityScores.con, theme.abilityScores.con);
-		clone.abilityScores.int = Math.max(clone.abilityScores.int, theme.abilityScores.int);
-		clone.abilityScores.wis = Math.max(clone.abilityScores.wis, theme.abilityScores.wis);
-		clone.abilityScores.cha = Math.max(clone.abilityScores.cha, theme.abilityScores.cha);
+		this.applyThemeAbilityScores(clone, theme);
+		this.applyThemeDamageMods(clone, theme);
+		this.applyThemeConditions(clone, theme);
+		this.applyThemeSaves(clone, theme);
+		this.applyThemeSkills(clone, theme);
+		this.applyThemeSpeeds(clone, theme);
+		this.applyThemeSenses(clone, theme);
+		this.applyThemeTraits(target, clone, theme);
 
-		const immuneA = this.parseDamageMods(clone.damage.immune);
+		return clone;
+	}
+
+	private static applyThemeAbilityScores(target: Monster, theme: Monster) {
+		target.abilityScores.str = Math.max(target.abilityScores.str, theme.abilityScores.str);
+		target.abilityScores.dex = Math.max(target.abilityScores.dex, theme.abilityScores.dex);
+		target.abilityScores.con = Math.max(target.abilityScores.con, theme.abilityScores.con);
+		target.abilityScores.int = Math.max(target.abilityScores.int, theme.abilityScores.int);
+		target.abilityScores.wis = Math.max(target.abilityScores.wis, theme.abilityScores.wis);
+		target.abilityScores.cha = Math.max(target.abilityScores.cha, theme.abilityScores.cha);
+	}
+
+	private static applyThemeDamageMods(target: Monster, theme: Monster) {
+		const immuneA = this.parseDamageMods(target.damage.immune);
 		const immuneB = this.parseDamageMods(theme.damage.immune);
-		clone.damage.immune = Utils.distinct(immuneA.concat(immuneB)).sort().join('; ');
-		const resistA = this.parseDamageMods(clone.damage.resist);
+		target.damage.immune = Utils.distinct(immuneA.concat(immuneB)).sort().join('; ');
+
+		const resistA = this.parseDamageMods(target.damage.resist);
 		const resistB = this.parseDamageMods(theme.damage.resist);
-		clone.damage.resist = Utils.distinct(resistA.concat(resistB)).filter(dt => !clone.damage.immune.includes(dt)).sort().join('; ');
-		const vulnerableA = this.parseDamageMods(clone.damage.vulnerable);
+		target.damage.resist = Utils.distinct(resistA.concat(resistB)).filter(dt => !target.damage.immune.includes(dt)).sort().join('; ');
+
+		const vulnerableA = this.parseDamageMods(target.damage.vulnerable);
 		const vulnerableB = this.parseDamageMods(theme.damage.vulnerable);
-		clone.damage.vulnerable = Utils.distinct(vulnerableA.concat(vulnerableB)).filter(dt => !clone.damage.immune.includes(dt) && !clone.damage.resist.includes(dt)).sort().join('; ');
+		target.damage.vulnerable = Utils.distinct(vulnerableA.concat(vulnerableB)).filter(dt => !target.damage.immune.includes(dt) && !target.damage.resist.includes(dt)).sort().join('; ');
+	}
 
-		const ciA = clone.conditionImmunities.split(/[,;]/).map(s => s.trim());
-		const ciB = target.conditionImmunities.split(/[,;]/).map(s => s.trim());
-		clone.conditionImmunities = Utils.distinct(ciA.concat(ciB)).sort().join(', ');
+	private static applyThemeConditions(target: Monster, theme: Monster) {
+		const ciA = target.conditionImmunities.split(/[,;]/).map(s => s.trim());
+		const ciB = theme.conditionImmunities.split(/[,;]/).map(s => s.trim());
+		target.conditionImmunities = Utils.distinct(ciA.concat(ciB)).sort().join(', ');
+	}
 
-		const savesA = this.parseSavingThrows(clone.savingThrows);
+	private static applyThemeSaves(target: Monster, theme: Monster) {
+		const savesA = this.parseSavingThrows(target.savingThrows);
 		const savesB = this.parseSavingThrows(theme.savingThrows);
+
 		const combinedSaves = Utils.sort(Utils.distinct(savesA.concat(savesB)));
-		clone.savingThrows = combinedSaves.map(save => {
-			const score = clone.abilityScores[save.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
-			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(clone.challenge);
+		target.savingThrows = combinedSaves.map(save => {
+			const score = target.abilityScores[save.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(target.challenge);
 			return save.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
 		}).join(', ');
+	}
 
-		const skillsA = this.parseSkills(clone.skills);
+	private static applyThemeSkills(target: Monster, theme: Monster) {
+		const skillsA = this.parseSkills(target.skills);
 		const skillsB = this.parseSkills(theme.skills);
+
 		const combinedSkills = Utils.sort(Utils.distinct(skillsA.concat(skillsB)));
-		clone.skills = combinedSkills.map(skill => {
-			const score = clone.abilityScores[skill.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
-			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(clone.challenge);
+		target.skills = combinedSkills.map(skill => {
+			const score = target.abilityScores[skill.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(target.challenge);
 			return skill.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
 		}).join(', ');
+	}
 
-		const speedA = this.parseSpeeds(clone.speed);
+	private static applyThemeSpeeds(target: Monster, theme: Monster) {
+		const speedA = this.parseSpeeds(target.speed);
 		const speedB = this.parseSpeeds(theme.speed);
+
 		const walk = Math.max(speedA.walk, speedB.walk);
 		const burrow = Math.max(speedA.burrow, speedB.burrow);
 		const climb = Math.max(speedA.climb, speedB.climb);
 		const fly = Math.max(speedA.fly, speedB.fly);
 		const swim = Math.max(speedA.swim, speedB.swim);
 		const hover = speedA.hover || speedB.hover;
+
 		const speeds = [];
 		if (walk > 0) {
 			speeds.push(walk + ' ft');
@@ -634,14 +662,18 @@ export class Frankenstein {
 		if (swim > 0) {
 			speeds.push('swim ' + swim + ' ft');
 		}
-		clone.speed = speeds.join(', ');
+		target.speed = speeds.join(', ');
+	}
 
-		const sensesA = this.parseSenses(clone.senses);
+	private static applyThemeSenses(target: Monster, theme: Monster) {
+		const sensesA = this.parseSenses(target.senses);
 		const sensesB = this.parseSenses(theme.senses);
+
 		const blindsight = Math.max(sensesA.blindsight, sensesB.blindsight);
 		const darkvision = Math.max(sensesA.darkvision, sensesB.darkvision);
 		const tremorsense = Math.max(sensesA.tremorsense, sensesB.tremorsense);
 		const truesight = Math.max(sensesA.truesight, sensesB.truesight);
+
 		const senses = [];
 		if (blindsight > 0) {
 			senses.push('blindsight ' + blindsight + ' ft');
@@ -655,47 +687,70 @@ export class Frankenstein {
 		if (truesight > 0) {
 			senses.push('truesight ' + truesight + ' ft');
 		}
-		clone.senses = senses.join(', ');
-		if (clone.senses !== '') {
-			clone.senses += ', ';
-		}
-		let perc = 10 + Gygax.modifierValue(clone.abilityScores.wis);
-		if (clone.skills.includes('Perception')) {
-			perc += Gygax.proficiency(clone.challenge);
-		}
-		clone.senses += 'passive Perception ' + perc;
+		target.senses = senses.join(', ');
 
-		clone.traits.forEach(t => {
-			if (this.getToHitExpressions(t).length + this.getDiceExpressions(t).length + this.getSaveExpressions(t).length > 0) {
-				const profDelta = Gygax.proficiency(clone.challenge) - Gygax.proficiency(target.challenge);
-				if (profDelta > 0) {
-					t.text += '\n\n*Increase attack bonus, damage, and save DC by +' + profDelta + '*';
-				}
-			}
-		});
-		theme.traits.forEach(t => {
-			const nameClash = clone.traits.find(tr => tr.name === t.name);
-			const copied = this.copyTrait(t, clone, theme);
-			if (nameClash) {
-				copied.name += ' (' + (theme.name || 'theme') + ')';
-			}
-			if (this.getToHitExpressions(copied).length + this.getDiceExpressions(copied).length + this.getSaveExpressions(copied).length > 0) {
-				const profDelta = Gygax.proficiency(clone.challenge) - Gygax.proficiency(theme.challenge);
-				if (profDelta > 0) {
-					copied.text += '\n\n*Increase attack bonus, damage, and save DC by +' + profDelta + '*';
-				}
-			}
-		});
-		this.sortTraits(clone);
-
-		if (clone.traits.some(t => t.type === 'legendary')) {
-			clone.legendaryActions = Math.max(clone.legendaryActions, 3);
+		if (target.senses !== '') {
+			target.senses += ', ';
 		}
-
-		return clone;
+		let perc = 10 + Gygax.modifierValue(target.abilityScores.wis);
+		if (target.skills.includes('Perception')) {
+			perc += Gygax.proficiency(target.challenge);
+		}
+		target.senses += 'passive Perception ' + perc;
 	}
 
-	public static parseDamageMods(str: string) {
+	private static applyThemeTraits(original: Monster, target: Monster, theme: Monster) {
+		target.traits = [];
+
+		original.traits.forEach(trait => {
+			const copied = this.copyTrait(trait, target, original);
+			const profDelta = Gygax.proficiency(target.challenge) - Gygax.proficiency(original.challenge);
+			if (profDelta > 0) {
+				this.getToHitExpressions(copied).forEach(exp => {
+					const newExp = '+' + (exp.bonus + profDelta) + ' to hit';
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+				this.getDiceExpressions(copied).forEach(exp => {
+					const newExp = exp.count + 'd' + exp.sides + ' + ' + (exp.bonus + profDelta);
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+				this.getSaveExpressions(copied).forEach(exp => {
+					const newExp = 'DC ' + (exp.dc + profDelta);
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+			}
+		});
+
+		theme.traits.forEach(trait => {
+			const copied = this.copyTrait(trait, target, theme);
+			if (original.traits.find(t => t.name === trait.name)) {
+				copied.name += ' (' + (theme.name || 'theme') + ')';
+			}
+			const profDelta = Gygax.proficiency(target.challenge) - Gygax.proficiency(theme.challenge);
+			if (profDelta > 0) {
+				this.getToHitExpressions(copied).forEach(exp => {
+					const newExp = '+' + (exp.bonus + profDelta) + ' to hit';
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+				this.getDiceExpressions(copied).forEach(exp => {
+					const newExp = exp.count + 'd' + exp.sides + ' + ' + (exp.bonus + profDelta);
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+				this.getSaveExpressions(copied).forEach(exp => {
+					const newExp = 'DC ' + (exp.dc + profDelta);
+					copied.text = copied.text.replaceAll(exp.expression, newExp);
+				});
+			}
+		});
+
+		this.sortTraits(target);
+
+		if (target.traits.some(t => t.type === 'legendary')) {
+			target.legendaryActions = Math.max(target.legendaryActions, 3);
+		}
+	}
+
+	private static parseDamageMods(str: string) {
 		const types = ['acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder'];
 
 		const result: string[] = [];
@@ -714,7 +769,7 @@ export class Frankenstein {
 		return result;
 	}
 
-	public static parseSpeeds(str: string) {
+	private static parseSpeeds(str: string) {
 		const values = {
 			walk: 0,
 			burrow: 0,
@@ -748,7 +803,7 @@ export class Frankenstein {
 		return values;
 	}
 
-	public static parseSenses(str: string) {
+	private static parseSenses(str: string) {
 		const values = {
 			blindsight: 0,
 			darkvision: 0,
@@ -777,7 +832,7 @@ export class Frankenstein {
 		return values;
 	}
 
-	public static parseSavingThrows(str: string) {
+	private static parseSavingThrows(str: string) {
 		const list = [
 			{ name: 'Strength', ability: 'str' },
 			{ name: 'Dexterity', ability: 'dex' },
@@ -790,7 +845,7 @@ export class Frankenstein {
 		return list.filter(item => str.toLowerCase().includes(item.name.toLowerCase()));
 	}
 
-	public static parseSkills(str: string) {
+	private static parseSkills(str: string) {
 		const list = [
 			{ name: 'Acrobatics', ability: 'dex' },
 			{ name: 'Animal handling', ability: 'wis' },

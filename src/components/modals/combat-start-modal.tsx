@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, PlusCircleOutlined, RedoOutlined } from '@ant-design/icons';
 import { Col, Row, Slider } from 'antd';
 import React from 'react';
 
@@ -15,7 +15,6 @@ import { Map } from '../../models/map';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { RenderError } from '../error';
-import { MonsterCandidateCard } from '../cards/monster-candidate-card';
 import { Checkbox } from '../controls/checkbox';
 import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
@@ -653,7 +652,16 @@ class MonsterSelectionSection extends React.Component<MonsterSelectionSectionPro
 
 		let allCombatants: JSX.Element | JSX.Element[] = monsters.filter(m => !selectedIDs.includes(m.id)).map(m => {
 			return (
-				<MonsterCandidateCard key={m.id} monster={m} selectMonster={monster => this.props.addMonster(monster)} />
+				<Group key={m.id}>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<div>{m.name || 'unnamed monster'}</div>
+						</div>
+						<div className='icons'>
+							<PlusCircleOutlined title='add monster' onClick={() => this.props.addMonster(m)} />
+						</div>
+					</div>
+				</Group>
 			);
 		});
 		if (allCombatants.length === 0) {

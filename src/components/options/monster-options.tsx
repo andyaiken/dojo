@@ -2,7 +2,6 @@ import { ExportOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Napoleon } from '../../utils/napoleon';
-import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
@@ -43,11 +42,6 @@ export class MonsterOptions extends React.Component<Props, State> {
 		});
 	}
 
-	private export() {
-		const filename = this.props.monster.name + '.monster';
-		Utils.saveFile(filename, this.props.monster);
-	}
-
 	public render() {
 		try {
 			const groupOptions: { id: string, text: string }[] = [];
@@ -64,7 +58,6 @@ export class MonsterOptions extends React.Component<Props, State> {
 				<div>
 					<button onClick={() => this.props.viewMonster(this.props.monster)}>statblock</button>
 					<button onClick={() => this.props.editMonster(this.props.monster)}>edit monster</button>
-					<button onClick={() => this.export()}>export monster</button>
 					<Expander text='copy monster'>
 						<div className='content-then-icons'>
 							<div className='content'>

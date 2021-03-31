@@ -6,6 +6,7 @@ import { List } from 'react-movable';
 import { Factory } from '../../../utils/factory';
 import { Frankenstein } from '../../../utils/frankenstein';
 import { Gygax } from '../../../utils/gygax';
+import { Matisse } from '../../../utils/matisse';
 import { Napoleon } from '../../../utils/napoleon';
 import { Shakespeare } from '../../../utils/shakespeare';
 import { Sherlock } from '../../../utils/sherlock';
@@ -16,7 +17,6 @@ import { Options } from '../../../models/misc';
 import { CATEGORY_TYPES, Monster, MonsterGroup, Trait, TRAIT_TYPES } from '../../../models/monster';
 
 import { RenderError } from '../../error';
-import { MonsterCandidateCard } from '../../cards/monster-candidate-card';
 import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
@@ -143,6 +143,12 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			monster: this.state.monster,
 			page: 'features',
 			selectedTraitID: null
+		});
+	}
+
+	private applyTheme(monster: Monster) {
+		this.setState({
+			monster: Frankenstein.applyTheme(this.state.monster, monster)
 		});
 	}
 
@@ -319,49 +325,49 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getHelpSection() {
 		switch (this.state.helpSection) {
 			case 'type':
-				return this.getValueSection('category', 'text');
+				return this.getValueSection('category', 'text', this.state.monster.category);
 			case 'subtype':
-				return this.getValueSection('tag', 'text');
+				return this.getValueSection('tag', 'text', this.state.monster.tag);
 			case 'align':
-				return this.getValueSection('alignment', 'text');
+				return this.getValueSection('alignment', 'text', this.state.monster.alignment);
 			case 'challenge':
-				return this.getValueSection('challenge', 'number');
+				return this.getValueSection('challenge', 'number', this.state.monster.challenge);
 			case 'size':
-				return this.getValueSection('size', 'text');
+				return this.getValueSection('size', 'text', this.state.monster.size);
 			case 'speed':
-				return this.getValueSection('speed', 'text');
+				return this.getValueSection('speed', 'text', this.state.monster.speed);
 			case 'lang':
-				return this.getValueSection('languages', 'text');
+				return this.getValueSection('languages', 'text', this.state.monster.languages);
 			case 'str':
-				return this.getValueSection('abilityScores.str', 'number');
+				return this.getValueSection('abilityScores.str', 'number', this.state.monster.abilityScores.str);
 			case 'dex':
-				return this.getValueSection('abilityScores.dex', 'number');
+				return this.getValueSection('abilityScores.dex', 'number', this.state.monster.abilityScores.dex);
 			case 'con':
-				return this.getValueSection('abilityScores.con', 'number');
+				return this.getValueSection('abilityScores.con', 'number', this.state.monster.abilityScores.con);
 			case 'int':
-				return this.getValueSection('abilityScores.int', 'number');
+				return this.getValueSection('abilityScores.int', 'number', this.state.monster.abilityScores.int);
 			case 'wis':
-				return this.getValueSection('abilityScores.wis', 'number');
+				return this.getValueSection('abilityScores.wis', 'number', this.state.monster.abilityScores.wis);
 			case 'cha':
-				return this.getValueSection('abilityScores.cha', 'number');
+				return this.getValueSection('abilityScores.cha', 'number', this.state.monster.abilityScores.cha);
 			case 'saves':
-				return this.getValueSection('savingThrows', 'text');
+				return this.getValueSection('savingThrows', 'text', this.state.monster.savingThrows);
 			case 'skills':
-				return this.getValueSection('skills', 'text');
+				return this.getValueSection('skills', 'text', this.state.monster.skills);
 			case 'senses':
-				return this.getValueSection('senses', 'text');
+				return this.getValueSection('senses', 'text', this.state.monster.senses);
 			case 'armor class':
-				return this.getValueSection('ac', 'number');
+				return this.getValueSection('ac', 'number', this.state.monster.ac);
 			case 'hit dice':
-				return this.getValueSection('hitDice', 'number');
+				return this.getValueSection('hitDice', 'number', this.state.monster.hitDice);
 			case 'resist':
-				return this.getValueSection('damage.resist', 'text');
+				return this.getValueSection('damage.resist', 'text', this.state.monster.damage.resist);
 			case 'vulnerable':
-				return this.getValueSection('damage.vulnerable', 'text');
+				return this.getValueSection('damage.vulnerable', 'text', this.state.monster.damage.vulnerable);
 			case 'immune':
-				return this.getValueSection('damage.immune', 'text');
+				return this.getValueSection('damage.immune', 'text', this.state.monster.damage.immune);
 			case 'conditions':
-				return this.getValueSection('conditionImmunities', 'text');
+				return this.getValueSection('conditionImmunities', 'text', this.state.monster.conditionImmunities);
 			case 'features':
 				return this.getFeaturesSection();
 			default:
@@ -369,7 +375,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		}
 	}
 
-	private getValueSection(field: string, dataType: 'text' | 'number') {
+	private getValueSection(field: string, dataType: 'text' | 'number', currentValue: any) {
 		const values: any[] = this.state.scratchpadList
 			.map(m => {
 				const tokens = field.split('.');
@@ -445,9 +451,13 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		}
 
 		const valueSections = distinct.map((d, index) => {
+			let style = 'value-list';
+			if (d.value === currentValue) {
+				style += ' current-value';
+			}
 			const width = 100 * d.count / this.state.scratchpadList.length;
 			return (
-				<Row gutter={10} className='value-list' key={index}>
+				<Row key={index} className={style} gutter={10} align='middle'>
 					<Col span={8} className='text-container'>
 						{d.value || '(none specified)'}
 					</Col>
@@ -471,7 +481,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	private getFeaturesSection() {
 		const rows = [];
 		rows.push(
-			<Row gutter={10} className='value-list' key='header'>
+			<Row key='header' className='value-list' gutter={10} align='middle'>
 				<Col span={8} className='text-container'>
 					<b>type</b>
 				</Col>
@@ -501,7 +511,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			const avg = Math.round(count / this.state.scratchpadList.length);
 
 			rows.push(
-				<Row gutter={10} className='value-list' key={type}>
+				<Row key={type} className='value-list' gutter={10} align='middle'>
 					<Col span={8} className={count === 0 ? 'text-container disabled' : 'text-container'}>
 						{Gygax.traitType(type, true)}
 					</Col>
@@ -678,7 +688,11 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		switch (this.state.sidebarView) {
 			case 'statblock':
 				return (
-					<MonsterStatblockCard monster={this.state.monster} />
+					<div>
+						<MonsterStatblockCard monster={this.state.monster} />
+						<hr/>
+						<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
+					</div>
 				);
 			case 'guidelines':
 				return (
@@ -724,6 +738,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			drawer.content = (
 				<div className='scrollable padded'>
 					<MonsterStatblockCard monster={this.state.inspectedMonster as Monster} />
+					<hr/>
+					<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
+					<button onClick={() => this.applyTheme(this.state.inspectedMonster as Monster)}>apply this monster as a theme</button>
 				</div>
 			);
 			drawer.onClose = () => {
@@ -812,17 +829,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					});
 					break;
 			}
-			monsters = monsters.filter(m => !this.state.scratchpadList.find(lm => lm.id === m.id));
-			const monsterCards = Utils.sort(monsters).map(m => (
-				<div className='section' key={m.id}>
-					<MonsterCandidateCard
-						monster={m}
-						selectMonster={monster => this.addToScratchpad(monster)}
-					/>
-				</div>
-			));
 
 			let emptyListNote = null;
+			monsters = monsters.filter(m => !this.state.scratchpadList.find(lm => lm.id === m.id));
 			if (monsters.length === 0) {
 				emptyListNote = (
 					<Note>
@@ -850,7 +859,20 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						add all to scratchpad
 					</button>
 					<hr/>
-					{monsterCards}
+					{
+						Utils.sort(monsters).map(m => (
+							<Group key={m.id}>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<div>{m.name || 'unnamed monster'}</div>
+									</div>
+									<div className='icons'>
+										<PlusCircleOutlined title='add monster' onClick={() => this.addToScratchpad(m)} />
+									</div>
+								</div>
+							</Group>
+						))
+					}
 					{emptyListNote}
 				</div>
 			);

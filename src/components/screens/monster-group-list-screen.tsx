@@ -17,7 +17,6 @@ interface Props {
 	encounters: Encounter[];
 	hasMonsters: boolean;
 	addMonsterGroup: () => void;
-	importMonsterGroup: () => void;
 	openMonsterGroup: (group: MonsterGroup) => void;
 	deleteMonsterGroup: (group: MonsterGroup) => void;
 	addOpenGameContent: () => void;
@@ -82,7 +81,6 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 						</Note>
 						<MonsterGroupListOptions
 							addMonsterGroup={() => this.props.addMonsterGroup()}
-							importMonsterGroup={() => this.props.importMonsterGroup()}
 							openDemographics={() => this.props.openDemographics(null)}
 						/>
 					</Col>

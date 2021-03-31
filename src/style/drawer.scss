@@ -36,6 +36,13 @@
 				background-color: $highlight01;
 			}
 
+			&.current-value {
+				.text-container {
+					border-left: 5px solid $highlight;
+					font-weight: 600;
+				}
+			}
+
 			.text-container {
 				min-height: 42px;
 				padding: 12px 0;

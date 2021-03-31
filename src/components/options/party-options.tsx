@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Utils } from '../../utils/utils';
-
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
@@ -25,11 +23,6 @@ interface Props {
 }
 
 export class PartyOptions extends React.Component<Props> {
-	private export() {
-		const filename = this.props.party.name + '.party';
-		Utils.saveFile(filename, this.props.party);
-	}
-
 	public render() {
 		try {
 			const pcs = this.props.party.pcs.filter(pc => pc.active);
@@ -89,7 +82,6 @@ export class PartyOptions extends React.Component<Props> {
 				<div>
 					<button onClick={() => this.props.addPC()}>add a new pc</button>
 					<button onClick={() => this.props.importPC()}>import a pc</button>
-					<button onClick={() => this.export()}>export party</button>
 					{run}
 					{explore}
 					{create}
