@@ -1,14 +1,14 @@
 import React from 'react';
 
-import { Napoleon } from '../../utils/napoleon';
+import { Napoleon } from '../../../utils/napoleon';
 
-import { Encounter } from '../../models/encounter';
-import { Monster } from '../../models/monster';
-import { Party } from '../../models/party';
+import { Encounter } from '../../../models/encounter';
+import { Monster } from '../../../models/monster';
+import { Party } from '../../../models/party';
 
-import { RenderError } from '../error';
-import { Group } from '../controls/group';
-import { EncounterInfoPanel } from '../panels/encounter-info-panel';
+import { RenderError } from '../../error';
+import { Group } from '../../controls/group';
+import { EncounterInfoPanel } from '../../panels/encounter-info-panel';
 
 interface Props {
 	encounters: Encounter[];

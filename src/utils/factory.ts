@@ -242,7 +242,8 @@ export class Factory {
 			id: Utils.guid(),
 			name: '',
 			type: 'text',
-			content: ''
+			content: '',
+			data: null
 		};
 	}
 
@@ -276,6 +277,7 @@ export class Factory {
 	public static createCombatSlotInfo(): CombatSlotInfo {
 		return {
 			id: '',
+			monsterID: '',
 			useGroupHP: true,
 			useGroupInit: true,
 			hp: 0,
@@ -289,7 +291,8 @@ export class Factory {
 			id: Utils.guid(),
 			name: '',
 			hp: 0,
-			init: 0
+			init: 0,
+			location: null
 		};
 	}
 

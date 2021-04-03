@@ -2,16 +2,16 @@ import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
 import { notification, Upload } from 'antd';
 import React from 'react';
 
-import { Matisse } from '../../utils/matisse';
-import { Sherlock } from '../../utils/sherlock';
-import { Utils } from '../../utils/utils';
+import { Matisse } from '../../../utils/matisse';
+import { Sherlock } from '../../../utils/sherlock';
+import { Utils } from '../../../utils/utils';
 
-import { SavedImage } from '../../models/misc';
+import { SavedImage } from '../../../models/misc';
 
-import { RenderError } from '../error';
-import { Group } from '../controls/group';
-import { Note } from '../controls/note';
-import { Textbox } from '../controls/textbox';
+import { RenderError } from '../../error';
+import { Group } from '../../controls/group';
+import { Note } from '../../controls/note';
+import { Textbox } from '../../controls/textbox';
 
 interface Props {
 	select: (id: string) => void;

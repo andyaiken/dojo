@@ -1,17 +1,18 @@
-import { CloseCircleOutlined, PlusCircleOutlined, RedoOutlined } from '@ant-design/icons';
-import { Col, Row, Slider } from 'antd';
+import { CloseCircleOutlined, EditOutlined, PlusCircleOutlined, RedoOutlined } from '@ant-design/icons';
+import { Col, Drawer, Row, Slider } from 'antd';
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 
 import { Factory } from '../../utils/factory';
 import { Frankenstein } from '../../utils/frankenstein';
 import { Gygax } from '../../utils/gygax';
-import { Mercator } from '../../utils/mercator';
 import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 
-import { CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
+import { Combatant, CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
-import { Map } from '../../models/map';
+import { Map, MapItem } from '../../models/map';
+import { Options } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { RenderError } from '../error';
@@ -26,6 +27,7 @@ import { Textbox } from '../controls/textbox';
 import { DifficultyChartPanel } from '../panels/difficulty-chart-panel';
 import { FilterPanel } from '../panels/filter-panel';
 import { MapPanel } from '../panels/map-panel';
+import { CombatMapModal } from './combat-map-modal';
 
 interface Props {
 	type: 'start' | 'add-wave' | 'add-combatants';
@@ -33,6 +35,7 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
+	options: Options;
 	getMonster: (id: string) => Monster | null;
 	addMonster: (monster: Monster) => void;
 	notify: () => void;
@@ -71,10 +74,15 @@ export class CombatStartModal extends React.Component<Props, State> {
 		}, () => this.props.notify());
 	}
 
-	private setMapID(mapID: string | null) {
-		const map = this.props.maps.find(m => m.id === mapID);
+	private clearMap() {
 		const setup = this.state.combatSetup;
-		setup.map = map || null;
+
+		setup.map = null;
+		setup.mapAreaID = null;
+		setup.slotInfo.forEach(si => {
+			si.members.forEach(m => m.location = null);
+		});
+
 		this.setState({
 			combatSetup: setup
 		});
@@ -115,18 +123,6 @@ export class CombatStartModal extends React.Component<Props, State> {
 		const setup = this.state.combatSetup;
 		setup.encounter = encounter;
 		setup.slotInfo = Gygax.getCombatSlotData(encounter, id => this.props.getMonster(id));
-		this.setState({
-			combatSetup: setup
-		}, () => this.props.notify());
-	}
-
-	private generateMap(areas: number) {
-		const map = Factory.createMap();
-		Mercator.generate(areas, map);
-
-		const setup = this.state.combatSetup;
-		setup.map = map;
-
 		this.setState({
 			combatSetup: setup
 		}, () => this.props.notify());
@@ -191,9 +187,11 @@ export class CombatStartModal extends React.Component<Props, State> {
 							<MapSection
 								combatSetup={this.state.combatSetup}
 								maps={this.props.maps}
+								options={this.props.options}
 								fixed={this.state.mapFixed}
-								setMapID={id => this.setMapID(id)}
-								generateMap={areas => this.generateMap(areas)}
+								clearMap={() => this.clearMap()}
+								changeValue={(source, field, value) => this.changeValue(source, field, value)}
+								getMonster={id => this.props.getMonster(id)}
 							/>
 						</div>
 					);
@@ -324,6 +322,16 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 
 		let encounterContent = null;
 		if (this.props.combatSetup.encounter) {
+			let notes = null;
+			if (this.props.combatSetup.encounter.notes) {
+				notes = (
+					<div>
+						<div className='subheading'>notes</div>
+						<ReactMarkdown source={this.props.combatSetup.encounter.notes} />
+					</div>
+				);
+			}
+
 			const monsterSections = this.props.combatSetup.encounter.slots.map(slot => {
 				const monster = Napoleon.slotToMonster(slot, id => this.props.getMonster(id));
 				let name = '';
@@ -348,6 +356,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 
 			encounterContent = (
 				<div>
+					{notes}
 					<div className='subheading'>monsters</div>
 					{monsterSections}
 				</div>
@@ -357,7 +366,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 		let clear = null;
 		if (this.props.combatSetup.encounter && !this.props.fixed) {
 			clear = (
-				<CloseCircleOutlined onClick={() => this.props.setEncounterID(null)} />
+				<CloseCircleOutlined title='remove encounter' onClick={() => this.props.setEncounterID(null)} />
 			);
 		}
 
@@ -377,9 +386,15 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 
 		return (
 			<div>
-				<div className='heading'>
-					encounter
-					{clear}
+				<div className='content-then-icons'>
+					<div className='content'>
+						<div className='heading'>
+							encounter
+						</div>
+					</div>
+					<div className='icons'>
+						{clear}
+					</div>
 				</div>
 				{tools}
 				{encounterContent}
@@ -392,53 +407,87 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 interface MapSectionProps {
 	combatSetup: CombatSetup;
 	maps: Map[];
+	options: Options;
 	fixed: boolean;
-	setMapID: (id: string | null) => void;
-	generateMap: (areas: number) => void;
+	clearMap: () => void;
+	changeValue: (source: any, field: string, value: any) => void;
+	getMonster: (id: string) => Monster | null;
 }
 
-class MapSection extends React.Component<MapSectionProps> {
+interface MapSectionState {
+	editing: boolean;
+}
+
+class MapSection extends React.Component<MapSectionProps, MapSectionState> {
+	constructor(props: MapSectionProps) {
+		super(props);
+		this.state = {
+			editing: false
+		};
+	}
+
+	private setEditing(editing: boolean) {
+		this.setState({
+			editing: editing
+		});
+	}
+
 	public render() {
-		let tools = null;
+		let content = null;
 		if (!this.props.combatSetup.map) {
-			let selector = null;
-			if (this.props.maps.length > 0) {
-				const options = this.props.maps.map(map => {
-					return {
-						id: map.id,
-						text: map.name || 'unnamed map'
-					};
-				});
-				selector = (
-					<Dropdown
-						options={options}
-						placeholder='select a map'
-						onSelect={optionID => this.props.setMapID(optionID)}
-					/>
-				);
-			}
-
-			tools = (
-				<div>
-					<Note>
-						<div className='section'>
-							this is optional - you don't have to use a map to run an encounter
-						</div>
-					</Note>
-					{selector}
-					<button onClick={() => this.props.generateMap(3)}>generate a random delve</button>
-				</div>
+			content = (
+				<Note>
+					<div className='section'>
+						not using a map for this encounter
+					</div>
+					<div className='section'>
+						to choose a map, click the <EditOutlined /> button above
+					</div>
+				</Note>
 			);
-		}
+		} else {
+			const combatants: Combatant[] = [];
+			const mapItems: MapItem[] = [];
 
-		let mapContent = null;
-		if (this.props.combatSetup.map) {
-			mapContent = (
+			this.props.combatSetup.slotInfo.forEach(slotInfo => {
+				slotInfo.members.forEach(m => {
+					if (m.location !== null) {
+						const slot = this.props.combatSetup.encounter?.slots.find(s => s.id === slotInfo.id);
+						if (slot && slot.monsterID) {
+							const monster = this.props.getMonster(slot.monsterID);
+							if (monster) {
+								const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction);
+								combatants.push(c);
+
+								const item = Factory.createMapItem();
+								item.id = c.id;
+								item.type = 'monster';
+								const size = Gygax.miniSize(monster.size);
+								item.height = size;
+								item.width = size;
+								item.depth = size;
+								item.x = m.location.x;
+								item.y = m.location.y;
+								item.z = m.location.z;
+								mapItems.push(item);
+							}
+						}
+					}
+				});
+			});
+
+			const map = JSON.parse(JSON.stringify(this.props.combatSetup.map));
+			map.items = map.items.concat(mapItems);
+
+			content = (
 				<div className='scrollable horizontal-only'>
 					<MapPanel
-						map={this.props.combatSetup.map}
-						combatants={this.props.combatSetup.combatants}
+						map={map}
+						mode='thumbnail'
+						combatants={this.props.combatSetup.combatants.concat(combatants)}
 						selectedAreaID={this.props.combatSetup.mapAreaID}
+						fog={this.props.combatSetup.fog}
+						lighting={this.props.combatSetup.lighting}
 					/>
 				</div>
 			);
@@ -447,18 +496,55 @@ class MapSection extends React.Component<MapSectionProps> {
 		let clear = null;
 		if (this.props.combatSetup.map && !this.props.fixed) {
 			clear = (
-				<CloseCircleOutlined onClick={() => this.props.setMapID(null)} />
+				<CloseCircleOutlined title='remove map' onClick={() => this.props.clearMap()} />
 			);
 		}
 
 		return (
 			<div>
-				<div className='heading'>
-					map
-					{clear}
+				<div className='content-then-icons'>
+					<div className='content'>
+						<div className='heading'>
+							map
+						</div>
+					</div>
+					<div className='icons'>
+						<EditOutlined title='edit map' onClick={() => this.setEditing(true)} />
+						{clear}
+					</div>
 				</div>
-				{tools}
-				{mapContent}
+				{content}
+				<Drawer
+					className={this.props.options.theme}
+					closable={false}
+					maskClosable={true}
+					width='50%'
+					visible={this.state.editing}
+					onClose={() => this.setEditing(false)}
+				>
+					<div className='drawer-header'>
+						<div className='app-title'>map setup</div>
+					</div>
+					<div className='drawer-content'>
+						<CombatMapModal
+							maps={this.props.maps}
+							map={this.props.combatSetup.map}
+							setMap={mp => this.props.changeValue(this.props.combatSetup, 'map', mp)}
+							areaID={this.props.combatSetup.mapAreaID}
+							setAreaID={id => this.props.changeValue(this.props.combatSetup, 'mapAreaID', id)}
+							lighting={this.props.combatSetup.lighting}
+							setLighting={lighting => this.props.changeValue(this.props.combatSetup, 'lighting', lighting)}
+							fog={this.props.combatSetup.fog}
+							setFog={fog => this.props.changeValue(this.props.combatSetup, 'fog', fog)}
+							slotInfo={this.props.combatSetup.slotInfo}
+							setSlotInfo={slotInfo => this.props.changeValue(this.props.combatSetup, 'slotInfo', slotInfo)}
+							getMonster={id => this.props.getMonster(id)}
+						/>
+					</div>
+					<div className='drawer-footer'>
+						<button onClick={() => this.setEditing(false)}>close</button>
+					</div>
+				</Drawer>
 			</div>
 		);
 	}

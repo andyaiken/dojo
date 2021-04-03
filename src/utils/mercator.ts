@@ -60,8 +60,10 @@ export class Mercator {
 						item.type = combatant.type as ('pc' | 'monster' | 'companion');
 						item.x = square.x;
 						item.y = square.y;
+						item.z = 0;
 						item.height = size;
 						item.width = size;
+						item.depth = size;
 						map.items.push(item);
 					}
 				});
@@ -537,6 +539,7 @@ export class Mercator {
 			const size = Gygax.miniSize(combatant.displaySize);
 			item.height = size;
 			item.width = size;
+			item.depth = size;
 
 			map.items.push(item);
 		} else {

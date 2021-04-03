@@ -1,18 +1,18 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Factory } from '../../utils/factory';
-import { Gygax } from '../../utils/gygax';
-import { Napoleon } from '../../utils/napoleon';
+import { Factory } from '../../../utils/factory';
+import { Gygax } from '../../../utils/gygax';
+import { Napoleon } from '../../../utils/napoleon';
 
-import { EncounterSlot, MonsterFilter } from '../../models/encounter';
-import { Monster, MonsterGroup } from '../../models/monster';
+import { EncounterSlot, MonsterFilter } from '../../../models/encounter';
+import { Monster, MonsterGroup } from '../../../models/monster';
 
-import { RenderError } from '../error';
-import { MonsterStatblockCard } from '../cards/monster-statblock-card';
-import { Note } from '../controls/note';
-import { RadioGroup } from '../controls/radio-group';
-import { FilterPanel } from '../panels/filter-panel';
+import { RenderError } from '../../error';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { Note } from '../../controls/note';
+import { RadioGroup } from '../../controls/radio-group';
+import { FilterPanel } from '../../panels/filter-panel';
 
 interface Props {
 	slot: EncounterSlot | null;

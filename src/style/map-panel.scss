@@ -99,6 +99,7 @@
 		}
 	}
 
+	&.setup,
 	&.interactive-dm,
 	&.interactive-player {
 		.overlay:hover,
@@ -107,6 +108,8 @@
 		}
 	}
 
+	&.thumbnail,
+	&.setup,
 	&.interactive-dm {
 		.fog,
 		.light.dim-light,

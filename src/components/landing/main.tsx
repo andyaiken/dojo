@@ -15,7 +15,7 @@ import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
 import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
-import { Combat, Combatant, CombatSetup, Notification } from '../../models/combat';
+import { Combat, Combatant, CombatSetup, CombatSlotInfo, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
 import { Exploration, Map, MapArea, MapItem } from '../../models/map';
@@ -24,23 +24,24 @@ import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
 import { ErrorBoundary, RenderError } from '../error';
-import { CombatStartModal } from '../modals/combat-start-modal';
-import { ConditionModal } from '../modals/condition-modal';
-import { DemographicsModal } from '../modals/demographics-modal';
 import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
 import { PCEditorModal } from '../modals/editors/pc-editor-modal';
-import { ImageSelectionModal } from '../modals/image-selection-modal';
 import { MapImportModal } from '../modals/import/map-import-modal';
 import { MonsterImportModal } from '../modals/import/monster-import-modal';
 import { PartyImportModal } from '../modals/import/party-import-modal';
 import { PCImportModal } from '../modals/import/pc-import-modal';
-import { EncounterSelectionModal } from '../modals/encounter-selection-modal';
-import { MapSelectionModal } from '../modals/map-selection-modal';
+import { EncounterSelectionModal } from '../modals/selection/encounter-selection-modal';
+import { ImageSelectionModal } from '../modals/selection/image-selection-modal';
+import { MapSelectionModal } from '../modals/selection/map-selection-modal';
+import { MonsterSelectionModal } from '../modals/selection/monster-selection-modal';
+import { ThemeSelectionModal } from '../modals/selection/theme-selection-modal';
+import { CombatMapModal } from '../modals/combat-map-modal';
+import { CombatStartModal } from '../modals/combat-start-modal';
+import { ConditionModal } from '../modals/condition-modal';
+import { DemographicsModal } from '../modals/demographics-modal';
 import { MarkdownModal } from '../modals/markdown-modal';
-import { MonsterSelectionModal } from '../modals/monster-selection-modal';
 import { RandomGeneratorModal } from '../modals/random-generator-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
-import { ThemeSelectionModal } from '../modals/theme-selection-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
 import { DieRollResultPanel } from '../panels/die-roll-panel';
 import { PageFooter } from '../panels/page-footer';
@@ -1832,6 +1833,7 @@ export class Main extends React.Component<Props, State> {
 						const resource = Factory.createSceneResource();
 						resource.type = type;
 						resource.content = id;
+						resource.data = null;
 						scene.resources.push(resource);
 
 						this.setState({
@@ -1866,6 +1868,13 @@ export class Main extends React.Component<Props, State> {
 						resource.type = 'encounter';
 						resource.name = encounter.name;
 						resource.content = encounter.id;
+						resource.data = {
+							map: null,
+							mapAreaID: null,
+							lighting: 'bright light',
+							fog: [],
+							slotInfo: Gygax.getCombatSlotData(encounter, id => this.getMonster(id))
+						};
 						scene.resources.push(resource);
 
 						this.setState({
@@ -1898,8 +1907,9 @@ export class Main extends React.Component<Props, State> {
 		mapAreaID: string | null = null,
 		fog: { x: number, y: number }[] = [],
 		lighting: 'bright light' | 'dim light' | 'darkness' = 'bright light',
-		combatants: Combatant[] = []
-		) {
+		combatants: Combatant[] = [],
+		slotInfo: CombatSlotInfo[] = []
+	) {
 		let party = this.state.parties.length === 1 ? this.state.parties[0] : null;
 		if (partyID) {
 			const p = this.state.parties.find(par => par.id === partyID);
@@ -1914,8 +1924,10 @@ export class Main extends React.Component<Props, State> {
 
 		const setup = Factory.createCombatSetup();
 		setup.party = JSON.parse(JSON.stringify(party));
-		setup.encounter = JSON.parse(JSON.stringify(encounter));
-		if (enc) {
+		setup.encounter = JSON.parse(JSON.stringify(enc));
+		if (slotInfo.length > 0) {
+			setup.slotInfo = JSON.parse(JSON.stringify(slotInfo));
+		} else if (enc) {
 			setup.slotInfo = Gygax.getCombatSlotData(enc, id => this.getMonster(id));
 		}
 		if (map) {
@@ -1956,13 +1968,18 @@ export class Main extends React.Component<Props, State> {
 				}
 			});
 
+			const locations: { combatant: Combatant, x: number, y: number }[] = [];
 			combat.encounter.slots.forEach(slot => {
 				const monster = Napoleon.slotToMonster(slot, id => this.getMonster(id));
 				if (monster) {
 					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 					if (slotInfo) {
 						slotInfo.members.forEach(m => {
-							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+							const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction);
+							combat.combatants.push(c);
+							if (m.location) {
+								locations.push({ combatant: c, x: m.location.x, y: m.location.y });
+							}
 						});
 					}
 				}
@@ -1978,6 +1995,10 @@ export class Main extends React.Component<Props, State> {
 				combat.mapAreaID = combatSetup.mapAreaID;
 				combat.fog = combatSetup.fog;
 				combat.lighting = combatSetup.lighting;
+
+				locations.forEach(c => {
+					Mercator.add(combat.map as Map, c.combatant, c.x, c.y);
+				})
 			}
 
 			let combats = this.state.combats;
@@ -2025,7 +2046,8 @@ export class Main extends React.Component<Props, State> {
 						const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 						if (slotInfo) {
 							slotInfo.members.forEach(m => {
-								combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+								const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction);
+								combat.combatants.push(c);
 							});
 						}
 					}
@@ -2087,7 +2109,8 @@ export class Main extends React.Component<Props, State> {
 					const slotInfo = combatSetup.slotInfo.find(info => info.id === slot.id);
 					if (slotInfo) {
 						slotInfo.members.forEach(m => {
-							combat.combatants.push(Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction));
+							const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, slot.faction);
+							combat.combatants.push(c);
 						});
 					}
 				}
@@ -2815,8 +2838,8 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private mapAdd(combatant: Combatant, x: number, y: number, currentCombatants: Combatant[], map: Map) {
-		const list = Napoleon.getMountsAndRiders([combatant.id], currentCombatants);
+	private mapAdd(combatant: Combatant, x: number, y: number, allCombatants: Combatant[], map: Map) {
+		const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
 		list.forEach(c => Mercator.add(map, c, x, y));
 
 		this.setState({
@@ -3634,7 +3657,7 @@ export class Main extends React.Component<Props, State> {
 							adventure={this.state.adventures.find(a => a.id === this.state.selectedAdventureID) as Adventure}
 							parties={this.state.parties}
 							encounters={this.state.encounters}
-							maps={this.state.maps.filter(m => m.areas.length > 0)}
+							maps={this.state.maps}
 							options={this.state.options}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
@@ -3648,17 +3671,19 @@ export class Main extends React.Component<Props, State> {
 							addResourceToScene={(scene, type) => this.addResourceToScene(scene, type)}
 							addEncounterToScene={(scene, party, random) => this.addEncounterToScene(scene, party, random)}
 							removeResourceFromScene={(scene, resourceID) => this.removeResourceFromScene(scene, resourceID)}
-							openEncounter={encounterID => this.selectEncounterByID(encounterID)}
-							runEncounter={encounterID => {
-								const encounter = this.state.encounters.find(e => e.id === encounterID);
-								if (encounter) {
-									this.createCombat('', encounter);
-								}
+							openEncounter={resource => this.selectEncounterByID(resource.content)}
+							setupEncounterMap={resource => {
+								this.setState({
+									drawer: {
+										type: 'combat-map',
+										data: resource.data
+									}
+								});
 							}}
-							runEncounterWithMap={(encounterID, map, areaID) => {
-								const encounter = this.state.encounters.find(e => e.id === encounterID);
+							runEncounter={(resource, map, areaID, fog, lighting, slotInfo) => {
+								const encounter = this.state.encounters.find(e => e.id === resource.content);
 								if (encounter) {
-									this.createCombat('', encounter, map, areaID);
+									this.createCombat('', encounter, map, areaID, fog, lighting, [], slotInfo);
 								}
 							}}
 							rotateMap={plot => {
@@ -4050,6 +4075,7 @@ export class Main extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
+							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
 						/>
@@ -4071,6 +4097,7 @@ export class Main extends React.Component<Props, State> {
 							type='add-wave'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
+							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
 						/>
@@ -4092,6 +4119,7 @@ export class Main extends React.Component<Props, State> {
 							type='add-combatants'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
+							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							addMonster={monster => this.addMonsterToAddCombatantsModal(monster)}
 							notify={() => this.setState({drawer: this.state.drawer})}
@@ -4106,6 +4134,56 @@ export class Main extends React.Component<Props, State> {
 							add combatants
 						</button>
 					);
+					closable = true;
+					break;
+				case 'combat-map':
+					content = (
+						<CombatMapModal
+							maps={this.state.maps}
+							map={this.state.drawer.data.map}
+							setMap={map => {
+								const data = this.state.drawer.data;
+								data.map = map;
+								this.setState({
+									drawer: this.state.drawer
+								});
+							}}
+							areaID={this.state.drawer.data.mapAreaID}
+							setAreaID={id => {
+								const data = this.state.drawer.data;
+								data.mapAreaID = id;
+								this.setState({
+									drawer: this.state.drawer
+								});
+							}}
+							lighting={this.state.drawer.data.lighting}
+							setLighting={lighting => {
+								const data = this.state.drawer.data;
+								data.lighting = lighting;
+								this.setState({
+									drawer: this.state.drawer
+								});
+							}}
+							fog={this.state.drawer.data.fog}
+							setFog={fog => {
+								const data = this.state.drawer.data;
+								data.fog = fog;
+								this.setState({
+									drawer: this.state.drawer
+								});
+							}}
+							slotInfo={this.state.drawer.data.slotInfo}
+							setSlotInfo={slotInfo => {
+								const data = this.state.drawer.data;
+								data.slotInfo = slotInfo;
+								this.setState({
+									drawer: this.state.drawer
+								});
+							}}
+							getMonster={id => this.getMonster(id)}
+						/>
+					);
+					header = 'setup encounter map';
 					closable = true;
 					break;
 				case 'condition-add':

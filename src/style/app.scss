@@ -265,7 +265,6 @@ p,
 		border-left: 1px solid $control-border-05;
 
 		.anticon {
-			display: block;
 			font-size: 20px;
 			padding: 5px;
 
@@ -281,6 +280,12 @@ p,
 
 			&.grabber {
 				cursor: ns-resize;
+			}
+		}
+
+		&.vertical {
+			.anticon {
+				display: block;
 			}
 		}
 	}

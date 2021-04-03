@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { Map } from '../../models/map';
+import { Map } from '../../../models/map';
 
-import { RenderError } from '../error';
-import { Group } from '../controls/group';
-import { MapPanel } from '../panels/map-panel';
+import { RenderError } from '../../error';
+import { Group } from '../../controls/group';
+import { MapPanel } from '../../panels/map-panel';
 
 interface Props {
 	maps: Map[];

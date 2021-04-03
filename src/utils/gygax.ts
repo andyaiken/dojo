@@ -632,6 +632,7 @@ export class Gygax {
 				if (monster) {
 					const slotInfo = Factory.createCombatSlotInfo();
 					slotInfo.id = slot.id;
+					slotInfo.monsterID = slot.monsterID;
 
 					// Roll initiative and set default HP
 					slotInfo.init = this.dieRoll() + this.modifierValue(monster.abilityScores.dex);
@@ -642,6 +643,7 @@ export class Gygax {
 						slotMember.init = slotInfo.init;
 						slotMember.hp = slotInfo.hp;
 						slotMember.name = monster.name;
+						slotMember.location = null;
 						slotInfo.members.push(slotMember);
 					}
 

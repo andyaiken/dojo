@@ -1,15 +1,15 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Frankenstein } from '../../utils/frankenstein';
-import { Gygax } from '../../utils/gygax';
+import { Frankenstein } from '../../../utils/frankenstein';
+import { Gygax } from '../../../utils/gygax';
 
-import { Monster } from '../../models/monster';
+import { Monster } from '../../../models/monster';
 
-import { RenderError } from '../error';
-import { MonsterStatblockCard } from '../cards/monster-statblock-card';
-import { Note } from '../controls/note';
-import { RadioGroup } from '../controls/radio-group';
+import { RenderError } from '../../error';
+import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
+import { Note } from '../../controls/note';
+import { RadioGroup } from '../../controls/radio-group';
 
 interface Props {
 	monster: Monster;

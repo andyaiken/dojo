@@ -33,4 +33,5 @@ export interface SceneResource {
 	name: string;
 	type: 'text' | 'url' | 'image' | 'encounter' | 'readaloud';
 	content: string;
+	data: any;
 }

@@ -1,8 +1,9 @@
-import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined, LinkOutlined, MessageOutlined, ShareAltOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, CaretRightOutlined, DeleteOutlined, EditOutlined, EnvironmentOutlined, MessageOutlined, ShareAltOutlined, VerticalAlignTopOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../utils/factory';
+import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Napoleon } from '../../utils/napoleon';
 import { Comms, CommsDM } from '../../utils/uhura';
@@ -10,8 +11,9 @@ import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
 import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
+import { Combatant, CombatSlotInfo } from '../../models/combat';
 import { Encounter } from '../../models/encounter';
-import { Map } from '../../models/map';
+import { Map, MapItem } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
@@ -50,9 +52,16 @@ interface Props {
 	addResourceToScene: (scene: Scene, type: 'text' | 'url' | 'image') => void;
 	addEncounterToScene: (scene: Scene, party: Party | null, random: boolean) => void;
 	removeResourceFromScene: (scene: Scene, resourceID: string) => void;
-	openEncounter: (encounterID: string) => void;
-	runEncounter: (encounterID: string) => void;
-	runEncounterWithMap: (encounterID: string, map: Map, areaID: string) => void;
+	openEncounter: (resource: SceneResource) => void;
+	setupEncounterMap: (resource: SceneResource) => void;
+	runEncounter: (
+		resource: SceneResource,
+		map: Map | null,
+		mapAreaID: string | null,
+		fog: { x: number, y: number }[],
+		lighting: 'bright light' | 'dim light' | 'darkness',
+		slotInfo: CombatSlotInfo[]
+	) => void;
 	rotateMap: (plot: Plot) => void;
 	showNotes: (scene: Scene) => void;
 	showMonster: (monster: Monster) => void;
@@ -149,6 +158,15 @@ export class AdventureScreen extends React.Component<Props, State> {
 		this.props.moveScene(this.state.plot, scene, dir);
 	}
 
+	private runEncounter(resource: SceneResource) {
+		const map = resource.data.map;
+		const mapAreaID = resource.data.mapAreaID;
+		const fog = resource.data.fog;
+		const lighting = resource.data.lighting;
+		const slotInfo = resource.data.slotInfo;
+		this.props.runEncounter(resource, map, mapAreaID, fog, lighting, slotInfo);
+	}
+
 	private getParty() {
 		let party: Party | null = null;
 
@@ -207,7 +225,8 @@ export class AdventureScreen extends React.Component<Props, State> {
 			id: Utils.guid(),
 			name: '',
 			type: 'readaloud',
-			content: text
+			content: text,
+			data: null
 		}));
 
 		if (readaloud.length + scene.resources.length === 0) {
@@ -222,10 +241,11 @@ export class AdventureScreen extends React.Component<Props, State> {
 		return readaloud.concat(scene.resources).map(resource => {
 			let content = null;
 			let diff = null;
-			let canLink = false;
-			let canEditEncounter = false;
+			let canFollowLink = false;
 			let canRunEncounter = false;
-			let canRunEncounterWithMap = false;
+			let canRunEncounterWithSceneMap = false;
+			let canEditEncounter = false;
+			let canSetupEncounterMap = false;
 			let canHandout = false;
 			let canChat = false;
 			let canDelete = false;
@@ -246,7 +266,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 					content = (
 						<Textbox placeholder='https://...' text={resource.content} onChange={text => this.props.changeValue(resource, 'content', text)} />
 					);
-					canLink = true;
+					canFollowLink = true;
 					canChat = true;
 					canDelete = true;
 					break;
@@ -268,21 +288,64 @@ export class AdventureScreen extends React.Component<Props, State> {
 				case 'encounter':
 					const encounter = this.props.encounters.find(enc => enc.id === resource.content);
 					if (encounter) {
-						content = (
-							<EncounterInfoPanel
-								encounter={encounter}
-								getMonster={id => this.props.getMonster(id)}
-								onMonsterClicked={monster => this.props.showMonster(monster)}
-							/>
-						);
+						if (resource.data.map) {
+							const combatants: Combatant[] = [];
+							const mapItems: MapItem[] = [];
+
+							(resource.data.slotInfo as CombatSlotInfo[]).forEach(slotInfo => {
+								slotInfo.members.forEach(m => {
+									if (m.location !== null) {
+										const monster = this.props.getMonster(slotInfo.monsterID);
+										if (monster) {
+											const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, 'foe');
+											combatants.push(c);
+
+											const item = Factory.createMapItem();
+											item.id = c.id;
+											item.type = 'monster';
+											const size = Gygax.miniSize(monster.size);
+											item.height = size;
+											item.width = size;
+											item.depth = size;
+											item.x = m.location.x;
+											item.y = m.location.y;
+											item.z = m.location.z;
+											mapItems.push(item);
+										}
+									}
+								});
+							});
+
+							const map = JSON.parse(JSON.stringify(resource.data.map));
+							map.items = map.items.concat(mapItems);
+
+							content = (
+								<MapPanel
+									map={map}
+									selectedAreaID={resource.data.mapAreaID}
+									combatants={combatants}
+									fog={resource.data.fog}
+									lighting={resource.data.lighting}
+								/>
+							);
+						} else {
+							content = (
+								<EncounterInfoPanel
+									encounter={encounter}
+									getMonster={id => this.props.getMonster(id)}
+									onMonsterClicked={monster => this.props.showMonster(monster)}
+								/>
+							);
+						}
 						const party = this.getParty();
 						if (party) {
 							const d = Napoleon.getEncounterDifficulty(encounter, null, party, id => this.props.getMonster(id));
 							diff = 'diff-' + Math.min(4, d.adjusted);
 						}
-						canEditEncounter = true;
 						canRunEncounter = (this.state.plot.map === null);
-						canRunEncounterWithMap = (this.state.plot.map !== null);
+						canRunEncounterWithSceneMap = (this.state.plot.map !== null);
+						canEditEncounter = true;
+						canSetupEncounterMap = (this.props.maps.length > 0) && (this.state.plot.map === null);
 						canDelete = true;
 					}
 					break;
@@ -310,17 +373,20 @@ export class AdventureScreen extends React.Component<Props, State> {
 							{content}
 						</div>
 						<div className='icons vertical'>
-							<Conditional display={canLink}>
-								<LinkOutlined className={resource.content === '' ? 'disabled' : ''} title='follow link' onClick={() => window.open(resource.content, '_blank')} />
-							</Conditional>
-							<Conditional display={canEditEncounter}>
-								<EditOutlined title='edit encounter' onClick={() => this.props.openEncounter(resource.content)} />
+							<Conditional display={canFollowLink}>
+								<CaretRightOutlined className={resource.content === '' ? 'disabled' : ''} title='follow link' onClick={() => window.open(resource.content, '_blank')} />
 							</Conditional>
 							<Conditional display={canRunEncounter}>
-								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounter(resource.content)} />
+								<CaretRightOutlined title='run encounter' onClick={() => this.runEncounter(resource)} />
 							</Conditional>
-							<Conditional display={canRunEncounterWithMap}>
-								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounterWithMap(resource.content, this.state.plot.map as Map, scene.id)} />
+							<Conditional display={canRunEncounterWithSceneMap}>
+								<CaretRightOutlined title='run encounter' onClick={() => this.props.runEncounter(resource, this.state.plot.map as Map, scene.id, [], 'bright light', [])} />
+							</Conditional>
+							<Conditional display={canEditEncounter}>
+								<EditOutlined title='edit encounter' onClick={() => this.props.openEncounter(resource)} />
+							</Conditional>
+							<Conditional display={canSetupEncounterMap}>
+								<EnvironmentOutlined title='setup encounter map' onClick={() => this.props.setupEncounterMap(resource)} />
 							</Conditional>
 							<Conditional display={canHandout}>
 								<ShareAltOutlined className={resource.content === '' ? 'disabled' : ''} title='show' onClick={() => this.props.showResource(resource)} />
@@ -494,7 +560,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</Conditional>
 				<Conditional display={this.state.plot.scenes.length === 0}>
 					<Expander text='use a map'>
-						<button className={this.props.maps.length === 0 ? 'disabled' : ''} onClick={() => this.props.addMapToPlot(this.state.plot, false)}>use an existing map</button>
+						<button className={this.props.maps.filter(m => m.areas.length > 0).length === 0 ? 'disabled' : ''} onClick={() => this.props.addMapToPlot(this.state.plot, false)}>use an existing map</button>
 						<button onClick={() => this.props.addMapToPlot(this.state.plot, true)}>use a new random map</button>
 					</Expander>
 				</Conditional>

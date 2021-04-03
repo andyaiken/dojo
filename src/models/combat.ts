@@ -18,6 +18,7 @@ export interface CombatSetup {
 
 export interface CombatSlotInfo {
 	id: string;
+	monsterID: string;
 	useGroupHP: boolean;
 	useGroupInit: boolean;
 	hp: number;
@@ -30,6 +31,11 @@ export interface CombatSlotMember {
 	name: string;
 	hp: number;
 	init: number;
+	location: {
+		x: number;
+		y: number;
+		z: number;
+	} | null;
 }
 
 export interface Combat {

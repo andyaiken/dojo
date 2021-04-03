@@ -27,7 +27,7 @@ import { MessagePanel } from './session-panel';
 
 interface Props {
 	map: Map;
-	mode: 'edit' | 'thumbnail' | 'interactive-dm' | 'interactive-player' | 'interactive-plot';
+	mode: 'edit' | 'thumbnail' | 'setup' | 'interactive-dm' | 'interactive-player' | 'interactive-plot';
 	features: {
 		highlight: boolean;
 		editFog: boolean;
@@ -55,7 +55,7 @@ interface Props {
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
 	areaClicked: (area: MapArea) => void;
 	changeLighting: (light: string) => void;
-	toggleFeature: (feature: string) => void;
+	toggleFeature: (feature: 'highlight' | 'editFog') => void;
 	fillFog: () => void;
 	clearFog: () => void;
 }
@@ -124,8 +124,18 @@ export class MapPanel extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 
+		let size = 50;
+		switch (props.mode) {
+			case 'thumbnail':
+				size = 15;
+				break;
+			case 'setup':
+				size = 25;
+				break;
+		}
+
 		this.state = {
-			size: (props.mode === 'thumbnail') ? 15 : 45,
+			size: size,
 			selectionStartSquare: null,
 			selectionEndSquare: null
 		};
@@ -365,7 +375,8 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.mode !== 'thumbnail') {
 			const controls = [];
 
-			if ((this.props.mode === 'interactive-dm') && (this.props.map.areas.length > 0)) {
+			const showAreas = (this.props.mode === 'setup') || (this.props.mode === 'interactive-dm');
+			if (showAreas && (this.props.map.areas.length > 0)) {
 				const areas = [{ id: '', text: 'whole map' }];
 				this.props.map.areas.forEach(a => {
 					areas.push({ id: a.id, text: a.name || 'unnamed area' });
@@ -405,7 +416,8 @@ export class MapPanel extends React.Component<Props, State> {
 				</Popover>
 			);
 
-			if (this.props.mode === 'interactive-dm') {
+			const showLight = (this.props.mode === 'setup') || (this.props.mode === 'interactive-dm');
+			if (showLight) {
 				controls.push(
 					<Popover
 						key='light'
@@ -423,7 +435,10 @@ export class MapPanel extends React.Component<Props, State> {
 						<BulbOutlined title='lighting' />
 					</Popover>
 				);
+			}
 
+			const showHighlight = (this.props.mode === 'interactive-dm');
+			if (showHighlight) {
 				controls.push(
 					<Popover
 						key='highlight'
@@ -452,7 +467,10 @@ export class MapPanel extends React.Component<Props, State> {
 						<EnvironmentOutlined title='highlight map square' className={this.props.features.highlight ? 'selected' : ''} />
 					</Popover>
 				);
+			}
 
+			const showFog = (this.props.mode === 'setup') || (this.props.mode === 'interactive-dm');
+			if (showFog) {
 				controls.push(
 					<Popover
 						key='fog'
