@@ -4,10 +4,11 @@ import React from 'react';
 
 import { Factory } from '../../utils/factory';
 import { Matisse } from '../../utils/matisse';
+import { Mercator } from '../../utils/mercator';
 import { Shakespeare } from '../../utils/shakespeare';
 import { Utils } from '../../utils/utils';
 
-import { DOORWAY_TYPES, Map, MapArea, MapItem, STAIRWAY_TYPES, TERRAIN_TYPES } from '../../models/map';
+import { Map, MapArea, MapItem, MapWall, TERRAIN_TYPES } from '../../models/map';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
@@ -25,6 +26,7 @@ import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { MovementPanel } from '../panels/movement-panel';
+import { Checkbox } from '../controls/checkbox';
 
 interface Props {
 	map: Map;
@@ -41,6 +43,12 @@ interface Props {
 	clearMapTiles: (map: Map) => void;
 	bringToFront: (map: Map, tile: MapItem) => void;
 	sendToBack: (map: Map, tile: MapItem) => void;
+	addMapWall: (map: Map, wall: MapWall) => void;
+	moveMapWall: (map: Map, wall: MapWall, dir: string, step: number) => void;
+	nudgeWallLength: (map: Map, wall: MapWall, delta: number) => void;
+	deleteMapWall: (map: Map, wall: MapWall) => void;
+	fillInMapWalls: (map: Map) => void;
+	clearMapWalls: (map: Map) => void;
 	addMapArea: (map: Map, area: MapArea) => void;
 	moveMapArea: (map: Map, area: MapArea, dir: string, step: number) => void;
 	deleteMapArea: (map: Map, area: MapArea) => void;
@@ -56,8 +64,10 @@ interface Props {
 interface State {
 	sidebarView: string;
 	selectedTileID: string | null;
+	selectedWallID: string | null;
 	selectedAreaID: string | null;
 	addingTile: boolean;
+	addingWall: boolean;
 	addingArea: boolean;
 }
 
@@ -67,8 +77,10 @@ export class MapScreen extends React.Component<Props, State> {
 		this.state = {
 			sidebarView: 'tiles',
 			selectedTileID: null,
+			selectedWallID: null,
 			selectedAreaID: null,
 			addingTile: false,
+			addingWall: false,
 			addingArea: false
 		};
 	}
@@ -81,12 +93,24 @@ export class MapScreen extends React.Component<Props, State> {
 
 	private setSelectedTileID(id: string | null) {
 		this.setState({
-			selectedTileID: id
+			selectedTileID: id,
+			selectedWallID: null,
+			selectedAreaID: null
+		});
+	}
+
+	private setSelectedWallID(id: string | null) {
+		this.setState({
+			selectedTileID: null,
+			selectedWallID: id,
+			selectedAreaID: null
 		});
 	}
 
 	private setSelectedAreaID(id: string | null) {
 		this.setState({
+			selectedTileID: null,
+			selectedWallID: null,
 			selectedAreaID: id
 		});
 	}
@@ -94,6 +118,15 @@ export class MapScreen extends React.Component<Props, State> {
 	private toggleAddingTile() {
 		this.setState({
 			addingTile: !this.state.addingTile,
+			addingWall: false,
+			addingArea: false
+		});
+	}
+
+	private toggleAddingWall() {
+		this.setState({
+			addingTile: false,
+			addingWall: !this.state.addingWall,
 			addingArea: false
 		});
 	}
@@ -101,6 +134,7 @@ export class MapScreen extends React.Component<Props, State> {
 	private toggleAddingArea() {
 		this.setState({
 			addingTile: false,
+			addingWall: false,
 			addingArea: !this.state.addingArea
 		});
 	}
@@ -116,8 +150,10 @@ export class MapScreen extends React.Component<Props, State> {
 
 			this.setState({
 				selectedTileID: tile.id,
+				selectedWallID: null,
 				selectedAreaID: null,
 				addingTile: false,
+				addingWall: false,
 				addingArea: false
 			}, () => {
 				this.props.addMapTile(this.props.map, tile);
@@ -133,11 +169,40 @@ export class MapScreen extends React.Component<Props, State> {
 
 			this.setState({
 				selectedTileID: null,
+				selectedWallID: null,
 				selectedAreaID: area.id,
 				addingTile: false,
+				addingWall: false,
 				addingArea: false
 			}, () => {
 				this.props.addMapArea(this.props.map, area);
+			});
+		}
+	}
+
+	private verticesSelected(x1: number, y1: number, x2: number, y2: number) {
+		if (this.state.addingWall) {
+			const wall = Factory.createMapWall();
+			wall.pointA = {
+				x: x1,
+				y: y1,
+				z: 0
+			};
+			wall.pointB = {
+				x: x2,
+				y: y2,
+				z: 0
+			};
+
+			this.setState({
+				selectedTileID: null,
+				selectedWallID: wall.id,
+				selectedAreaID: null,
+				addingTile: false,
+				addingWall: false,
+				addingArea: false
+			}, () => {
+				this.props.addMapWall(this.props.map, wall);
 			});
 		}
 	}
@@ -172,6 +237,27 @@ export class MapScreen extends React.Component<Props, State> {
 				}
 			}
 
+			if (this.state.selectedWallID) {
+				const wall = this.props.map.walls.find(w => w.id === this.state.selectedWallID);
+				if (wall) {
+					sidebar = (
+						<div>
+							<MapWallPanel
+								wall={wall}
+								changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+								nudgeWallLength={(w, delta) => this.props.nudgeWallLength(this.props.map, w, delta)}
+								moveMapWall={(w, dir, step) => this.props.moveMapWall(this.props.map, w, dir, step)}
+								deleteMapWall={w => this.props.deleteMapWall(this.props.map, w)}
+							/>
+							<hr/>
+							<button onClick={() => this.setSelectedTileID(null)}>
+								<CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the editor
+							</button>
+						</div>
+					);
+				}
+			}
+
 			if (!sidebar) {
 				sidebar = (
 					<div>
@@ -185,7 +271,7 @@ export class MapScreen extends React.Component<Props, State> {
 						</div>
 						<hr/>
 						<Tabs
-							options={Utils.arrayToItems(['tiles', 'areas'])}
+							options={Utils.arrayToItems(['tiles', 'walls', 'areas'])}
 							selectedID={this.state.sidebarView}
 							onSelect={view => this.setSidebarView(view)}
 						/>
@@ -204,12 +290,34 @@ export class MapScreen extends React.Component<Props, State> {
 										</div>
 									</Note>
 								</Conditional>
-								<div className='section'>
-									<button onClick={() => this.toggleAddingTile()}>
-										{this.state.addingTile ? 'click and drag on the map to create a tile, or click here to cancel' : 'add a map tile'}
-									</button>
-									<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
-								</div>
+								<button onClick={() => this.toggleAddingTile()}>
+									{this.state.addingTile ? 'click and drag on the map to select a rectangle, or click here to cancel' : 'add a map tile'}
+								</button>
+								<ConfirmButton onConfirm={() => this.props.clearMapTiles(this.props.map)}>clear all tiles</ConfirmButton>
+							</Group>
+						</Conditional>
+						<Conditional display={this.state.sidebarView === 'walls'}>
+							<Group transparent={true}>
+								<Conditional display={this.props.map.walls.length === 0}>
+									<Note>
+										<div className='section'>
+											tiles usually need walls around them
+										</div>
+										<div className='section'>
+											to add a new wall to the map, click on <b>add a wall</b> below
+										</div>
+										<div className='section'>
+											to edit an existing wall, click on it to select it
+										</div>
+									</Note>
+								</Conditional>
+								<button onClick={() => this.toggleAddingWall()}>
+									{this.state.addingWall ? 'click and drag a corner circle on the map, or click here to cancel' : 'add a wall'}
+								</button>
+								<Conditional display={this.props.map.walls.length === 0}>
+									<button onClick={() => this.props.fillInMapWalls(this.props.map)}>add walls around tiles</button>
+								</Conditional>
+								<ConfirmButton onConfirm={() => this.props.clearMapWalls(this.props.map)}>clear all walls</ConfirmButton>
 							</Group>
 						</Conditional>
 						<Conditional display={this.state.sidebarView === 'areas'}>
@@ -227,28 +335,26 @@ export class MapScreen extends React.Component<Props, State> {
 										</div>
 									</Note>
 								</Conditional>
-								<div className='section'>
-									{
-										this.props.map.areas.map(area => (
-											<div key={area.id} onMouseEnter={() => this.setSelectedAreaID(area.id)} onMouseLeave={() => this.setSelectedAreaID(null)}>
-												<Expander text={area.name || 'unnamed area'}>
-													<MapAreaPanel
-														area={area}
-														changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-														nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-														moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
-														deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
-													/>
-												</Expander>
-											</div>
-										))
-									}
-									<hr/>
-									<button onClick={() => this.toggleAddingArea()}>
-										{this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area'}
-									</button>
-									<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
-								</div>
+								{
+									this.props.map.areas.map(area => (
+										<div key={area.id} onMouseEnter={() => this.setSelectedAreaID(area.id)} onMouseLeave={() => this.setSelectedAreaID(null)}>
+											<Expander text={area.name || 'unnamed area'}>
+												<MapAreaPanel
+													area={area}
+													changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+													nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
+													moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
+													deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
+												/>
+											</Expander>
+										</div>
+									))
+								}
+								<hr/>
+								<button onClick={() => this.toggleAddingArea()}>
+									{this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area'}
+								</button>
+								<ConfirmButton onConfirm={() => this.props.clearMapAreas(this.props.map)}>clear all areas</ConfirmButton>
 							</Group>
 						</Conditional>
 						<hr/>
@@ -273,6 +379,9 @@ export class MapScreen extends React.Component<Props, State> {
 			if (this.state.selectedTileID) {
 				selectedIDs.push(this.state.selectedTileID);
 			}
+			if (this.state.selectedWallID) {
+				selectedIDs.push(this.state.selectedWallID);
+			}
 			if (this.state.selectedAreaID) {
 				selectedIDs.push(this.state.selectedAreaID);
 			}
@@ -289,13 +398,13 @@ export class MapScreen extends React.Component<Props, State> {
 							paddingSquares={5}
 							selectedItemIDs={selectedIDs}
 							showGrid={this.state.addingTile || this.state.addingArea}
+							showWallVertices={this.state.addingWall}
 							showAreaNames={true}
-							itemSelected={(id, ctrl) => {
-								this.setSelectedTileID(id);
-								this.setSelectedAreaID(null);
-							}}
+							itemSelected={(id, ctrl) => this.setSelectedTileID(id)}
+							wallSelected={(id, ctrl) => this.setSelectedWallID(id)}
 							areaSelected={id => this.setSelectedAreaID(id)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.rectangleSelected(x1, y1, x2, y2)}
+							verticesSelected={(x1, y1, x2, y2) => this.verticesSelected(x1, y1, x2, y2)}
 						/>
 					</Col>
 				</Row>
@@ -395,27 +504,11 @@ class MapTilePanel extends React.Component<MapTileProps> {
 								<RadioGroup
 									items={[
 										{ id: 'none', text: 'none' },
-										{ id: 'doorway', text: 'doorway', details: (
-											<div>
-												<div><b>style</b></div>
-												<Selector
-													options={Utils.arrayToItems(DOORWAY_TYPES)}
-													selectedID={this.props.tile.content ? this.props.tile.content.style : null}
-													onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
-												/>
-												<div><b>orientation</b></div>
-												<Selector
-													options={Utils.arrayToItems(['horizontal', 'vertical'])}
-													selectedID={this.props.tile.content ? this.props.tile.content.orientation : null}
-													onSelect={id => this.props.changeValue(this.props.tile.content, 'orientation', id)}
-												/>
-											</div>
-										) },
 										{ id: 'stairway', text: 'stairway', details: (
 											<div>
 												<div><b>style</b></div>
 												<Selector
-													options={Utils.arrayToItems(STAIRWAY_TYPES)}
+													options={Utils.arrayToItems(['stairs', 'spiral', 'ladder'])}
 													selectedID={this.props.tile.content ? this.props.tile.content.style : null}
 													onSelect={id => this.props.changeValue(this.props.tile.content, 'style', id)}
 												/>
@@ -434,11 +527,8 @@ class MapTilePanel extends React.Component<MapTileProps> {
 										if (id !== 'none') {
 											let defaultStyle = '';
 											switch (id) {
-												case 'doorway':
-													defaultStyle = DOORWAY_TYPES[0];
-													break;
 												case 'stairway':
-													defaultStyle = STAIRWAY_TYPES[0];
+													defaultStyle = 'stairs';
 													break;
 											}
 											value = { type: id, orientation: 'horizontal', style: defaultStyle };
@@ -456,6 +546,58 @@ class MapTilePanel extends React.Component<MapTileProps> {
 						</Expander>
 						<hr/>
 						<ConfirmButton onConfirm={() => this.props.deleteMapTile(this.props.tile)}>delete tile</ConfirmButton>
+					</div>
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='MapTilePanel' error={e} />;
+		}
+	}
+}
+
+interface MapWallProps {
+	wall: MapWall;
+	changeValue: (source: any, field: string, value: any) => void;
+	nudgeWallLength: (wall: MapWall, delta: number) => void;
+	moveMapWall: (wall: MapWall, dir: string, step: number) => void;
+	deleteMapWall: (wall: MapWall) => void;
+}
+
+class MapWallPanel extends React.Component<MapWallProps> {
+	public render() {
+		try {
+			const length = Mercator.getWallLength(this.props.wall);
+
+			return (
+				<div>
+					<div className='heading'>
+						<div className='title'>map wall</div>
+					</div>
+					<div>
+						<MovementPanel onMove={(dir, step) => this.props.moveMapWall(this.props.wall, dir, step)} />
+						<div className='section'>
+						<div className='subheading'>size</div>
+							<div className='section'>
+								<NumberSpin
+									value={length + ' sq / ' + (length * 5) + ' ft'}
+									label='length'
+									downEnabled={length > 1}
+									onNudgeValue={delta => this.props.nudgeWallLength(this.props.wall, delta)}
+								/>
+							</div>
+							<div className='subheading'>properties</div>
+							<div className='section'>
+								<Checkbox label='blocks movement' checked={this.props.wall.blocksMovement} onChecked={checked => this.props.changeValue(this.props.wall, 'blocksMovement', checked)} />
+							</div>
+							<Selector
+								options={Utils.arrayToItems(['wall', 'door', 'double-door', 'bars'])}
+								selectedID={this.props.wall.display}
+								onSelect={id => this.props.changeValue(this.props.wall, 'display', id)}
+							/>
+						</div>
+						<hr/>
+						<ConfirmButton onConfirm={() => this.props.deleteMapWall(this.props.wall)}>delete wall</ConfirmButton>
 					</div>
 				</div>
 			);

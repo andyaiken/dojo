@@ -4,6 +4,7 @@ export interface Map {
 	id: string;
 	name: string;
 	items: MapItem[];
+	walls: MapWall[];
 	areas: MapArea[];
 }
 
@@ -16,7 +17,7 @@ export interface MapDimensions {
 
 export interface MapItem {
 	id: string;
-	type: 'tile' | 'pc' | 'monster' | 'companion' | 'overlay' | 'token';
+	type: 'tile' | 'pc' | 'monster' | 'companion' | 'token' | 'overlay';
 	x: number;
 	y: number;
 	z: number;
@@ -31,6 +32,23 @@ export interface MapItem {
 	color: string;															// Used by overlays
 	opacity: number;														// Used by overlays
 	style: 'square' | 'rounded' | 'circle' | null;							// Used by tiles and overlays
+}
+
+export interface MapWall {
+	id: string;
+	pointA: {
+		x: number,
+		y: number,
+		z: number
+	};
+	pointB: {
+		x: number,
+		y: number,
+		z: number
+	};
+	display: string;
+	blocksLineOfSight: boolean;
+	blocksMovement: boolean;
 }
 
 export interface MapArea {
@@ -69,17 +87,4 @@ export const TERRAIN_TYPES = [
 	'water',
 	'custom',
 	'link'
-];
-
-export const DOORWAY_TYPES = [
-	'single',
-	'double',
-	'arch',
-	'bars'
-];
-
-export const STAIRWAY_TYPES = [
-	'stairs',
-	'spiral',
-	'ladder'
 ];

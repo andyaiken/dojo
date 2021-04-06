@@ -18,7 +18,7 @@ import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/a
 import { Combat, Combatant, CombatSetup, CombatSlotInfo, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
-import { Exploration, Map, MapArea, MapItem } from '../../models/map';
+import { Exploration, Map, MapArea, MapItem, MapWall } from '../../models/map';
 import { Options, SavedImage, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
@@ -194,6 +194,9 @@ export class Main extends React.Component<Props, State> {
 							item.depth = 1;
 						}
 					});
+					if (m.walls === undefined) {
+						m.walls = [];
+					}
 					if (m.areas === undefined) {
 						m.areas = [];
 					}
@@ -297,6 +300,9 @@ export class Main extends React.Component<Props, State> {
 								item.depth = 1;
 							}
 						});
+						if (combat.map.walls === undefined) {
+							combat.map.walls = [];
+						}
 						if (combat.map.areas === undefined) {
 							combat.map.areas = [];
 						}
@@ -335,6 +341,9 @@ export class Main extends React.Component<Props, State> {
 							item.customLink = '';
 						}
 					});
+					if (ex.map.walls === undefined) {
+						ex.map.walls = [];
+					}
 					if (ex.map.areas === undefined) {
 						ex.map.areas = [];
 					}
@@ -1584,6 +1593,55 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private addMapWall(map: Map, wall: MapWall) {
+		map.walls.push(wall);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private moveMapWall(map: Map, wall: MapWall, dir: string, step: number) {
+		Mercator.moveWall(wall, dir, step);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private nudgeWallLength(map: Map, wall: MapWall, delta: number) {
+		Mercator.nudgeWallLength(wall, delta);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private deleteMapWall(map: Map, wall: MapWall) {
+		const index = map.walls.indexOf(wall);
+		map.walls.splice(index, 1);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private fillInMapWalls(map: Map) {
+		Mercator.addWalls(map, true, false);
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
+	private clearMapWalls(map: Map) {
+		map.walls = [];
+
+		this.setState({
+			maps: this.state.maps
+		});
+	}
+
 	private moveMapTileOrArea(map: Map, thing: MapItem | MapArea, dir: string, step: number) {
 		Mercator.move(map, thing.id, dir, step);
 
@@ -2638,7 +2696,7 @@ export class Main extends React.Component<Props, State> {
 		if (party) {
 			const mapCopy = JSON.parse(JSON.stringify(map));
 			const ex = Factory.createExploration();
-			ex.name = party.name + ' in ' + map.name;
+			ex.name = (party.name || 'unnamed party') + ' in ' + (map.name || 'unnamed map');
 			ex.map = mapCopy;
 			ex.partyID = partyID;
 			party.pcs.filter(pc => pc.active).forEach(pc => {
@@ -3608,6 +3666,12 @@ export class Main extends React.Component<Props, State> {
 							clearMapTiles={map => this.clearMapTiles(map)}
 							bringToFront={(map, tile) => this.bringToFront(map, tile)}
 							sendToBack={(map, tile) => this.sendToBack(map, tile)}
+							addMapWall={(map, wall) => this.addMapWall(map, wall)}
+							moveMapWall={(map, wall, dir, step) => this.moveMapWall(map, wall, dir, step)}
+							nudgeWallLength={(map, wall, delta) => this.nudgeWallLength(map, wall, delta)}
+							deleteMapWall={(map, wall) => this.deleteMapWall(map, wall)}
+							fillInMapWalls={map => this.fillInMapWalls(map)}
+							clearMapWalls={map => this.clearMapWalls(map)}
 							addMapArea={(map, area) => this.addMapArea(map, area)}
 							moveMapArea={(map, area, dir, step) => this.moveMapTileOrArea(map, area, dir, step)}
 							deleteMapArea={(map, area) => this.deleteMapArea(map, area)}

@@ -7,7 +7,7 @@ import { Shakespeare } from './shakespeare';
 import { Utils } from './utils';
 
 import { Combatant } from '../models/combat';
-import { DOORWAY_TYPES, Map, MapArea, MapItem } from '../models/map';
+import { Map, MapArea, MapItem, MapWall } from '../models/map';
 
 export class Mercator {
 	public static scatterCombatants(map: Map, combatants: Combatant[], areaID: string | null) {
@@ -34,7 +34,7 @@ export class Mercator {
 					};
 				}
 			}
-			const dimensions = areaDimensions || Mercator.mapDimensions(map.items);
+			const dimensions = areaDimensions || this.mapDimensions(map.items);
 			if (dimensions) {
 				combatants.forEach(combatant => {
 					const candidateSquares: {x: number, y: number}[] = [];
@@ -43,7 +43,7 @@ export class Mercator {
 					for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 						for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 							// Could we add this monster to this square?
-							const canAddHere = Mercator.canAddMonsterHere(map, combatant, x, y);
+							const canAddHere = this.canAddMonsterHere(map, combatant, x, y);
 							if (canAddHere) {
 								candidateSquares.push({x: x, y: y});
 							}
@@ -79,20 +79,21 @@ export class Mercator {
 			}
 		});
 		list.forEach(id => {
-			const combatant = combatants.find(c => c.id === id);
-			if (combatant && combatant.path) {
-				// Find map item
-				const item = map.items.find(i => i.id === id);
-				if (item) {
-					combatant.path.push({
-						x: item.x,
-						y: item.y,
-						z: item.z
-					});
+			if (this.canMove(map, id, dir)) {
+				const combatant = combatants.find(c => c.id === id);
+				if (combatant && combatant.path) {
+					const item = map.items.find(i => i.id === id);
+					if (item) {
+						combatant.path.push({
+							x: item.x,
+							y: item.y,
+							z: item.z
+						});
+					}
 				}
+				this.move(map, id, dir, step);
 			}
 		});
-		list.forEach(id => Mercator.move(map, id, dir, step));
 		Napoleon.setMountPositions(combatants, map);
 	}
 
@@ -149,7 +150,7 @@ export class Mercator {
 		for (let x1 = left; x1 <= right; ++x1) {
 			for (let y1 = top; y1 <= bottom; ++y1) {
 				// Is this square free of tiles?
-				const occupants = Mercator.itemsAt(map as Map, x1, y1);
+				const occupants = this.itemsAt(map as Map, x1, y1);
 				const canOccupy = occupants.every(item => item.type !== 'tile');
 				coveredSquares.push(canOccupy);
 			}
@@ -167,7 +168,7 @@ export class Mercator {
 		for (let x1 = x; x1 <= right; ++x1) {
 			for (let y1 = y; y1 <= bottom; ++y1) {
 				// Is this square on an empty tile?
-				const occupants = Mercator.itemsAt(map as Map, x1, y1);
+				const occupants = this.itemsAt(map as Map, x1, y1);
 				const canOccupy = (occupants.length > 0) && occupants.every(item => item.type === 'tile');
 				coveredSquares.push(canOccupy);
 			}
@@ -219,7 +220,7 @@ export class Mercator {
 	public static mapSize(map: Map) {
 		return map.items
 			.filter(item => item.type === 'tile')
-			.reduce((sum, item) => sum + Mercator.mapTileSize(item), 0);
+			.reduce((sum, item) => sum + this.mapTileSize(item), 0);
 	}
 
 	public static mapTileSize(tile: MapItem) {
@@ -233,10 +234,12 @@ export class Mercator {
 	public static generate(areas: number, map: Map) {
 		let n = 0;
 		while (n < areas) {
-			if (Mercator.addRoom(map)) {
+			if (this.addRoom(map)) {
 				n += 1;
 			}
 		}
+
+		this.addWalls(map, true, true);
 	}
 
 	public static addRoom(map: Map) {
@@ -249,7 +252,7 @@ export class Mercator {
 
 		let extra = null;
 
-		const dimensions = Mercator.mapDimensions(map.items);
+		const dimensions = this.mapDimensions(map.items);
 		if (dimensions) {
 			// Try to find a place we can add this tile
 			const minGap = 1;
@@ -261,7 +264,7 @@ export class Mercator {
 			const candidates = [];
 			for (let x = dimensions.minX; x !== dimensions.maxX; ++x) {
 				for (let y = dimensions.minY; y !== dimensions.maxY; ++y) {
-					const canAdd = Mercator.canAddTileHere(map, x, y, room.width, room.height, minGap, minGap);
+					const canAdd = this.canAddTileHere(map, x, y, room.width, room.height, minGap, minGap);
 					if (canAdd) {
 						candidates.push({ x: x, y: y });
 					}
@@ -294,7 +297,7 @@ export class Mercator {
 						corridor.y = corridorTop;
 						corridor.width = 2;
 						corridor.height = corridorBottom - corridorTop + 1;
-						if (Mercator.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 1, 0)) {
+						if (this.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 1, 0)) {
 							corridors.push({ tile: corridor, horizontal: false });
 						}
 					}
@@ -316,7 +319,7 @@ export class Mercator {
 						corridor.y = y;
 						corridor.width = corridorRight - corridorLeft + 1;
 						corridor.height = 2;
-						if (Mercator.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 0, 1)) {
+						if (this.canAddTileHere(map, corridor.x, corridor.y, corridor.width, corridor.height, 0, 1)) {
 							corridors.push({ tile: corridor, horizontal: true });
 						}
 					}
@@ -327,82 +330,13 @@ export class Mercator {
 				const index = Utils.randomNumber(corridors.length);
 				const corridor = corridors[index];
 
-				if ((!corridor.horizontal && (corridor.tile.height === 1)) || (corridor.horizontal && (corridor.tile.width === 1))) {
-					if (Gygax.dieRoll(2) === 2) {
+				if ((!corridor.horizontal && (corridor.tile.height <= 4)) || (corridor.horizontal && (corridor.tile.width <= 4))) {
+					if (Gygax.dieRoll(3) === 3) {
 						corridor.tile.content = {
-							type: 'doorway',
-							style: Mercator.getRandomDoorwayStyle(),
+							type: 'stairway',
+							style: 'stairs',
 							orientation: corridor.horizontal ? 'vertical' : 'horizontal'
 						};
-					}
-				} else {
-					if ((!corridor.horizontal && (corridor.tile.height >= 4)) || (corridor.horizontal && (corridor.tile.width >= 4))) {
-						if (Gygax.dieRoll(2) === 2) {
-							const door = Factory.createMapItem();
-							door.type = 'tile';
-							door.terrain = 'default';
-							door.style = 'square';
-							door.content = {
-								type: 'doorway',
-								style: Mercator.getRandomDoorwayStyle(),
-								orientation: ''
-							};
-							if (corridor.horizontal) {
-								door.x = corridor.tile.x;
-								door.y = corridor.tile.y;
-								door.width = 1;
-								door.height = 2;
-								door.content.orientation = 'vertical';
-								corridor.tile.x += 1;
-								corridor.tile.width -= 1;
-							} else {
-								door.x = corridor.tile.x;
-								door.y = corridor.tile.y;
-								door.width = 2;
-								door.height = 1;
-								door.content.orientation = 'horizontal';
-								corridor.tile.y += 1;
-								corridor.tile.height -= 1;
-							}
-							map.items.push(door);
-						}
-						if (Gygax.dieRoll(2) === 2) {
-							const door = Factory.createMapItem();
-							door.type = 'tile';
-							door.terrain = 'default';
-							door.style = 'square';
-							door.content = {
-								type: 'doorway',
-								style: Mercator.getRandomDoorwayStyle(),
-								orientation: ''
-							};
-							if (corridor.horizontal) {
-								door.x = corridor.tile.x + corridor.tile.width - 1;
-								door.y = corridor.tile.y;
-								door.width = 1;
-								door.height = 2;
-								door.content.orientation = 'vertical';
-								corridor.tile.width -= 1;
-							} else {
-								door.x = corridor.tile.x;
-								door.y = corridor.tile.y + corridor.tile.height - 1;
-								door.width = 2;
-								door.height = 1;
-								door.content.orientation = 'horizontal';
-								corridor.tile.height -= 1;
-							}
-							map.items.push(door);
-						}
-					}
-
-					if ((!corridor.horizontal && (corridor.tile.height <= 4)) || (corridor.horizontal && (corridor.tile.width <= 4))) {
-						if (Gygax.dieRoll(3) === 3) {
-							corridor.tile.content = {
-								type: 'stairway',
-								style: 'stairs',
-								orientation: corridor.horizontal ? 'vertical' : 'horizontal'
-							};
-						}
 					}
 				}
 
@@ -459,12 +393,12 @@ export class Mercator {
 					const x = room.x + dx;
 					// Can we put this on the top?
 					const y1 = room.y - height;
-					if (Mercator.canAddTileHere(map, x, y1, width, height, 1, 1)) {
+					if (this.canAddTileHere(map, x, y1, width, height, 1, 1)) {
 						candidates.push({ x: x, y: y1 });
 					}
 					// Can we put this on the bottom?
 					const y2 = room.y + room.height;
-					if (Mercator.canAddTileHere(map, x, y2, width, height, 1, 1)) {
+					if (this.canAddTileHere(map, x, y2, width, height, 1, 1)) {
 						candidates.push({ x: x, y: y2 });
 					}
 				}
@@ -478,12 +412,12 @@ export class Mercator {
 					const y = room.y + dy;
 					// Can we put this on the left?
 					const x1 = room.x - width;
-					if (Mercator.canAddTileHere(map, x1, y, width, height, 1, 1)) {
+					if (this.canAddTileHere(map, x1, y, width, height, 1, 1)) {
 						candidates.push({ x: x1, y: y });
 					}
 					// Can we put this on the right?
 					const x2 = room.x + room.width;
-					if (Mercator.canAddTileHere(map, x2, y, width, height, 1, 1)) {
+					if (this.canAddTileHere(map, x2, y, width, height, 1, 1)) {
 						candidates.push({ x: x2, y: y });
 					}
 				}
@@ -506,11 +440,6 @@ export class Mercator {
 		}
 
 		return null;
-	}
-
-	private static getRandomDoorwayStyle() {
-		const index = Utils.randomNumber(DOORWAY_TYPES.length);
-		return DOORWAY_TYPES[index];
 	}
 
 	public static getViewport(map: Map, areaID: string | null) {
@@ -554,6 +483,52 @@ export class Mercator {
 
 		item.x = x;
 		item.y = y;
+	}
+
+	public static canMove(map: Map, id: string, dir: string): boolean {
+		const item = map.items.find(i => i.id === id);
+		if (item) {
+			switch (dir) {
+				case 'N':
+					return map.walls
+						.filter(w => this.getWallOrientation(w) === 'horizontal')
+						.filter(w => (w.pointA.y === item.y))
+						.filter(w => (w.pointA.x <= item.x) && (w.pointB.x > item.x))
+						.filter(w => w.blocksMovement)
+						.length === 0;
+				case 'NE':
+					return this.canMove(map, id, 'N') && this.canMove(map, id, 'E');
+				case 'E':
+					return map.walls
+						.filter(w => this.getWallOrientation(w) === 'vertical')
+						.filter(w => (w.pointA.x === item.x + 1))
+						.filter(w => (w.pointA.y <= item.y) && (w.pointB.y > item.y))
+						.filter(w => w.blocksMovement)
+						.length === 0;
+				case 'SE':
+					return this.canMove(map, id, 'S') && this.canMove(map, id, 'E');
+				case 'S':
+					return map.walls
+						.filter(w => this.getWallOrientation(w) === 'horizontal')
+						.filter(w => (w.pointA.y === item.y + 1))
+						.filter(w => (w.pointA.x <= item.x) && (w.pointB.x > item.x))
+						.filter(w => w.blocksMovement)
+						.length === 0;
+				case 'SW':
+					return this.canMove(map, id, 'S') && this.canMove(map, id, 'W');
+				case 'W':
+					return map.walls
+						.filter(w => this.getWallOrientation(w) === 'vertical')
+						.filter(w => (w.pointA.x === item.x))
+						.filter(w => (w.pointA.y <= item.y) && (w.pointB.y > item.y))
+						.filter(w => w.blocksMovement)
+						.length === 0;
+				case 'NW':
+					return this.canMove(map, id, 'N') && this.canMove(map, id, 'W');
+			}
+		}
+
+		return true;
 	}
 
 	public static move(map: Map, id: string, dir: string, step: number) {
@@ -603,6 +578,59 @@ export class Mercator {
 		}
 	}
 
+	public static moveWall(wall: MapWall, dir: string, step: number) {
+		switch (dir) {
+			case 'N':
+				wall.pointA.y -= step;
+				wall.pointB.y -= step;
+				break;
+			case 'NE':
+				wall.pointA.x += step;
+				wall.pointA.y -= step;
+				wall.pointB.x += step;
+				wall.pointB.y -= step;
+				break;
+			case 'E':
+				wall.pointA.x += step;
+				wall.pointB.x += step;
+				break;
+			case 'SE':
+				wall.pointA.x += step;
+				wall.pointA.y += step;
+				wall.pointB.x += step;
+				wall.pointB.y += step;
+				break;
+			case 'S':
+				wall.pointA.y += step;
+				wall.pointB.y += step;
+				break;
+			case 'SW':
+				wall.pointA.x -= step;
+				wall.pointA.y += step;
+				wall.pointB.x -= step;
+				wall.pointB.y += step;
+				break;
+			case 'W':
+				wall.pointA.x -= step;
+				wall.pointB.x -= step;
+				break;
+			case 'NW':
+				wall.pointA.x -= step;
+				wall.pointA.y -= step;
+				wall.pointB.x -= step;
+				wall.pointB.y -= step;
+				break;
+			case 'UP':
+				wall.pointA.z += step;
+				wall.pointB.z += step;
+				break;
+			case 'DOWN':
+				wall.pointA.z -= step;
+				wall.pointB.z -= step;
+				break;
+		}
+	}
+
 	public static remove(map: Map, id: string) {
 		const item = map.items.find(i => i.id === id);
 		if (item) {
@@ -649,7 +677,7 @@ export class Mercator {
 		let prev: { x: number, y: number, z: number } | null = null;
 		allSteps.forEach(step => {
 			if (prev) {
-				d += Mercator.getStepDistance(prev, step, diagonalMode);
+				d += this.getStepDistance(prev, step, diagonalMode);
 			}
 			prev = step;
 		});
@@ -688,5 +716,200 @@ export class Mercator {
 		}
 
 		return d;
+	}
+
+	public static getWallOrientation(wall: MapWall) {
+		if (wall.pointA.x === wall.pointB.x) {
+			return 'vertical';
+		} else if (wall.pointA.y === wall.pointB.y) {
+			return 'horizontal';
+		}
+
+		return '';
+	}
+
+	public static getWallLength(wall: MapWall) {
+		if (wall.pointA.x === wall.pointB.x) {
+			return Math.abs(wall.pointA.y - wall.pointB.y);
+		} else if (wall.pointA.y === wall.pointB.y) {
+			return Math.abs(wall.pointA.x - wall.pointB.x);
+		}
+
+		return 0;
+	}
+
+	public static nudgeWallLength(wall: MapWall, delta: number) {
+		if (wall.pointA.x === wall.pointB.x) {
+			wall.pointB.y += delta;
+		} else if (wall.pointA.y === wall.pointB.y) {
+			wall.pointB.x += delta;
+		}
+	}
+
+	public static addWalls(map: Map, addWalls: boolean, addDoors: boolean) {
+		const walls: MapWall[] = [];
+
+		const randomDoor = () => {
+			const doors = ['door', 'double-door', 'bars'];
+			const index = Utils.randomNumber(doors.length);
+			return doors[index];
+		};
+
+		const addDoor = (xA: number, yA: number, xB: number, yB: number) => {
+			const door = Factory.createMapWall();
+			door.pointA = { x: xA, y: yA, z: 0 };
+			door.pointB = { x: xB, y: yB, z: 0 };
+			door.display = randomDoor();
+			door.blocksMovement = false;
+			if (this.getWallLength(door) <= 2) {
+				if (addDoors) {
+					walls.push(door);
+				}
+			}
+			return door;
+		};
+
+		const tiles = map.items.filter(i => i.type === 'tile');
+		tiles.forEach(tile => {
+			const top = tile.y;
+			const right = tile.x + tile.width - 1;
+			const bottom = tile.y + tile.height - 1;
+			const left = tile.x;
+
+			let north: number[] = [];
+			let east: number[] = [];
+			let south: number[] = [];
+			let west: number[] = [];
+			for (let x = left; x <= right; ++x) {
+				north.push(x);
+				south.push(x);
+			}
+			for (let y = top; y <= bottom; ++y) {
+				east.push(y);
+				west.push(y);
+			}
+
+			// Find tiles adjacent to the north edge
+			tiles.filter(t => (t.y + t.height - 1 === top - 1) && (t.x <= right) && (t.x + t.width - 1 >= left))
+				.forEach(t => {
+					const door = addDoor(Math.max(left, t.x), top, Math.min(right + 1, t.x + t.width), top);
+					for (let x = door.pointA.x; x < door.pointB.x; ++x) {
+						north = north.filter(val => val !== x);
+					}
+				});
+
+			// Find tiles adjacent to the east edge
+			tiles.filter(t => (t.x === right + 1) && (t.y <= bottom) && (t.y + t.height - 1 >= top))
+				.forEach(t => {
+					const door = addDoor(right + 1, Math.max(top, t.y), right + 1, Math.min(bottom + 1, t.y + t.height));
+					for (let y = door.pointA.y; y < door.pointB.y; ++y) {
+						east = east.filter(val => val !== y);
+					}
+				});
+
+			// Find tiles adjacent to the south edge
+			tiles.filter(t => (t.y === bottom + 1) && (t.x <= right) && (t.x + t.width - 1 >= left))
+				.forEach(t => {
+					const door = addDoor(Math.max(left, t.x), bottom + 1, Math.min(right + 1, t.x + t.width), bottom + 1);
+					for (let x = door.pointA.x; x < door.pointB.x; ++x) {
+						south = south.filter(val => val !== x);
+					}
+				});
+
+			// Find tiles adjacent to the west edge
+			tiles.filter(t => (t.x + t.width - 1 === left - 1) && (t.y <= bottom) && (t.y + t.height - 1 >= top))
+				.forEach(t => {
+					const door = addDoor(left, Math.max(top, t.y), left, Math.min(bottom + 1, t.y + t.height));
+					for (let y = door.pointA.y; y < door.pointB.y; ++y) {
+						west = west.filter(val => val !== y);
+					}
+				});
+
+			if (addWalls) {
+				// Add missing walls
+				while (north.length > 0) {
+					let val = north[0];
+					north.splice(0, 1);
+
+					const wall = Factory.createMapWall();
+					wall.pointA.x = val;
+					wall.pointA.y = top;
+					wall.pointB.x = val + 1;
+					wall.pointB.y = top;
+
+					while ((north.length > 0) && (north[0] === val + 1)) {
+						val = north[0];
+						north.splice(0, 1);
+						wall.pointB.x += 1;
+					}
+
+					walls.push(wall);
+				}
+				while (east.length > 0) {
+					let val = east[0];
+					east.splice(0, 1);
+
+					const wall = Factory.createMapWall();
+					wall.pointA.x = right + 1;
+					wall.pointA.y = val;
+					wall.pointB.x = right + 1;
+					wall.pointB.y = val + 1;
+
+					while ((east.length > 0) && (east[0] === val + 1)) {
+						val = east[0];
+						east.splice(0, 1);
+						wall.pointB.y += 1;
+					}
+
+					walls.push(wall);
+				}
+				while (south.length > 0) {
+					let val = south[0];
+					south.splice(0, 1);
+
+					const wall = Factory.createMapWall();
+					wall.pointA.x = val;
+					wall.pointA.y = bottom + 1;
+					wall.pointB.x = val + 1;
+					wall.pointB.y = bottom + 1;
+
+					while ((south.length > 0) && (south[0] === val + 1)) {
+						val = south[0];
+						south.splice(0, 1);
+						wall.pointB.x += 1;
+					}
+
+					walls.push(wall);
+				}
+				while (west.length > 0) {
+					let val = west[0];
+					west.splice(0, 1);
+
+					const wall = Factory.createMapWall();
+					wall.pointA.x = left;
+					wall.pointA.y = val;
+					wall.pointB.x = left;
+					wall.pointB.y = val + 1;
+
+					while ((west.length > 0) && (west[0] === val + 1)) {
+						val = west[0];
+						west.splice(0, 1);
+						wall.pointB.y += 1;
+					}
+
+					walls.push(wall);
+				}
+			}
+		});
+
+		Utils.distinct(
+			walls,
+			wall => {
+				const w = wall as MapWall;
+				const a = w.pointA.x + ',' + w.pointA.y + ',' + w.pointA.z;
+				const b = w.pointB.x + ',' + w.pointB.y + ',' + w.pointB.z;
+				return a + '-' + b;
+			})
+			.forEach(wall => map.walls.push(wall));
 	}
 }

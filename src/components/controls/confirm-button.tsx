@@ -11,12 +11,29 @@ interface Props {
 	onConfirm: () => void;
 }
 
-export class ConfirmButton extends React.Component<Props> {
+interface State {
+	visible: boolean;
+}
+
+export class ConfirmButton extends React.Component<Props, State> {
 	public static defaultProps = {
 		prompt: 'are you sure you want to do this?',
 		info: null,
 		disabled: false
 	};
+
+	constructor(props: Props) {
+		super(props);
+		this.state = {
+			visible: false
+		};
+	}
+
+	private onConfirm() {
+		this.setState({
+			visible: false
+		}, () => this.props.onConfirm());
+	}
 
 	public render() {
 		try {
@@ -46,11 +63,13 @@ export class ConfirmButton extends React.Component<Props> {
 							</div>
 							{this.props.info}
 							<hr/>
-							<button onClick={() => this.props.onConfirm()}>confirm</button>
+							<button onClick={() => this.onConfirm()}>confirm</button>
 						</div>
 					)}
 					trigger='click'
 					overlayClassName='confirm-tooltip'
+					visible={this.state.visible}
+					onVisibleChange={visible => this.setState({ visible: visible })}
 				>
 					{btn}
 				</Popover>

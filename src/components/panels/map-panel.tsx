@@ -10,7 +10,7 @@ import { Comms } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map, MapArea, MapDimensions, MapItem } from '../../models/map';
+import { Map, MapArea, MapDimensions, MapItem, MapWall } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
@@ -36,6 +36,7 @@ interface Props {
 	paddingSquares: number;
 	combatants: Combatant[];
 	showGrid: boolean;
+	showWallVertices: boolean;
 	showAreaNames: boolean;
 	areaClassNames: { id: string, className: string }[];
 	selectedItemIDs: string[];
@@ -44,6 +45,7 @@ interface Props {
 	lighting: 'bright light' | 'dim light' | 'darkness';
 	focussedSquare: { x: number, y: number } | null;
 	itemSelected: (itemID: string | null, ctrl: boolean) => void;
+	wallSelected: (wallID: string, ctrl: boolean) => void;
 	itemRemove: (itemID: string) => void;
 	conditionRemove: (combatant: Combatant, condition: Condition) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
@@ -53,6 +55,7 @@ interface Props {
 	gridSquareEntered: (x: number, y: number) => void;
 	gridSquareClicked: (x: number, y: number) => void;
 	gridRectangleSelected: (x1: number, y1: number, x2: number, y2: number) => void;
+	verticesSelected: (x1: number, y1: number, x2: number, y2: number) => void;
 	areaClicked: (area: MapArea) => void;
 	changeLighting: (light: string) => void;
 	toggleFeature: (feature: 'highlight' | 'editFog') => void;
@@ -67,6 +70,14 @@ interface State {
 		y: number
 	} | null;
 	selectionEndSquare: {
+		x: number,
+		y: number
+	} | null;
+	wallStartVertex: {
+		x: number,
+		y: number
+	} | null;
+	wallEndVertex: {
 		x: number,
 		y: number
 	} | null;
@@ -95,6 +106,7 @@ export class MapPanel extends React.Component<Props, State> {
 		paddingSquares: 0,
 		combatants: [],
 		showGrid: false,
+		showWallVertices: false,
 		showAreaNames: false,
 		areaClassNames: [],
 		selectedItemIDs: [],
@@ -103,7 +115,7 @@ export class MapPanel extends React.Component<Props, State> {
 		lighting: 'bright light',
 		focussedSquare: null,
 		itemSelected: null,
-		itemMove: null,
+		wallSelected: null,
 		itemRemove: null,
 		conditionRemove: null,
 		toggleTag: null,
@@ -114,6 +126,7 @@ export class MapPanel extends React.Component<Props, State> {
 		gridSquareClicked: null,
 		gridRectangleUpdated: null,
 		gridRectangleSelected: null,
+		verticesSelected: null,
 		areaClicked: () => null,
 		changeLighting: null,
 		toggleFeature: null,
@@ -137,7 +150,9 @@ export class MapPanel extends React.Component<Props, State> {
 		this.state = {
 			size: size,
 			selectionStartSquare: null,
-			selectionEndSquare: null
+			selectionEndSquare: null,
+			wallStartVertex: null,
+			wallEndVertex: null
 		};
 	}
 
@@ -191,13 +206,84 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 	}
 
-	private isSelected(x: number, y: number) {
+	private isGridSquareSelected(x: number, y: number) {
 		if (this.state.selectionStartSquare && this.state.selectionEndSquare) {
 			const minX = Math.min(this.state.selectionStartSquare.x, this.state.selectionEndSquare.x);
 			const minY = Math.min(this.state.selectionStartSquare.y, this.state.selectionEndSquare.y);
 			const maxX = Math.max(this.state.selectionStartSquare.x, this.state.selectionEndSquare.x);
 			const maxY = Math.max(this.state.selectionStartSquare.y, this.state.selectionEndSquare.y);
 			return ((x >= minX) && (x <= maxX) && (y >= minY) && (y <= maxY));
+		}
+
+		return false;
+	}
+
+	private vertexMouseDown(x: number, y: number) {
+		this.setState({
+			wallStartVertex: {
+				x: x,
+				y: y
+			},
+			wallEndVertex: null
+		});
+	}
+
+	private vertexEntered(x: number, y: number) {
+		if (this.state.wallStartVertex) {
+			this.setState({
+				wallEndVertex: {
+					x: x,
+					y: y
+				}
+			});
+		}
+	}
+
+	private vertexMouseUp(x: number, y: number) {
+		if (this.state.wallStartVertex) {
+			const x1 = this.state.wallStartVertex.x;
+			const y1 = this.state.wallStartVertex.y;
+			this.setState({
+				wallStartVertex: null,
+				wallEndVertex: null
+			}, () => {
+				if ((x1 === x) && (y1 === y)) {
+					// Can't have a wall that's 0 long
+				} else {
+					if (this.props.verticesSelected) {
+						const minX = Math.min(x1, x);
+						const minY = Math.min(y1, y);
+						const maxX = Math.max(x1, x);
+						const maxY = Math.max(y1, y);
+						this.props.verticesSelected(minX, minY, maxX, maxY);
+					}
+				}
+			});
+		}
+	}
+
+	private isVertexSelected(x: number, y: number) {
+		if (this.state.wallStartVertex) {
+			if ((x === this.state.wallStartVertex.x) && (y === this.state.wallStartVertex.y)) {
+				return true;
+			}
+		}
+
+		if (this.state.wallStartVertex && this.state.wallEndVertex) {
+			if (this.state.wallStartVertex.x === this.state.wallEndVertex.x) {
+				if (x === this.state.wallStartVertex.x) {
+					const min = Math.min(this.state.wallStartVertex.y, this.state.wallEndVertex.y);
+					const max = Math.max(this.state.wallStartVertex.y, this.state.wallEndVertex.y);
+					return ((y >= min) && (y <= max));
+				}
+			}
+			if (this.state.wallStartVertex.y === this.state.wallEndVertex.y) {
+				if (y === this.state.wallStartVertex.y) {
+					const min = Math.min(this.state.wallStartVertex.x, this.state.wallEndVertex.x);
+					const max = Math.max(this.state.wallStartVertex.x, this.state.wallEndVertex.x);
+					return ((x >= min) && (x <= max));
+				}
+			}
 		}
 
 		return false;
@@ -310,13 +396,13 @@ export class MapPanel extends React.Component<Props, State> {
 		return dimensions;
 	}
 
-	private getStyle(x: number, y: number, width: number, height: number, style: 'square' | 'rounded' | 'circle' | null, dim: MapDimensions): MapItemStyle {
+	private getStyle(x: number, y: number, width: number, height: number, style: 'square' | 'rounded' | 'circle' | 'vertex' | 'wall' | null, dim: MapDimensions): MapItemStyle {
 		let offsetX = 0;
 		let offsetY = 0;
-		if (width < 1) {
+		if ((width < 1) && (style !== 'wall')) {
 			offsetX = (1 - width) / 2;
 		}
-		if (height < 1) {
+		if ((height < 1) && (style !== 'wall')) {
 			offsetY = (1 - height) / 2;
 		}
 
@@ -326,15 +412,38 @@ export class MapPanel extends React.Component<Props, State> {
 				radius = this.state.size + 'px';
 				break;
 			case 'circle':
+			case 'vertex':
 				radius = '50%';
 				break;
 		}
 
+		const wallSize = this.state.size / 12;
+
+		const dx = x + offsetX - dim.minX;
+		const dy = y + offsetY - dim.minY;
+		let left = this.state.size * dx;
+		let top = this.state.size * dy;
+		if ((style === 'vertex') || (style === 'wall')) {
+			left -= wallSize;
+			top -= wallSize;
+		}
+
+		let pixelWidth = this.state.size * width;
+		let pixelHeight = this.state.size * height;
+		if (style === 'vertex') {
+			pixelWidth = wallSize * 2;
+			pixelHeight = wallSize * 2;
+		}
+		if (style === 'wall') {
+			pixelWidth += (wallSize * 2);
+			pixelHeight += (wallSize * 2);
+		}
+
 		return {
-			left: 'calc(' + this.state.size + 'px * ' + (x + offsetX - dim.minX) + ')',
-			top: 'calc(' + this.state.size + 'px * ' + (y + offsetY - dim.minY) + ')',
-			width: 'calc(' + this.state.size + 'px * ' + width + ')',
-			height: 'calc(' + this.state.size + 'px * ' + height + ')',
+			left: left + 'px',
+			top: top + 'px',
+			width: pixelWidth + 'px',
+			height: pixelHeight + 'px',
 			borderRadius: radius,
 			backgroundSize: this.state.size + 'px'
 		};
@@ -530,6 +639,26 @@ export class MapPanel extends React.Component<Props, State> {
 					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
 				/>
 			));
+	}
+
+	private getWalls(dimensions: MapDimensions) {
+		return this.props.map.walls.map(wall => {
+			const x = Math.min(wall.pointA.x, wall.pointB.x);
+			const y = Math.min(wall.pointA.y, wall.pointB.y);
+			const width = Math.abs(wall.pointA.x - wall.pointB.x);
+			const height = Math.abs(wall.pointA.y - wall.pointB.y);
+
+			return (
+				<Wall
+					key={wall.id}
+					wall={wall}
+					style={this.getStyle(x, y, width, height, 'wall', dimensions)}
+					selectable={this.props.mode === 'edit'}
+					selected={this.props.selectedItemIDs.includes(wall.id)}
+					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.wallSelected(id, ctrl) : null}
+				/>
+			);
+		});
 	}
 
 	private getAreas(dimensions: MapDimensions) {
@@ -865,15 +994,42 @@ export class MapPanel extends React.Component<Props, State> {
 				for (let xGrid = dimensions.minX; xGrid !== dimensions.maxX + 1; ++xGrid) {
 					grid.push(
 						<GridSquare
-							key={xGrid + ',' + yGrid}
+							key={'grid ' + xGrid + ',' + yGrid}
 							x={xGrid}
 							y={yGrid}
 							style={this.getStyle(xGrid, yGrid, 1, 1, 'square', dimensions)}
-							selected={this.isSelected(xGrid, yGrid)}
+							selected={this.isGridSquareSelected(xGrid, yGrid)}
 							showDistanceTo={activeToken}
 							onMouseDown={(posX, posY) => this.gridSquareMouseDown(posX, posY)}
 							onMouseUp={(posX, posY) => this.gridSquareMouseUp(posX, posY)}
 							onMouseEnter={(posX, posY) => this.gridSquareEntered(posX, posY)}
+						/>
+					);
+				}
+			}
+
+			return grid;
+		}
+
+		return null;
+	}
+
+	private getWallVertices(dimensions: MapDimensions) {
+		if (this.props.showWallVertices) {
+			const grid: (JSX.Element | null)[] = [];
+
+			for (let yGrid = dimensions.minY + 1; yGrid !== dimensions.maxY + 1; ++yGrid) {
+				for (let xGrid = dimensions.minX + 1; xGrid !== dimensions.maxX + 1; ++xGrid) {
+					grid.push(
+						<WallVertex
+							key={'vertex ' + xGrid + ',' + yGrid}
+							x={xGrid}
+							y={yGrid}
+							style={this.getStyle(xGrid, yGrid, 1, 1, 'vertex', dimensions)}
+							selected={this.isVertexSelected(xGrid, yGrid)}
+							onMouseDown={(posX, posY) => this.vertexMouseDown(posX, posY)}
+							onMouseUp={(posX, posY) => this.vertexMouseUp(posX, posY)}
+							onMouseEnter={(posX, posY) => this.vertexEntered(posX, posY)}
 						/>
 					);
 				}
@@ -928,6 +1084,7 @@ export class MapPanel extends React.Component<Props, State> {
 					{this.getControls()}
 					<div id={this.props.map.id} className='grid'>
 						{this.getTiles(mapDimensions)}
+						{this.getWalls(mapDimensions)}
 						{this.getAreas(mapDimensions)}
 						{this.getAreaNames(mapDimensions)}
 						{this.getOverlays(mapDimensions)}
@@ -938,6 +1095,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getFog(mapDimensions)}
 						{this.getLighting(mapDimensions)}
 						{this.getGrid(mapDimensions)}
+						{this.getWallVertices(mapDimensions)}
 						{this.getFocus(mapDimensions)}
 					</div>
 				</div>
@@ -996,7 +1154,6 @@ interface GridSquareProps {
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
 	onMouseEnter: (x: number, y: number) => void;
-	onDoubleClick: (x: number, y: number) => void;
 }
 
 class GridSquare extends React.Component<GridSquareProps> {
@@ -1007,8 +1164,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 		content: null,
 		onMouseDown: null,
 		onMouseUp: null,
-		onMouseEnter: null,
-		onDoubleClick: null
+		onMouseEnter: null
 	};
 
 	private mouseDown(e: React.MouseEvent) {
@@ -1032,13 +1188,6 @@ class GridSquare extends React.Component<GridSquareProps> {
 		}
 	}
 
-	private doubleClick(e: React.MouseEvent) {
-		e.stopPropagation();
-		if (this.props.onDoubleClick) {
-			this.props.onDoubleClick(this.props.x, this.props.y);
-		}
-	}
-
 	public render() {
 		try {
 			let content = null;
@@ -1055,7 +1204,6 @@ class GridSquare extends React.Component<GridSquareProps> {
 					onMouseDown={e => this.mouseDown(e)}
 					onMouseUp={e => this.mouseUp(e)}
 					onMouseEnter={e => this.mouseEnter(e)}
-					onDoubleClick={e => this.doubleClick(e)}
 					role='button'
 				>
 					{content}
@@ -1105,7 +1253,7 @@ interface TileProps {
 }
 
 class Tile extends React.Component<TileProps> {
-	private select(e: React.MouseEvent) {
+	private onClick(e: React.MouseEvent) {
 		if (this.props.selectable) {
 			e.stopPropagation();
 			this.props.select(this.props.tile.id, e.ctrlKey);
@@ -1114,7 +1262,7 @@ class Tile extends React.Component<TileProps> {
 
 	public render() {
 		try {
-			let style = 'tile ' + this.props.tile.terrain;
+			let style = 'map-tile ' + this.props.tile.terrain;
 			if (this.props.selected) {
 				style += ' selected';
 			}
@@ -1137,102 +1285,6 @@ class Tile extends React.Component<TileProps> {
 			let content = null;
 			if (this.props.tile.content) {
 				switch (this.props.tile.content.type) {
-					case 'doorway':
-						switch (this.props.tile.content.style) {
-							case 'single':
-								switch (this.props.tile.content.orientation) {
-									case 'horizontal':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='0' y1='50%' x2='100%' y2='50%' />
-												<rect className='thin outline' x='10%' y='25%' width='80%' height='50%' />
-											</svg>
-										);
-										break;
-									case 'vertical':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='50%' y1='0' x2='50%' y2='100%' />
-												<rect className='thin outline' x='25%' y='10%' width='50%' height='80%' />
-											</svg>
-										);
-										break;
-								}
-								break;
-							case 'double':
-								switch (this.props.tile.content.orientation) {
-									case 'horizontal':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='0' y1='50%' x2='100%' y2='50%' />
-												<rect className='thin outline' x='10%' y='25%' width='80%' height='50%' />
-												<line className='thin' x1='50%' y1='25%' x2='50%' y2='75%' />
-											</svg>
-										);
-										break;
-									case 'vertical':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='50%' y1='0' x2='50%' y2='100%' />
-												<rect className='thin outline' x='25%' y='10%' width='50%' height='80%' />
-												<line className='thin' x1='25%' y1='50%' x2='75%' y2='50%' />
-											</svg>
-										);
-										break;
-								}
-								break;
-							case 'arch':
-								switch (this.props.tile.content.orientation) {
-									case 'horizontal':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='0' y1='50%' x2='20%' y2='50%' />
-												<line className='thick' x1='80%' y1='50%' x2='100%' y2='50%' />
-												<line className='medium' x1='20%' y1='20%' x2='20%' y2='80%' />
-												<line className='medium' x1='80%' y1='20%' x2='80%' y2='80%' />
-											</svg>
-										);
-										break;
-									case 'vertical':
-										content = (
-											<svg className='tile-content'>
-												<line className='thick' x1='50%' y1='0' x2='50%' y2='20%' />
-												<line className='thick' x1='50%' y1='80%' x2='50%' y2='100%' />
-												<line className='medium' x1='20%' y1='20%' x2='80%' y2='20%' />
-												<line className='medium' x1='20%' y1='80%' x2='80%' y2='80%' />
-											</svg>
-										);
-										break;
-								}
-								break;
-							case 'bars':
-								switch (this.props.tile.content.orientation) {
-									case 'horizontal':
-										content = (
-											<svg className='tile-content'>
-												<circle className='thin filled' cx='10%' cy='50%' r='5%' />
-												<circle className='thin filled' cx='30%' cy='50%' r='5%' />
-												<circle className='thin filled' cx='50%' cy='50%' r='5%' />
-												<circle className='thin filled' cx='70%' cy='50%' r='5%' />
-												<circle className='thin filled' cx='90%' cy='50%' r='5%' />
-											</svg>
-										);
-										break;
-									case 'vertical':
-										content = (
-											<svg className='tile-content'>
-												<circle className='thin filled' cx='50%' cy='10%' r='5%' />
-												<circle className='thin filled' cx='50%' cy='30%' r='5%' />
-												<circle className='thin filled' cx='50%' cy='50%' r='5%' />
-												<circle className='thin filled' cx='50%' cy='70%' r='5%' />
-												<circle className='thin filled' cx='50%' cy='90%' r='5%' />
-											</svg>
-										);
-										break;
-								}
-								break;
-						}
-						break;
 					case 'stairway':
 						switch (this.props.tile.content.style) {
 							case 'stairs':
@@ -1268,8 +1320,8 @@ class Tile extends React.Component<TileProps> {
 							case 'spiral':
 								content = (
 									<svg className='tile-content'>
-										<ellipse className='thin outline' cx='50%' cy='50%' rx='40%' ry='40%' />
-										<ellipse className='thin filled' cx='50%' cy='50%' rx='10%' ry='10%' />
+										<ellipse className='outline' cx='50%' cy='50%' rx='40%' ry='40%' />
+										<ellipse className='filled' cx='50%' cy='50%' rx='10%' ry='10%' />
 										<line className='thin' x1='50%' y1='10%' x2='50%' y2='90%' />
 										<line className='thin' x1='10%' y1='50%' x2='90%' y2='50%' />
 										<line className='thin' x1='20%' y1='20%' x2='80%' y2='80%' />
@@ -1282,18 +1334,18 @@ class Tile extends React.Component<TileProps> {
 									case 'horizontal':
 										content = (
 											<svg className='tile-content'>
-												<circle className='thin filled' cx='20%' cy='50%' r='7%' />
+												<circle className='filled' cx='20%' cy='50%' r='7%' />
 												<line className='thin' x1='20%' y1='50%' x2='80%' y2='50%' />
-												<circle className='thin filled' cx='80%' cy='50%' r='7%' />
+												<circle className='filled' cx='80%' cy='50%' r='7%' />
 											</svg>
 										);
 										break;
 									case 'vertical':
 										content = (
 											<svg className='tile-content'>
-												<circle className='thin filled' cx='50%' cy='20%' r='7%' />
+												<circle className='filled' cx='50%' cy='20%' r='7%' />
 												<line className='thin' x1='50%' y1='20%' x2='50%' y2='80%' />
-												<circle className='thin filled' cx='50%' cy='80%' r='7%' />
+												<circle className='filled' cx='50%' cy='80%' r='7%' />
 											</svg>
 										);
 										break;
@@ -1308,7 +1360,7 @@ class Tile extends React.Component<TileProps> {
 				<div
 					className={style}
 					style={this.props.style}
-					onClick={e => this.select(e)}
+					onClick={e => this.onClick(e)}
 					role='button'
 				>
 					{customImage}
@@ -1318,6 +1370,160 @@ class Tile extends React.Component<TileProps> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='Tile' error={e} />;
+		}
+	}
+}
+
+interface WallVertexProps {
+	x: number;
+	y: number;
+	style: MapItemStyle;
+	selected: boolean;
+	onMouseDown: (x: number, y: number) => void;
+	onMouseUp: (x: number, y: number) => void;
+	onMouseEnter: (x: number, y: number) => void;
+}
+
+class WallVertex extends React.Component<WallVertexProps> {
+	private mouseDown(e: React.MouseEvent) {
+		e.stopPropagation();
+		if (this.props.onMouseDown) {
+			this.props.onMouseDown(this.props.x, this.props.y);
+		}
+	}
+
+	private mouseUp(e: React.MouseEvent) {
+		e.stopPropagation();
+		if (this.props.onMouseUp) {
+			this.props.onMouseUp(this.props.x, this.props.y);
+		}
+	}
+
+	private mouseEnter(e: React.MouseEvent) {
+		e.stopPropagation();
+		if (this.props.onMouseEnter) {
+			this.props.onMouseEnter(this.props.x, this.props.y);
+		}
+	}
+
+	public render() {
+		try {
+			let style = 'wall-vertex';
+			if (this.props.selected) {
+				style += ' selected';
+			}
+
+			return (
+				<div
+					className={style}
+					style={this.props.style}
+					onMouseDown={e => this.mouseDown(e)}
+					onMouseUp={e => this.mouseUp(e)}
+					onMouseEnter={e => this.mouseEnter(e)}
+					role='button'
+				/>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='WallVertex' error={e} />;
+		}
+	}
+}
+
+interface WallProps {
+	wall: MapWall;
+	style: MapItemStyle;
+	selectable: boolean;
+	selected: boolean;
+	select: (wallID: string, ctrl: boolean) => void;
+}
+
+class Wall extends React.Component<WallProps> {
+	private onClick(e: React.MouseEvent) {
+		if (this.props.selectable) {
+			e.stopPropagation();
+			this.props.select(this.props.wall.id, e.ctrlKey);
+		}
+	}
+
+	public render() {
+		try {
+			let style = 'map-wall';
+			if (this.props.selected) {
+				style += ' selected';
+			}
+
+			let content = null;
+			switch (this.props.wall.display) {
+				case 'wall':
+					content = (
+						<div className='wall'/>
+					);
+					break;
+				case 'door':
+					content = (
+						<div className='door'/>
+					);
+					break;
+				case 'double-door':
+					switch (Mercator.getWallOrientation(this.props.wall)) {
+						case 'horizontal':
+							content = (
+								<svg className='wall-content'>
+									<line x1='50%' y1='0%' x2='50%' y2='100%' />
+								</svg>
+							);
+							break;
+						case 'vertical':
+							content = (
+								<svg className='wall-content'>
+									<line x1='0%' y1='50%' x2='100%' y2='50%' />
+								</svg>
+							);
+							break;
+					}
+					break;
+				case 'bars':
+					switch (Mercator.getWallOrientation(this.props.wall)) {
+						case 'horizontal':
+							content = (
+								<svg className='wall-content'>
+									<circle cx='10%' cy='50%' r='5%' />
+									<circle cx='30%' cy='50%' r='5%' />
+									<circle cx='50%' cy='50%' r='5%' />
+									<circle cx='70%' cy='50%' r='5%' />
+									<circle cx='90%' cy='50%' r='5%' />
+								</svg>
+							);
+							break;
+						case 'vertical':
+							content = (
+								<svg className='wall-content'>
+									<circle cx='50%' cy='10%' r='5%' />
+									<circle cx='50%' cy='30%' r='5%' />
+									<circle cx='50%' cy='50%' r='5%' />
+									<circle cx='50%' cy='70%' r='5%' />
+									<circle cx='50%' cy='90%' r='5%' />
+								</svg>
+							);
+							break;
+					}
+					break;
+			}
+
+			return (
+				<div
+					className={style}
+					style={this.props.style}
+					onClick={e => this.onClick(e)}
+					role='button'
+				>
+					{content}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='Wall' error={e} />;
 		}
 	}
 }
