@@ -1299,26 +1299,26 @@ class Tile extends React.Component<TileProps> {
 									case 'horizontal':
 										content = (
 											<svg className='tile-content'>
-												<line className='thin' x1='0' y1='12.5%' x2='100%' y2='12.5%' />
-												<line className='thin' x1='0' y1='25%' x2='100%' y2='25%' />
-												<line className='thin' x1='0' y1='37.5%' x2='100%' y2='37.5%' />
-												<line className='thin' x1='0' y1='50%' x2='100%' y2='50%' />
-												<line className='thin' x1='0' y1='62.5%' x2='100%' y2='62.5%' />
-												<line className='thin' x1='0' y1='75%' x2='100%' y2='75%' />
-												<line className='thin' x1='0' y1='87.5%' x2='100%' y2='87.5%' />
+												<line className='thin-line' x1='0' y1='12.5%' x2='100%' y2='12.5%' />
+												<line className='thin-line' x1='0' y1='25%' x2='100%' y2='25%' />
+												<line className='thin-line' x1='0' y1='37.5%' x2='100%' y2='37.5%' />
+												<line className='thin-line' x1='0' y1='50%' x2='100%' y2='50%' />
+												<line className='thin-line' x1='0' y1='62.5%' x2='100%' y2='62.5%' />
+												<line className='thin-line' x1='0' y1='75%' x2='100%' y2='75%' />
+												<line className='thin-line' x1='0' y1='87.5%' x2='100%' y2='87.5%' />
 											</svg>
 										);
 										break;
 									case 'vertical':
 										content = (
 											<svg className='tile-content'>
-												<line className='thin' x1='12.5%' y1='0' x2='12.5%' y2='100%' />
-												<line className='thin' x1='25%' y1='0' x2='25%' y2='100%' />
-												<line className='thin' x1='37.5%' y1='0' x2='37.5%' y2='100%' />
-												<line className='thin' x1='50%' y1='0' x2='50%' y2='100%' />
-												<line className='thin' x1='62.5%' y1='0' x2='62.5%' y2='100%' />
-												<line className='thin' x1='75%' y1='0' x2='75%' y2='100%' />
-												<line className='thin' x1='87.5%' y1='0' x2='87.5%' y2='100%' />
+												<line className='thin-line' x1='12.5%' y1='0' x2='12.5%' y2='100%' />
+												<line className='thin-line' x1='25%' y1='0' x2='25%' y2='100%' />
+												<line className='thin-line' x1='37.5%' y1='0' x2='37.5%' y2='100%' />
+												<line className='thin-line' x1='50%' y1='0' x2='50%' y2='100%' />
+												<line className='thin-line' x1='62.5%' y1='0' x2='62.5%' y2='100%' />
+												<line className='thin-line' x1='75%' y1='0' x2='75%' y2='100%' />
+												<line className='thin-line' x1='87.5%' y1='0' x2='87.5%' y2='100%' />
 											</svg>
 										);
 										break;
@@ -1329,10 +1329,10 @@ class Tile extends React.Component<TileProps> {
 									<svg className='tile-content'>
 										<ellipse className='outline' cx='50%' cy='50%' rx='40%' ry='40%' />
 										<ellipse className='filled' cx='50%' cy='50%' rx='10%' ry='10%' />
-										<line className='thin' x1='50%' y1='10%' x2='50%' y2='90%' />
-										<line className='thin' x1='10%' y1='50%' x2='90%' y2='50%' />
-										<line className='thin' x1='20%' y1='20%' x2='80%' y2='80%' />
-										<line className='thin' x1='20%' y1='80%' x2='80%' y2='20%' />
+										<line className='thin-line' x1='50%' y1='10%' x2='50%' y2='90%' />
+										<line className='thin-line' x1='10%' y1='50%' x2='90%' y2='50%' />
+										<line className='thin-line' x1='20%' y1='20%' x2='80%' y2='80%' />
+										<line className='thin-line' x1='20%' y1='80%' x2='80%' y2='20%' />
 									</svg>
 								);
 								break;
@@ -1342,7 +1342,7 @@ class Tile extends React.Component<TileProps> {
 										content = (
 											<svg className='tile-content'>
 												<circle className='filled' cx='20%' cy='50%' r='7%' />
-												<line className='thin' x1='20%' y1='50%' x2='80%' y2='50%' />
+												<line className='thin-line' x1='20%' y1='50%' x2='80%' y2='50%' />
 												<circle className='filled' cx='80%' cy='50%' r='7%' />
 											</svg>
 										);
@@ -1351,7 +1351,7 @@ class Tile extends React.Component<TileProps> {
 										content = (
 											<svg className='tile-content'>
 												<circle className='filled' cx='50%' cy='20%' r='7%' />
-												<line className='thin' x1='50%' y1='20%' x2='50%' y2='80%' />
+												<line className='thin-line' x1='50%' y1='20%' x2='50%' y2='80%' />
 												<circle className='filled' cx='50%' cy='80%' r='7%' />
 											</svg>
 										);
@@ -1543,7 +1543,9 @@ class Wall extends React.Component<WallProps, WallState> {
 					break;
 				case 'door':
 					content = (
-						<div className='door'/>
+						<svg className='wall-content'>
+							<rect className='outline' x='0%' y='0%' width='100%' height='100%' />
+						</svg>
 					);
 					break;
 				case 'double-door':
@@ -1551,14 +1553,16 @@ class Wall extends React.Component<WallProps, WallState> {
 						case 'horizontal':
 							content = (
 								<svg className='wall-content'>
-									<line x1='50%' y1='0%' x2='50%' y2='100%' />
+									<rect className='outline' x='0%' y='0%' width='100%' height='100%' />
+									<line className='thin-line' x1='50%' y1='0%' x2='50%' y2='100%' />
 								</svg>
 							);
 							break;
 						case 'vertical':
 							content = (
 								<svg className='wall-content'>
-									<line x1='0%' y1='50%' x2='100%' y2='50%' />
+									<rect className='outline' x='0%' y='0%' width='100%' height='100%' />
+									<line className='thin-line' x1='0%' y1='50%' x2='100%' y2='50%' />
 								</svg>
 							);
 							break;
@@ -1569,22 +1573,22 @@ class Wall extends React.Component<WallProps, WallState> {
 						case 'horizontal':
 							content = (
 								<svg className='wall-content'>
-									<circle cx='10%' cy='50%' r='5%' />
-									<circle cx='30%' cy='50%' r='5%' />
-									<circle cx='50%' cy='50%' r='5%' />
-									<circle cx='70%' cy='50%' r='5%' />
-									<circle cx='90%' cy='50%' r='5%' />
+									<circle className='filled' cx='20%' cy='50%' r='5%' />
+									<circle className='filled' cx='35%' cy='50%' r='5%' />
+									<circle className='filled' cx='50%' cy='50%' r='5%' />
+									<circle className='filled' cx='65%' cy='50%' r='5%' />
+									<circle className='filled' cx='80%' cy='50%' r='5%' />
 								</svg>
 							);
 							break;
 						case 'vertical':
 							content = (
 								<svg className='wall-content'>
-									<circle cx='50%' cy='10%' r='5%' />
-									<circle cx='50%' cy='30%' r='5%' />
-									<circle cx='50%' cy='50%' r='5%' />
-									<circle cx='50%' cy='70%' r='5%' />
-									<circle cx='50%' cy='90%' r='5%' />
+									<circle className='filled' cx='50%' cy='20%' r='5%' />
+									<circle className='filled' cx='50%' cy='35%' r='5%' />
+									<circle className='filled' cx='50%' cy='50%' r='5%' />
+									<circle className='filled' cx='50%' cy='65%' r='5%' />
+									<circle className='filled' cx='50%' cy='80%' r='5%' />
 								</svg>
 							);
 							break;

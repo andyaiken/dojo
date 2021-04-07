@@ -1,5 +1,4 @@
 .map-panel {
-
 	.map-menu {
 		position: relative;
 		z-index: 4;
@@ -21,6 +20,71 @@
 				background-color: $highlight02;
 				color: $highlight;
 			}
+		}
+	}
+
+	&.thumbnail {
+		.grid {
+			height: 100%;
+		}
+	}
+
+	&.edit {
+		.map-tile,
+		.wall-vertex,
+		.map-wall {
+			cursor: pointer;
+		}
+
+		.map-tile:hover {
+			outline: 5px solid $highlight;
+		}
+
+		.map-tile.selected {
+			outline: 6px solid $highlight;
+		}
+
+		.map-wall:hover {
+			outline: 1px solid $highlight;
+		}
+
+		.map-wall.selected {
+			outline: 2px solid $highlight;
+		}
+
+		.wall-vertex:hover {
+			border-color: $highlight;
+		}
+
+		.wall-vertex.selected {
+			border-color: $highlight;
+			background-color: $highlight;
+		}
+	}
+
+	&.setup,
+	&.interactive-dm,
+	&.interactive-player {
+		.overlay:hover,
+		.token:hover {
+			box-shadow: 0 0 10px 2px $highlight;
+		}
+	}
+
+	&.thumbnail,
+	&.setup,
+	&.interactive-dm {
+		.fog,
+		.light.dim-light,
+		.light.darkness {
+			opacity: 0.5;
+			box-shadow: none !important;
+		}
+	}
+
+	&.interactive-dm {
+		.map-wall.openable:hover {
+			box-shadow: 0 0 10px 2px $highlight;
 		}
 	}
 
@@ -46,7 +110,7 @@
 
 			&.fog {
 				background-color: black;
-				box-shadow: 0 0 10px 2px black;
+				box-shadow: 0 0 10px 1px black;
 				pointer-events: none;
 			}
 
@@ -55,12 +119,12 @@
 
 				&.dim-light {
 					background-color: rgba(0, 0, 0, 0.5);
-					box-shadow: 0 0 10px 2px  rgba(0, 0, 0, 0.5);
+					box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.5);
 				}
 
 				&.darkness {
 					background-color: black;
-					box-shadow: 0 0 10px 2px black;
+					box-shadow: 0 0 10px 1px black;
 				}
 			}
 
@@ -87,121 +151,58 @@
 		}
 	}
 
-	&.thumbnail {
-		.grid {
-			height: 100%;
-		}
-	}
-
-	&.edit {
-		.map-tile,
-		.wall-vertex,
-		.map-wall {
-			cursor: pointer;
-		}
-
-		.map-tile:hover,
-		.wall-vertex:hover,
-		.map-wall:hover {
-			border-color: $highlight;
-		}
-	}
-
-	&.setup,
-	&.interactive-dm,
-	&.interactive-player {
-		.overlay:hover,
-		.token:hover {
-			border-color: $highlight;
-		}
-	}
-
-	&.thumbnail,
-	&.setup,
-	&.interactive-dm {
-		.fog,
-		.light.dim-light,
-		.light.darkness {
-			opacity: 0.5;
-			box-shadow: none !important;
-		}
-	}
-
-	&.interactive-dm {
-		.map-wall.openable:hover {
-			border-color: $highlight;
-		}
-	}
-
 	.map-tile {
 		position: absolute;
-		border: 2px solid transparent;
 		background-color: lightgrey;
 
 		&.default {
 			background-image: url("../resources/images/map-tiles/default.jpg");
+			background-repeat: round;
 		}
 
 		&.cavern {
 			background-image: url("../resources/images/map-tiles/cavern.jpg");
+			background-repeat: round;
 		}
 
 		&.dirt {
 			background-image: url("../resources/images/map-tiles/dirt.jpg");
+			background-repeat: round;
 		}
 
 		&.flagstone {
 			background-image: url("../resources/images/map-tiles/flagstone.jpg");
+			background-repeat: round;
 		}
 
 		&.floorboard {
 			background-image: url("../resources/images/map-tiles/floorboard.jpg");
+			background-repeat: round;
 		}
 
 		&.grassland {
 			background-image: url("../resources/images/map-tiles/grassland.jpg");
+			background-repeat: round;
 		}
 
 		&.pit {
 			background-image: url("../resources/images/map-tiles/pit.jpg");
+			background-repeat: round;
 		}
 
 		&.sand {
 			background-image: url("../resources/images/map-tiles/sand.jpg");
+			background-repeat: round;
 		}
 
 		&.snow {
 			background-image: url("../resources/images/map-tiles/snow.jpg");
+			background-repeat: round;
 		}
 
 		&.water {
 			background-image: url("../resources/images/map-tiles/water.jpg");
-		}
-
-		&.selected {
-			border-color: $highlight;
-			box-shadow: 0 0 10px 2px black;
-		}
-
-		.tile-content {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-	
-			.thin {
-				stroke: darkgrey;
-				stroke-width: 5%;
-			}
-	
-			.outline {
-				stroke: darkgrey;
-				stroke-width: 5%;
-				fill: lightgrey;
-			}
-	
-			.filled {
-				fill: darkgrey;
-			}
+			background-repeat: round;
 		}
 
 		.custom-image {
@@ -215,52 +216,38 @@
 		position: absolute;
 		border: 1px solid darkgrey;
 		background-color: lightgrey;
-
-		&.selected {
-			border-color: $highlight;
-			background-color: $highlight;
-			box-shadow: 0 0 10px 2px black;
-		}
 	}
 
 	.map-wall {
 		position: absolute;
-		border: 1px solid lightgrey;
-		background-color: white;
+		background-color: transparent;
 
 		.wall {
 			width: 100%;
 			height: 100%;
-			background-color: lightgrey;
+			background-color: darkgrey;
+		}
+	}
+
+	.map-tile .tile-content,
+	.map-wall .wall-content {
+		position: absolute;
+		width: 100%;
+		height: 100%;
+
+		.thin-line {
+			stroke: darkgrey;
+			stroke-width: 3%;
 		}
 
-		.door {
-			width: 100%;
-			height: 100%;
-			border: 1px solid darkgrey;
-			background-color: white;
+		.outline {
+			stroke: darkgrey;
+			stroke-width: 3%;
+			fill: white;
 		}
 
-		.wall-content {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-
-			line {
-				stroke: darkgrey;
-				stroke-width: 2%;
-			}
-
-			rect,
-			circle {
-				fill: darkgrey;
-			}
-		}
-
-		&.selected {
-			border-color: $highlight;
-			background-color: $highlight;
-			box-shadow: 0 0 10px 2px black;
+		.filled {
+			fill: darkgrey;
 		}
 	}
 
@@ -275,7 +262,7 @@
 
 		&.selected {
 			border: 2px solid $highlight;
-			box-shadow: 0 0 10px 2px black;
+			box-shadow: 0 0 10px 2px $highlight;
 		}
 	}
 
