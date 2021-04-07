@@ -127,9 +127,15 @@
 		}
 	}
 
+	&.interactive-dm {
+		.map-wall:hover {
+			border-color: $highlight;
+		}
+	}
+
 	.map-tile {
 		position: absolute;
-		border: 1px solid darkgrey;
+		border: 2px solid transparent;
 		background-color: lightgrey;
 
 		&.default {
@@ -226,6 +232,13 @@
 			width: 100%;
 			height: 100%;
 			background-color: lightgrey;
+		}
+
+		.door {
+			width: 100%;
+			height: 100%;
+			border: 1px solid darkgrey;
+			background-color: white;
 		}
 
 		.wall-content {

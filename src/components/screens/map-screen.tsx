@@ -586,15 +586,31 @@ class MapWallPanel extends React.Component<MapWallProps> {
 									onNudgeValue={delta => this.props.nudgeWallLength(this.props.wall, delta)}
 								/>
 							</div>
-							<div className='subheading'>properties</div>
-							<div className='section'>
-								<Checkbox label='blocks movement' checked={this.props.wall.blocksMovement} onChecked={checked => this.props.changeValue(this.props.wall, 'blocksMovement', checked)} />
-							</div>
-							<Selector
-								options={Utils.arrayToItems(['wall', 'door', 'double-door', 'bars'])}
-								selectedID={this.props.wall.display}
-								onSelect={id => this.props.changeValue(this.props.wall, 'display', id)}
+							<div className='subheading'>details</div>
+							<Checkbox
+								label='this is a doorway'
+								checked={this.props.wall.display !== 'wall'}
+								onChecked={checked => this.props.changeValue(this.props.wall, 'display', (checked ? 'door' : 'wall'))}
 							/>
+							<Conditional display={this.props.wall.display === 'wall'}>
+								<Checkbox
+									label='blocks movement'
+									checked={this.props.wall.blocksMovement}
+									onChecked={checked => this.props.changeValue(this.props.wall, 'blocksMovement', checked)}
+								/>
+							</Conditional>
+							<Conditional display={this.props.wall.display !== 'wall'}>
+								<Selector
+									options={Utils.arrayToItems(['door', 'double-door', 'bars'])}
+									selectedID={this.props.wall.display}
+									onSelect={id => this.props.changeValue(this.props.wall, 'display', id)}
+								/>
+								<Selector
+									options={Utils.arrayToItems(['open', 'closed'])}
+									selectedID={this.props.wall.blocksMovement ? 'closed' : 'open'}
+									onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', (value === 'closed'))}
+								/>
+							</Conditional>
 						</div>
 						<hr/>
 						<ConfirmButton onConfirm={() => this.props.deleteMapWall(this.props.wall)}>delete wall</ConfirmButton>

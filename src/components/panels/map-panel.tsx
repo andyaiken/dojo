@@ -7,6 +7,7 @@ import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
 import { Comms } from '../../utils/uhura';
+import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
@@ -22,6 +23,7 @@ import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
+import { Selector } from '../controls/selector';
 import { CombatantTags } from './combat-controls-panel';
 import { MessagePanel } from './session-panel';
 
@@ -61,6 +63,7 @@ interface Props {
 	toggleFeature: (feature: 'highlight' | 'editFog') => void;
 	fillFog: () => void;
 	clearFog: () => void;
+	changeValue: (source: any, field: string, value: any) => void;
 }
 
 interface State {
@@ -103,7 +106,7 @@ export class MapPanel extends React.Component<Props, State> {
 			editFog: false
 		},
 		options: null,
-		paddingSquares: 0,
+		paddingSquares: 1,
 		combatants: [],
 		showGrid: false,
 		showWallVertices: false,
@@ -131,7 +134,8 @@ export class MapPanel extends React.Component<Props, State> {
 		changeLighting: null,
 		toggleFeature: null,
 		fillFog: null,
-		clearFog: null
+		clearFog: null,
+		changeValue: null
 	};
 
 	constructor(props: Props) {
@@ -654,8 +658,10 @@ export class MapPanel extends React.Component<Props, State> {
 					wall={wall}
 					style={this.getStyle(x, y, width, height, 'wall', dimensions)}
 					selectable={this.props.mode === 'edit'}
+					openable={(this.props.mode === 'interactive-dm') && (wall.display !== 'wall')}
 					selected={this.props.selectedItemIDs.includes(wall.id)}
-					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.wallSelected(id, ctrl) : null}
+					select={(id, ctrl) => this.props.wallSelected(id, ctrl)}
+					changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 				/>
 			);
 		});
@@ -1434,11 +1440,40 @@ interface WallProps {
 	wall: MapWall;
 	style: MapItemStyle;
 	selectable: boolean;
+	openable: boolean;
 	selected: boolean;
 	select: (wallID: string, ctrl: boolean) => void;
+	changeValue: (source: any, field: string, value: any) => void;
 }
 
-class Wall extends React.Component<WallProps> {
+interface WallState {
+	hovered: boolean;
+	clicked: boolean;
+}
+
+class Wall extends React.Component<WallProps, WallState> {
+	constructor(props: WallProps) {
+		super(props);
+		this.state = {
+			hovered: false,
+			clicked: false
+		};
+	}
+
+	private handleHoverChange(visible: boolean) {
+		this.setState({
+			hovered: visible,
+			clicked: false
+		});
+	}
+
+	private handleClickChange(visible: boolean) {
+		this.setState({
+			hovered: false,
+			clicked: visible
+		});
+	}
+
 	private onClick(e: React.MouseEvent) {
 		if (this.props.selectable) {
 			e.stopPropagation();
@@ -1446,9 +1481,41 @@ class Wall extends React.Component<WallProps> {
 		}
 	}
 
+	private getPopoverContent(clicked: boolean) {
+		const name = this.props.wall.display + ' ' + (this.props.wall.blocksMovement ? '(closed)' : '(open)');
+
+		if (clicked) {
+			return (
+				<div>
+					<div className='section centered'><b>{name}</b></div>
+					<hr/>
+					<div className='section'>
+						<Selector
+							options={Utils.arrayToItems(['open', 'closed'])}
+							selectedID={this.props.wall.blocksMovement ? 'closed' : 'open'}
+							onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', value ? 'closed' : 'open')}
+						/>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<div className='section centered'><b>{name}</b></div>
+			</div>
+		);
+	}
+
 	public render() {
 		try {
 			let style = 'map-wall';
+			if (this.props.wall.display !== 'wall') {
+				style += ' doorway';
+			}
+			if (this.props.openable) {
+				style += ' openable'
+			}
 			if (this.props.selected) {
 				style += ' selected';
 			}
@@ -1511,7 +1578,7 @@ class Wall extends React.Component<WallProps> {
 					break;
 			}
 
-			return (
+			const wall = (
 				<div
 					className={style}
 					style={this.props.style}
@@ -1521,6 +1588,31 @@ class Wall extends React.Component<WallProps> {
 					{content}
 				</div>
 			);
+
+			if (this.props.openable) {
+				return (
+					<Popover
+						content={this.getPopoverContent(false)}
+						placement='bottom'
+						overlayClassName='map-hover-tooltip'
+						visible={this.state.hovered}
+						onVisibleChange={value => this.handleHoverChange(value)}
+					>
+						<Popover
+							content={this.getPopoverContent(true)}
+							trigger='contextMenu'
+							placement='bottom'
+							overlayClassName='map-click-tooltip'
+							visible={this.state.clicked}
+							onVisibleChange={value => this.handleClickChange(value)}
+						>
+							{wall}
+						</Popover>
+					</Popover>
+				)
+			}
+
+			return wall;
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='Wall' error={e} />;

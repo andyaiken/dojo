@@ -1030,6 +1030,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							}}
 							fillFog={() => this.fillFog()}
 							clearFog={() => this.clearFog()}
+							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						/>
 					</div>
 				);
