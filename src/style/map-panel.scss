@@ -128,7 +128,7 @@
 	}
 
 	&.interactive-dm {
-		.map-wall:hover {
+		.map-wall.openable:hover {
 			border-color: $highlight;
 		}
 	}
@@ -225,7 +225,7 @@
 
 	.map-wall {
 		position: absolute;
-		border: 1px solid darkgrey;
+		border: 1px solid lightgrey;
 		background-color: white;
 
 		.wall {

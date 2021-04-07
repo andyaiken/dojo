@@ -49,6 +49,7 @@ export interface MapWall {
 	display: string;
 	blocksLineOfSight: boolean;
 	blocksMovement: boolean;
+	isConcealed: boolean;
 }
 
 export interface MapArea {

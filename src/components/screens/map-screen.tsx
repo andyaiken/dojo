@@ -610,6 +610,11 @@ class MapWallPanel extends React.Component<MapWallProps> {
 									selectedID={this.props.wall.blocksMovement ? 'closed' : 'open'}
 									onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', (value === 'closed'))}
 								/>
+								<Checkbox
+									label='concealed'
+									checked={this.props.wall.isConcealed}
+									onChecked={checked => this.props.changeValue(this.props.wall, 'isConcealed', checked)}
+								/>
 							</Conditional>
 						</div>
 						<hr/>

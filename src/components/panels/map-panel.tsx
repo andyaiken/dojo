@@ -656,6 +656,7 @@ export class MapPanel extends React.Component<Props, State> {
 				<Wall
 					key={wall.id}
 					wall={wall}
+					mode={this.props.mode}
 					style={this.getStyle(x, y, width, height, 'wall', dimensions)}
 					selectable={this.props.mode === 'edit'}
 					openable={(this.props.mode === 'interactive-dm') && (wall.display !== 'wall')}
@@ -1438,6 +1439,7 @@ class WallVertex extends React.Component<WallVertexProps> {
 
 interface WallProps {
 	wall: MapWall;
+	mode: 'edit' | 'thumbnail' | 'setup' | 'interactive-dm' | 'interactive-player' | 'interactive-plot';
 	style: MapItemStyle;
 	selectable: boolean;
 	openable: boolean;
@@ -1482,7 +1484,7 @@ class Wall extends React.Component<WallProps, WallState> {
 	}
 
 	private getPopoverContent(clicked: boolean) {
-		const name = this.props.wall.display + ' ' + (this.props.wall.blocksMovement ? '(closed)' : '(open)');
+		const name = (this.props.wall.isConcealed ? 'concealed ' : '') + this.props.wall.display + ' ' + (this.props.wall.blocksMovement ? '(closed)' : '(open)');
 
 		if (clicked) {
 			return (
@@ -1493,7 +1495,12 @@ class Wall extends React.Component<WallProps, WallState> {
 						<Selector
 							options={Utils.arrayToItems(['open', 'closed'])}
 							selectedID={this.props.wall.blocksMovement ? 'closed' : 'open'}
-							onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', value ? 'closed' : 'open')}
+							onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', (value === 'closed'))}
+						/>
+						<Checkbox
+							label='concealed'
+							checked={this.props.wall.isConcealed}
+							onChecked={checked => this.props.changeValue(this.props.wall, 'isConcealed', checked)}
 						/>
 					</div>
 				</div>
@@ -1520,8 +1527,15 @@ class Wall extends React.Component<WallProps, WallState> {
 				style += ' selected';
 			}
 
+			let display = this.props.wall.display;
+			if (this.props.wall.isConcealed) {
+				if (this.props.mode === 'interactive-player') {
+					display = 'wall';
+				}
+			}
+
 			let content = null;
-			switch (this.props.wall.display) {
+			switch (display) {
 				case 'wall':
 					content = (
 						<div className='wall'/>

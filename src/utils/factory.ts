@@ -195,7 +195,8 @@ export class Factory {
 			pointB: { x: 0, y: 0, z: 0 },
 			display: 'wall',
 			blocksLineOfSight: true,
-			blocksMovement: true
+			blocksMovement: true,
+			isConcealed: false
 		};
 	}
 
