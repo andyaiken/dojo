@@ -889,18 +889,6 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private showPartyReference(party: Party) {
-		const sidebar = this.state.sidebar;
-		sidebar.visible = true;
-		sidebar.type = 'reference';
-		sidebar.subtype = 'party';
-		sidebar.selectedPartyID = party.id;
-
-		this.setState({
-			sidebar: sidebar
-		});
-	}
-
 	private clonePC(pc: PC, name: string) {
 		const party = this.state.parties.find(p => p.pcs.includes(pc));
 		if (party) {
@@ -3212,7 +3200,6 @@ export class Main extends React.Component<Props, State> {
 								this.startExploration(map, partyID);
 							}}
 							setLevel={(party, level) => this.setPartyLevel(party, level)}
-							showReference={party => this.showPartyReference(party)}
 							changeValue={(pc, type, value) => this.changeValue(pc, type, value)}
 							nudgeValue={(pc, type, delta) => this.nudgeValue(pc, type, delta)}
 						/>
@@ -3238,7 +3225,6 @@ export class Main extends React.Component<Props, State> {
 							this.startExploration(map, partyID);
 						}}
 						setLevel={(party, level) => this.setPartyLevel(party, level)}
-						showReference={party => this.showPartyReference(party)}
 						deleteParty={party => this.deleteParty(party)}
 						openStatBlock={pc => this.setState({drawer: { type: 'statblock', source: pc }})}
 					/>

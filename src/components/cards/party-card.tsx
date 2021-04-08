@@ -21,7 +21,6 @@ interface Props {
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	setLevel: (party: Party, level: number) => void;
-	showReference: (party: Party) => void;
 	openStatBlock: (pc: PC) => void;
 	deleteParty: (party: Party) => void;
 }
@@ -83,7 +82,6 @@ export class PartyCard extends React.Component<Props> {
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
 								setLevel={(party, level) => this.props.setLevel(party, level)}
-								showReference={party => this.props.showReference(party)}
 								deleteParty={party => this.props.deleteParty(party)}
 							/>
 						</Expander>

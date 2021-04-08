@@ -18,7 +18,6 @@ interface Props {
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
 	setLevel: (party: Party, level: number) => void;
-	showReference: (party: Party) => void;
 	deleteParty: (party: Party) => void;
 }
 
@@ -86,7 +85,6 @@ export class PartyOptions extends React.Component<Props> {
 					{explore}
 					{create}
 					{levelUp}
-					<button onClick={() => this.props.showReference(this.props.party)}>show party reference</button>
 					<ConfirmButton onConfirm={() => this.props.deleteParty(this.props.party)}>delete party</ConfirmButton>
 				</div>
 			);
