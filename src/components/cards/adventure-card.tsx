@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Adventure } from '../../models/adventure';
+import { Map } from '../../models/map';
+import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
@@ -10,7 +12,9 @@ import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	adventure: Adventure;
+	parties: Party[];
 	openAdventure: (adventure: Adventure) => void;
+	exploreMap: (map: Map, partyID: string) => void;
 	deleteAdventure: (adventure: Adventure) => void;
 }
 
@@ -50,6 +54,8 @@ export class AdventureCard extends React.Component<Props> {
 						<Expander text='more options'>
 							<AdventureOptions
 								adventure={this.props.adventure}
+								parties={this.props.parties}
+								exploreMap={(map, partyID) => this.props.exploreMap(map, partyID)}
 								deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
 							/>
 						</Expander>

@@ -3737,6 +3737,7 @@ export class Main extends React.Component<Props, State> {
 							addLink={(scene, sceneID) => this.addLink(scene, sceneID)}
 							deleteLink={(scene, link) => this.deleteLink(scene, link)}
 							deleteAdventure={adventure => this.deleteAdventure(adventure)}
+							exploreMap={(map, partyID) => this.startExploration(map, partyID)}
 							addMapToPlot={(plot, random) => this.addMapToPlot(plot, random)}
 							removeMapFromPlot={plot => this.removeMapFromPlot(plot)}
 							addResourceToScene={(scene, type) => this.addResourceToScene(scene, type)}
@@ -3774,9 +3775,11 @@ export class Main extends React.Component<Props, State> {
 				return (
 					<AdventureListScreen
 						adventures={this.state.adventures}
+						parties={this.state.parties}
 						addAdventure={() => this.addAdventure()}
 						generateAdventure={() => this.generateAdventure()}
 						openAdventure={adventure => this.selectAdventure(adventure)}
+						exploreMap={(map, partyID) => this.startExploration(map, partyID)}
 						deleteAdventure={adventure => this.deleteAdventure(adventure)}
 					/>
 				);

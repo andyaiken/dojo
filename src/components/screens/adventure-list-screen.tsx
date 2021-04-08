@@ -4,6 +4,8 @@ import React from 'react';
 import { Utils } from '../../utils/utils';
 
 import { Adventure } from '../../models/adventure';
+import { Map } from '../../models/map';
+import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { AdventureCard } from '../cards/adventure-card';
@@ -13,9 +15,11 @@ import { GridPanel } from '../panels/grid-panel';
 
 interface Props {
 	adventures: Adventure[];
+	parties: Party[];
 	addAdventure: () => void;
 	generateAdventure: () => void;
 	openAdventure: (adventure: Adventure) => void;
+	exploreMap: (map: Map, partyID: string) => void;
 	deleteAdventure: (adventure: Adventure) => void;
 }
 
@@ -28,7 +32,9 @@ export class AdventureListScreen extends React.Component<Props> {
 				<AdventureCard
 					key={a.id}
 					adventure={a}
+					parties={this.props.parties}
 					openAdventure={adventure => this.props.openAdventure(adventure)}
+					exploreMap={(map, partyID) => this.props.exploreMap(map, partyID)}
 					deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
 				/>
 			));

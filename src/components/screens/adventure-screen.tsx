@@ -47,6 +47,7 @@ interface Props {
 	addLink: (scene: Scene, sceneID: string) => void;
 	deleteLink: (scene: Scene, link: SceneLink) => void;
 	deleteAdventure: (adventure: Adventure) => void;
+	exploreMap: (map: Map, partyID: string) => void;
 	addMapToPlot: (plot: Plot, random: boolean) => void;
 	removeMapFromPlot: (plot: Plot) => void;
 	addResourceToScene: (scene: Scene, type: 'text' | 'url' | 'image') => void;
@@ -596,6 +597,8 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</Expander>
 				<AdventureOptions
 					adventure={this.props.adventure}
+					parties={this.props.parties}
+					exploreMap={(map, partyID) => this.props.exploreMap(map, partyID)}
 					deleteAdventure={adventure => this.props.deleteAdventure(adventure)}
 				/>
 				<hr/>
