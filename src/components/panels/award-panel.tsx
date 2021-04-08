@@ -21,8 +21,14 @@ export class AwardPanel extends React.Component<AwardPanelProps> {
 							<TrophyTwoTone style={{ fontSize: '50px' }} twoToneColor='#d4af37' />
 						</Col>
 						<Col span={20}>
-							<div className='section subheading'>{this.props.award.name.toLowerCase()}</div>
-							<Tag>{this.props.award.category}</Tag>
+							<div className='content-then-info'>
+								<div className='content'>
+									<div className='section subheading'>{this.props.award.name.toLowerCase()}</div>
+								</div>
+								<div className='info'>
+									<Tag>{this.props.award.category}</Tag>
+								</div>
+							</div>
 							<div className='section'>{this.props.award.description.toLowerCase()}</div>
 							{this.props.children}
 						</Col>

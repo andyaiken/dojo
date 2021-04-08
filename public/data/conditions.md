@@ -18,14 +18,12 @@
 
 Some special abilities and environmental hazards, such as starvation and the long-term effects of freezing or scorching temperatures, can lead to a special condition called exhaustion. Exhaustion is measured in six levels. An effect can give a creature one or more levels of exhaustion, as specified in the effect's description.
 
-| Level | Effect                                         |
-|:------|:-----------------------------------------------|
-| 1     | Disadvantage on ability checks                 |
-| 2     | Speed halved                                   |
-| 3     | Disadvantage on attack rolls and saving throws |
-| 4     | Hit point maximum halved                       |
-| 5     | Speed reduced to 0                             |
-| 6     | Death                                          |
+1. Disadvantage on ability checks
+2. Speed halved
+3. Disadvantage on attack rolls and saving throws
+4. Hit point maximum halved
+5. Speed reduced to 0
+6. Death
 
 If an already exhausted creature suffers another effect that causes exhaustion, its current level of exhaustion increases by the amount specified in the effect's description.
 
@@ -45,7 +43,7 @@ Finishing a long rest reduces a creature's exhaustion level by 1, provided that 
 
 * A grappled creature's speed becomes 0, and it can't benefit from any bonus to its speed.
 
-* The condition ends if the grappler is incapacitated (see the condition).
+* The condition ends if the grappler is incapacitated.
 
 * The condition also ends if an effect removes the grappled creature from the reach of the grappler or grappling effect, such as when a creature is hurled away by the thunderwave spell.
 
@@ -61,7 +59,7 @@ Finishing a long rest reduces a creature's exhaustion level by 1, provided that 
 
 # Paralyzed
 
-* A paralyzed creature is incapacitated (see the condition) and can't move or speak.
+* A paralyzed creature is incapacitated (can't take actions or reactions) and can't move or speak.
 
 * The creature automatically fails Strength and Dexterity saving throws. Attack rolls against the creature have advantage.
 
@@ -71,7 +69,7 @@ Finishing a long rest reduces a creature's exhaustion level by 1, provided that 
 
 * A petrified creature is transformed, along with any nonmagical object it is wearing or carrying, into a solid inanimate substance (usually stone). Its weight increases by a factor of ten, and it ceases aging.
 
-* The creature is incapacitated (see the condition), can't move or speak, and is unaware of its surroundings.
+* The creature is incapacitated (can't take actions or reactions), can't move or speak, and is unaware of its surroundings.
 
 * Attack rolls against the creature have advantage.
 
@@ -103,7 +101,7 @@ Finishing a long rest reduces a creature's exhaustion level by 1, provided that 
 
 # Stunned
 
-* A stunned creature is incapacitated (see the condition), can't move, and can speak only falteringly.
+* A stunned creature is incapacitated (can't take actions or reactions), can't move, and can speak only falteringly.
 
 * The creature automatically fails Strength and Dexterity saving throws.
 

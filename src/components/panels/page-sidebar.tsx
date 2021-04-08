@@ -13,7 +13,7 @@ import { Encounter } from '../../models/encounter';
 import { Exploration, Map } from '../../models/map';
 import { Options, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
-import { Party, PC } from '../../models/party';
+import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { AboutSidebar } from '../sidebars/about-sidebar';
@@ -46,8 +46,6 @@ interface Props {
 	selectMap: (id: string) => void;
 	selectAdventure: (id: string) => void;
 	openImage: (data: string) => void;
-	addAward: (awardID: string, awardee: Party | PC) => void;
-	deleteAward: (awardID: string, awardee: Party | PC) => void;
 	addCondition: (combatants: Combatant[], allCombatants: Combatant[]) => void;
 	editCondition: (combatant: Combatant, condition: Condition, allCombatants: Combatant[]) => void;
 	toggleAddingToMap: () => void;
@@ -112,14 +110,6 @@ export class PageSidebar extends React.Component<Props> {
 							className={this.props.sidebar.type === 'generators' ? 'sidebar-icon selected' : 'sidebar-icon'}
 							title='generators'
 							onClick={() => this.props.onSelectSidebar('generators')}
-						/>
-					);
-					options.push(
-						<BookOutlined
-							key='reference'
-							className={this.props.sidebar.type === 'reference' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='reference'
-							onClick={() => this.props.onSelectSidebar('reference')}
 						/>
 					);
 					options.push(
@@ -401,23 +391,6 @@ export class PageSidebar extends React.Component<Props> {
 								sidebar.subtype = view;
 								this.props.onUpdateSidebar(sidebar);
 							}}
-							selectedPartyID={this.props.sidebar.selectedPartyID}
-							parties={this.props.parties}
-							selectPartyID={id => {
-								const sidebar = this.props.sidebar;
-								sidebar.selectedPartyID = id;
-								this.props.onUpdateSidebar(sidebar);
-							}}
-							selectedMonsterID={this.props.sidebar.selectedMonsterID}
-							monsters={monsters}
-							selectMonsterID={id => {
-								const sidebar = this.props.sidebar;
-								sidebar.selectedMonsterID = id;
-								this.props.onUpdateSidebar(sidebar);
-							}}
-							showAwards={this.props.options.showAwards && (this.props.user === 'dm')}
-							addAward={(awardID, awardee) => this.props.addAward(awardID, awardee)}
-							deleteAward={(awardID, awardee) => this.props.deleteAward(awardID, awardee)}
 						/>
 					);
 					break;

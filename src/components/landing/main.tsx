@@ -51,6 +51,7 @@ import { MessagePanel } from '../panels/session-panel';
 import { AdventureListScreen } from '../screens/adventure-list-screen';
 import { AdventureScreen } from '../screens/adventure-screen';
 import { CombatScreen } from '../screens/combat-screen';
+import { DMScreen } from '../screens/dm-screen';
 import { EncounterListScreen } from '../screens/encounter-list-screen';
 import { EncounterScreen } from '../screens/encounter-screen';
 import { ExplorationScreen } from '../screens/exploration-screen';
@@ -419,8 +420,7 @@ export class Main extends React.Component<Props, State> {
 				surge: '',
 				draws: [],
 				npc: null,
-				selectedPartyID: null,
-				selectedMonsterID: null
+				selectedPartyID: null
 			},
 			parties: parties,
 			library: library,
@@ -3163,6 +3163,13 @@ export class Main extends React.Component<Props, State> {
 					});
 				}
 				break;
+			case 'dm':
+				breadcrumbs.push({
+					id: 'dm screen',
+					text: 'dm screen',
+					onClick: () => null
+				});
+				break;
 		}
 
 		return breadcrumbs;
@@ -3773,6 +3780,33 @@ export class Main extends React.Component<Props, State> {
 						deleteAdventure={adventure => this.deleteAdventure(adventure)}
 					/>
 				);
+			case 'dm':
+				return (
+					<DMScreen
+						parties={this.state.parties}
+						showAwards={this.state.options.showAwards}
+						addAward={(awardID, awardee) => {
+							awardee.awards.push(awardID);
+							this.setState({
+								parties: this.state.parties
+							}, () => {
+								CommsDM.sendPartyUpdate();
+								CommsDM.prompt('award', {
+									awardee: awardee.name,
+									awardID: awardID
+								});
+							});
+						}}
+						deleteAward={(awardID, awardee) => {
+							awardee.awards = awardee.awards.filter(id => id !== awardID);
+							this.setState({
+								parties: this.state.parties
+							}, () => {
+								CommsDM.sendPartyUpdate();
+							});
+						}}
+					/>
+				);
 		}
 
 		return (
@@ -3810,6 +3844,12 @@ export class Main extends React.Component<Props, State> {
 			text: 'adventures',
 			selected: (this.state.view === 'adventures'),
 			onSelect: () => this.setView('adventures')
+		},
+		{
+			id: 'dm',
+			text: 'dm screen',
+			selected: (this.state.view === 'dm'),
+			onSelect: () => this.setView('dm')
 		}];
 	}
 
@@ -4382,26 +4422,6 @@ export class Main extends React.Component<Props, State> {
 							selectMap={id => this.selectMapByID(id)}
 							selectAdventure={id => this.selectAdventureByID(id)}
 							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-							addAward={(awardID, awardee) => {
-								awardee.awards.push(awardID);
-								this.setState({
-									parties: this.state.parties
-								}, () => {
-									CommsDM.sendPartyUpdate();
-									CommsDM.prompt('award', {
-										awardee: awardee.name,
-										awardID: awardID
-									});
-								});
-							}}
-							deleteAward={(awardID, awardee) => {
-								awardee.awards = awardee.awards.filter(id => id !== awardID);
-								this.setState({
-									parties: this.state.parties
-								}, () => {
-									CommsDM.sendPartyUpdate();
-								});
-							}}
 							setOption={(option, value) => {
 								const options = this.state.options as any;
 								options[option] = value;

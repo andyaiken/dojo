@@ -118,7 +118,13 @@ code {
 			&.small {
 				flex-grow: 0;
 				flex-shrink: 0;
-				flex-basis: 40px;
+				flex-basis: 60px;
+			}
+
+			&.wide {
+				flex-grow: 2;
+				flex-shrink: 2;
+				flex-basis: 0;
 			}
 
 			&.l {

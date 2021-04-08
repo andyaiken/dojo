@@ -24,7 +24,6 @@ export interface Sidebar {
 	draws: CardDraw[];
 	npc: NPC | null;
 	selectedPartyID: string | null;
-	selectedMonsterID: string | null;
 }
 
 export interface NPC {

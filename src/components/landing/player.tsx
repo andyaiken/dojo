@@ -110,8 +110,7 @@ export class Player extends React.Component<Props, State> {
 				surge: '',
 				draws: [],
 				npc: null,
-				selectedPartyID: null,
-				selectedMonsterID: null
+				selectedPartyID: null
 			},
 			options: options
 		};
