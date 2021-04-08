@@ -288,7 +288,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				case 'encounter':
 					const encounter = this.props.encounters.find(enc => enc.id === resource.content);
 					if (encounter) {
-						if (resource.data.map) {
+						if (resource.data && resource.data.map) {
 							const combatants: Combatant[] = [];
 							const mapItems: MapItem[] = [];
 
