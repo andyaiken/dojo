@@ -107,25 +107,8 @@ export class SessionControlsSidebar extends React.Component<Props> {
 						// Map tab
 						mapAdd={combatant => this.props.toggleAddingToMap()}
 						mapMove={(combatants, dir, step) => {
-							combatants.filter(c => c.path !== null).forEach(c => {
-								const item = (map as Map).items.find(i => i.id === c.id);
-								if (item && c.path) {
-									c.path.push({
-										x: item.x,
-										y: item.y,
-										z: item.z
-									});
-								}
-							});
 							const ids = combatants.map(c => c.id);
-							const list = Napoleon.getMountsAndRiders(ids, allCombatants).map(c => c.id);
-							ids.forEach(id => {
-								if (!list.includes(id)) {
-									list.push(id);
-								}
-							});
-							list.forEach(id => Mercator.move(map as Map, id, dir, step));
-							Napoleon.setMountPositions(allCombatants, map as Map);
+							Mercator.moveCombatants(ids, dir, allCombatants, map as Map, step);
 							CommsPlayer.sendSharedUpdate();
 							this.props.onUpdated();
 						}}

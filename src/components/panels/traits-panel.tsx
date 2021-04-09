@@ -250,7 +250,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 
 			if (this.props.trait.usage) {
 				let used = '';
-				if (this.props.trait.usage.toLowerCase().startsWith('recharge ')) {
+				if (this.props.trait.usage.toLowerCase().startsWith('recharge')) {
 					maxUses = 1;
 					if (this.props.trait.uses > 0) {
 						used = '; used';

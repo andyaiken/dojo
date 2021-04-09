@@ -204,6 +204,23 @@ export class Mercator {
 			}
 		});
 
+		map.walls.forEach(wall => {
+			const x = Math.min(wall.pointA.x, wall.pointB.x);
+			const y = Math.min(wall.pointA.y, wall.pointB.y);
+			const width = Math.max(wall.pointA.x, wall.pointB.x) - x + 1;
+			const height = Math.max(wall.pointA.y, wall.pointB.y) - y + 1;
+
+			const newX = (y + height - 1) * -1;
+			const newY = x;
+			const newWidth = height;
+			const newHeight = width;
+
+			wall.pointA.x = newX + 1;
+			wall.pointA.y = newY;
+			wall.pointB.x = newX + newWidth;
+			wall.pointB.y = newY + newHeight - 1;
+		});
+
 		map.areas.forEach(area => {
 			const newX = (area.y + area.height - 1) * -1;
 			const newY = area.x;

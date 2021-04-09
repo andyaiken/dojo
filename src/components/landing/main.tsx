@@ -2402,7 +2402,7 @@ export class Main extends React.Component<Props, State> {
 			// Handle recharging traits
 			if (combatant && (combatant.type === 'monster')) {
 				(combatant as Combatant & Monster).traits
-					.filter(t => (t.uses > 0) && t.usage.toLowerCase().startsWith('recharge '))
+					.filter(t => (t.uses > 0) && t.usage.toLowerCase().startsWith('recharge'))
 					.forEach(t => {
 						const n: Notification = {
 							id: Utils.guid(),
