@@ -16,6 +16,7 @@ import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
+import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	view: string;
@@ -28,19 +29,27 @@ interface Props {
 
 interface State {
 	selectedPartyID: string | null;
+	selectedCombatantID: string | null;
 }
 
-export class SessionSidebar extends React.Component<Props, State> {
+export class SessionDMSidebar extends React.Component<Props, State> {
 	constructor(props: Props) {
 		super(props);
 		this.state = {
-			selectedPartyID: this.props.parties.length === 1 ? this.props.parties[0].id : null
+			selectedPartyID: this.props.parties.length === 1 ? this.props.parties[0].id : null,
+			selectedCombatantID: null
 		};
 	}
 
 	private setSelectedPartyID(id: string | null) {
 		this.setState({
 			selectedPartyID: id
+		});
+	}
+
+	private setSelectedCombatantID(id: string | null) {
+		this.setState({
+			selectedCombatantID: id
 		});
 	}
 
@@ -210,6 +219,72 @@ export class SessionSidebar extends React.Component<Props, State> {
 		return null;
 	}
 
+	private getTools() {
+		let map = null;
+		let areaID = null;
+		let combatants = null;
+		let lighting = null;
+		let fog = null;
+		if (this.props.currentCombat && this.props.currentCombat.map) {
+			map = this.props.currentCombat.map;
+			areaID = this.props.currentCombat.mapAreaID;
+			combatants = this.props.currentCombat.combatants;
+			lighting = this.props.currentCombat.lighting;
+			fog = this.props.currentCombat.fog;
+		} else if (this.props.currentExploration) {
+			map = this.props.currentExploration.map;
+			areaID = this.props.currentExploration.mapAreaID;
+			combatants = this.props.currentExploration.combatants;
+			lighting = this.props.currentExploration.lighting;
+			fog = this.props.currentExploration.fog;
+		}
+
+		if (map) {
+			const additional = Comms.data.shared.additional;
+			const highlightedSquare = additional['highlightedSquare'] as { x: number, y: number} | null ?? null;
+
+			let dropdown = null;
+			if (combatants) {
+				dropdown = (
+					<Dropdown
+						placeholder='view the map as...'
+						options={combatants.map(c => ({ id: c.id, text: c.displayName }))}
+						selectedID={this.state.selectedCombatantID}
+						onSelect={id => this.setSelectedCombatantID(id)}
+						onClear={() => this.setSelectedCombatantID(null)}
+					/>
+				);
+			}
+
+			return (
+				<div>
+					<hr/>
+					<div className='section subheading'>player map</div>
+					<Note>
+						<div className='section'>
+							this is how the map looks to your players
+						</div>
+					</Note>
+					{dropdown}
+					<div className='scrollable horizontal-only'>
+						<MapPanel
+							mode='interactive-player'
+							map={map}
+							selectedAreaID={areaID}
+							combatants={combatants || []}
+							selectedItemIDs={this.state.selectedCombatantID ? [this.state.selectedCombatantID] : []}
+							lighting={lighting || 'bright light'}
+							fog={fog || []}
+							focussedSquare={highlightedSquare}
+						/>
+					</div>
+				</div>
+			);
+		}
+
+		return null;
+	}
+
 	private getViewSelector() {
 		if (CommsDM.getState() !== 'started') {
 			return null;
@@ -259,6 +334,7 @@ export class SessionSidebar extends React.Component<Props, State> {
 				</div>
 				<div className='sidebar-content'>
 					{this.getContent()}
+					{this.getTools()}
 				</div>
 				{this.getFooter()}
 			</div>

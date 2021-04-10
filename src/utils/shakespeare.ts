@@ -351,6 +351,7 @@ export class Shakespeare {
 		const startElf = 'Ad All Aram Berri Car Enial Gann Im Per Sorvi Var Adr An Beth Bir Jelen Key Lesh Mer Mia Naiv Quel Sar Shan';
 		const startHalfling = 'Al An C Cor Eld Er Finn Gar Lin Mer Os Per Ros An Cal Cor Kith Lav Ned Pae Seraph T V Chen';
 		const startDragonborn = 'Are Bala Bhar Don Gh Hesk Med Meh Nad Pand Patr Sham Shed Ak Bir Farid Fla Ka Ko Mish Thav Uad Eder Hener';
+		const startValerian = 'Ae Ar Au Bae Bale Ca Cor Dae Elae Gae Helae Jacae Jae Jaehae Lae Luce Mae Me Monte Nae Rha Rhae Sae Shae Sy Te Ty Va Vae Valae Vale Ver Vha Vise';
 		const startMisc = 'Alu Stos Fa Ravay Leo Stok Vic El Yeng Car Ric Ar Guir Es My Pey';
 
 		const maleHuman = 'Eir Eid Eed El Ar An Or Ef Al Vin Orn Dur Stag Elm Ur Us';
@@ -367,12 +368,15 @@ export class Shakespeare {
 		const femaleDragonborn = 'Ra Ir Eh Ann Ilar Rinn Ann La Ra A Ina Va Hit Ederei Ere Eila';
 		const femaleMisc = 'Ina Ceryn Vyn Ella Aella Vyre';
 
+		const endValerian = 'gar gal gel gelle gon gor kar, l la larr leys lla lon lor lora lys lyx max mion mithor mon mond na naera nar nara nerys nor nora nya nyra nys ra rax raxes rea rion ron rra ryn rys than xes';
+
 		const starts = [
-			startHuman1, startHuman2, startDwarf, startElf, startHalfling, startDragonborn, startMisc
+			startHuman1, startHuman2, startDwarf, startElf, startHalfling, startDragonborn, startValerian, startMisc
 		].join(' ').toLowerCase().split(' ');
 		const ends = [
 			maleHuman, maleDwarf, maleElf, maleHalfling, maleDragonborn, maleMisc,
-			femaleHuman, femaleDwarf, femaleElf, femaleHalfling, femaleDragonborn, femaleMisc
+			femaleHuman, femaleDwarf, femaleElf, femaleHalfling, femaleDragonborn, femaleMisc,
+			endValerian
 		].join(' ').toLowerCase().split(' ');
 
 		const startIndex = Utils.randomNumber(starts.length);

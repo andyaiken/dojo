@@ -23,8 +23,8 @@ import { ReferenceSidebar } from '../sidebars/reference-sidebar';
 import { SearchSidebar } from '../sidebars/search-sidebar';
 import { SessionChatSidebar } from '../sidebars/session-chat-sidebar';
 import { SessionControlsSidebar } from '../sidebars/session-controls-sidebar';
+import { SessionDMSidebar } from '../sidebars/session-dm-sidebar';
 import { SessionPlayerSidebar } from '../sidebars/session-player-sidebar';
-import { SessionSidebar } from '../sidebars/session-sidebar';
 import { ToolsSidebar } from '../sidebars/tools-sidebar';
 
 interface Props {
@@ -396,7 +396,7 @@ export class PageSidebar extends React.Component<Props> {
 					break;
 				case 'session':
 					content = (
-						<SessionSidebar
+						<SessionDMSidebar
 							view={this.props.sidebar.subtype}
 							setView={view => {
 								const sidebar = this.props.sidebar;

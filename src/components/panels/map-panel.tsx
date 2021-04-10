@@ -106,7 +106,7 @@ export class MapPanel extends React.Component<Props, State> {
 			editFog: false
 		},
 		options: null,
-		paddingSquares: 1,
+		paddingSquares: 0,
 		combatants: [],
 		showGrid: false,
 		showWallVertices: false,

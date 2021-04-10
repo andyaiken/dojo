@@ -81,10 +81,12 @@ export class MovementPanel extends React.Component<Props, State> {
 					undoStyle += ' disabled';
 				}
 				undo = (
-					<div className={undoStyle}>
-						<UndoOutlined title='undo' onClick={e => this.undo(e)} />
-						{this.props.undo.text}
-					</div>
+					<Col flex='1'>
+						<div className={undoStyle}>
+							<UndoOutlined title='undo' onClick={e => this.undo(e)} />
+							{this.props.undo.text}
+						</div>
+					</Col>
 				);
 			}
 
@@ -95,21 +97,21 @@ export class MovementPanel extends React.Component<Props, State> {
 					altStyle += ' disabled';
 				}
 				altitude = (
-					<div className={altStyle}>
-						<CaretUpOutlined title='move up' onClick={e => this.click(e, 'UP')} />
-						{this.props.altitude.text}
-						<CaretDownOutlined title='move down' onClick={e => this.click(e, 'DOWN')} />
-					</div>
+					<Col flex='1'>
+						<div className={altStyle}>
+							<CaretUpOutlined title='move up' onClick={e => this.click(e, 'UP')} />
+							{this.props.altitude.text}
+							<CaretDownOutlined title='move down' onClick={e => this.click(e, 'DOWN')} />
+						</div>
+					</Col>
 				);
 			}
 
 			return (
 				<div className={style}>
 					<Row align='middle'>
-						<Col span={8}>
-							{undo}
-						</Col>
-						<Col span={8}>
+						{undo}
+						<Col flex='2'>
 							<div className='dial'>
 								<div className='cells'>
 									<div className='radial-cell'>
@@ -158,9 +160,7 @@ export class MovementPanel extends React.Component<Props, State> {
 								</div>
 							</div>
 						</Col>
-						<Col span={8}>
-							{altitude}
-						</Col>
+						{altitude}
 					</Row>
 				</div>
 			);
