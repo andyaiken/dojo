@@ -51,9 +51,6 @@ interface Props {
 	clearLanguages: () => void;
 	selectRandomLanguages: () => void;
 	generateLanguage: () => void;
-	// Wild Surge
-	surge: string;
-	rollSurge: () => void;
 	// Oracle
 	draws: CardDraw[];
 	drawCards: (count: number, deck: PlayingCard[]) => void;
@@ -75,10 +72,6 @@ export class ToolsSidebar extends React.Component<Props> {
 				{
 					id: 'language',
 					text: 'language'
-				},
-				{
-					id: 'wild',
-					text: 'wild surge'
 				},
 				{
 					id: 'oracle',
@@ -123,14 +116,6 @@ export class ToolsSidebar extends React.Component<Props> {
 							clearLanguages={() => this.props.clearLanguages()}
 							selectRandomLanguages={() => this.props.selectRandomLanguages()}
 							generateLanguage={() => this.props.generateLanguage()}
-						/>
-					);
-					break;
-				case 'wild':
-					content = (
-						<WildSurgeTool
-							surge={this.props.surge}
-							rollSurge={() => this.props.rollSurge()}
 						/>
 					);
 					break;
@@ -590,55 +575,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='HandoutTool' error={e} />;
-		}
-	}
-}
-
-interface WildSurgeProps {
-	surge: string;
-	rollSurge: () => void;
-}
-
-class WildSurgeTool extends React.Component<WildSurgeProps> {
-	public render() {
-		try {
-			let content = null;
-			if (this.props.surge) {
-				content = (
-					<div>
-						<hr/>
-						<Group>
-							<div className='content-then-icons'>
-								<div className='content'>
-									<div className='section'>
-										<div className='section'>
-											{this.props.surge}
-										</div>
-									</div>
-								</div>
-								<div className='icons'>
-									<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(Comms.getID())} />
-								</div>
-							</div>
-						</Group>
-					</div>
-				);
-			}
-
-			return (
-				<div>
-					<Note>
-						<div className='section'>
-							this tool randomly chooses wild magic surge effects
-						</div>
-					</Note>
-					<button onClick={() => this.props.rollSurge()}>surge</button>
-					{content}
-				</div>
-			);
-		} catch (e) {
-			console.error(e);
-			return <RenderError context='WildSurgeTool' error={e} />;
 		}
 	}
 }

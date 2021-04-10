@@ -417,9 +417,7 @@ export class Main extends React.Component<Props, State> {
 				languagePreset: Shakespeare.getLanguagePresets()[0].name,
 				selectedLanguages: Shakespeare.getLanguagePresets()[0].languages,
 				languageOutput: [],
-				surge: '',
 				draws: [],
-				npc: null,
 				selectedPartyID: null
 			},
 			parties: parties,
@@ -518,9 +516,6 @@ export class Main extends React.Component<Props, State> {
 		switch (type) {
 			case 'tools':
 				subtype = 'die';
-				break;
-			case 'generators':
-				subtype = 'name';
 				break;
 			case 'reference':
 				subtype = 'skills';

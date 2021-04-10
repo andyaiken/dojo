@@ -107,9 +107,7 @@ export class Player extends React.Component<Props, State> {
 				languagePreset: null,
 				selectedLanguages: [],
 				languageOutput: [],
-				surge: '',
 				draws: [],
-				npc: null,
 				selectedPartyID: null
 			},
 			options: options

@@ -81,6 +81,16 @@ export class HomeScreen extends React.Component<Props> {
 							<li>generate an entire dungeon delve with a single click</li>
 						</ul>
 					</div>
+					<div key='dm-screen'>
+						<div className='heading'>
+							keep on top of things
+						</div>
+						<ul>
+							<li>check references for skill usage, condition effects, and action rules</li>
+							<li>see your party's passive skills, known languages, and darkvision ranges</li>
+							<li>come up with npc names and descriptions, place names, and descriptions of potions or art objects</li>
+						</ul>
+					</div>
 					<div key='session'>
 						<div className='heading'>
 							connect with your players
@@ -100,7 +110,7 @@ export class HomeScreen extends React.Component<Props> {
 							use the buttons at the bottom of this screen to explore <span className='app-name'>dojo</span>'s main features
 						</div>
 						<div className='section'>
-							the arrow at the top right gives you additional tools like a die roller, some useful random generators, and rules references
+							the arrow at the top right gives you additional tools like a die roller and a handout manager
 						</div>
 					</div>
 				</Carousel>

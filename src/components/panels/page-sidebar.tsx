@@ -1,4 +1,4 @@
-import { BookOutlined, BulbOutlined, ControlOutlined, InfoCircleOutlined, MessageOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
+import { BookOutlined, ControlOutlined, InfoCircleOutlined, MessageOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -18,7 +18,6 @@ import { Party } from '../../models/party';
 import { RenderError } from '../error';
 import { AboutSidebar } from '../sidebars/about-sidebar';
 import { AwardsPlayerSidebar } from '../sidebars/awards-player-sidebar';
-import { GeneratorsSidebar } from '../sidebars/generators-sidebar';
 import { ReferenceSidebar } from '../sidebars/reference-sidebar';
 import { SearchSidebar } from '../sidebars/search-sidebar';
 import { SessionChatSidebar } from '../sidebars/session-chat-sidebar';
@@ -102,14 +101,6 @@ export class PageSidebar extends React.Component<Props> {
 							className={this.props.sidebar.type === 'tools' ? 'sidebar-icon selected' : 'sidebar-icon'}
 							title='tools'
 							onClick={() => this.props.onSelectSidebar('tools')}
-						/>
-					);
-					options.push(
-						<BulbOutlined
-							key='generators'
-							className={this.props.sidebar.type === 'generators' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='generators'
-							onClick={() => this.props.onSelectSidebar('generators')}
 						/>
 					);
 					options.push(
@@ -315,12 +306,6 @@ export class PageSidebar extends React.Component<Props> {
 									});
 								});
 							}}
-							surge={this.props.sidebar.surge}
-							rollSurge={() => {
-								const sidebar = this.props.sidebar;
-								sidebar.surge = Gygax.getWildSurge();
-								this.props.onUpdateSidebar(sidebar);
-							}}
 							draws={this.props.sidebar.draws}
 							drawCards={(count, deck) => {
 								const sidebar = this.props.sidebar;
@@ -341,37 +326,6 @@ export class PageSidebar extends React.Component<Props> {
 							resetDraw={() => {
 								const sidebar = this.props.sidebar;
 								sidebar.draws = [];
-								this.props.onUpdateSidebar(sidebar);
-							}}
-						/>
-					);
-					break;
-				case 'generators':
-					content = (
-						<GeneratorsSidebar
-							view={this.props.sidebar.subtype}
-							npc={this.props.sidebar.npc}
-							setView={view => {
-								const sidebar = this.props.sidebar;
-								sidebar.subtype = view;
-								this.props.onUpdateSidebar(sidebar);
-							}}
-							generateNPC={() => {
-								const sidebar = this.props.sidebar;
-								sidebar.npc = {
-									age: Shakespeare.generateNPCAge(),
-									profession: Shakespeare.generateNPCProfession(),
-									height: Shakespeare.generateNPCHeight(),
-									weight: Shakespeare.generateNPCWeight(),
-									hair: Shakespeare.generateNPCHair(),
-									physical: Shakespeare.generateNPCPhysical(),
-									mental: Shakespeare.generateNPCMental(),
-									speech: Shakespeare.generateNPCSpeech(),
-									trait: Shakespeare.generateNPCTrait(),
-									ideal: Shakespeare.generateNPCIdeal(),
-									bond: Shakespeare.generateNPCBond(),
-									flaw: Shakespeare.generateNPCFlaw()
-								};
 								this.props.onUpdateSidebar(sidebar);
 							}}
 						/>
