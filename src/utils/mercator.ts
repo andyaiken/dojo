@@ -79,22 +79,129 @@ export class Mercator {
 			}
 		});
 		list.forEach(id => {
-			if (this.canMove(map, id, dir)) {
-				const combatant = combatants.find(c => c.id === id);
-				if (combatant && combatant.path) {
-					const item = map.items.find(i => i.id === id);
-					if (item) {
-						combatant.path.push({
-							x: item.x,
-							y: item.y,
-							z: item.z
-						});
-					}
+			const cube = {
+				x: 0,
+				y: 0,
+				z: 0,
+				width: 1,
+				height: 1,
+				depth: 1
+			};
+
+			const item = map.items.find(i => i.id === id);
+			if (item) {
+				cube.x = item.x;
+				cube.y = item.y;
+				cube.z = item.z;
+				cube.width = item.width;
+				cube.height = item.height;
+				cube.depth = item.depth;
+			}
+
+			const combatant = combatants.find(c => c.id === id);
+			if (combatant) {
+				const size = Math.max(1, Gygax.miniSize(combatant.displaySize));
+				cube.width = size;
+				cube.height = size;
+				cube.depth = size;
+			}
+
+			if (this.canMove(map, cube, dir)) {
+				if (item && combatant && combatant.path) {
+					combatant.path.push({
+						x: item.x,
+						y: item.y,
+						z: item.z
+					});
 				}
 				this.move(map, id, dir, step);
 			}
 		});
 		Napoleon.setMountPositions(combatants, map);
+	}
+
+	public static canMove(map: Map, item: { x: number, y: number, z: number, width: number, height: number, depth: number}, dir: string): boolean {
+		const horizontalWalls: { start: number, end: number, y: number }[] = [];
+		map.walls
+			.filter(w => w.blocksMovement)
+			.filter(w => this.getWallOrientation(w) === 'horizontal')
+			.map(w => ({
+				start: Math.min(w.pointA.x, w.pointB.x),
+				end: Math.max(w.pointA.x, w.pointB.x),
+				y: w.pointA.y
+			}))
+			.forEach(section => {
+				const before = horizontalWalls.find(s => s.y === section.y && s.end === section.start);
+				const after = horizontalWalls.find(s => s.y === section.y && s.start === section.end);
+				if (before && after) {
+					before.end = after.end;
+					horizontalWalls.splice(horizontalWalls.indexOf(after), 1);
+				} else if (before) {
+					before.end = section.end;
+				} else if (after) {
+					after.start = section.start;
+				} else {
+					horizontalWalls.push(section);
+				}
+			});
+
+		const verticalWalls: { start: number, end: number, x: number }[] = [];
+		map.walls
+			.filter(w => w.blocksMovement)
+			.filter(w => this.getWallOrientation(w) === 'vertical')
+			.map(w => ({
+				start: Math.min(w.pointA.y, w.pointB.y),
+				end: Math.max(w.pointA.y, w.pointB.y),
+				x: w.pointA.x
+			}))
+			.forEach(section => {
+				const before = verticalWalls.find(s => s.x === section.x && s.end === section.start);
+				const after = verticalWalls.find(s => s.x === section.x && s.start === section.end);
+				if (before && after) {
+					before.end = after.end;
+					verticalWalls.splice(verticalWalls.indexOf(after), 1);
+				} else if (before) {
+					before.end = section.end;
+				} else if (after) {
+					after.start = section.start;
+				} else {
+					verticalWalls.push(section);
+				}
+			});
+
+		const northWalls = horizontalWalls
+			.filter(w => w.y === item.y)
+			.filter(w => (w.start <= item.x) && (w.end > item.x + item.width - 1));
+		const eastWalls = verticalWalls
+			.filter(w => w.x === item.x + item.width)
+			.filter(w => (w.start <= item.y) && (w.end > item.y + item.height - 1));
+		const southWalls = horizontalWalls
+			.filter(w => w.y === item.y + item.height)
+			.filter(w => (w.start <= item.x) && (w.end > item.x + item.width - 1));
+		const westWalls = verticalWalls
+			.filter(w => w.x === item.x)
+			.filter(w => (w.start <= item.y) && (w.end > item.y + item.height - 1));
+
+		switch (dir) {
+			case 'N':
+				return northWalls.length === 0;
+			case 'NE':
+				return (northWalls.length === 0) && (eastWalls.length === 0);
+			case 'E':
+				return eastWalls.length === 0;
+			case 'SE':
+				return (southWalls.length === 0) && (eastWalls.length === 0);
+			case 'S':
+				return southWalls.length === 0;
+			case 'SW':
+				return (southWalls.length === 0) && (westWalls.length === 0);
+			case 'W':
+				return westWalls.length === 0;
+			case 'NW':
+				return (northWalls.length === 0) && (westWalls.length === 0);
+		}
+
+		return true;
 	}
 
 	public static mapDimensions(items: MapItem[]) {
@@ -122,7 +229,7 @@ export class Mercator {
 		}
 	}
 
-	public static calculateDistance(item: MapItem, x: number, y: number) {
+	public static calculateDistance(item: { x: number, y: number, z: number, width: number, height: number, depth: number}, x: number, y: number, z: number) {
 		let dx = 0;
 		if ((item.x) > x) {
 			dx = item.x - x;
@@ -130,6 +237,7 @@ export class Mercator {
 		if ((item.x + item.width - 1) < x) {
 			dx = x - (item.x + item.width - 1);
 		}
+
 		let dy = 0;
 		if (item.y > y) {
 			dy = item.y - y;
@@ -137,7 +245,16 @@ export class Mercator {
 		if ((item.y + item.height - 1) < y) {
 			dy = y - (item.y + item.height - 1);
 		}
-		return Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))) * 5;
+
+		let dz = 0;
+		if (item.z > z) {
+			dz = item.z - z;
+		}
+		if ((item.z + item.depth - 1) < z) {
+			dz = z - (item.z + item.depth - 1);
+		}
+
+		return Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2))) * 5;
 	}
 
 	public static canAddTileHere(map: Map, x: number, y: number, width: number, height: number, minGapX: number, minGapY: number) {
@@ -502,52 +619,6 @@ export class Mercator {
 		item.y = y;
 	}
 
-	public static canMove(map: Map, id: string, dir: string): boolean {
-		const item = map.items.find(i => i.id === id);
-		if (item) {
-			switch (dir) {
-				case 'N':
-					return map.walls
-						.filter(w => this.getWallOrientation(w) === 'horizontal')
-						.filter(w => (w.pointA.y === item.y))
-						.filter(w => (w.pointA.x <= item.x) && (w.pointB.x > item.x))
-						.filter(w => w.blocksMovement)
-						.length === 0;
-				case 'NE':
-					return this.canMove(map, id, 'N') && this.canMove(map, id, 'E');
-				case 'E':
-					return map.walls
-						.filter(w => this.getWallOrientation(w) === 'vertical')
-						.filter(w => (w.pointA.x === item.x + 1))
-						.filter(w => (w.pointA.y <= item.y) && (w.pointB.y > item.y))
-						.filter(w => w.blocksMovement)
-						.length === 0;
-				case 'SE':
-					return this.canMove(map, id, 'S') && this.canMove(map, id, 'E');
-				case 'S':
-					return map.walls
-						.filter(w => this.getWallOrientation(w) === 'horizontal')
-						.filter(w => (w.pointA.y === item.y + 1))
-						.filter(w => (w.pointA.x <= item.x) && (w.pointB.x > item.x))
-						.filter(w => w.blocksMovement)
-						.length === 0;
-				case 'SW':
-					return this.canMove(map, id, 'S') && this.canMove(map, id, 'W');
-				case 'W':
-					return map.walls
-						.filter(w => this.getWallOrientation(w) === 'vertical')
-						.filter(w => (w.pointA.x === item.x))
-						.filter(w => (w.pointA.y <= item.y) && (w.pointB.y > item.y))
-						.filter(w => w.blocksMovement)
-						.length === 0;
-				case 'NW':
-					return this.canMove(map, id, 'N') && this.canMove(map, id, 'W');
-			}
-		}
-
-		return true;
-	}
-
 	public static move(map: Map, id: string, dir: string, step: number) {
 		let item: MapItem | MapArea | null = null;
 		item = map.items.find(i => i.id === id) || null;
@@ -656,7 +727,10 @@ export class Mercator {
 		}
 	}
 
-	public static getDistanceBetweenItems(a: MapItem, b: MapItem) {
+	public static getDistanceBetweenItems(
+		a: { x: number, y: number, z: number, width: number, height: number, depth: number},
+		b: { x: number, y: number, z: number, width: number, height: number, depth: number}
+	) {
 		let min = Number.MAX_VALUE;
 
 		const aMaxX = a.x + Math.max(1, a.width) - 1;
@@ -684,6 +758,7 @@ export class Mercator {
 			}
 		}
 
+		// Return an answer to the nearest half
 		return Math.round(min * 2) / 2;
 	}
 

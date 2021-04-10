@@ -454,7 +454,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getActiveToken() {
-		let activeToken: { token: MapItem, name: string } | null = null;
+		let activeToken: { token: MapItem, combatant: Combatant | null } | null = null;
 		const characterID = Comms.getCharacterID(Comms.getID());
 		if (characterID) {
 			// The active token is my character's token
@@ -462,7 +462,7 @@ export class MapPanel extends React.Component<Props, State> {
 			if (token) {
 				activeToken = {
 					token: token,
-					name: 'you'
+					combatant: null
 				};
 			}
 		} else {
@@ -473,7 +473,7 @@ export class MapPanel extends React.Component<Props, State> {
 				if (token) {
 					activeToken = {
 						token: token,
-						name: combatant.displayName
+						combatant: combatant
 					};
 				}
 			}
@@ -943,7 +943,15 @@ export class MapPanel extends React.Component<Props, State> {
 					this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
-							const dist = Mercator.calculateDistance(item, x, y);
+							const fromCube = {
+								x: item.x,
+								y: item.y,
+								z: item.z,
+								width: Gygax.miniSize(combatant.displaySize),
+								height: Gygax.miniSize(combatant.displaySize),
+								depth: Gygax.miniSize(combatant.displaySize)
+							};
+							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
 							if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
 								if (level === 'darkness') {
 									level = 'dim light';
@@ -958,7 +966,15 @@ export class MapPanel extends React.Component<Props, State> {
 						// Can this actor see this square?
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
-							const dist = Mercator.calculateDistance(item, x, y);
+							const fromCube = {
+								x: item.x,
+								y: item.y,
+								z: item.z,
+								width: Gygax.miniSize(combatant.displaySize),
+								height: Gygax.miniSize(combatant.displaySize),
+								depth: Gygax.miniSize(combatant.displaySize)
+							};
+							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
 							if (combatant.darkvision >= dist) {
 								if (level === 'dim light') {
 									level = 'bright light';
@@ -1156,7 +1172,7 @@ interface GridSquareProps {
 	style: MapItemStyle;
 	mode: string;
 	selected: boolean;
-	showDistanceTo: { token: MapItem, name: string } | null;
+	showDistanceTo: { token: MapItem, combatant: Combatant | null } | null;
 	content: string | JSX.Element | null;
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
@@ -1224,7 +1240,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 					z: this.props.showDistanceTo.token.z,
 					width: 1,
 					height: 1,
-					depth: this.props.showDistanceTo.token.depth
+					depth: 1
 				};
 				const dist = Mercator.getDistanceBetweenItems(mockItem as MapItem, this.props.showDistanceTo.token) * 5;
 
@@ -1232,7 +1248,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 					<Popover
 						content={(
 							<div className='section'>
-								{dist} ft away from {this.props.showDistanceTo.name}
+								{dist} ft away from {this.props.showDistanceTo.combatant ? this.props.showDistanceTo.combatant.displayName : 'you'}
 							</div>
 						)}
 						placement='bottom'
@@ -1677,7 +1693,7 @@ interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
 	user: 'dm' | 'player';
-	activeToken: { token: MapItem, name: string } | null;
+	activeToken: { token: MapItem, combatant: Combatant | null } | null;
 	style: MapItemStyle;
 	width: number;
 	simple: boolean;
@@ -1734,10 +1750,26 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 		const info: JSX.Element[] = [];
 
 		if (this.props.activeToken && (this.props.activeToken.token.id !== this.props.token.id)) {
-			const dist = Mercator.getDistanceBetweenItems(this.props.token, this.props.activeToken.token) * 5;
+			const fromCube = {
+				x: this.props.token.x,
+				y: this.props.token.y,
+				z: this.props.token.z,
+				width: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.width,
+				height: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.height,
+				depth: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.depth
+			};
+			const toCube = {
+				x: this.props.activeToken.token.x,
+				y: this.props.activeToken.token.y,
+				z: this.props.activeToken.token.z,
+				width: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.width,
+				height: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.height,
+				depth: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.depth
+			};
+			const dist = Mercator.getDistanceBetweenItems(fromCube, toCube) * 5;
 			info.push(
 				<div key='distance' className='section'>
-					{dist} ft away from {this.props.activeToken.name}
+					{dist} ft away from {this.props.activeToken.combatant ? this.props.activeToken.combatant.displayName : 'you'}
 				</div>
 			);
 		}
