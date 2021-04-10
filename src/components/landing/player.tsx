@@ -522,6 +522,7 @@ export class Player extends React.Component<Props, State> {
 						selectedItemIDs={[characterID]}
 						selectedAreaID={combat.mapAreaID}
 						fog={combat.fog}
+						lighting={combat.lighting}
 						focussedSquare={highlightedSquare}
 						itemSelected={(id, ctrl) => null}
 						itemRemove={id => null}
@@ -573,6 +574,7 @@ export class Player extends React.Component<Props, State> {
 					selectedItemIDs={[characterID]}
 					selectedAreaID={exploration.mapAreaID}
 					fog={exploration.fog}
+					lighting={exploration.lighting}
 					focussedSquare={highlightedSquare}
 					itemSelected={(id, ctrl) => null}
 					gridSquareClicked={(x, y) => {
