@@ -447,17 +447,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			);
 		}
 
-		// Have we selected only the current combatant?
-		if ((combatants.length > 0) && combatants.every(c => c.current)) {
-			return (
-				<Note>
-					<div className='section'>
-						you've selected the current initiative holder
-					</div>
-				</Note>
-			);
-		}
-
 		// Have we selected a single combatant?
 		if (combatants.length === 1) {
 			return (
