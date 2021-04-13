@@ -121,66 +121,20 @@ export class Mercator {
 	}
 
 	public static canMove(map: Map, item: { x: number, y: number, z: number, width: number, height: number, depth: number}, dir: string): boolean {
-		const horizontalWalls: { start: number, end: number, y: number }[] = [];
-		map.walls
-			.filter(w => w.blocksMovement)
-			.filter(w => this.getWallOrientation(w) === 'horizontal')
-			.map(w => ({
-				start: Math.min(w.pointA.x, w.pointB.x),
-				end: Math.max(w.pointA.x, w.pointB.x),
-				y: w.pointA.y
-			}))
-			.forEach(section => {
-				const before = horizontalWalls.find(s => s.y === section.y && s.end === section.start);
-				const after = horizontalWalls.find(s => s.y === section.y && s.start === section.end);
-				if (before && after) {
-					before.end = after.end;
-					horizontalWalls.splice(horizontalWalls.indexOf(after), 1);
-				} else if (before) {
-					before.end = section.end;
-				} else if (after) {
-					after.start = section.start;
-				} else {
-					horizontalWalls.push(section);
-				}
-			});
+		const walls = this.getWalls(map, wall => wall.blocksMovement);
 
-		const verticalWalls: { start: number, end: number, x: number }[] = [];
-		map.walls
-			.filter(w => w.blocksMovement)
-			.filter(w => this.getWallOrientation(w) === 'vertical')
-			.map(w => ({
-				start: Math.min(w.pointA.y, w.pointB.y),
-				end: Math.max(w.pointA.y, w.pointB.y),
-				x: w.pointA.x
-			}))
-			.forEach(section => {
-				const before = verticalWalls.find(s => s.x === section.x && s.end === section.start);
-				const after = verticalWalls.find(s => s.x === section.x && s.start === section.end);
-				if (before && after) {
-					before.end = after.end;
-					verticalWalls.splice(verticalWalls.indexOf(after), 1);
-				} else if (before) {
-					before.end = section.end;
-				} else if (after) {
-					after.start = section.start;
-				} else {
-					verticalWalls.push(section);
-				}
-			});
-
-		const northWalls = horizontalWalls
+		const northWalls = walls.horizontal
 			.filter(w => w.y === item.y)
-			.filter(w => (w.start <= item.x) && (w.end > item.x + item.width - 1));
-		const eastWalls = verticalWalls
-			.filter(w => w.x === item.x + item.width)
-			.filter(w => (w.start <= item.y) && (w.end > item.y + item.height - 1));
-		const southWalls = horizontalWalls
-			.filter(w => w.y === item.y + item.height)
-			.filter(w => (w.start <= item.x) && (w.end > item.x + item.width - 1));
-		const westWalls = verticalWalls
+			.filter(w => (w.start <= item.x) && (w.end > item.x + Math.max(item.width, 1) - 1));
+		const eastWalls = walls.vertical
+			.filter(w => w.x === item.x + Math.max(item.width, 1))
+			.filter(w => (w.start <= item.y) && (w.end > item.y + Math.max(item.height, 1) - 1));
+		const southWalls = walls.horizontal
+			.filter(w => w.y === item.y + Math.max(item.height, 1))
+			.filter(w => (w.start <= item.x) && (w.end > item.x + Math.max(item.width, 1) - 1));
+		const westWalls = walls.vertical
 			.filter(w => w.x === item.x)
-			.filter(w => (w.start <= item.y) && (w.end > item.y + item.height - 1));
+			.filter(w => (w.start <= item.y) && (w.end > item.y + Math.max(item.height, 1) - 1));
 
 		switch (dir) {
 			case 'N':
@@ -202,6 +156,26 @@ export class Mercator {
 		}
 
 		return true;
+	}
+
+	public static canSee(
+		walls: { horizontal: { start: number, end: number, y: number }[], vertical: { start: number, end: number, x: number }[] },
+		a: { x: number, y: number },
+		b: { x: number, y: number }
+	): boolean {
+		const intersects = (light: { a: { x: number, y: number }, b: { x: number, y: number } }, wall: { a: { x: number, y: number }, b: { x: number, y: number } }) => {
+			const det = (light.b.x - light.a.x) * (wall.b.y - wall.a.y) - (wall.b.x - wall.a.x) * (light.b.y - light.a.y);
+			if (det === 0) {
+				return false;
+			} else {
+				const lambda = ((wall.b.y - wall.a.y) * (wall.b.x - light.a.x) + (wall.a.x - wall.b.x) * (wall.b.y - light.a.y)) / det;
+				const gamma = ((light.a.y - light.b.y) * (wall.b.x - light.a.x) + (light.b.x - light.a.x) * (wall.b.y - light.a.y)) / det;
+				return (0 <= lambda && lambda <= 1) && (0 <= gamma && gamma <= 1);
+			}
+		};
+
+		return !(walls.horizontal.some(wall => intersects({ a: a, b: b }, { a: { x: wall.start, y: wall.y }, b: { x: wall.end, y: wall.y }}))
+			|| walls.vertical.some(wall => intersects({ a: a, b: b }, { a: { x: wall.x, y: wall.start }, b: { x: wall.x, y: wall.end }})));
 	}
 
 	public static mapDimensions(items: MapItem[]) {
@@ -234,24 +208,24 @@ export class Mercator {
 		if ((item.x) > x) {
 			dx = item.x - x;
 		}
-		if ((item.x + item.width - 1) < x) {
-			dx = x - (item.x + item.width - 1);
+		if ((item.x + Math.max(item.width, 1) - 1) < x) {
+			dx = x - (item.x + Math.max(item.width, 1) - 1);
 		}
 
 		let dy = 0;
 		if (item.y > y) {
 			dy = item.y - y;
 		}
-		if ((item.y + item.height - 1) < y) {
-			dy = y - (item.y + item.height - 1);
+		if ((item.y + Math.max(item.height, 1) - 1) < y) {
+			dy = y - (item.y + Math.max(item.height, 1) - 1);
 		}
 
 		let dz = 0;
 		if (item.z > z) {
 			dz = item.z - z;
 		}
-		if ((item.z + item.depth - 1) < z) {
-			dz = z - (item.z + item.depth - 1);
+		if ((item.z + Math.max(item.depth, 1) - 1) < z) {
+			dz = z - (item.z + Math.max(item.depth, 1) - 1);
 		}
 
 		return Math.ceil(Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2) + Math.pow(dz, 2))) * 5;
@@ -1003,5 +977,60 @@ export class Mercator {
 				return a + '-' + b;
 			})
 			.forEach(wall => map.walls.push(wall));
+	}
+
+	public static getWalls(map: Map, filter: (wall: MapWall) => boolean) {
+		const horizontalWalls: { start: number, end: number, y: number }[] = [];
+		map.walls
+			.filter(w => filter(w))
+			.filter(w => this.getWallOrientation(w) === 'horizontal')
+			.map(w => ({
+				start: Math.min(w.pointA.x, w.pointB.x),
+				end: Math.max(w.pointA.x, w.pointB.x),
+				y: w.pointA.y
+			}))
+			.forEach(section => {
+				const before = horizontalWalls.find(s => s.y === section.y && s.end === section.start);
+				const after = horizontalWalls.find(s => s.y === section.y && s.start === section.end);
+				if (before && after) {
+					before.end = after.end;
+					horizontalWalls.splice(horizontalWalls.indexOf(after), 1);
+				} else if (before) {
+					before.end = section.end;
+				} else if (after) {
+					after.start = section.start;
+				} else {
+					horizontalWalls.push(section);
+				}
+			});
+
+		const verticalWalls: { start: number, end: number, x: number }[] = [];
+		map.walls
+			.filter(w => filter(w))
+			.filter(w => this.getWallOrientation(w) === 'vertical')
+			.map(w => ({
+				start: Math.min(w.pointA.y, w.pointB.y),
+				end: Math.max(w.pointA.y, w.pointB.y),
+				x: w.pointA.x
+			}))
+			.forEach(section => {
+				const before = verticalWalls.find(s => s.x === section.x && s.end === section.start);
+				const after = verticalWalls.find(s => s.x === section.x && s.start === section.end);
+				if (before && after) {
+					before.end = after.end;
+					verticalWalls.splice(verticalWalls.indexOf(after), 1);
+				} else if (before) {
+					before.end = section.end;
+				} else if (after) {
+					after.start = section.start;
+				} else {
+					verticalWalls.push(section);
+				}
+			});
+
+		return {
+			horizontal: horizontalWalls,
+			vertical: verticalWalls
+		};
 	}
 }

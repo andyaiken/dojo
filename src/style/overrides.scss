@@ -423,12 +423,25 @@ button {
 
 		.ant-popover-inner {
 			max-width: 225px;
+
+			.message {
+				border: none;
+				padding: 0;
+			}
+
+			.message .message-content .text {
+				font-size: 12px;
+			}
 		}
 	}
 	
 	&.map-click-tooltip {
 		.ant-popover-inner {
 			width: 225px;
+
+			.message .message-content .text {
+				font-size: 12px;
+			}
 		}
 	}
 	

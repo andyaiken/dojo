@@ -597,6 +597,9 @@ export class MapPanel extends React.Component<Props, State> {
 								<Conditional display={this.props.features.editFog}>
 									<Note>
 										<div className='section'>
+											fog of war conceals areas from your players
+										</div>
+										<div className='section'>
 											click on map squares to turn fog of war on and off
 										</div>
 										<div className='section'>
@@ -926,82 +929,140 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getLighting(dimensions: MapDimensions) {
-		if (this.props.lighting !== 'bright light') {
-			const actors: Combatant[] = [];
-			if (this.props.mode === 'interactive-dm') {
-				this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
-				this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-			}
-			if (this.props.mode === 'interactive-player') {
-				this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-			}
+		const lighting: (JSX.Element | null)[] = [];
 
-			const lighting: (JSX.Element | null)[] = [];
-			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
-				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
-					let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
+		const actors: Combatant[] = [];
+		if (this.props.mode === 'interactive-dm') {
+			this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
+			this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+		}
+		if (this.props.mode === 'interactive-player') {
+			this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+		}
+
+		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
+
+		for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+			for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+				let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
+
+				if (this.props.lighting !== 'bright light') {
+					// Take light sources into account
 					this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
-							const fromCube = {
-								x: item.x,
-								y: item.y,
-								z: item.z,
-								width: Gygax.miniSize(combatant.displaySize),
-								height: Gygax.miniSize(combatant.displaySize),
-								depth: Gygax.miniSize(combatant.displaySize)
-							};
-							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-							if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
-								if (level === 'darkness') {
-									level = 'dim light';
+							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+							if (visible) {
+								const fromCube = {
+									x: item.x,
+									y: item.y,
+									z: item.z,
+									width: size,
+									height: size,
+									depth: size
+								};
+								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
+								if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
+									if (level === 'darkness') {
+										level = 'dim light';
+									}
 								}
-							}
-							if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
-								level = 'bright light';
+								if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
+									level = 'bright light';
+								}
 							}
 						}
 					});
+				}
+
+				if (this.props.lighting !== 'bright light') {
+					// Take darkvision into account
 					actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
-						// Can this actor see this square?
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
-							const fromCube = {
-								x: item.x,
-								y: item.y,
-								z: item.z,
-								width: Gygax.miniSize(combatant.displaySize),
-								height: Gygax.miniSize(combatant.displaySize),
-								depth: Gygax.miniSize(combatant.displaySize)
-							};
-							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-							if (combatant.darkvision >= dist) {
-								if (level === 'dim light') {
-									level = 'bright light';
-								} else if (level === 'darkness') {
-									level = 'dim light';
+							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+							if (visible) {
+								const fromCube = {
+									x: item.x,
+									y: item.y,
+									z: item.z,
+									width: size,
+									height: size,
+									depth: size
+								};
+								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
+								if (combatant.darkvision >= dist) {
+									if (level === 'dim light') {
+										level = 'bright light';
+									} else if (level === 'darkness') {
+										level = 'dim light';
+									}
 								}
 							}
 						}
 					});
-					if (level !== 'bright light') {
-						lighting.push(
+				}
+
+				if (level !== 'bright light') {
+					lighting.push(
+						<GridSquare
+							key={'light ' + x + ',' + y}
+							x={x}
+							y={y}
+							style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
+							mode={'light ' + level.replaceAll(' ', '-')}
+						/>
+					);
+				}
+			}
+		}
+
+		return lighting;
+	}
+
+	private getVisibility(dimensions: MapDimensions) {
+		const hiddenSquares: (JSX.Element | null)[] = [];
+
+		const actors: Combatant[] = [];
+		if (this.props.mode === 'interactive-dm') {
+			this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
+			this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+		}
+		if (this.props.mode === 'interactive-player') {
+			this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
+		}
+
+		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
+
+		if (actors.length > 0) {
+			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+					const visible = actors.some(combatant => {
+						const item = this.props.map.items.find(i => i.id === combatant.id);
+						if (item) {
+							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							return Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+						}
+						return false;
+					});
+					if (!visible) {
+						hiddenSquares.push(
 							<GridSquare
-								key={'light ' + x + ',' + y}
+								key={'hidden ' + x + ',' + y}
 								x={x}
 								y={y}
 								style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
-								mode={'light ' + level.replaceAll(' ', '-')}
+								mode='hidden'
 							/>
 						);
 					}
 				}
 			}
-
-			return lighting;
 		}
 
-		return null;
+		return hiddenSquares;
 	}
 
 	private getGrid(dimensions: MapDimensions) {
@@ -1117,6 +1178,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getTokens(mapDimensions)}
 						{this.getFog(mapDimensions)}
 						{this.getLighting(mapDimensions)}
+						{this.getVisibility(mapDimensions)}
 						{this.getGrid(mapDimensions)}
 						{this.getWallVertices(mapDimensions)}
 						{this.getFocus(mapDimensions)}
@@ -1512,6 +1574,11 @@ class Wall extends React.Component<WallProps, WallState> {
 							options={Utils.arrayToItems(['open', 'closed'])}
 							selectedID={this.props.wall.blocksMovement ? 'closed' : 'open'}
 							onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', (value === 'closed'))}
+						/>
+						<Checkbox
+							label='blocks line-of-sight'
+							checked={this.props.wall.blocksLineOfSight}
+							onChecked={checked => this.props.changeValue(this.props.wall, 'blocksLineOfSight', checked)}
 						/>
 						<Checkbox
 							label='concealed'

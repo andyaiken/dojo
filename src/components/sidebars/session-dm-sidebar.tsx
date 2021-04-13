@@ -10,6 +10,7 @@ import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
 import { Checkbox } from '../controls/checkbox';
+import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
 import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
@@ -17,6 +18,7 @@ import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { ConnectionsPanel, MessagesPanel, SendMessagePanel } from '../panels/session-panel';
 import { MapPanel } from '../panels/map-panel';
+import { Expander } from '../controls/expander';
 
 interface Props {
 	view: string;
@@ -54,55 +56,50 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 	}
 
 	private getContent() {
-		switch (CommsDM.getState()) {
-			case 'not started':
-				return this.getNotStartedContent();
-			case 'starting':
-				return this.getStartingContent();
-			case 'started':
-				return this.getStartedContent();
-		}
-	}
-
-	private getNotStartedContent() {
+		const state = CommsDM.getState();
 		return (
 			<div>
-				<Note>
-					<div className='section'>
-						select a party, then click the 'start' button to allow your players to connect to the game session
-					</div>
-					<div className='section'>
-						you can then send messages and share content such as handouts, combat encounters, and map explorations
-					</div>
-				</Note>
-				<Dropdown
-					placeholder='select a party...'
-					options={this.props.parties.map(party => ({ id: party.id, text: party.name || 'unnamed party' }))}
-					selectedID={this.state.selectedPartyID}
-					onSelect={id => this.setSelectedPartyID(id)}
-				/>
-				<button
-					className={this.state.selectedPartyID ? '' : 'disabled'}
-					onClick={() => {
-						const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
-						if (party) {
-							CommsDM.init(party);
-						}
-					}}
-				>
-					start the session
-				</button>
+				<Conditional display={state === 'not started'}>
+					<Note>
+						<div className='section'>
+							you're not currently running a game session
+						</div>
+						<div className='section'>
+							select a party, then click the 'start' button to allow your players to connect to the game session
+						</div>
+						<div className='section'>
+							you can then send messages and share content such as handouts, combat encounters, and map explorations
+						</div>
+					</Note>
+					<Dropdown
+						placeholder='select a party...'
+						options={this.props.parties.map(party => ({ id: party.id, text: party.name || 'unnamed party' }))}
+						selectedID={this.state.selectedPartyID}
+						onSelect={id => this.setSelectedPartyID(id)}
+					/>
+					<button
+						className={this.state.selectedPartyID ? '' : 'disabled'}
+						onClick={() => {
+							const party = this.props.parties.find(p => p.id === this.state.selectedPartyID);
+							if (party) {
+								CommsDM.init(party);
+							}
+						}}
+					>
+						start the session
+					</button>
+				</Conditional>
+				<Conditional display={state === 'starting'}>
+					<Note>
+						<div className='section'>
+							starting session...
+						</div>
+					</Note>
+				</Conditional>
+				<Conditional display={state === 'started'}>
+					{this.getStartedContent()}
+				</Conditional>
 			</div>
-		);
-	}
-
-	private getStartingContent() {
-		return (
-			<Note>
-				<div className='section'>
-					starting session...
-				</div>
-			</Note>
 		);
 	}
 
@@ -199,6 +196,7 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 						<div className='subheading'>currently sharing</div>
 						<div className='section'>{sharing}</div>
 						{action}
+						{this.getTools()}
 						<hr/>
 						<div className='subheading'>options</div>
 						<Checkbox
@@ -257,9 +255,7 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 			}
 
 			return (
-				<div>
-					<hr/>
-					<div className='section subheading'>player map</div>
+				<Expander text='player map'>
 					<Note>
 						<div className='section'>
 							this is how the map looks to your players
@@ -278,7 +274,7 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 							focussedSquare={highlightedSquare}
 						/>
 					</div>
-				</div>
+				</Expander>
 			);
 		}
 
@@ -334,7 +330,6 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 				</div>
 				<div className='sidebar-content'>
 					{this.getContent()}
-					{this.getTools()}
 				</div>
 				{this.getFooter()}
 			</div>

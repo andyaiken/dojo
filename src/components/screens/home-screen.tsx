@@ -28,9 +28,9 @@ export class HomeScreen extends React.Component<Props> {
 						</div>
 						<ul>
 							<li>watch the stat block change as you design your monster</li>
-							<li>see a list of similar monsters to help kickstart your creativity (or show you typical stat values for the type of monster you're creating)</li>
 							<li>build an entirely random monster with a single click</li>
 							<li>easily import any monster from <a href='https://dnd.wizards.com/articles/features/basicrules' target='_blank' rel='noopener noreferrer'>the basic rules</a> or from <a href='https://www.dndbeyond.com' target='_blank' rel='noopener noreferrer'>d&amp;d beyond</a></li>
+							<li>apply a theme to your monster to make it extra unique</li>
 							<li>use legendary and mythic monsters</li>
 						</ul>
 					</div>

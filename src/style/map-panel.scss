@@ -76,7 +76,8 @@
 	&.interactive-dm {
 		.fog,
 		.light.dim-light,
-		.light.darkness {
+		.light.darkness,
+		.hidden {
 			opacity: 0.5;
 			box-shadow: none !important;
 		}
@@ -126,6 +127,11 @@
 					background-color: black;
 					box-shadow: 0 0 10px 1px black;
 				}
+			}
+
+			&.hidden {
+				background-color: black;
+				pointer-events: none;
 			}
 
 			&.step {

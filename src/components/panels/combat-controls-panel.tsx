@@ -277,11 +277,11 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		if (this.props.combatants.length === 1) {
 			if (this.props.lighting !== 'bright light') {
 				const c = this.props.combatants[0];
-				if (c.darkvision === 0) {
+				if ((c.darkvision === 0) && (c.lightSource === null)) {
 					notes.push(
 						<Note key='light'>
 							<div className='section'>
-								{c.displayName} is in {this.props.lighting}, and has no darkvision
+								{c.displayName} is in {this.props.lighting}, and has no darkvision or light source
 							</div>
 						</Note>
 					);

@@ -611,6 +611,11 @@ class MapWallPanel extends React.Component<MapWallProps> {
 									onSelect={value => this.props.changeValue(this.props.wall, 'blocksMovement', (value === 'closed'))}
 								/>
 								<Checkbox
+									label='blocks line-of-sight'
+									checked={this.props.wall.blocksLineOfSight}
+									onChecked={checked => this.props.changeValue(this.props.wall, 'blocksLineOfSight', checked)}
+								/>
+								<Checkbox
 									label='concealed'
 									checked={this.props.wall.isConcealed}
 									onChecked={checked => this.props.changeValue(this.props.wall, 'isConcealed', checked)}

@@ -742,21 +742,29 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 				);
 			case 'card':
 				return (
-					<div>
-						<Dropdown
-							options={Utils.arrayToItems([
-								'tarot deck',
-								'tarot deck (major arcana)',
-								'tarot deck (minor arcana)',
-								'standard deck',
-								'standard deck (with jokers)',
-								'deck of many things',
-								'deck of many things (13 cards)'
-							])}
-							selectedID={this.state.deck}
-							onSelect={deck => this.setDeck(deck)}
-						/>
-						<button onClick={() => this.sendCard()}>draw a card</button>
+					<div className='content-then-icons'>
+						<div className='content'>
+							<Dropdown
+								options={Utils.arrayToItems([
+									'tarot deck',
+									'tarot deck (major arcana)',
+									'tarot deck (minor arcana)',
+									'standard deck',
+									'standard deck (with jokers)',
+									'deck of many things',
+									'deck of many things (13 cards)'
+								])}
+								selectedID={this.state.deck}
+								onSelect={deck => this.setDeck(deck)}
+							/>
+						</div>
+						<div className='icons vertical'>
+							<SendOutlined
+								onClick={() => this.sendCard()}
+								title='send image'
+								className={this.canSend() ? '' : 'disabled'}
+							/>
+						</div>
 					</div>
 				);
 		}
