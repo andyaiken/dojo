@@ -811,10 +811,10 @@ export class MapPanel extends React.Component<Props, State> {
 						}
 						const miniSize = Gygax.miniSize(s);
 
-						combatant.path.filter(step => !!step).forEach((step, index) => {
+						combatant.path.filter(step => !!step).forEach(step => {
 							steps.push(
 								<GridSquare
-									key={combatant.id + '-step-' + index}
+									key={step.id}
 									x={step.x}
 									y={step.y}
 									style={this.getStyle(step.x, step.y, miniSize, miniSize, 'circle', dimensions)}

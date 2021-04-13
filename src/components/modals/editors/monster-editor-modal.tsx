@@ -691,7 +691,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					<div>
 						<MonsterStatblockCard monster={this.state.monster} />
 						<hr/>
-						<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
+						<button onClick={() => Matisse.takeScreenshot('statblock')}>export statblock image</button>
 					</div>
 				);
 			case 'guidelines':
@@ -739,7 +739,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				<div className='scrollable padded'>
 					<MonsterStatblockCard monster={this.state.inspectedMonster as Monster} />
 					<hr/>
-					<button onClick={() => Matisse.takeScreenshot('statblock')}>export image</button>
+					<button onClick={() => Matisse.takeScreenshot('statblock')}>export statblock image</button>
 					<button onClick={() => this.applyTheme(this.state.inspectedMonster as Monster)}>apply this monster as a theme</button>
 				</div>
 			);

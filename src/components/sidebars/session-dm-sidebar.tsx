@@ -137,19 +137,19 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 						break;
 					case 'combat':
 						const combat = Comms.data.shared.data as Combat;
-						sharing = 'encounter (' + combat.encounter.name + ')';
+						sharing = 'encounter (' + (combat.encounter.name || 'unnamed encounter') + ')';
 						break;
 					case 'exploration':
 						const exploration = Comms.data.shared.data as Exploration;
-						sharing = 'map (' + exploration.map.name + ')';
+						sharing = 'map (' + (exploration.map.name || 'unnamed map') + ')';
 						break;
 					case 'handout':
 						const handout = Comms.data.shared.data as { title: string, src: string };
-						sharing = 'handout (' + handout.title + ')';
+						sharing = 'handout (' + (handout.title || 'untitled handout') + ')';
 						break;
 					case 'monster':
 						const monster = Comms.data.shared.data as Monster;
-						sharing = 'monster (' + monster.name + ')';
+						sharing = 'monster (' + (monster.name || 'unnamed monster') + ')';
 						break;
 				}
 

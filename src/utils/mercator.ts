@@ -109,6 +109,7 @@ export class Mercator {
 			if (this.canMove(map, cube, dir)) {
 				if (item && combatant && combatant.path) {
 					combatant.path.push({
+						id: Utils.guid(),
 						x: item.x,
 						y: item.y,
 						z: item.z
@@ -582,6 +583,7 @@ export class Mercator {
 		} else {
 			if (combatant.path) {
 				combatant.path.push({
+					id: Utils.guid(),
 					x: item.x,
 					y: item.y,
 					z: item.z

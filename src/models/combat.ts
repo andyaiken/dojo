@@ -77,7 +77,7 @@ export interface Combatant {
 	mountType: 'controlled' | 'independent';
 	darkvision: number;
 	lightSource: { bright: number, dim: number } | null;
-	path: { x: number, y: number, z: number }[] | null;
+	path: { id: string, x: number, y: number, z: number }[] | null;
 }
 
 export interface Notification {

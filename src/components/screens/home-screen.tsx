@@ -39,7 +39,7 @@ export class HomeScreen extends React.Component<Props> {
 							create rewarding encounters
 						</div>
 						<ul>
-							<li>quickly add monsters to your encounter and see its xp value and difficulty level change</li>
+							<li>quickly add monsters to your encounter and see its difficulty level change</li>
 							<li>add themes to your monsters to make them more unique</li>
 							<li>split your encounter into multiple waves</li>
 							<li>set specific victory conditions</li>
