@@ -370,18 +370,52 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 
 		if ((this.props.mode === 'thumbnail') || (this.props.mode === 'interactive-player')) {
-			// Invert the fog
-			const visible: { x: number, y: number }[] = [];
+			// Limit to non-fog squares
+			const visibleSquares: { x: number, y: number }[] = [];
 			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 					if (!this.props.fog.find(f => (f.x === x) && (f.y === y))) {
-						visible.push({ x: x, y: y });
+						visibleSquares.push({ x: x, y: y });
 					}
 				}
 			}
-			if (visible.length > 0) {
-				const xs = visible.map(f => f.x);
-				const ys = visible.map(f => f.y);
+			if (visibleSquares.length > 0) {
+				const xs = visibleSquares.map(f => f.x);
+				const ys = visibleSquares.map(f => f.y);
+				dimensions = {
+					minX: Math.min(...xs),
+					maxX: Math.max(...xs),
+					minY: Math.min(...ys),
+					maxY: Math.max(...ys)
+				};
+			}
+		}
+
+		if (this.props.mode === 'interactive-player') {
+			// Limit to visible squares
+			const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
+			const actors = this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id));
+			const visibleSquares: { x: number, y: number }[] = [];
+			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+					let isVisible = false;
+					actors.forEach(combatant => {
+						const item = this.props.map.items.find(i => i.id === combatant.id);
+						if (item) {
+							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							if (Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
+								isVisible = true;
+							}
+						}
+					});
+					if (isVisible) {
+						visibleSquares.push({ x: x, y: y });
+					}
+				}
+			}
+			if (visibleSquares.length > 0) {
+				const xs = visibleSquares.map(f => f.x);
+				const ys = visibleSquares.map(f => f.y);
 				dimensions = {
 					minX: Math.min(...xs),
 					maxX: Math.max(...xs),
