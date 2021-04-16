@@ -997,12 +997,12 @@ export class MapPanel extends React.Component<Props, State> {
 									depth: size
 								};
 								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-								if (combatant.lightSource && (combatant.lightSource.dim >= dist)) {
+								if (combatant.lightSource && (combatant.lightSource.dim > 0) && (combatant.lightSource.dim >= dist)) {
 									if (level === 'darkness') {
 										level = 'dim light';
 									}
 								}
-								if (combatant.lightSource && (combatant.lightSource.bright >= dist)) {
+								if (combatant.lightSource && (combatant.lightSource.bright > 0) && (combatant.lightSource.bright >= dist)) {
 									level = 'bright light';
 								}
 							}
@@ -1936,7 +1936,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			if (this.props.combatant.note) {
 				info.push(
 					<div key='note' className='section'>
-						<ReactMarkdown source={this.props.combatant.note} />
+						<ReactMarkdown>{this.props.combatant.note}</ReactMarkdown>
 					</div>
 				);
 			}

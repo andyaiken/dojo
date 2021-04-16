@@ -681,7 +681,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			sections.push(
 				<Group key='encounter-notes'>
 					<div className='section subheading'>encounter notes</div>
-					<ReactMarkdown source={this.props.combat.encounter.notes} />
+					<ReactMarkdown>{this.props.combat.encounter.notes}</ReactMarkdown>
 				</Group>
 			);
 		}
@@ -692,7 +692,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				sections.push(
 					<Group key='area-notes'>
 						<div className='section subheading'>map notes</div>
-						<ReactMarkdown source={area.text} />
+						<ReactMarkdown>{area.text}</ReactMarkdown>
 					</Group>
 				);
 			}

@@ -220,7 +220,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 		if (this.props.combatant.note) {
 			notes.push(
 				<Note key='text'>
-					<ReactMarkdown source={this.props.combatant.note} />
+					<ReactMarkdown>{this.props.combatant.note}</ReactMarkdown>
 				</Note>
 			);
 		}

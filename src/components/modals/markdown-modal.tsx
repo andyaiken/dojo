@@ -10,7 +10,7 @@ interface Props {
 export class MarkdownModal extends React.Component<Props> {
 	public render() {
 		try {
-			const content = <ReactMarkdown source={this.props.content} />;
+			const content = <ReactMarkdown>{this.props.content}</ReactMarkdown>;
 
 			return (
 				<div className='scrollable padded'>

@@ -619,7 +619,7 @@ export class Player extends React.Component<Props, State> {
 			case 'text':
 				return (
 					<div className='scrollable'>
-						<ReactMarkdown source={handout.src} />
+						<ReactMarkdown>{handout.src}</ReactMarkdown>
 					</div>
 				);
 			case 'readaloud':

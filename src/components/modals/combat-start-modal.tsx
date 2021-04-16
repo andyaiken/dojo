@@ -327,7 +327,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 				notes = (
 					<div>
 						<div className='subheading'>notes</div>
-						<ReactMarkdown source={this.props.combatSetup.encounter.notes} />
+						<ReactMarkdown>{this.props.combatSetup.encounter.notes}</ReactMarkdown>
 					</div>
 				);
 			}

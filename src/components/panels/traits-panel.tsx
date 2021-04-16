@@ -277,7 +277,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'view':
 					return (
 						<div key={this.props.trait.id} className='section trait'>
-							<ReactMarkdown source={markdown} />
+							<ReactMarkdown>{markdown}</ReactMarkdown>
 						</div>
 					);
 				case 'template':
@@ -285,7 +285,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 						<div key={this.props.trait.id} className='section trait trait-template'>
 							<ToTopOutlined className='trait-template-button' rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
 							<div className='trait-template-details'>
-								<ReactMarkdown source={markdown} />
+								<ReactMarkdown>{markdown}</ReactMarkdown>
 							</div>
 						</div>
 					);
@@ -353,7 +353,7 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 					return (
 						<div key={this.props.trait.id} className='section trait'>
 							<div className={style}>
-								<ReactMarkdown source={markdown} />
+								<ReactMarkdown>{markdown}</ReactMarkdown>
 							</div>
 							{buttonSection}
 						</div>

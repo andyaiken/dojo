@@ -92,7 +92,7 @@ export class MarkdownReference extends React.Component<MarkdownReferenceProps, M
 		try {
 			return (
 				<Spin spinning={this.state.source === null} indicator={<LoadingOutlined style={{ fontSize: 20, marginTop: 100 }} />}>
-					<ReactMarkdown source={this.state.source || ''} />
+					<ReactMarkdown>{this.state.source || ''}</ReactMarkdown>
 				</Spin>
 			);
 		} catch (e) {

@@ -3595,6 +3595,7 @@ export class Main extends React.Component<Props, State> {
 							}}
 							deleteCondition={(combatant, condition) => this.deleteCondition(combatant, condition)}
 							changeValue={(source, field, value) => this.changeValue(source, field, value)}
+							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
 							addCompanion={companion => this.addCompanionToExploration(companion)}
 							mapAdd={(combatant, x, y) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;

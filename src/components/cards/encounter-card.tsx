@@ -132,7 +132,7 @@ export class EncounterCard extends React.Component<Props> {
 							{Napoleon.getEncounterXP(this.props.encounter, null, id => this.props.getMonster(id))}
 							<Conditional display={!!this.props.encounter.notes}>
 								<div className='subheading'>notes</div>
-								<ReactMarkdown source={this.props.encounter.notes} />
+								<ReactMarkdown>{this.props.encounter.notes}</ReactMarkdown>
 							</Conditional>
 						</div>
 						<hr/>

@@ -757,40 +757,48 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				</Expander>
 			);
 
-			let source = 'none';
-			if (combatant.lightSource) {
-				if ((combatant.lightSource.bright === 5) && (combatant.lightSource.dim === 10)) {
-					source = 'candle';
-				}
-				if ((combatant.lightSource.bright === 20) && (combatant.lightSource.dim === 40)) {
-					source = 'torch';
-				}
-				if ((combatant.lightSource.bright === 30) && (combatant.lightSource.dim === 60)) {
-					source = 'lantern';
-				}
-			}
 			changeLight = (
 				<Expander text='light source'>
 					<Selector
-						options={Utils.arrayToItems(['none', 'candle', 'torch', 'lantern'])}
-						selectedID={source}
+						options={Utils.arrayToItems(['none', 'candle', 'torch', 'lantern', 'custom'])}
+						selectedID={combatant.lightSource ? combatant.lightSource.name : 'none'}
 						onSelect={id => {
 							switch (id) {
 								case 'none':
 									this.props.changeValue(combatant, 'lightSource', null);
 									break;
 								case 'candle':
-									this.props.changeValue(combatant, 'lightSource', { bright: 5, dim: 10 });
+									this.props.changeValue(combatant, 'lightSource', { name: 'candle', bright: 5, dim: 10 });
 									break;
 								case 'torch':
-									this.props.changeValue(combatant, 'lightSource', { bright: 20, dim: 40 });
+									this.props.changeValue(combatant, 'lightSource', { name: 'torch', bright: 20, dim: 40 });
 									break;
 								case 'lantern':
-									this.props.changeValue(combatant, 'lightSource', { bright: 30, dim: 60 });
+									this.props.changeValue(combatant, 'lightSource', { name: 'lantern', bright: 30, dim: 60 });
+									break;
+								case 'custom':
+									const bright = combatant.lightSource ? combatant.lightSource.bright : 0;
+									const dim = combatant.lightSource ? combatant.lightSource.dim : 0;
+									this.props.changeValue(combatant, 'lightSource', { name: 'custom', bright: bright, dim: dim });
 									break;
 							}
 						}}
 					/>
+					<Conditional display={(combatant.lightSource !== null) && (combatant.lightSource.name === 'custom')}>
+						<NumberSpin
+							label='bright light radius'
+							value={(combatant.lightSource ? combatant.lightSource.bright : 0) + ' ft'}
+							downEnabled={(combatant.lightSource !== null) && (combatant.lightSource.bright > 0)}
+							upEnabled={(combatant.lightSource !== null) && (combatant.lightSource.bright < combatant.lightSource.dim)}
+							onNudgeValue={delta => this.props.nudgeValue(combatant.lightSource, 'bright', delta * 5)}
+						/>
+						<NumberSpin
+							label='dim light radius'
+							value={(combatant.lightSource ? combatant.lightSource.dim : 0) + ' ft'}
+							downEnabled={(combatant.lightSource !== null) && (combatant.lightSource.dim > combatant.lightSource.bright)}
+							onNudgeValue={delta => this.props.nudgeValue(combatant.lightSource, 'dim', delta * 5)}
+						/>
+					</Conditional>
 				</Expander>
 			);
 

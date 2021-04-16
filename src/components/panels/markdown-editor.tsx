@@ -54,7 +54,7 @@ export class MarkdownEditor extends React.Component<Props, State> {
 					toolbarCommands={[['bold', 'italic'], ['link', 'quote', 'code'], ['unordered-list', 'ordered-list']]}
 					getIcon={icon => this.getIcon(icon)}
 					generateMarkdownPreview={markdown =>
-						Promise.resolve(<ReactMarkdown source={markdown} />)
+						Promise.resolve(<ReactMarkdown>{markdown}</ReactMarkdown>)
 					}
 				/>
 			);

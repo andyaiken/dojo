@@ -491,7 +491,7 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 				);
 			case 'text':
 				return (
-					<ReactMarkdown source={this.props.handout.src} />
+					<ReactMarkdown>{this.props.handout.src}</ReactMarkdown>
 				);
 			case 'readaloud':
 				return (

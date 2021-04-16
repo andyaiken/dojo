@@ -43,6 +43,7 @@ interface Props {
 	editCondition: (combatant: Combatant, condition: Condition) => void;
 	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	changeValue: (source: any, field: string, value: any) => void;
+	nudgeValue: (source: any, field: string, delta: number) => void;
 	addCompanion: (companion: Companion) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
@@ -203,16 +204,17 @@ export class ExplorationScreen extends React.Component<Props, State> {
 		switch (field) {
 			case 'challenge':
 				value = Gygax.nudgeChallenge(source[field], delta);
+				this.props.changeValue(source, field, value);
 				break;
 			case 'size':
 			case 'displaySize':
 				value = Gygax.nudgeSize(source[field], delta);
+				this.props.changeValue(source, field, value);
 				break;
 			default:
-				value = source[field] + delta;
+				this.props.nudgeValue(source, field, delta);
+				break;
 		}
-
-		this.props.changeValue(source, field, value);
 	}
 
 	private fillFog() {

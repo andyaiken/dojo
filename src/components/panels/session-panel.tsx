@@ -286,7 +286,7 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 						} else {
 							content = (
 								<div className='text'>
-									<ReactMarkdown source={text} />
+									<ReactMarkdown>{text}</ReactMarkdown>
 									{language !== '' ? <div className='language'>in {language}</div> : null}
 								</div>
 							);
