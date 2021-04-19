@@ -616,11 +616,7 @@ export class Frankenstein {
 		const savesB = this.parseSavingThrows(theme.savingThrows);
 
 		const combinedSaves = Utils.sort(Utils.distinct(savesA.concat(savesB)));
-		target.savingThrows = combinedSaves.map(save => {
-			const score = target.abilityScores[save.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
-			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(target.challenge);
-			return save.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
-		}).join(', ');
+		target.savingThrows = this.stringifySavingThrows(combinedSaves, target);
 	}
 
 	private static applyThemeSkills(target: Monster, theme: Monster) {
@@ -628,75 +624,35 @@ export class Frankenstein {
 		const skillsB = this.parseSkills(theme.skills);
 
 		const combinedSkills = Utils.sort(Utils.distinct(skillsA.concat(skillsB)));
-		target.skills = combinedSkills.map(skill => {
-			const score = target.abilityScores[skill.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
-			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(target.challenge);
-			return skill.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
-		}).join(', ');
+		target.skills = this.stringifySkills(combinedSkills, target);
 	}
 
 	private static applyThemeSpeeds(target: Monster, theme: Monster) {
 		const speedA = this.parseSpeeds(target.speed);
 		const speedB = this.parseSpeeds(theme.speed);
 
-		const walk = Math.max(speedA.walk, speedB.walk);
-		const burrow = Math.max(speedA.burrow, speedB.burrow);
-		const climb = Math.max(speedA.climb, speedB.climb);
-		const fly = Math.max(speedA.fly, speedB.fly);
-		const swim = Math.max(speedA.swim, speedB.swim);
-		const hover = speedA.hover || speedB.hover;
-
-		const speeds = [];
-		if (walk > 0) {
-			speeds.push(walk + ' ft');
-		}
-		if (burrow > 0) {
-			speeds.push('burrow ' + burrow + ' ft');
-		}
-		if (climb > 0) {
-			speeds.push('climb ' + climb + ' ft');
-		}
-		if (fly > 0) {
-			speeds.push('fly ' + fly + ' ft' + (hover ? ' (hover)' : ''));
-		}
-		if (swim > 0) {
-			speeds.push('swim ' + swim + ' ft');
-		}
-		target.speed = speeds.join(', ');
+		const combinedSpeeds = {
+			walk: Math.max(speedA.walk, speedB.walk),
+			burrow: Math.max(speedA.burrow, speedB.burrow),
+			climb: Math.max(speedA.climb, speedB.climb),
+			fly: Math.max(speedA.fly, speedB.fly),
+			swim: Math.max(speedA.swim, speedB.swim),
+			hover: speedA.hover || speedB.hover
+		};
+		target.speed = this.stringifySpeeds(combinedSpeeds);
 	}
 
 	private static applyThemeSenses(target: Monster, theme: Monster) {
 		const sensesA = this.parseSenses(target.senses);
 		const sensesB = this.parseSenses(theme.senses);
 
-		const blindsight = Math.max(sensesA.blindsight, sensesB.blindsight);
-		const darkvision = Math.max(sensesA.darkvision, sensesB.darkvision);
-		const tremorsense = Math.max(sensesA.tremorsense, sensesB.tremorsense);
-		const truesight = Math.max(sensesA.truesight, sensesB.truesight);
-
-		const senses = [];
-		if (blindsight > 0) {
-			senses.push('blindsight ' + blindsight + ' ft');
-		}
-		if (darkvision > 0) {
-			senses.push('darkvision ' + darkvision + ' ft');
-		}
-		if (tremorsense > 0) {
-			senses.push('tremorsense ' + tremorsense + ' ft');
-		}
-		if (truesight > 0) {
-			senses.push('truesight ' + truesight + ' ft');
-		}
-		target.senses = senses.join(', ');
-
-		if (target.senses !== '') {
-			target.senses += ', ';
-		}
-		let perc = 10 + Gygax.modifierValue(target.abilityScores.wis);
-		if (target.skills.includes('Perception')) {
-			perc += Gygax.proficiency(target.challenge);
-		}
-		target.senses += 'passive Perception ' + perc;
+		const combinedSenses = {
+			blindsight: Math.max(sensesA.blindsight, sensesB.blindsight),
+			darkvision: Math.max(sensesA.darkvision, sensesB.darkvision),
+			tremorsense: Math.max(sensesA.tremorsense, sensesB.tremorsense),
+			truesight: Math.max(sensesA.truesight, sensesB.truesight)
+		};
+		target.senses = this.stringifySenses(combinedSenses, target);
 	}
 
 	private static applyThemeTraits(original: Monster, target: Monster, theme: Monster) {
@@ -868,6 +824,70 @@ export class Frankenstein {
 		];
 
 		return list.filter(item => str.toLowerCase().includes(item.name.toLowerCase()));
+	}
+
+	private static stringifySavingThrows(saves: { name: string, ability: string }[], monster: Monster) {
+		return saves.map(save => {
+			const score = monster.abilityScores[save.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(monster.challenge);
+			return save.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
+		}).join(', ');
+	}
+
+	private static stringifySkills(skills: { name: string, ability: string }[], monster: Monster) {
+		return skills.map(skill => {
+			const score = monster.abilityScores[skill.ability as 'str' | 'dex' | 'con' | 'int' | 'wis' | 'cha'];
+			const bonus = Gygax.modifierValue(score) + Gygax.proficiency(monster.challenge);
+			return skill.name + ' ' + (bonus >= 0 ? '+' : '') + bonus;
+		}).join(', ');
+	}
+
+	private static stringifySpeeds(speeds: { walk: number; burrow: number; climb: number; fly: number; swim: number; hover: boolean }) {
+		const sections = [];
+		if (speeds.walk > 0) {
+			sections.push(speeds.walk + ' ft');
+		}
+		if (speeds.burrow > 0) {
+			sections.push('burrow ' + speeds.burrow + ' ft');
+		}
+		if (speeds.climb > 0) {
+			sections.push('climb ' + speeds.climb + ' ft');
+		}
+		if (speeds.fly > 0) {
+			sections.push('fly ' + speeds.fly + ' ft' + (speeds.hover ? ' (hover)' : ''));
+		}
+		if (speeds.swim > 0) {
+			sections.push('swim ' + speeds.swim + ' ft');
+		}
+		return sections.join(', ');
+	}
+
+	private static stringifySenses(senses: { blindsight: number; darkvision: number; tremorsense: number; truesight: number }, monster: Monster) {
+		const sections = [];
+		if (senses.blindsight > 0) {
+			sections.push('blindsight ' + senses.blindsight + ' ft');
+		}
+		if (senses.darkvision > 0) {
+			sections.push('darkvision ' + senses.darkvision + ' ft');
+		}
+		if (senses.tremorsense > 0) {
+			sections.push('tremorsense ' + senses.tremorsense + ' ft');
+		}
+		if (senses.truesight > 0) {
+			sections.push('truesight ' + senses.truesight + ' ft');
+		}
+		let str = sections.join(', ');
+
+		if (str !== '') {
+			str += ', ';
+		}
+		let perc = 10 + Gygax.modifierValue(monster.abilityScores.wis);
+		if (monster.skills.includes('Perception')) {
+			perc += Gygax.proficiency(monster.challenge);
+		}
+		str += 'passive Perception ' + perc;
+		return str;
+
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1184,5 +1204,47 @@ export class Frankenstein {
 
 		// Otherwise, it's probably a skirmisher
 		return 'skirmisher';
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public static adjustCR(monster: Monster, delta: number) {
+		if (delta === 0) {
+			return monster;
+		}
+
+		const adjusted = JSON.parse(JSON.stringify(monster)) as Monster;
+
+		adjusted.challenge = Math.min(Math.max(Math.floor(monster.challenge + delta), 0), 30);
+		adjusted.hitDice = Math.round(monster.hitDice * adjusted.challenge / monster.challenge);
+
+		const profDelta = Gygax.proficiency(adjusted.challenge) - Gygax.proficiency(monster.challenge);
+		if (profDelta !== 0) {
+			const senses = this.parseSenses(adjusted.senses);
+			adjusted.senses = this.stringifySenses(senses, adjusted);
+
+			const skills = this.parseSkills(adjusted.skills);
+			adjusted.skills = this.stringifySkills(skills, adjusted);
+
+			const saves = this.parseSavingThrows(adjusted.savingThrows);
+			adjusted.savingThrows = this.stringifySavingThrows(saves, adjusted);
+
+			adjusted.traits.forEach(trait => {
+				this.getToHitExpressions(trait).forEach(exp => {
+					const newExp = '+' + (exp.bonus + profDelta) + ' to hit';
+					trait.text = trait.text.replaceAll(exp.expression, newExp);
+				});
+				this.getDiceExpressions(trait).forEach(exp => {
+					const newExp = exp.count + 'd' + exp.sides + ' + ' + (exp.bonus + profDelta);
+					trait.text = trait.text.replaceAll(exp.expression, newExp);
+				});
+				this.getSaveExpressions(trait).forEach(exp => {
+					const newExp = 'DC ' + (exp.dc + profDelta);
+					trait.text = trait.text.replaceAll(exp.expression, newExp);
+				});
+			});
+		}
+
+		return adjusted;
 	}
 }

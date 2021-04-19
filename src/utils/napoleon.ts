@@ -390,6 +390,9 @@ export class Napoleon {
 					monster = Frankenstein.applyTheme(monster, theme);
 				}
 			}
+			if (slot.deltaCR !== 0) {
+				monster = Frankenstein.adjustCR(monster, slot.deltaCR);
+			}
 		}
 
 		return monster;

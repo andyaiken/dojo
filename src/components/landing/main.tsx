@@ -159,6 +159,9 @@ export class Main extends React.Component<Props, State> {
 						if (slot.faction === undefined) {
 							slot.faction = 'foe';
 						}
+						if (slot.deltaCR === undefined) {
+							slot.deltaCR = 0;
+						}
 					});
 
 					encounter.waves.forEach(wave => {
@@ -168,6 +171,9 @@ export class Main extends React.Component<Props, State> {
 							}
 							if (slot.faction === undefined) {
 								slot.faction = 'foe';
+							}
+							if (slot.deltaCR === undefined) {
+								slot.deltaCR = 0;
 							}
 						});
 					});
@@ -3427,6 +3433,7 @@ export class Main extends React.Component<Props, State> {
 									const newSlot = Factory.createEncounterSlot();
 									newSlot.monsterID = slot.monsterID;
 									newSlot.monsterThemeID = slot.monsterThemeID;
+									newSlot.deltaCR = slot.deltaCR;
 									newSlot.roles = [...slot.roles];
 									newSlot.count = count;
 									newSlot.faction = slot.faction;
@@ -3482,7 +3489,7 @@ export class Main extends React.Component<Props, State> {
 									});
 								}
 							}}
-							chooseTheme={(encounter, slot) => {
+							adjustSlot={(encounter, slot) => {
 								const themes: Monster[] = [];
 								this.state.library.forEach(group => {
 									group.monsters.forEach(m => {
@@ -3493,12 +3500,14 @@ export class Main extends React.Component<Props, State> {
 								});
 								this.setState({
 									drawer: {
-										type: 'encounter-slot-theme',
+										type: 'encounter-slot-adjust',
 										monster: this.getMonster(slot.monsterID),
 										themes: themes,
 										selectedThemeID: slot.monsterThemeID,
+										deltaCR: slot.deltaCR,
 										onAccept: () => {
 											slot.monsterThemeID = this.state.drawer.selectedThemeID;
+											slot.deltaCR = this.state.drawer.deltaCR;
 											Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 											this.setState({
 												encounters: this.state.encounters,
@@ -3535,8 +3544,9 @@ export class Main extends React.Component<Props, State> {
 									encounters: this.state.encounters
 								});
 							}}
-							removeTheme={(encounter, slot) => {
+							removeAdjustments={(encounter, slot) => {
 								slot.monsterThemeID = '';
+								slot.deltaCR = 0;
 								Napoleon.sortEncounter(encounter, id => this.getMonster(id));
 								this.setState({
 									encounters: this.state.encounters,
@@ -4034,8 +4044,9 @@ export class Main extends React.Component<Props, State> {
 						</Row>
 					);
 					width = '75%';
+					closable = true;
 					break;
-				case 'encounter-slot-theme':
+				case 'encounter-slot-adjust':
 					content = (
 						<ThemeSelectionModal
 							monster={this.state.drawer.monster}
@@ -4048,9 +4059,17 @@ export class Main extends React.Component<Props, State> {
 									drawer: drawer
 								});
 							}}
+							deltaCR={this.state.drawer.deltaCR}
+							setDeltaCR={deltaCR => {
+								const drawer = this.state.drawer;
+								drawer.deltaCR = deltaCR;
+								this.setState({
+									drawer: drawer
+								});
+							}}
 						/>
 					);
-					header = 'choose a theme';
+					header = 'modify monster';
 					footer = (
 						<Row gutter={10}>
 							<Col span={12}>
@@ -4062,6 +4081,7 @@ export class Main extends React.Component<Props, State> {
 						</Row>
 					);
 					width = '75%';
+					closable = true;
 					break;
 				case 'encounter-slot-template':
 					content = (
@@ -4082,12 +4102,19 @@ export class Main extends React.Component<Props, State> {
 					);
 					header = 'choose a monster';
 					footer = (
-						<button
-							className={!this.state.drawer.monster ? 'disabled' : ''}
-							onClick={() => this.addToEncounterSlot(this.state.drawer.encounter, this.state.drawer.wave, this.state.drawer.slot, this.state.drawer.monster, true)}
-						>
-							add this monster to the encounter
-						</button>
+						<Row gutter={10}>
+							<Col span={12}>
+								<button
+									className={!this.state.drawer.monster ? 'disabled' : ''}
+									onClick={() => this.addToEncounterSlot(this.state.drawer.encounter, this.state.drawer.wave, this.state.drawer.slot, this.state.drawer.monster, true)}
+								>
+									add this monster to the encounter
+								</button>
+							</Col>
+							<Col span={12}>
+								<button onClick={() => this.closeDrawer()}>cancel</button>
+							</Col>
+						</Row>
 					);
 					width = '75%';
 					closable = true;

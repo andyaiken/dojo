@@ -10,6 +10,7 @@ export interface EncounterSlot {
 	id: string;
 	monsterID: string;
 	monsterThemeID: string;
+	deltaCR: number;
 	roles: string[];
 	count: number;
 	faction: 'foe' | 'neutral' | 'ally';

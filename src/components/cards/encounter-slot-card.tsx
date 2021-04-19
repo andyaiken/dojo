@@ -25,10 +25,10 @@ interface Props {
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	chooseMonster: (slot: EncounterSlot) => void;
-	chooseTheme: (slot: EncounterSlot) => void;
+	adjustSlot: (slot: EncounterSlot) => void;
 	chooseRandomTheme: (slot: EncounterSlot) => void;
 	splitTheme: (slot: EncounterSlot) => void;
-	removeTheme: (slot: EncounterSlot) => void;
+	removeAdjustments: (slot: EncounterSlot) => void;
 	deleteEncounterSlot: (slot: EncounterSlot) => void;
 	moveToWave: (slot: EncounterSlot, count: number, wave: EncounterWave | null) => void;
 	showStatblock: (monster: Monster) => void;
@@ -100,20 +100,22 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 		);
 	}
 
-	private getThemeControl() {
+	private getModifyControl() {
 		return (
-			<Expander text='theme options'>
-				<button onClick={() => this.props.chooseTheme(this.props.slot)}>
-					{this.props.slot.monsterThemeID === '' ? 'choose a theme' : 'change theme'}
+			<Expander text={this.props.slot.count === 1 ? 'modify this monster' : 'modify these monsters'}>
+				<button onClick={() => this.props.adjustSlot(this.props.slot)}>
+					modify monster
 				</button>
+				<hr/>
 				<button onClick={() => this.props.chooseRandomTheme(this.props.slot)}>
 					apply a random theme
 				</button>
 				<button className={(this.props.slot.monsterThemeID === '') && (this.props.slot.count > 1) ? '' : 'disabled'} onClick={() => this.props.splitTheme(this.props.slot)}>
 					split into themed versions
 				</button>
-				<button className={this.props.slot.monsterThemeID !== '' ? '' : 'disabled'} onClick={() => this.props.removeTheme(this.props.slot)}>
-					remove theme
+				<hr/>
+				<button className={(this.props.slot.monsterThemeID !== '') || (this.props.slot.deltaCR !== 0) ? '' : 'disabled'} onClick={() => this.props.removeAdjustments(this.props.slot)}>
+					remove adjustments
 				</button>
 			</Expander>
 		);
@@ -125,6 +127,9 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 			if (monster) {
 				if (this.props.theme) {
 					monster = Frankenstein.applyTheme(monster, this.props.theme);
+				}
+				if (this.props.slot.deltaCR) {
+					monster = Frankenstein.adjustCR(monster, this.props.slot.deltaCR)
 				}
 			}
 
@@ -214,7 +219,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 						<button onClick={() => this.props.showStatblock(monster as Monster)}>statblock</button>
 						<button onClick={() => this.props.chooseMonster(this.props.slot)}>choose a different monster</button>
 						{this.getMoveControl()}
-						{this.getThemeControl()}
+						{this.getModifyControl()}
 						<ConfirmButton onConfirm={() => this.props.deleteEncounterSlot(this.props.slot)}>remove from encounter</ConfirmButton>
 					</div>
 				</div>

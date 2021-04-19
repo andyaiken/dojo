@@ -16,9 +16,8 @@ export class EncounterListOptions extends React.Component<Props> {
 		try {
 			return (
 				<div>
-					<Expander text='add a new encounter'>
-						<button onClick={() => this.props.addEncounter(null)}>add a new encounter</button>
-						<hr/>
+					<button onClick={() => this.props.addEncounter(null)}>add a new encounter</button>
+					<Expander text='use an encounter template'>
 						<Note>
 							<div className='section'>
 								these templates give you a good framework for creating an encounter

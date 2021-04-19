@@ -132,6 +132,7 @@ export class Factory {
 			id: Utils.guid(),
 			monsterID: '',
 			monsterThemeID: '',
+			deltaCR: 0,
 			roles: [],
 			count: 1,
 			faction: 'foe'
