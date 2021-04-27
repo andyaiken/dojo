@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/dojo/static/css/main.c5e00b4f.chunk.css",
-    "main.js": "/dojo/static/js/main.62bff093.chunk.js",
+    "main.css": "/dojo/static/css/main.5925e417.chunk.css",
+    "main.js": "/dojo/static/js/main.bd7b59e3.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.34acfcde.js",
-    "static/css/2.d3f083f6.chunk.css": "/dojo/static/css/2.d3f083f6.chunk.css",
-    "static/js/2.eb8f15ff.chunk.js": "/dojo/static/js/2.eb8f15ff.chunk.js",
+    "static/css/2.fc958d2c.chunk.css": "/dojo/static/css/2.fc958d2c.chunk.css",
+    "static/js/2.73c4baa2.chunk.js": "/dojo/static/js/2.73c4baa2.chunk.js",
     "index.html": "/dojo/index.html",
-    "static/js/2.eb8f15ff.chunk.js.LICENSE.txt": "/dojo/static/js/2.eb8f15ff.chunk.js.LICENSE.txt"
+    "static/js/2.73c4baa2.chunk.js.LICENSE.txt": "/dojo/static/js/2.73c4baa2.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.34acfcde.js",
-    "static/css/2.d3f083f6.chunk.css",
-    "static/js/2.eb8f15ff.chunk.js",
-    "static/css/main.c5e00b4f.chunk.css",
-    "static/js/main.62bff093.chunk.js"
+    "static/css/2.fc958d2c.chunk.css",
+    "static/js/2.73c4baa2.chunk.js",
+    "static/css/main.5925e417.chunk.css",
+    "static/js/main.bd7b59e3.chunk.js"
   ]
 }
