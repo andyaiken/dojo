@@ -12,7 +12,7 @@ import { Utils } from '../../utils/utils';
 import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
-import { MapItem } from '../../models/map';
+import { Map, MapItem, MapLightSource } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
@@ -60,6 +60,9 @@ interface Props {
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
+	mapAddLightSource: (map: Map, ls: MapLightSource) => void;
+	mapDeleteLightSource: (map: Map, ls: MapLightSource) => void;
+	mapChangeLightSource: (ls: MapLightSource, name: string, bright: number, dim: number) => void;
 	undoStep: (combatant: Combatant) => void;
 	endTurn: (combatant: Combatant) => void;
 	changeHP: (values: {id: string, hp: number, temp: number, damage: number}[]) => void;
@@ -84,6 +87,7 @@ interface State {
 	addingOverlay: boolean;
 	editFog: boolean;
 	highlightMapSquare: boolean;
+	addingLightSource: boolean;
 	highlightedSquare: { x: number, y: number} | null;
 	playerViewOpen: boolean;
 	middleColumnWidth: number;
@@ -101,6 +105,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			addingOverlay: false,			// True if we're adding a custom overlay to the map
 			editFog: false,
 			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null,
 			playerViewOpen: false,
 			middleColumnWidth: 8
@@ -161,6 +166,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			addingOverlay: false,
 			editFog: false,
 			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null
 		});
 	}
@@ -171,6 +177,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			addingToMapID: null,
 			editFog: false,
 			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null
 		});
 	}
@@ -181,6 +188,7 @@ export class CombatScreen extends React.Component<Props, State> {
 			addingToMapID: null,
 			editFog: !this.state.editFog,
 			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null
 		});
 	}
@@ -191,6 +199,18 @@ export class CombatScreen extends React.Component<Props, State> {
 			addingToMapID: null,
 			editFog: false,
 			highlightMapSquare: !this.state.highlightMapSquare,
+			addingLightSource: false,
+			highlightedSquare: null
+		});
+	}
+
+	private toggleAddingLightSource() {
+		this.setState({
+			addingOverlay: false,
+			addingToMapID: null,
+			editFog: false,
+			highlightMapSquare: false,
+			addingLightSource: !this.state.addingLightSource,
 			highlightedSquare: null
 		});
 	}
@@ -303,13 +323,23 @@ export class CombatScreen extends React.Component<Props, State> {
 			this.props.addOverlay(overlay);
 			this.setState({
 				addingOverlay: false,
-				addingToMapID: null,
 				selectedItemIDs: [overlay.id]
 			});
 		}
 
 		if (this.state.editFog) {
 			this.gridRectangleSelected(x, y, x, y);
+		}
+
+		if (this.state.addingLightSource) {
+			this.setState({
+				addingLightSource: false
+			}, () => {
+				const ls = Factory.createMapLightSource();
+				ls.x = x;
+				ls.y = y;
+				this.props.mapAddLightSource(this.props.combat.map as Map, ls);
+			});
 		}
 	}
 
@@ -328,7 +358,6 @@ export class CombatScreen extends React.Component<Props, State> {
 			this.props.addOverlay(overlay);
 			this.setState({
 				addingOverlay: false,
-				addingToMapID: null,
 				selectedItemIDs: [overlay.id]
 			});
 		}
@@ -998,9 +1027,9 @@ export class CombatScreen extends React.Component<Props, State> {
 						<MapPanel
 							map={this.props.combat.map}
 							mode='interactive-dm'
-							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
+							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog, lightSource: this.state.addingLightSource }}
 							options={this.props.options}
-							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare}
+							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare || this.state.addingLightSource}
 							combatants={this.props.combat.combatants}
 							selectedItemIDs={this.state.selectedItemIDs}
 							selectedAreaID={this.props.combat.mapAreaID}
@@ -1018,6 +1047,8 @@ export class CombatScreen extends React.Component<Props, State> {
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.gridRectangleSelected(x1, y1, x2, y2)}
 							changeLighting={light => this.props.changeValue(this.props.combat, 'lighting', light)}
+							changeLightSource={(ls, name, bright, dim) => this.props.mapChangeLightSource(ls, name, bright, dim)}
+							removeLightSource={ls => this.props.mapDeleteLightSource(this.props.combat.map as Map, ls)}
 							toggleFeature={feature => {
 								switch (feature) {
 									case 'highlight':
@@ -1025,6 +1056,9 @@ export class CombatScreen extends React.Component<Props, State> {
 										break;
 									case 'editFog':
 										this.toggleEditFog();
+										break;
+									case 'lightSource':
+										this.toggleAddingLightSource();
 										break;
 								}
 							}}

@@ -221,7 +221,7 @@ export class CombatMapModal extends React.Component<Props, State> {
 				<MapPanel
 					map={map}
 					mode='setup'
-					features={{ highlight: false, editFog: this.state.editFog }}
+					features={{ highlight: false, editFog: this.state.editFog, lightSource: false }}
 					showGrid={(this.state.addingToMapID !== null) || this.state.editFog}
 					combatants={combatants}
 					selectedAreaID={this.props.areaID}

@@ -72,6 +72,7 @@
 	}
 
 	&.thumbnail,
+	&.edit,
 	&.setup,
 	&.interactive-dm {
 		.fog,
@@ -254,6 +255,44 @@
 
 		.filled {
 			fill: darkgrey;
+		}
+	}
+
+	.map-wall .wall-icon {
+		position: absolute;
+		background-color: white;
+		border: 1px solid $control-border;
+		padding: 2px;
+		left: calc(50% - 10px);
+		top: calc(50% - 10px);
+		width: 20px;
+		height: 20px;
+		font-size: 14px;
+		cursor: pointer;
+
+		&:hover {
+			border-color: $highlight;
+		}
+	}
+
+	.map-light-source {
+		position: absolute;
+
+		.anticon {
+			position: absolute;
+			background-color: white;
+			border: 1px solid $control-border;
+			padding: 2px;
+			left: calc(50% - 10px);
+			top: calc(50% - 10px);
+			width: 20px;
+			height: 20px;
+			font-size: 14px;
+			cursor: pointer;
+
+			&:hover {
+				border-color: $highlight;
+			}
 		}
 	}
 

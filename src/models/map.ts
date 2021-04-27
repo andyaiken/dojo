@@ -6,6 +6,7 @@ export interface Map {
 	items: MapItem[];
 	walls: MapWall[];
 	areas: MapArea[];
+	lightSources: MapLightSource[];
 }
 
 export interface MapDimensions {
@@ -62,6 +63,16 @@ export interface MapArea {
 	width: number;
 	height: number;
 	depth: number;
+}
+
+export interface MapLightSource {
+	id: string;
+	x: number;
+	y: number;
+	z: number;
+	name: string;
+	bright: number;
+	dim: number;
 }
 
 export interface Exploration {

@@ -8,7 +8,7 @@ import { Mercator } from '../../utils/mercator';
 import { Shakespeare } from '../../utils/shakespeare';
 import { Utils } from '../../utils/utils';
 
-import { Map, MapArea, MapItem, MapWall, TERRAIN_TYPES } from '../../models/map';
+import { Map, MapArea, MapItem, MapLightSource, MapWall, TERRAIN_TYPES } from '../../models/map';
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
@@ -53,9 +53,12 @@ interface Props {
 	moveMapArea: (map: Map, area: MapArea, dir: string, step: number) => void;
 	deleteMapArea: (map: Map, area: MapArea) => void;
 	clearMapAreas: (map: Map) => void;
+	addMapLightSource: (map: Map, ls: MapLightSource) => void;
+	deleteMapLightSource: (map: Map, ls: MapLightSource) => void;
+	changeLightSource: (ls: MapLightSource, name: string, bright: number, dim: number) => void;
 	generateRoom: (map: Map) => void;
-	startEncounter: (partyID: string, mapID: string) => void;
-	startExploration: (partyID: string, mapID: string) => void;
+	startEncounter: (partyID: string, mapID: string, lighting: string) => void;
+	startExploration: (partyID: string, mapID: string, lighting: string) => void;
 	changeValue: (source: any, field: string, value: string) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
 	goBack: () => void;
@@ -63,12 +66,14 @@ interface Props {
 
 interface State {
 	sidebarView: string;
+	lighting: string;
 	selectedTileID: string | null;
 	selectedWallID: string | null;
 	selectedAreaID: string | null;
 	addingTile: boolean;
 	addingWall: boolean;
 	addingArea: boolean;
+	addingLightSource: boolean;
 }
 
 export class MapScreen extends React.Component<Props, State> {
@@ -76,18 +81,26 @@ export class MapScreen extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			sidebarView: 'tiles',
+			lighting: 'bright light',
 			selectedTileID: null,
 			selectedWallID: null,
 			selectedAreaID: null,
 			addingTile: false,
 			addingWall: false,
-			addingArea: false
+			addingArea: false,
+			addingLightSource: false
 		};
 	}
 
 	private setSidebarView(view: string) {
 		this.setState({
 			sidebarView: view
+		});
+	}
+
+	private setLighting(lighting: string) {
+		this.setState({
+			lighting: lighting
 		});
 	}
 
@@ -119,7 +132,8 @@ export class MapScreen extends React.Component<Props, State> {
 		this.setState({
 			addingTile: !this.state.addingTile,
 			addingWall: false,
-			addingArea: false
+			addingArea: false,
+			addingLightSource: false
 		});
 	}
 
@@ -127,7 +141,8 @@ export class MapScreen extends React.Component<Props, State> {
 		this.setState({
 			addingTile: false,
 			addingWall: !this.state.addingWall,
-			addingArea: false
+			addingArea: false,
+			addingLightSource: false
 		});
 	}
 
@@ -135,8 +150,31 @@ export class MapScreen extends React.Component<Props, State> {
 		this.setState({
 			addingTile: false,
 			addingWall: false,
-			addingArea: !this.state.addingArea
+			addingArea: !this.state.addingArea,
+			addingLightSource: false
 		});
+	}
+
+	private toggleAddingLightSource() {
+		this.setState({
+			addingTile: false,
+			addingWall: false,
+			addingArea: false,
+			addingLightSource: !this.state.addingLightSource
+		});
+	}
+
+	private gridSquareClicked(x: number, y: number) {
+		if (this.state.addingLightSource) {
+			this.setState({
+				addingLightSource: false
+			}, () => {
+				const ls = Factory.createMapLightSource();
+				ls.x = x;
+				ls.y = y;
+				this.props.addMapLightSource(this.props.map, ls);
+			});
+		}
 	}
 
 	private rectangleSelected(x1: number, y1: number, x2: number, y2: number) {
@@ -150,11 +188,7 @@ export class MapScreen extends React.Component<Props, State> {
 
 			this.setState({
 				selectedTileID: tile.id,
-				selectedWallID: null,
-				selectedAreaID: null,
-				addingTile: false,
-				addingWall: false,
-				addingArea: false
+				addingTile: false
 			}, () => {
 				this.props.addMapTile(this.props.map, tile);
 			});
@@ -168,11 +202,7 @@ export class MapScreen extends React.Component<Props, State> {
 			area.height = y2 - y1 + 1;
 
 			this.setState({
-				selectedTileID: null,
-				selectedWallID: null,
 				selectedAreaID: area.id,
-				addingTile: false,
-				addingWall: false,
 				addingArea: false
 			}, () => {
 				this.props.addMapArea(this.props.map, area);
@@ -195,12 +225,8 @@ export class MapScreen extends React.Component<Props, State> {
 			};
 
 			this.setState({
-				selectedTileID: null,
 				selectedWallID: wall.id,
-				selectedAreaID: null,
-				addingTile: false,
-				addingWall: false,
-				addingArea: false
+				addingWall: false
 			}, () => {
 				this.props.addMapWall(this.props.map, wall);
 			});
@@ -365,8 +391,8 @@ export class MapScreen extends React.Component<Props, State> {
 							map={this.props.map}
 							parties={this.props.parties}
 							cloneMap={(map, name) => this.props.cloneMap(map, name)}
-							startEncounter={(partyID, mapID) => this.props.startEncounter(partyID, mapID)}
-							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}
+							startEncounter={(partyID, mapID) => this.props.startEncounter(partyID, mapID, this.state.lighting)}
+							startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID, this.state.lighting)}
 							deleteMap={map => this.props.deleteMap(map)}
 						/>
 						<hr />
@@ -395,16 +421,30 @@ export class MapScreen extends React.Component<Props, State> {
 						<MapPanel
 							map={this.props.map}
 							mode='edit'
-							paddingSquares={5}
+							features={{ highlight: false, editFog: false, lightSource: this.state.addingLightSource }}
+							paddingSquares={this.state.addingTile ? 5 : 0}
 							selectedItemIDs={selectedIDs}
-							showGrid={this.state.addingTile || this.state.addingArea}
+							showGrid={this.state.addingTile || this.state.addingArea || this.state.addingLightSource}
 							showWallVertices={this.state.addingWall}
 							showAreaNames={true}
+							lighting={this.state.lighting as 'bright light' | 'dim light' | 'darkness'}
 							itemSelected={(id, ctrl) => this.setSelectedTileID(id)}
 							wallSelected={(id, ctrl) => this.setSelectedWallID(id)}
 							areaSelected={id => this.setSelectedAreaID(id)}
+							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.rectangleSelected(x1, y1, x2, y2)}
 							verticesSelected={(x1, y1, x2, y2) => this.verticesSelected(x1, y1, x2, y2)}
+							changeLighting={lighting => this.setLighting(lighting)}
+							changeLightSource={(ls, name, bright, dim) => this.props.changeLightSource(ls, name, bright, dim)}
+							removeLightSource={ls => this.props.deleteMapLightSource(this.props.map, ls)}
+							toggleFeature={feature => {
+								switch (feature) {
+									case 'lightSource':
+										this.toggleAddingLightSource();
+										break;
+								}
+							}}
+							changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
 						/>
 					</Col>
 				</Row>

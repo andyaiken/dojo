@@ -18,7 +18,7 @@ import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/a
 import { Combat, Combatant, CombatSetup, CombatSlotInfo, Notification } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
-import { Exploration, Map, MapArea, MapItem, MapWall } from '../../models/map';
+import { Exploration, Map, MapArea, MapItem, MapLightSource, MapWall } from '../../models/map';
 import { Options, SavedImage, Sidebar } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
@@ -215,6 +215,9 @@ export class Main extends React.Component<Props, State> {
 							area.depth = 1;
 						}
 					});
+					if (m.lightSources === undefined) {
+						m.lightSources = [];
+					}
 				});
 			}
 		} catch (ex) {
@@ -321,6 +324,9 @@ export class Main extends React.Component<Props, State> {
 								area.depth = 1;
 							}
 						});
+						if (combat.map.lightSources === undefined) {
+							combat.map.lightSources = [];
+						}
 					}
 
 					if (combat.fog === undefined) {
@@ -353,6 +359,17 @@ export class Main extends React.Component<Props, State> {
 					}
 					if (ex.map.areas === undefined) {
 						ex.map.areas = [];
+					}
+					ex.map.areas.forEach(area => {
+						if (area.z === undefined) {
+							area.z = 0;
+						}
+						if (area.depth === undefined) {
+							area.depth = 1;
+						}
+					});
+					if (ex.map.lightSources === undefined) {
+						ex.map.lightSources = [];
 					}
 					ex.combatants.forEach(c => {
 						if (c.darkvision === undefined) {
@@ -1665,6 +1682,40 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private addMapLightSource(map: Map, ls: MapLightSource) {
+		map.lightSources.push(ls);
+		Utils.sort(map.lightSources);
+
+		this.setState({
+			maps: this.state.maps,
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private deleteMapLightSource(map: Map, ls: MapLightSource) {
+		const index = map.lightSources.indexOf(ls);
+		map.lightSources.splice(index, 1);
+
+		this.setState({
+			maps: this.state.maps,
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
+	private changeLightSource(ls: MapLightSource, name: string, bright: number, dim: number) {
+		ls.name = name;
+		ls.bright = bright;
+		ls.dim = dim;
+
+		this.setState({
+			maps: this.state.maps,
+			combats: this.state.combats,
+			explorations: this.state.explorations
+		});
+	}
+
 	private generateRoom(map: Map) {
 		Mercator.addRoom(map);
 
@@ -2680,7 +2731,7 @@ export class Main extends React.Component<Props, State> {
 
 	//#region Exploration screen
 
-	private startExploration(map: Map, partyID: string) {
+	private startExploration(map: Map, partyID: string, lighting: 'bright light' | 'dim light' | 'darkness' = 'bright light') {
 		const party = this.state.parties.find(p => p.id === partyID);
 		if (party) {
 			const mapCopy = JSON.parse(JSON.stringify(map));
@@ -2688,6 +2739,7 @@ export class Main extends React.Component<Props, State> {
 			ex.name = (party.name || 'unnamed party') + ' in ' + (map.name || 'unnamed map');
 			ex.map = mapCopy;
 			ex.partyID = partyID;
+			ex.lighting = lighting;
 			party.pcs.filter(pc => pc.active).forEach(pc => {
 				const combatant = Napoleon.convertPCToCombatant(pc);
 				ex.combatants.push(combatant);
@@ -3315,6 +3367,9 @@ export class Main extends React.Component<Props, State> {
 								const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
 								this.mapRemove(ids, combat.combatants, combat.map as Map);
 							}}
+							mapAddLightSource={(map, ls) => this.addMapLightSource(map, ls)}
+							mapDeleteLightSource={(map, ls) => this.deleteMapLightSource(map, ls)}
+							mapChangeLightSource={(ls, name, bright, dim) => this.changeLightSource(ls, name, bright, dim)}
 							undoStep={combatant => {
 								if (combatant.path && (combatant.path.length > 0)) {
 									const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID) as Combat;
@@ -3619,6 +3674,9 @@ export class Main extends React.Component<Props, State> {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.mapRemove(ids, ex.combatants, ex.map);
 							}}
+							mapAddLightSource={(map, ls) => this.addMapLightSource(map, ls)}
+							mapDeleteLightSource={(map, ls) => this.deleteMapLightSource(map, ls)}
+							mapChangeLightSource={(ls, name, bright, dim) => this.changeLightSource(ls, name, bright, dim)}
 							scatterCombatants={(combatants, areaID) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;
 								this.scatterCombatants(combatants, ex.combatants, ex.map, areaID);
@@ -3675,14 +3733,17 @@ export class Main extends React.Component<Props, State> {
 							moveMapArea={(map, area, dir, step) => this.moveMapTileOrArea(map, area, dir, step)}
 							deleteMapArea={(map, area) => this.deleteMapArea(map, area)}
 							clearMapAreas={map => this.clearMapAreas(map)}
+							addMapLightSource={(map, ls) => this.addMapLightSource(map, ls)}
+							deleteMapLightSource={(map, ls) => this.deleteMapLightSource(map, ls)}
+							changeLightSource={(ls, name, bright, dim) => this.changeLightSource(ls, name, bright, dim)}
 							generateRoom={map => this.generateRoom(map)}
-							startEncounter={(partyID, mapID) => {
+							startEncounter={(partyID, mapID, lighting) => {
 								const map = this.state.maps.find(m => m.id === mapID) as Map;
-								this.createCombat(partyID, null, map);
+								this.createCombat(partyID, null, map, null, [], lighting as 'bright light' | 'dim light' | 'darkness');
 							}}
-							startExploration={(partyID, mapID) => {
+							startExploration={(partyID, mapID, lighting) => {
 								const map = this.state.maps.find(m => m.id === mapID) as Map;
-								this.startExploration(map, partyID);
+								this.startExploration(map, partyID, lighting as 'bright light' | 'dim light' | 'darkness');
 							}}
 							changeValue={(source, field, value) => this.changeValue(source, field, value)}
 							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}

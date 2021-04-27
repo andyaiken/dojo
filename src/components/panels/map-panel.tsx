@@ -1,4 +1,4 @@
-import { BulbOutlined, CloudOutlined, DeleteOutlined, DownSquareTwoTone, EnvironmentOutlined, ExpandOutlined, StarTwoTone, UpSquareTwoTone, ZoomInOutlined } from '@ant-design/icons';
+import { BulbOutlined, CloudOutlined, ColumnHeightOutlined, DeleteOutlined, DownSquareTwoTone, EnvironmentOutlined, ExpandOutlined, StarTwoTone, UpSquareTwoTone, ZoomInOutlined } from '@ant-design/icons';
 import { Popover, Progress } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -11,7 +11,7 @@ import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Map, MapArea, MapDimensions, MapItem, MapWall } from '../../models/map';
+import { Map, MapArea, MapDimensions, MapItem, MapLightSource, MapWall } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
@@ -33,6 +33,7 @@ interface Props {
 	features: {
 		highlight: boolean;
 		editFog: boolean;
+		lightSource: boolean;
 	};
 	options: Options | null;
 	paddingSquares: number;
@@ -60,7 +61,9 @@ interface Props {
 	verticesSelected: (x1: number, y1: number, x2: number, y2: number) => void;
 	areaClicked: (area: MapArea) => void;
 	changeLighting: (light: string) => void;
-	toggleFeature: (feature: 'highlight' | 'editFog') => void;
+	changeLightSource: (ls: MapLightSource, name: string, bright: number, dim: number) => void;
+	removeLightSource: (ls: MapLightSource) => void;
+	toggleFeature: (feature: 'highlight' | 'editFog' | 'lightSource') => void;
 	fillFog: () => void;
 	clearFog: () => void;
 	changeValue: (source: any, field: string, value: any) => void;
@@ -103,7 +106,8 @@ export class MapPanel extends React.Component<Props, State> {
 		mode: 'thumbnail',
 		features: {
 			highlight: false,
-			editFog: false
+			editFog: false,
+			lightSource: false
 		},
 		options: null,
 		paddingSquares: 0,
@@ -132,6 +136,8 @@ export class MapPanel extends React.Component<Props, State> {
 		verticesSelected: null,
 		areaClicked: () => null,
 		changeLighting: null,
+		changeLightSource: null,
+		removeLightSource: null,
 		toggleFeature: null,
 		fillFog: null,
 		clearFog: null,
@@ -370,49 +376,35 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 
 		if ((this.props.mode === 'thumbnail') || (this.props.mode === 'interactive-player')) {
-			// Limit to non-fog squares
-			const visibleSquares: { x: number, y: number }[] = [];
-			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
-				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
-					if (!this.props.fog.find(f => (f.x === x) && (f.y === y))) {
-						visibleSquares.push({ x: x, y: y });
-					}
-				}
-			}
-			if (visibleSquares.length > 0) {
-				const xs = visibleSquares.map(f => f.x);
-				const ys = visibleSquares.map(f => f.y);
-				dimensions = {
-					minX: Math.min(...xs),
-					maxX: Math.max(...xs),
-					minY: Math.min(...ys),
-					maxY: Math.max(...ys)
-				};
-			}
-		}
-
-		if (this.props.mode === 'interactive-player') {
-			// Limit to visible squares
+			// Limit to non-fog squares that are in line-of-sight
+			// Don't worry about lighting
 			const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 			const actors = this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id));
 			const visibleSquares: { x: number, y: number }[] = [];
 			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 					let isVisible = false;
-					actors.forEach(combatant => {
-						const item = this.props.map.items.find(i => i.id === combatant.id);
-						if (item) {
-							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-							if (Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
-								isVisible = true;
-							}
+					if (!this.props.fog.find(f => (f.x === x) && (f.y === y))) {
+						if (this.props.mode === 'interactive-player') {
+							actors.forEach(combatant => {
+								const item = this.props.map.items.find(i => i.id === combatant.id);
+								if (item) {
+									const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+									if (Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
+										isVisible = true;
+									}
+								}
+							});
+						} else {
+							isVisible = true;
 						}
-					});
+					}
 					if (isVisible) {
 						visibleSquares.push({ x: x, y: y });
 					}
 				}
 			}
+
 			if (visibleSquares.length > 0) {
 				const xs = visibleSquares.map(f => f.x);
 				const ys = visibleSquares.map(f => f.y);
@@ -422,6 +414,9 @@ export class MapPanel extends React.Component<Props, State> {
 					minY: Math.min(...ys),
 					maxY: Math.max(...ys)
 				};
+			} else {
+				// Nothing is visible
+				return null;
 			}
 		}
 
@@ -461,7 +456,11 @@ export class MapPanel extends React.Component<Props, State> {
 		const dy = y + offsetY - dim.minY;
 		let left = this.state.size * dx;
 		let top = this.state.size * dy;
-		if ((style === 'vertex') || (style === 'wall')) {
+		if (style === 'vertex') {
+			left -= Math.max(5, wallSize);
+			top -= Math.max(5, wallSize);
+		}
+		if (style === 'wall') {
 			left -= wallSize;
 			top -= wallSize;
 		}
@@ -469,8 +468,8 @@ export class MapPanel extends React.Component<Props, State> {
 		let pixelWidth = this.state.size * width;
 		let pixelHeight = this.state.size * height;
 		if (style === 'vertex') {
-			pixelWidth = wallSize * 2;
-			pixelHeight = wallSize * 2;
+			pixelWidth = Math.max(10, wallSize * 2);
+			pixelHeight = Math.max(10, wallSize * 2);
 		}
 		if (style === 'wall') {
 			pixelWidth += (wallSize * 2);
@@ -563,18 +562,23 @@ export class MapPanel extends React.Component<Props, State> {
 				</Popover>
 			);
 
-			const showLight = (this.props.mode === 'setup') || (this.props.mode === 'interactive-dm');
+			const showLight = (this.props.mode === 'edit') || (this.props.mode === 'interactive-dm');
 			if (showLight) {
 				controls.push(
 					<Popover
 						key='light'
 						content={(
-							<NumberSpin
-								value={this.props.lighting}
-								downEnabled={this.props.lighting !== 'darkness'}
-								upEnabled={this.props.lighting !== 'bright light'}
-								onNudgeValue={delta => this.props.changeLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
-							/>
+							<div>
+								<NumberSpin
+									value={this.props.lighting}
+									downEnabled={this.props.lighting !== 'darkness'}
+									upEnabled={this.props.lighting !== 'bright light'}
+									onNudgeValue={delta => this.props.changeLighting(Gygax.nudgeLighting(this.props.lighting, delta))}
+								/>
+								<button onClick={() => this.props.toggleFeature('lightSource')}>
+									{this.props.features.lightSource ? 'click on the map to add a light source, or click here to cancel' : 'add a light source'}
+								</button>
+							</div>
 						)}
 						placement='bottom'
 						overlayClassName='map-control-tooltip'
@@ -696,7 +700,7 @@ export class MapPanel extends React.Component<Props, State> {
 					mode={this.props.mode}
 					style={this.getStyle(x, y, width, height, 'wall', dimensions)}
 					selectable={this.props.mode === 'edit'}
-					openable={(this.props.mode === 'interactive-dm') && (wall.display !== 'wall')}
+					openable={((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm')) && (wall.display !== 'wall')}
 					selected={this.props.selectedItemIDs.includes(wall.id)}
 					select={(id, ctrl) => this.props.wallSelected(id, ctrl)}
 					changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
@@ -976,33 +980,52 @@ export class MapPanel extends React.Component<Props, State> {
 
 		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 
+		const lightSources: { x: number, y: number, z: number, width: number, height: number, depth: number, bright: number, dim: number }[] = [];
+		this.props.map.lightSources.forEach(ls => {
+			lightSources.push({
+				x: ls.x,
+				y: ls.y,
+				z: ls.z,
+				width: 1,
+				height: 1,
+				depth: 1,
+				bright: ls.bright,
+				dim: ls.dim
+			});
+		});
+		this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
+			const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+			const item = this.props.map.items.find(i => i.id === combatant.id);
+			if (item) {
+				lightSources.push({
+					x: item.x,
+					y: item.y,
+					z: item.z,
+					width: size,
+					height: size,
+					depth: size,
+					bright: combatant.lightSource ? combatant.lightSource.bright : 0,
+					dim: combatant.lightSource ? combatant.lightSource.dim : 0
+				});
+			}
+		});
+
 		for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 			for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+				// Start with the ambient lighting level
 				let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
 
-				if (this.props.lighting !== 'bright light') {
+				if (level !== 'bright light') {
 					// Take light sources into account
-					this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
-						const item = this.props.map.items.find(i => i.id === combatant.id);
-						if (item) {
-							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-							const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+					lightSources.forEach(ls => {
+						const dist = Mercator.calculateDistance(ls, x, y, 0);
+						if ((ls.dim > 0) && (ls.dim >= dist)) {
+							const visible = Mercator.canSee(walls, { x: ls.x + (ls.width / 2), y: ls.y + (ls.height / 2) }, { x: x + 0.5, y: y + 0.5 });
 							if (visible) {
-								const fromCube = {
-									x: item.x,
-									y: item.y,
-									z: item.z,
-									width: size,
-									height: size,
-									depth: size
-								};
-								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-								if (combatant.lightSource && (combatant.lightSource.dim > 0) && (combatant.lightSource.dim >= dist)) {
-									if (level === 'darkness') {
-										level = 'dim light';
-									}
+								if (level === 'darkness') {
+									level = 'dim light';
 								}
-								if (combatant.lightSource && (combatant.lightSource.bright > 0) && (combatant.lightSource.bright >= dist)) {
+								if ((ls.bright > 0) && (ls.bright >= dist)) {
 									level = 'bright light';
 								}
 							}
@@ -1010,24 +1033,24 @@ export class MapPanel extends React.Component<Props, State> {
 					});
 				}
 
-				if (this.props.lighting !== 'bright light') {
+				if (level !== 'bright light') {
 					// Take darkvision into account
 					actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
 							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-							const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
-							if (visible) {
-								const fromCube = {
-									x: item.x,
-									y: item.y,
-									z: item.z,
-									width: size,
-									height: size,
-									depth: size
-								};
-								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-								if (combatant.darkvision >= dist) {
+							const fromCube = {
+								x: item.x,
+								y: item.y,
+								z: item.z,
+								width: size,
+								height: size,
+								depth: size
+							};
+							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
+							if (combatant.darkvision >= dist) {
+								const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+								if (visible) {
 									if (level === 'dim light') {
 										level = 'bright light';
 									} else if (level === 'darkness') {
@@ -1054,6 +1077,24 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 
 		return lighting;
+	}
+
+	private getLightSources(dimensions: MapDimensions) {
+		if ((this.props.mode === 'edit') || (this.props.mode === 'interactive-dm')) {
+			return this.props.map.lightSources.map(ls => {
+				return (
+					<LightSource
+						key={ls.id}
+						lightSource={ls}
+						style={this.getStyle(ls.x, ls.y, 1, 1, 'square', dimensions)}
+						changeLightSource={(l, name, bright, dim) => this.props.changeLightSource(l, name, bright, dim)}
+						removeLightSource={l => this.props.removeLightSource(l)}
+					/>
+				);
+			});
+		}
+
+		return null;
 	}
 
 	private getVisibility(dimensions: MapDimensions) {
@@ -1178,8 +1219,12 @@ export class MapPanel extends React.Component<Props, State> {
 		try {
 			const mapDimensions = this.getMapDimensions();
 			if (!mapDimensions) {
+				let message = 'blank map';
+				if ((this.props.map.items.length > 0) || (this.props.map.walls.length > 0)) {
+					message = 'nothing is visible';
+				}
 				return (
-					<div className='section centered'>(blank map)</div>
+					<div className='section centered'>{message}</div>
 				);
 			}
 
@@ -1212,6 +1257,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getTokens(mapDimensions)}
 						{this.getFog(mapDimensions)}
 						{this.getLighting(mapDimensions)}
+						{this.getLightSources(mapDimensions)}
 						{this.getVisibility(mapDimensions)}
 						{this.getGrid(mapDimensions)}
 						{this.getWallVertices(mapDimensions)}
@@ -1713,19 +1759,9 @@ class Wall extends React.Component<WallProps, WallState> {
 					break;
 			}
 
-			const wall = (
-				<div
-					className={style}
-					style={this.props.style}
-					onClick={e => this.onClick(e)}
-					role='button'
-				>
-					{content}
-				</div>
-			);
-
-			if (this.props.openable) {
-				return (
+			let icon = null;
+			if (this.props.openable && (display !== 'wall')) {
+				icon = (
 					<Popover
 						content={this.getPopoverContent(false)}
 						placement='bottom'
@@ -1741,16 +1777,158 @@ class Wall extends React.Component<WallProps, WallState> {
 							visible={this.state.clicked}
 							onVisibleChange={value => this.handleClickChange(value)}
 						>
-							{wall}
+							<ColumnHeightOutlined className='wall-icon' rotate={Mercator.getWallOrientation(this.props.wall) === 'horizontal' ? 0 : 90} />
 						</Popover>
 					</Popover>
-				)
+				);
 			}
 
-			return wall;
+			return (
+				<div
+					className={style}
+					style={this.props.style}
+					onClick={e => this.onClick(e)}
+					role='button'
+				>
+					{content}
+					{icon}
+				</div>
+			);
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='Wall' error={e} />;
+		}
+	}
+}
+
+interface LightSourceProps {
+	lightSource: MapLightSource;
+	style: MapItemStyle;
+	changeLightSource: (ls: MapLightSource, name: string, bright: number, dim: number) => void;
+	removeLightSource: (ls: MapLightSource) => void;
+}
+
+interface LightSourceState {
+	hovered: boolean;
+	clicked: boolean;
+}
+
+class LightSource extends React.Component<LightSourceProps, LightSourceState> {
+	constructor(props: LightSourceProps) {
+		super(props);
+		this.state = {
+			hovered: false,
+			clicked: false
+		};
+	}
+
+	private handleHoverChange(visible: boolean) {
+		this.setState({
+			hovered: visible,
+			clicked: false
+		});
+	}
+
+	private handleClickChange(visible: boolean) {
+		this.setState({
+			hovered: false,
+			clicked: visible
+		});
+	}
+
+	private getPopoverContent(clicked: boolean) {
+		const name = this.props.lightSource.name === 'custom' ? 'custom light source' : this.props.lightSource.name;
+
+		if (clicked) {
+			return (
+				<div>
+					<div className='section centered'><b>{name}</b></div>
+					<hr/>
+					<div className='section'>
+						<Selector
+							options={Utils.arrayToItems(['candle', 'torch', 'lantern', 'custom'])}
+							selectedID={this.props.lightSource.name}
+							onSelect={id => {
+								switch (id) {
+									case 'candle':
+										this.props.changeLightSource(this.props.lightSource, 'candle', 5, 10);
+										break;
+									case 'torch':
+										this.props.changeLightSource(this.props.lightSource, 'torch', 20, 40);
+										break;
+									case 'lantern':
+										this.props.changeLightSource(this.props.lightSource, 'lantern', 30, 60);
+										break;
+									case 'custom':
+										this.props.changeLightSource(this.props.lightSource, 'custom', this.props.lightSource.bright, this.props.lightSource.dim);
+										break;
+								}
+							}}
+						/>
+						<Conditional display={this.props.lightSource.name === 'custom'}>
+							<NumberSpin
+								label='bright light radius'
+								value={this.props.lightSource.bright + ' ft'}
+								downEnabled={this.props.lightSource.bright > 0}
+								upEnabled={this.props.lightSource.bright < this.props.lightSource.dim}
+								onNudgeValue={delta => this.props.changeLightSource(this.props.lightSource, this.props.lightSource.name, this.props.lightSource.bright + (delta * 5), this.props.lightSource.dim)}
+							/>
+							<NumberSpin
+								label='dim light radius'
+								value={this.props.lightSource.dim + ' ft'}
+								downEnabled={this.props.lightSource.dim > this.props.lightSource.bright}
+								onNudgeValue={delta => this.props.changeLightSource(this.props.lightSource, this.props.lightSource.name, this.props.lightSource.bright, this.props.lightSource.dim + (delta * 5))}
+							/>
+						</Conditional>
+						<button onClick={() => this.props.removeLightSource(this.props.lightSource)}>remove from map</button>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<div>
+				<div className='section centered'><b>{name}</b></div>
+			</div>
+		);
+	}
+
+	public render() {
+		try {
+			let icon = null;
+			icon = (
+				<Popover
+					content={this.getPopoverContent(false)}
+					placement='bottom'
+					overlayClassName='map-hover-tooltip'
+					visible={this.state.hovered}
+					onVisibleChange={value => this.handleHoverChange(value)}
+				>
+					<Popover
+						content={this.getPopoverContent(true)}
+						trigger='contextMenu'
+						placement='bottom'
+						overlayClassName='map-click-tooltip'
+						visible={this.state.clicked}
+						onVisibleChange={value => this.handleClickChange(value)}
+					>
+						<BulbOutlined className='light-source-icon' />
+					</Popover>
+				</Popover>
+			);
+
+			return (
+				<div
+					className='map-light-source'
+					style={this.props.style}
+					role='button'
+				>
+					{icon}
+				</div>
+			);
+		} catch (e) {
+			console.error(e);
+			return <RenderError context='LightSource' error={e} />;
 		}
 	}
 }

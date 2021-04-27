@@ -4,7 +4,7 @@ import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../models/adve
 import { Combat, CombatSetup, CombatSlotInfo, CombatSlotMember, Notification } from '../models/combat';
 import { Condition, ConditionDurationCombatant, ConditionDurationRounds, ConditionDurationSaves } from '../models/condition';
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
-import { Exploration, Map, MapArea, MapItem, MapWall } from '../models/map';
+import { Exploration, Map, MapArea, MapItem, MapLightSource, MapWall } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
 import { Award, Companion, Party, PC } from '../models/party';
 
@@ -164,7 +164,8 @@ export class Factory {
 			name: '',
 			items: [],
 			walls: [],
-			areas: []
+			areas: [],
+			lightSources: []
 		};
 	}
 
@@ -213,6 +214,18 @@ export class Factory {
 			height: 1,
 			depth: 1
 		};
+	}
+
+	public static createMapLightSource(): MapLightSource {
+		return {
+			id: Utils.guid(),
+			x: 0,
+			y: 0,
+			z: 0,
+			name: 'torch',
+			bright: 20,
+			dim: 40
+		}
 	}
 
 	public static createAdventure(): Adventure {

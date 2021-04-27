@@ -10,7 +10,7 @@ import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
-import { Exploration, MapItem } from '../../models/map';
+import { Exploration, Map, MapItem, MapLightSource } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, PC } from '../../models/party';
@@ -48,6 +48,9 @@ interface Props {
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
+	mapAddLightSource: (map: Map, ls: MapLightSource) => void;
+	mapDeleteLightSource: (map: Map, ls: MapLightSource) => void;
+	mapChangeLightSource: (ls: MapLightSource, name: string, bright: number, dim: number) => void;
 	scatterCombatants: (combatants: Combatant[], areaID: string | null) => void;
 	rotateMap: () => void;
 	getMonster: (id: string) => Monster | null;
@@ -68,6 +71,7 @@ interface State {
 	addingOverlay: boolean;
 	editFog: boolean;
 	highlightMapSquare: boolean;
+	addingLightSource: boolean;
 	highlightedSquare: { x: number, y: number} | null;
 	selectedItemIDs: string[];
 }
@@ -82,6 +86,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			addingOverlay: false,
 			editFog: false,
 			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null,
 			selectedItemIDs: []
 		};
@@ -120,16 +125,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			addingOverlay: false,
 			editFog: false,
 			highlightMapSquare: false,
-			highlightedSquare: null
-		});
-	}
-
-	private toggleEditFog() {
-		this.setState({
-			addingOverlay: false,
-			editFog: !this.state.editFog,
-			selectedItemIDs: [],
-			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null
 		});
 	}
@@ -140,6 +136,18 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			editFog: false,
 			selectedItemIDs: [],
 			highlightMapSquare: false,
+			addingLightSource: false,
+			highlightedSquare: null
+		});
+	}
+
+	private toggleEditFog() {
+		this.setState({
+			addingOverlay: false,
+			editFog: !this.state.editFog,
+			selectedItemIDs: [],
+			highlightMapSquare: false,
+			addingLightSource: false,
 			highlightedSquare: null
 		});
 	}
@@ -150,6 +158,18 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			editFog: false,
 			selectedItemIDs: [],
 			highlightMapSquare: !this.state.highlightMapSquare,
+			addingLightSource: false,
+			highlightedSquare: null
+		});
+	}
+
+	private toggleAddingLightSource() {
+		this.setState({
+			addingOverlay: false,
+			editFog: false,
+			selectedItemIDs: [],
+			highlightMapSquare: false,
+			addingLightSource: !this.state.addingLightSource,
 			highlightedSquare: null
 		});
 	}
@@ -246,7 +266,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			this.setAddingToMapID(null);
 		}
 
-		if (this.state.addingOverlay) {
+		if (this.state.addingOverlay && !playerView) {
 			const token = Factory.createMapItem();
 			token.type = 'token';
 			token.x = x;
@@ -257,16 +277,27 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			token.opacity = 127;
 			token.style = 'square';
 
-			this.props.addOverlay(token);
 			this.setState({
 				addingOverlay: false,
-				addingToMapID: null,
 				selectedItemIDs: [token.id]
+			}, () => {
+				this.props.addOverlay(token);
 			});
 		}
 
 		if (this.state.editFog && !playerView) {
 			this.gridRectangleSelected(x, y, x, y);
+		}
+
+		if (this.state.addingLightSource && !playerView) {
+			this.setState({
+				addingLightSource: false
+			}, () => {
+				const ls = Factory.createMapLightSource();
+				ls.x = x;
+				ls.y = y;
+				this.props.mapAddLightSource(this.props.exploration.map as Map, ls);
+			});
 		}
 	}
 
@@ -282,11 +313,11 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			overlay.opacity = 127;
 			overlay.style = 'square';
 
-			this.props.addOverlay(overlay);
 			this.setState({
 				addingOverlay: false,
-				addingToMapID: null,
 				selectedItemIDs: [overlay.id]
+			}, () => {
+				this.props.addOverlay(overlay);
 			});
 		}
 
@@ -394,10 +425,10 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			<MapPanel
 				map={this.props.exploration.map}
 				mode={playerView ? 'interactive-player' : 'interactive-dm'}
-				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog }}
+				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog, lightSource: this.state.addingLightSource }}
 				options={this.props.options}
 				combatants={this.props.exploration.combatants}
-				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare) && !playerView}
+				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare || this.state.addingLightSource) && !playerView}
 				selectedItemIDs={this.state.selectedItemIDs}
 				selectedAreaID={this.props.exploration.mapAreaID}
 				fog={this.props.exploration.fog}
@@ -414,6 +445,8 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				toggleHidden={(combatants) => this.props.toggleHidden(combatants)}
 				areaSelected={id => this.props.changeValue(this.props.exploration, 'mapAreaID', id)}
 				changeLighting={light => this.props.changeValue(this.props.exploration, 'lighting', light)}
+				changeLightSource={(ls, name, bright, dim) => this.props.mapChangeLightSource(ls, name, bright, dim)}
+				removeLightSource={ls => this.props.mapDeleteLightSource(this.props.exploration.map as Map, ls)}
 				toggleFeature={feature => {
 					switch (feature) {
 						case 'highlight':
@@ -421,6 +454,9 @@ export class ExplorationScreen extends React.Component<Props, State> {
 							break;
 						case 'editFog':
 							this.toggleEditFog();
+							break;
+						case 'lightSource':
+							this.toggleAddingLightSource();
 							break;
 					}
 				}}
