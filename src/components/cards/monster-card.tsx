@@ -1,8 +1,6 @@
 import { Tag } from 'antd';
 import React from 'react';
 
-import { Gygax } from '../../utils/gygax';
-
 import { Encounter } from '../../models/encounter';
 import { Monster, MonsterGroup } from '../../models/monster';
 
@@ -35,8 +33,6 @@ export class MonsterCard extends React.Component<Props> {
 		if (this.props.monster.alignment) {
 			tags.push(<Tag key='tag-align'>{this.props.monster.alignment.toLowerCase()}</Tag>);
 		}
-
-		tags.push(<Tag key='tag-cr'>cr {Gygax.challenge(this.props.monster.challenge)}</Tag>);
 
 		return tags;
 	}

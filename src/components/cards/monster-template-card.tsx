@@ -18,6 +18,13 @@ interface Props {
 }
 
 export class MonsterTemplateCard extends React.Component<Props> {
+	private getCR() {
+		const cr = Gygax.challenge(this.props.monster.challenge);
+		const xp = Gygax.experience(this.props.monster.challenge) + ' xp';
+		const prof = 'proficiency bonus +' + Gygax.proficiency(this.props.monster.challenge);
+		return cr + ' (' + xp + '; ' + prof + ')';
+	}
+
 	private getAC() {
 		let value = this.props.monster.ac.toString();
 		if (this.props.monster.acInfo) {
@@ -57,8 +64,6 @@ export class MonsterTemplateCard extends React.Component<Props> {
 			tags.push(<Tag key='tag-align'>{this.props.monster.alignment.toLowerCase()}</Tag>);
 		}
 
-		tags.push(<Tag key='tag-cr'>cr {Gygax.challenge(this.props.monster.challenge)}</Tag>);
-
 		return tags;
 	}
 
@@ -75,6 +80,7 @@ export class MonsterTemplateCard extends React.Component<Props> {
 						{this.statSection('speed', this.props.monster.speed)}
 						{this.statSection('senses', this.props.monster.senses)}
 						{this.statSection('languages', this.props.monster.languages)}
+						{this.statSection('challenge rating', this.getCR())}
 					</div>
 				);
 			case 'abilities':

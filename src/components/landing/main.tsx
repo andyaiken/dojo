@@ -2233,6 +2233,8 @@ export class Main extends React.Component<Props, State> {
 				const pc = party.pcs.find(item => item.id === pcID);
 				if (pc) {
 					combat.combatants.push(Napoleon.convertPCToCombatant(pc));
+					Utils.sort(combat.combatants, [{ field: 'displayName', dir: 'asc' }]);
+
 					this.setState({
 						combats: this.state.combats
 					});
@@ -2245,7 +2247,6 @@ export class Main extends React.Component<Props, State> {
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
 			combat.combatants.push(Napoleon.convertCompanionToCombatant(companion));
-
 			Utils.sort(combat.combatants, [{ field: 'displayName', dir: 'asc' }]);
 
 			this.setState({
@@ -2791,11 +2792,28 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private addCompanionToExploration(companion: Companion) {
+	private addPCToExploration(partyID: string, pcID: string) {
+		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
+		if (ex) {
+			const party = this.state.parties.find(p => p.id === partyID);
+			if (party) {
+				const pc = party.pcs.find(item => item.id === pcID);
+				if (pc) {
+					ex.combatants.push(Napoleon.convertPCToCombatant(pc));
+					Utils.sort(ex.combatants, [{ field: 'displayName', dir: 'asc' }]);
+
+					this.setState({
+						explorations: this.state.explorations
+					});
+				}
+			}
+		}
+	}
+
+	private addCompanionToExploration(companion: Companion | null) {
 		const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID);
 		if (ex) {
 			ex.combatants.push(Napoleon.convertCompanionToCombatant(companion));
-
 			Utils.sort(ex.combatants, [{ field: 'displayName', dir: 'asc' }]);
 
 			this.setState({
@@ -3644,6 +3662,7 @@ export class Main extends React.Component<Props, State> {
 					return (
 						<ExplorationScreen
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
+							parties={this.state.parties}
 							library={this.state.library}
 							options={this.state.options}
 							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.mapAreaID, ex.fog, ex.lighting, ex.combatants)}
@@ -3661,6 +3680,7 @@ export class Main extends React.Component<Props, State> {
 							deleteCondition={(combatant, condition) => this.deleteCondition(combatant, condition)}
 							changeValue={(source, field, value) => this.changeValue(source, field, value)}
 							nudgeValue={(source, field, delta) => this.nudgeValue(source, field, delta)}
+							addPC={(partyID, pcID) => this.addPCToExploration(partyID, pcID)}
 							addCompanion={companion => this.addCompanionToExploration(companion)}
 							mapAdd={(combatant, x, y) => {
 								const ex = this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration;

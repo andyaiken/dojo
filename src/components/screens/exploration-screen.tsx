@@ -13,7 +13,7 @@ import { Condition } from '../../models/condition';
 import { Exploration, Map, MapItem, MapLightSource } from '../../models/map';
 import { Options } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
-import { Companion, PC } from '../../models/party';
+import { Companion, Party, PC } from '../../models/party';
 
 import { RenderError } from '../error';
 import { MapItemCard } from '../cards/map-item-card';
@@ -22,6 +22,7 @@ import { PCStatblockCard } from '../cards/pc-statblock-card';
 import { Checkbox } from '../controls/checkbox';
 import { Conditional } from '../controls/conditional';
 import { ConfirmButton } from '../controls/confirm-button';
+import { Expander } from '../controls/expander';
 import { Group } from '../controls/group';
 import { Note } from '../controls/note';
 import { CombatControlsPanel } from '../panels/combat-controls-panel';
@@ -33,6 +34,7 @@ import { TraitsPanel } from '../panels/traits-panel';
 
 interface Props {
 	exploration: Exploration;
+	parties: Party[];
 	library: MonsterGroup[];
 	options: Options;
 	startCombat: (exploration: Exploration) => void;
@@ -44,7 +46,8 @@ interface Props {
 	deleteCondition: (combatant: Combatant, condition: Condition) => void;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
-	addCompanion: (companion: Companion) => void;
+	addPC: (partyID: string, pcID: string) => void;
+	addCompanion: (companion: Companion | null) => void;
 	mapAdd: (combatant: Combatant, x: number, y: number) => void;
 	mapMove: (ids: string[], dir: string, step: number) => void;
 	mapRemove: (ids: string[]) => void;
@@ -358,6 +361,32 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			return null;
 		}
 
+		const parties: Party[] = [];
+		this.props.exploration.combatants.filter(c => c.type === 'pc').forEach(pc => {
+			const party = this.props.parties.find(p => p.pcs.find(item => item.id === pc.id));
+			if (party && !parties.includes(party)) {
+				parties.push(party);
+			}
+		});
+		const pcOptions: JSX.Element[] = [];
+		parties.forEach(party => {
+			party.pcs.forEach(pc => {
+				if (!this.props.exploration.combatants.find(c => c.id === pc.id)) {
+					pcOptions.push(
+						<button key={pc.id} onClick={() => this.props.addPC(party.id, pc.id)}>{pc.name} ({party.name})</button>
+					);
+				}
+			});
+		});
+		let addPCs = null;
+		if (pcOptions.length > 0) {
+			addPCs = (
+				<Expander text='add pcs'>
+					{pcOptions}
+				</Expander>
+			);
+		}
+
 		let session = null;
 		if (CommsDM.getState() === 'started') {
 			session = (
@@ -399,6 +428,19 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				>
 					end exploration and start combat
 				</ConfirmButton>
+				<div className='heading'>explorers</div>
+				{addPCs}
+				<button
+					onClick={() => {
+						this.setState({
+							showOptions: false
+						}, () => {
+							this.props.addCompanion(null);
+						});
+					}}
+				>
+					add a companion
+				</button>
 				<div className='heading'>map</div>
 				<Checkbox label='add token / overlay' checked={this.state.addingOverlay} onChecked={() => this.toggleAddingOverlay()} />
 				<Conditional display={this.state.addingOverlay}>
