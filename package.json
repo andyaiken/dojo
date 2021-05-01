@@ -1,12 +1,12 @@
 {
 	"name": "dojo",
-	"version": "15.16.0",
+	"version": "15.17.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
 	"dependencies": {
 		"@ant-design/icons": "^4.6.2",
-		"antd": "^4.15.3",
+		"antd": "^4.15.4",
 		"html2canvas": "^1.0.0-rc.7",
 		"lz-string": "^1.4.4",
 		"mousetrap": "^1.6.5",
@@ -15,7 +15,7 @@
 		"react-debounce-input": "^3.2.3",
 		"react-dom": "^17.0.2",
 		"react-markdown": "^6.0.1",
-		"react-mde": "^11.1.0",
+		"react-mde": "^11.4.0",
 		"react-movable": "^2.5.3",
 		"react-router-dom": "^5.2.0",
 		"recursive-diff": "^1.0.8",

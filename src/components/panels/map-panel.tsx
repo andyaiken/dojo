@@ -166,6 +166,9 @@ export class MapPanel extends React.Component<Props, State> {
 		};
 	}
 
+	private walls: string = '';
+	private cache: { a: string, b: string, visible: boolean }[] = [];
+
 	private gridSquareMouseDown(x: number, y: number) {
 		this.setState({
 			selectionStartSquare: {
@@ -390,7 +393,7 @@ export class MapPanel extends React.Component<Props, State> {
 								const item = this.props.map.items.find(i => i.id === combatant.id);
 								if (item) {
 									const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-									if (Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
+									if (this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
 										isVisible = true;
 									}
 								}
@@ -513,6 +516,27 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 
 		return activeToken;
+	}
+
+	private canSee(
+		walls: { horizontal: { start: number, end: number, y: number }[], vertical: { start: number, end: number, x: number }[] },
+		a: { x: number, y: number },
+		b: { x: number, y: number }
+	) {
+		const wallsStr = JSON.stringify(walls);
+		if (wallsStr !== this.walls) {
+			this.walls = wallsStr;
+			this.cache = [];
+		}
+		const aStr = JSON.stringify(a);
+		const bStr = JSON.stringify(b);
+		const known = this.cache.find(i => (i.a === aStr) && (i.b === bStr));
+		if (known) {
+			return known.visible;
+		}
+		const visible = Mercator.canSee(walls, a, b);
+		this.cache.push({ a: aStr, b: bStr, visible: visible });
+		return visible;
 	}
 
 	//#region Rendering
@@ -1014,52 +1038,55 @@ export class MapPanel extends React.Component<Props, State> {
 			for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 				// Start with the ambient lighting level
 				let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
-
-				if (level !== 'bright light') {
-					// Take light sources into account
-					lightSources.forEach(ls => {
-						const dist = Mercator.calculateDistance(ls, x, y, 0);
-						if ((ls.dim > 0) && (ls.dim >= dist)) {
-							const visible = Mercator.canSee(walls, { x: ls.x + (ls.width / 2), y: ls.y + (ls.height / 2) }, { x: x + 0.5, y: y + 0.5 });
-							if (visible) {
-								if (level === 'darkness') {
-									level = 'dim light';
-								}
-								if ((ls.bright > 0) && (ls.bright >= dist)) {
-									level = 'bright light';
-								}
-							}
-						}
-					});
-				}
-
-				if (level !== 'bright light') {
-					// Take darkvision into account
-					actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
-						const item = this.props.map.items.find(i => i.id === combatant.id);
-						if (item) {
-							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-							const fromCube = {
-								x: item.x,
-								y: item.y,
-								z: item.z,
-								width: size,
-								height: size,
-								depth: size
-							};
-							const dist = Mercator.calculateDistance(fromCube, x, y, 0);
-							if (combatant.darkvision >= dist) {
-								const visible = Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+				if (this.props.fog.find(f => (f.x === x) && (f.y === y))) {
+					level = 'darkness';
+				} else {
+					if (level !== 'bright light') {
+						// Take light sources into account
+						lightSources.forEach(ls => {
+							const dist = Mercator.calculateDistance(ls, x, y, 0);
+							if ((ls.dim > 0) && (ls.dim >= dist)) {
+								const visible = this.canSee(walls, { x: ls.x + (ls.width / 2), y: ls.y + (ls.height / 2) }, { x: x + 0.5, y: y + 0.5 });
 								if (visible) {
-									if (level === 'dim light') {
-										level = 'bright light';
-									} else if (level === 'darkness') {
+									if (level === 'darkness') {
 										level = 'dim light';
+									}
+									if ((ls.bright > 0) && (ls.bright >= dist)) {
+										level = 'bright light';
 									}
 								}
 							}
-						}
-					});
+						});
+					}
+
+					if (level !== 'bright light') {
+						// Take darkvision into account
+						actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
+							const item = this.props.map.items.find(i => i.id === combatant.id);
+							if (item) {
+								const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+								const fromCube = {
+									x: item.x,
+									y: item.y,
+									z: item.z,
+									width: size,
+									height: size,
+									depth: size
+								};
+								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
+								if (combatant.darkvision >= dist) {
+									const visible = this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+									if (visible) {
+										if (level === 'dim light') {
+											level = 'bright light';
+										} else if (level === 'darkness') {
+											level = 'dim light';
+										}
+									}
+								}
+							}
+						});
+					}
 				}
 
 				if (level !== 'bright light') {
@@ -1114,14 +1141,19 @@ export class MapPanel extends React.Component<Props, State> {
 		if (actors.length > 0) {
 			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
-					const visible = actors.some(combatant => {
-						const item = this.props.map.items.find(i => i.id === combatant.id);
-						if (item) {
-							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-							return Mercator.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
-						}
-						return false;
-					});
+					let visible = false;
+					if (this.props.fog.find(f => (f.x === x) && (f.y === y))) {
+						visible = false;
+					} else {
+						visible = actors.some(combatant => {
+							const item = this.props.map.items.find(i => i.id === combatant.id);
+							if (item) {
+								const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+								return this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+							}
+							return false;
+						});
+					}
 					if (!visible) {
 						hiddenSquares.push(
 							<GridSquare
