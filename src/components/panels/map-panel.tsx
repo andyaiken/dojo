@@ -166,7 +166,6 @@ export class MapPanel extends React.Component<Props, State> {
 		};
 	}
 
-	private walls: string = '';
 	private cache: { a: string, b: string, visible: boolean }[] = [];
 
 	private gridSquareMouseDown(x: number, y: number) {
@@ -523,17 +522,13 @@ export class MapPanel extends React.Component<Props, State> {
 		a: { x: number, y: number },
 		b: { x: number, y: number }
 	) {
-		const wallsStr = JSON.stringify(walls);
-		if (wallsStr !== this.walls) {
-			this.walls = wallsStr;
-			this.cache = [];
-		}
 		const aStr = JSON.stringify(a);
 		const bStr = JSON.stringify(b);
-		const known = this.cache.find(i => (i.a === aStr) && (i.b === bStr));
+		const known = this.cache.find(i => ((i.a === aStr) && (i.b === bStr)) || ((i.a === bStr) && (i.b === aStr)));
 		if (known) {
 			return known.visible;
 		}
+
 		const visible = Mercator.canSee(walls, a, b);
 		this.cache.push({ a: aStr, b: bStr, visible: visible });
 		return visible;
@@ -990,7 +985,7 @@ export class MapPanel extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getLighting(dimensions: MapDimensions) {
+	private getLighting(dimensions: MapDimensions, walls: { horizontal: { start: number; end: number; y: number; }[]; vertical: { start: number; end: number; x: number; }[]; }) {
 		const lighting: (JSX.Element | null)[] = [];
 
 		const actors: Combatant[] = [];
@@ -1001,8 +996,6 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.mode === 'interactive-player') {
 			this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
 		}
-
-		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 
 		const lightSources: { x: number, y: number, z: number, width: number, height: number, depth: number, bright: number, dim: number }[] = [];
 		this.props.map.lightSources.forEach(ls => {
@@ -1124,7 +1117,7 @@ export class MapPanel extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getVisibility(dimensions: MapDimensions) {
+	private getVisibility(dimensions: MapDimensions, walls: { horizontal: { start: number; end: number; y: number; }[]; vertical: { start: number; end: number; x: number; }[]; }) {
 		const hiddenSquares: (JSX.Element | null)[] = [];
 
 		const actors: Combatant[] = [];
@@ -1135,8 +1128,6 @@ export class MapPanel extends React.Component<Props, State> {
 		if (this.props.mode === 'interactive-player') {
 			this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
 		}
-
-		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 
 		if (actors.length > 0) {
 			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
@@ -1249,6 +1240,9 @@ export class MapPanel extends React.Component<Props, State> {
 
 	public render() {
 		try {
+			const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
+			this.cache = [];
+
 			const mapDimensions = this.getMapDimensions();
 			if (!mapDimensions) {
 				let message = 'blank map';
@@ -1288,9 +1282,9 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getDistances(mapDimensions)}
 						{this.getTokens(mapDimensions)}
 						{this.getFog(mapDimensions)}
-						{this.getLighting(mapDimensions)}
+						{this.getLighting(mapDimensions, walls)}
 						{this.getLightSources(mapDimensions)}
-						{this.getVisibility(mapDimensions)}
+						{this.getVisibility(mapDimensions, walls)}
 						{this.getGrid(mapDimensions)}
 						{this.getWallVertices(mapDimensions)}
 						{this.getFocus(mapDimensions)}
