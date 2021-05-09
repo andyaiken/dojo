@@ -1,4 +1,4 @@
-import { DeleteOutlined, InfoCircleOutlined, MenuOutlined, PlusCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { DeleteOutlined, InfoCircleOutlined, MenuOutlined, PlusCircleOutlined, ThunderboltOutlined, ToTopOutlined } from '@ant-design/icons';
 import { Col, Drawer, Popover, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
@@ -21,6 +21,7 @@ import { MonsterStatblockCard } from '../../cards/monster-statblock-card';
 import { MonsterTemplateCard } from '../../cards/monster-template-card';
 import { Checkbox } from '../../controls/checkbox';
 import { Conditional } from '../../controls/conditional';
+import { ConfirmButton } from '../../controls/confirm-button';
 import { Expander } from '../../controls/expander';
 import { Group } from '../../controls/group';
 import { Note } from '../../controls/note';
@@ -57,6 +58,8 @@ interface State {
 	scratchpadFilter: MonsterFilter;
 	scratchpadList: Monster[];
 	inspectedMonster: Monster | null;
+	browseFeatureType: string | null;
+	browseFeatureText: string;
 }
 
 export class MonsterEditorModal extends React.Component<Props, State> {
@@ -80,7 +83,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			scratchpadAddMode: 'similar',
 			scratchpadFilter: Factory.createMonsterFilter(),
 			scratchpadList: [],
-			inspectedMonster: null
+			inspectedMonster: null,
+			browseFeatureType: null,
+			browseFeatureText: ''
 		};
 	}
 
@@ -97,8 +102,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 		monster.role = Frankenstein.getRole(monster);
 	}
 
-	private addTrait(type: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') {
-		const trait = Frankenstein.addTrait(this.state.monster, type);
+	private addTrait(type: string) {
+		const trait = Frankenstein.addTrait(this.state.monster, type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair');
 		this.recalculateRole();
 		this.setState({
 			monster: this.state.monster,
@@ -672,6 +677,9 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						monster={this.state.monster}
 						selectedTraitID={this.state.selectedTraitID}
 						addTrait={type => this.addTrait(type)}
+						browse={type => this.setState({
+							browseFeatureType: type
+						})}
 						copyTrait={trait => this.copyTrait(trait, null)}
 						moveTrait={(trait, moveBefore) => this.moveTrait(trait, moveBefore)}
 						deleteTrait={trait => this.deleteTrait(trait)}
@@ -700,14 +708,6 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 				);
 			case 'scratchpad':
 				return this.getScratchpad();
-			case 'features':
-				return (
-					<FeatureBrowser
-						monster={this.state.monster}
-						library={this.props.library}
-						importTrait={(trait, sourceMonster) => this.copyTrait(trait, sourceMonster)}
-					/>
-				);
 		}
 
 		return null;
@@ -748,6 +748,55 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					inspectedMonster: null
 				});
 			};
+		}
+
+		if (this.state.browseFeatureType) {
+			const traitIdToMonster: { [id: string]: Monster } = {};
+			let featureData: { id: string, name: string, traits: Trait[] }[] = [];
+			this.props.library.forEach(group => {
+				group.monsters.forEach(monster => {
+					monster.traits
+						.filter(t => t.type === this.state.browseFeatureType)
+						.filter(t => Sherlock.matchTrait(this.state.browseFeatureText, t))
+						.forEach(t => {
+							traitIdToMonster[t.id] = monster;
+							let data = featureData.find(f => f.name === t.name);
+							if (!data) {
+								data = { id: Utils.guid(), name: t.name, traits: [] };
+								featureData.push(data);
+							}
+							data.traits.push(t);
+						});
+				});
+			});
+			featureData = Utils.sort(featureData);
+			drawer.visible = true;
+			drawer.title = this.state.browseFeatureType;
+			drawer.content = (
+				<div className='scrollable padded'>
+					<Textbox text={this.state.browseFeatureText} placeholder='search...' onChange={txt => this.setState({ browseFeatureText: txt })} />
+					<hr/>
+					{
+						featureData.map(fd => (
+							<div key={fd.id} className='trait-container'>
+								<TraitPanel
+									trait={fd.traits[0]}
+									mode='template'
+									copyTrait={t => {
+										const monster = traitIdToMonster[t.id];
+										this.copyTrait(t, monster);
+									}}
+								/>
+							</div>
+						))
+					}
+				</div>
+			);
+			drawer.onClose = () => {
+				this.setState({
+					browseFeatureType: null
+				});
+			}
 		}
 
 		if (this.state.addingToScratchpad) {
@@ -902,7 +951,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					</Col>
 					<Col span={12} className='scrollable sidebar sidebar-right'>
 						<Tabs
-							options={Utils.arrayToItems(['statblock', 'guidelines', 'scratchpad', 'features'])}
+							options={Utils.arrayToItems(['statblock', 'guidelines', 'scratchpad'])}
 							selectedID={this.state.sidebarView}
 							onSelect={option => this.setState({ sidebarView: option })}
 						/>
@@ -1275,7 +1324,8 @@ class CombatTab extends React.Component<CombatTabProps> {
 interface FeaturesTabProps {
 	monster: Monster;
 	selectedTraitID: string | null;
-	addTrait: (traitType: 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair') => void;
+	addTrait: (traitType: string) => void;
+	browse: (traitType: string) => void;
 	copyTrait: (trait: Trait) => void;
 	moveTrait: (trait: Trait, moveBefore: Trait) => void;
 	deleteTrait: (trait: Trait) => void;
@@ -1298,8 +1348,13 @@ class FeaturesTab extends React.Component<FeaturesTabProps> {
 						</div>
 						<div className='icons'>
 							<PlusCircleOutlined
-								title='add'
-								onClick={() => this.props.addTrait(type as 'trait' | 'action' | 'bonus' | 'reaction' | 'legendary' | 'mythic' | 'lair')}
+								title={'new ' + Gygax.traitType(type, false)}
+								onClick={() => this.props.addTrait(type)}
+							/>
+							<ToTopOutlined
+								rotate={270}
+								title='import'
+								onClick={() => this.props.browse(type)}
 							/>
 						</div>
 					</div>
@@ -1316,6 +1371,7 @@ class FeaturesTab extends React.Component<FeaturesTabProps> {
 								trait={value}
 								isSelected={value.id === this.props.selectedTraitID}
 								select={trait => this.props.selectTrait(trait)}
+								delete={trait => this.props.deleteTrait(trait)}
 							/>
 						</div>
 					)}
@@ -1407,6 +1463,7 @@ interface TraitBarProps {
 	trait: Trait;
 	isSelected: boolean;
 	select: (trait: Trait) => void;
+	delete: (trait: Trait) => void;
 }
 
 class TraitBarPanel extends React.Component<TraitBarProps> {
@@ -1420,6 +1477,9 @@ class TraitBarPanel extends React.Component<TraitBarProps> {
 						</div>
 						<div className='icons'>
 							<MenuOutlined className='grabber' title='drag to reorder' data-movable-handle={true} />
+							<ConfirmButton onConfirm={() => this.props.delete(this.props.trait)}>
+								<DeleteOutlined title='delete' />
+							</ConfirmButton>
 						</div>
 					</div>
 				</Group>
@@ -1539,188 +1599,6 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 		} catch (e) {
 			console.error(e);
 			return <RenderError context='GuidelinesPanel' error={e} />;
-		}
-	}
-}
-
-interface FeatureBrowserProps {
-	monster: Monster;
-	library: MonsterGroup[];
-	importTrait: (trait: Trait, sourceMonster: Monster) => void;
-}
-
-interface FeatureBrowserState {
-	mode: string;
-	query: string;
-	randomTraits: { trait: Trait, monster: Monster }[];
-}
-
-class FeatureBrowser extends React.Component<FeatureBrowserProps, FeatureBrowserState> {
-	constructor(props: FeatureBrowserProps) {
-		super(props);
-		this.state = {
-			mode: 'search',
-			query: '',
-			randomTraits: []
-		};
-	}
-
-	private chooseRandomTraits() {
-		const traits: { name: string, trait: Trait, monster: Monster }[] = [];
-		this.props.library.forEach(group => {
-			group.monsters.forEach(m => {
-				if (m.id !== this.props.monster.id) {
-					m.traits.forEach(t => {
-						traits.push({ name: t.name, trait: t, monster: m });
-					});
-				}
-			});
-		});
-
-		const selected = [];
-		while (selected.length < 10) {
-			const index = Utils.randomNumber(traits.length);
-			selected.push(traits[index]);
-			traits.splice(index, 1);
-		}
-		Utils.sort(selected);
-
-		this.setState({
-			randomTraits: selected
-		});
-	}
-
-	private getSearchSection() {
-		const traits: { name: string, trait: Trait, monster: Monster }[] = [];
-		if (this.state.query.length >= 2) {
-			this.props.library.forEach(group => {
-				group.monsters.forEach(m => {
-					if (m.id !== this.props.monster.id) {
-						m.traits.forEach(t => {
-							if (Sherlock.matchTrait(this.state.query, t)) {
-								traits.push({ name: t.name, trait: t, monster: m });
-							}
-						});
-					}
-				});
-			});
-
-			Utils.sort(traits);
-		}
-
-		let featuresSection = null;
-		if (this.state.query !== '') {
-			if (traits.length === 0) {
-				featuresSection = (
-					<Note>
-						<div className='section'>
-							no features found
-						</div>
-					</Note>
-				);
-			} else {
-				const traitsByType: { [id: string]: JSX.Element[] } = {};
-				TRAIT_TYPES.forEach(type => {
-					traitsByType[type] = traits.filter(t => t.trait.type === type).map(trait => (
-						<div className='card monster' key={trait.trait.id}>
-							<TraitPanel trait={trait.trait} mode='template' copyTrait={t => this.props.importTrait(t, trait.monster)} />
-						</div>
-					));
-				});
-
-				featuresSection = TRAIT_TYPES.map(type => {
-					if (traitsByType[type].length > 0) {
-						return (
-							<div key={type}>
-								<div className='subheading'>{Gygax.traitType(type, true)}</div>
-								{traitsByType[type]}
-							</div>
-						);
-					} else {
-						return null;
-					}
-				});
-			}
-		}
-
-		return (
-			<div>
-				<Textbox
-					text={this.state.query}
-					placeholder='search for features...'
-					onChange={text => this.setState({ query: text })}
-				/>
-				{featuresSection ? <hr/> : null}
-				{featuresSection}
-			</div>
-		);
-	}
-
-	private getRandomSection() {
-		const traitsByType: { [id: string]: JSX.Element[] } = {};
-		TRAIT_TYPES.forEach(type => {
-			traitsByType[type] = this.state.randomTraits.filter(t => t.trait.type === type).map(trait => (
-				<div className='card monster' key={trait.trait.id}>
-					<TraitPanel
-						trait={trait.trait}
-						mode='template'
-						copyTrait={t => this.props.importTrait(trait.trait, trait.monster)}
-					/>
-				</div>
-			));
-		});
-
-		const featuresSection = TRAIT_TYPES.map(type => {
-			if (traitsByType[type].length > 0) {
-				return (
-					<div key={type}>
-						<div className='subheading'>{Gygax.traitType(type, true)}</div>
-						{traitsByType[type]}
-					</div>
-				);
-			} else {
-				return null;
-			}
-		});
-
-		return (
-			<div>
-				<button onClick={() => this.chooseRandomTraits()}>select random features</button>
-				{featuresSection}
-			</div>
-		);
-	}
-
-	public render() {
-		try {
-			let content = null;
-			switch (this.state.mode) {
-				case 'search':
-					content = this.getSearchSection();
-					break;
-				case 'random':
-					content = this.getRandomSection();
-					break;
-			}
-
-			return (
-				<div>
-					<Note>
-						<div className='section'>
-							here you can look for features from other monsters in your library, either for inspiration or to copy directly into your monster
-						</div>
-					</Note>
-					<Selector
-						options={['search', 'random'].map(o => ({ id: o, text: o }))}
-						selectedID={this.state.mode}
-						onSelect={mode => this.setState({ mode: mode })}
-					/>
-					{content}
-				</div>
-			);
-		} catch (e) {
-			console.error(e);
-			return <RenderError context='FeatureBrowser' error={e} />;
 		}
 	}
 }

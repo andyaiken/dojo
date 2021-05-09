@@ -66,6 +66,16 @@
 		}
 	}
 
+	.trait-container {
+		margin: 5px 0;
+		border: 1px solid $control-border;
+
+		&:hover {
+			border-color: $highlight;
+			background-color: $highlight01;
+		}
+	}
+
 	.slot {
 		margin: 5px 0;
 		padding: 3px 5px;
