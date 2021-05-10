@@ -73,6 +73,17 @@ export class Frankenstein {
 
 	public static changeValue(target: Monster, field: string, value: any) {
 		let source: any = target;
+
+		if (field === 'name') {
+			// Update the name in all the traits
+			const oldName = target.name.toLowerCase() || 'monster';
+			const newName = value.toLowerCase() || 'monster';
+			target.traits.forEach(t => {
+				t.text = t.text.replaceAll(' ' + oldName, ' ' + newName);
+				t.text = t.text.replaceAll(' ' + Shakespeare.capitalise(oldName), ' ' + newName);
+			});
+		}
+
 		const tokens = field.split('.');
 		tokens.forEach(tkn => {
 			if (tkn === tokens[tokens.length - 1]) {
@@ -897,11 +908,11 @@ export class Frankenstein {
 		const copy = JSON.parse(JSON.stringify(trait)) as Trait;
 		copy.id = Utils.guid();
 
-		if (sourceMonster && sourceMonster.name) {
-			const sourceName = sourceMonster.name.toLowerCase();
-			const targetName = targetMonster.name.toLowerCase() || 'monster';
-			copy.text = copy.text.replaceAll(' ' + sourceName, ' ' + targetName);
-			copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(sourceName), ' ' + targetName);
+		if (sourceMonster) {
+			const oldName = sourceMonster.name.toLowerCase() || 'monster';
+			const newName = targetMonster.name.toLowerCase() || 'monster';
+			copy.text = copy.text.replaceAll(' ' + oldName, ' ' + newName);
+			copy.text = copy.text.replaceAll(' ' + Shakespeare.capitalise(oldName), ' ' + newName);
 		}
 
 		targetMonster.traits.push(copy);

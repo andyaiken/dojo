@@ -781,7 +781,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						<hr/>
 						{
 							featureData.map(fd => (
-								<div key={fd.id} className='trait-container'>
+								<Group key={fd.id}>
 									<TraitPanel
 										trait={fd.traits[0]}
 										mode='template'
@@ -793,7 +793,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 										}}
 										viewMultiple={() => this.setState({ browseFeatureID: fd.id })}
 									/>
-								</div>
+								</Group>
 							))
 						}
 					</Conditional>
@@ -802,7 +802,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						<hr/>
 						{
 							featureData.find(fd => fd.id === this.state.browseFeatureID)?.traits.map(trait => (
-								<div key={trait.id} className='trait-container'>
+								<Group key={trait.id}>
 									<TraitPanel
 										trait={trait}
 										mode='template'
@@ -812,7 +812,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 											this.copyTrait(tr, monster);
 										}}
 									/>
-								</div>
+								</Group>
 							))
 						}
 					</Conditional>

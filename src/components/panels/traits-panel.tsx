@@ -289,16 +289,16 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 					);
 				case 'template':
 					return (
-						<div key={this.props.trait.id} className='section trait trait-template'>
-							<div className='trait-template-button'>
+						<div key={this.props.trait.id} className='content-then-icons'>
+							<div className='content'>
+								<ReactMarkdown>{markdown}</ReactMarkdown>
+								<div className='section'>from {this.props.source ? this.props.source.name || 'unnamed monster' : ''}</div>
+							</div>
+							<div className='icons'>
 								<ToTopOutlined rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
 								<Conditional display={this.props.showMultiple}>
 									<CopyOutlined title='see all' onClick={() => this.props.viewMultiple(this.props.trait)} />
 								</Conditional>
-							</div>
-							<div className='trait-template-details'>
-								<ReactMarkdown>{markdown}</ReactMarkdown>
-								<div className='section'>from {this.props.source ? this.props.source.name || 'unnamed monster' : ''}</div>
 							</div>
 						</div>
 					);
