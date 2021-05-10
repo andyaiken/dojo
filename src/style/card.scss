@@ -192,13 +192,16 @@
 
 	.trait-template-button {
 		flex: 0 0 auto;
-		margin: 2px 5px;
-		padding: 3px;
-		cursor: pointer;
-		font-size: 18px;
 		
-		&:hover {
-			background-color: $highlight02;
+		.anticon {
+			margin: 2px 5px;
+			padding: 3px;
+			cursor: pointer;
+			font-size: 18px;
+
+			&:hover {
+				background-color: $highlight02;
+			}
 		}
 	}
 }

@@ -1,4 +1,4 @@
-import { StarFilled, StarOutlined, ToTopOutlined } from '@ant-design/icons';
+import { CopyOutlined, StarFilled, StarOutlined, ToTopOutlined } from '@ant-design/icons';
 import { Popover } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
@@ -15,6 +15,7 @@ import { Dropdown } from '../controls/dropdown';
 import { Note } from '../controls/note';
 import { Textbox } from '../controls/textbox';
 import { MarkdownEditor } from './markdown-editor';
+import { Conditional } from '../controls/conditional';
 
 interface TraitsPanelProps {
 	combatant: Monster | (Combatant & Monster);
@@ -227,9 +228,12 @@ interface TraitPanelProps {
 	trait: Trait;
 	mode: 'view' | 'template' | 'combat' | 'legendary' | 'lair';
 	showRollButtons: boolean;
+	showMultiple: boolean;
+	source: Monster | null;
 	copyTrait: (trait: Trait) => void;
 	useTrait: (trait: Trait) => void;
 	rechargeTrait: (trait: Trait) => void;
+	viewMultiple: (trait: Trait) => void;
 	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
 }
 
@@ -237,9 +241,12 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 	public static defaultProps = {
 		mode: 'view',
 		showRollButtons: false,
+		showMultiple: false,
+		source: null,
 		copyTrait: null,
 		useTrait: null,
 		rechargeTrait: null,
+		viewMultiple: null,
 		onRollDice: null
 	};
 
@@ -283,9 +290,15 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'template':
 					return (
 						<div key={this.props.trait.id} className='section trait trait-template'>
-							<ToTopOutlined className='trait-template-button' rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
+							<div className='trait-template-button'>
+								<ToTopOutlined rotate={270} title='import' onClick={() => this.props.copyTrait(this.props.trait)} />
+								<Conditional display={this.props.showMultiple}>
+									<CopyOutlined title='see all' onClick={() => this.props.viewMultiple(this.props.trait)} />
+								</Conditional>
+							</div>
 							<div className='trait-template-details'>
 								<ReactMarkdown>{markdown}</ReactMarkdown>
+								<div className='section'>from {this.props.source ? this.props.source.name || 'unnamed monster' : ''}</div>
 							</div>
 						</div>
 					);

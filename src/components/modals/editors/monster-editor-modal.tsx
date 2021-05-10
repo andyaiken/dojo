@@ -1,4 +1,4 @@
-import { DeleteOutlined, InfoCircleOutlined, MenuOutlined, PlusCircleOutlined, ThunderboltOutlined, ToTopOutlined } from '@ant-design/icons';
+import { CaretLeftOutlined, DeleteOutlined, InfoCircleOutlined, MenuOutlined, PlusCircleOutlined, ThunderboltOutlined, ToTopOutlined } from '@ant-design/icons';
 import { Col, Drawer, Popover, Row } from 'antd';
 import React from 'react';
 import { List } from 'react-movable';
@@ -60,6 +60,7 @@ interface State {
 	inspectedMonster: Monster | null;
 	browseFeatureType: string | null;
 	browseFeatureText: string;
+	browseFeatureID: string | null;
 }
 
 export class MonsterEditorModal extends React.Component<Props, State> {
@@ -85,7 +86,8 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			scratchpadList: [],
 			inspectedMonster: null,
 			browseFeatureType: null,
-			browseFeatureText: ''
+			browseFeatureText: '',
+			browseFeatureID: null
 		};
 	}
 
@@ -762,7 +764,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							traitIdToMonster[t.id] = monster;
 							let data = featureData.find(f => f.name === t.name);
 							if (!data) {
-								data = { id: Utils.guid(), name: t.name, traits: [] };
+								data = { id: t.id, name: t.name, traits: [] };
 								featureData.push(data);
 							}
 							data.traits.push(t);
@@ -771,25 +773,49 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 			});
 			featureData = Utils.sort(featureData);
 			drawer.visible = true;
-			drawer.title = this.state.browseFeatureType;
+			drawer.title = 'import a ' + Gygax.traitType(this.state.browseFeatureType, false);
 			drawer.content = (
 				<div className='scrollable padded'>
-					<Textbox text={this.state.browseFeatureText} placeholder='search...' onChange={txt => this.setState({ browseFeatureText: txt })} />
-					<hr/>
-					{
-						featureData.map(fd => (
-							<div key={fd.id} className='trait-container'>
-								<TraitPanel
-									trait={fd.traits[0]}
-									mode='template'
-									copyTrait={t => {
-										const monster = traitIdToMonster[t.id];
-										this.copyTrait(t, monster);
-									}}
-								/>
-							</div>
-						))
-					}
+					<Conditional display={this.state.browseFeatureID === null}>
+						<Textbox text={this.state.browseFeatureText} placeholder='search...' onChange={txt => this.setState({ browseFeatureText: txt })} />
+						<hr/>
+						{
+							featureData.map(fd => (
+								<div key={fd.id} className='trait-container'>
+									<TraitPanel
+										trait={fd.traits[0]}
+										mode='template'
+										source={traitIdToMonster[fd.traits[0].id]}
+										showMultiple={fd.traits.length > 1}
+										copyTrait={tr => {
+											const monster = traitIdToMonster[tr.id];
+											this.copyTrait(tr, monster);
+										}}
+										viewMultiple={() => this.setState({ browseFeatureID: fd.id })}
+									/>
+								</div>
+							))
+						}
+					</Conditional>
+					<Conditional display={this.state.browseFeatureID !== null}>
+						<button onClick={() => this.setState({ browseFeatureID: null })}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
+						<hr/>
+						{
+							featureData.find(fd => fd.id === this.state.browseFeatureID)?.traits.map(trait => (
+								<div key={trait.id} className='trait-container'>
+									<TraitPanel
+										trait={trait}
+										mode='template'
+										source={traitIdToMonster[trait.id]}
+										copyTrait={tr => {
+											const monster = traitIdToMonster[tr.id];
+											this.copyTrait(tr, monster);
+										}}
+									/>
+								</div>
+							))
+						}
+					</Conditional>
 				</div>
 			);
 			drawer.onClose = () => {
