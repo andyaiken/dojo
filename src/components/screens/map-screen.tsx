@@ -428,8 +428,8 @@ export class MapScreen extends React.Component<Props, State> {
 							showWallVertices={this.state.addingWall}
 							showAreaNames={true}
 							lighting={this.state.lighting as 'bright light' | 'dim light' | 'darkness'}
-							itemSelected={(id, ctrl) => this.setSelectedTileID(id)}
-							wallSelected={(id, ctrl) => this.setSelectedWallID(id)}
+							itemSelected={id => this.setSelectedTileID(id)}
+							wallSelected={id => this.setSelectedWallID(id)}
 							areaSelected={id => this.setSelectedAreaID(id)}
 							gridSquareClicked={(x, y) => this.gridSquareClicked(x, y)}
 							gridRectangleSelected={(x1, y1, x2, y2) => this.rectangleSelected(x1, y1, x2, y2)}

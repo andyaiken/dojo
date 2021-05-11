@@ -674,7 +674,7 @@ export class Napoleon {
 		const leaders: string[] = [];
 		encounter.slots.filter(slot => slot.count === 1).forEach(slot => {
 			const m = getMonster(slot.monsterID);
-			if (!!m) {
+			if (m) {
 				if ((m.role === 'boss') || (m.role === 'controller')) {
 					leaders.push(m.name);
 				}
@@ -683,7 +683,7 @@ export class Napoleon {
 		encounter.waves.forEach(wave => {
 			wave.slots.filter(slot => slot.count === 1).forEach(slot => {
 				const m = getMonster(slot.monsterID);
-				if (!!m) {
+				if (m) {
 					if ((m.role === 'boss') || (m.role === 'controller')) {
 						leaders.push(m.name);
 					}

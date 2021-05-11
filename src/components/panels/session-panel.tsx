@@ -784,7 +784,7 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					key={person.id}
 					label={'to ' + Comms.getCurrentName(person.id)}
 					checked={(this.state.recipients.length === 0) || this.state.recipients.includes(person.id)}
-					onChecked={value => this.toggleRecipient(person.id)}
+					onChecked={() => this.toggleRecipient(person.id)}
 				/>
 			));
 

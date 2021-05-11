@@ -307,7 +307,7 @@ export class MapImportModal extends React.Component<Props, State> {
 							map={this.state.map}
 							mode='edit'
 							showGrid={true}
-							gridSquareClicked={(x, y) => null}
+							gridSquareClicked={() => null}
 						/>
 					</Col>
 				</Row>

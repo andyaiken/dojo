@@ -188,7 +188,7 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 									</div>
 								</div>
 								<div className='icons'>
-									<CopyOutlined title='copy to clipboard' onClick={e => navigator.clipboard.writeText(playerURL)} />
+									<CopyOutlined title='copy to clipboard' onClick={() => navigator.clipboard.writeText(playerURL)} />
 								</div>
 							</div>
 						</Group>

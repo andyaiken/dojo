@@ -845,35 +845,35 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 							<Checkbox
 								label={'size ' + this.state.monster.size}
 								checked={this.state.similarFilter.size}
-								onChecked={value => this.toggleMatch('size')}
+								onChecked={() => this.toggleMatch('size')}
 							/>
 							<Checkbox
 								label={'type ' + this.state.monster.category}
 								checked={this.state.similarFilter.type}
-								onChecked={value => this.toggleMatch('type')}
+								onChecked={() => this.toggleMatch('type')}
 							/>
 							<Checkbox
 								label={this.state.monster.tag ? 'subtype ' + this.state.monster.tag : 'subtype'}
 								checked={this.state.similarFilter.subtype}
 								disabled={!this.state.monster.tag}
-								onChecked={value => this.toggleMatch('subtype')}
+								onChecked={() => this.toggleMatch('subtype')}
 							/>
 							<Checkbox
 								label={this.state.monster.role ? 'role ' + this.state.monster.role : 'role'}
 								checked={this.state.similarFilter.role}
 								disabled={!this.state.monster.role}
-								onChecked={value => this.toggleMatch('role')}
+								onChecked={() => this.toggleMatch('role')}
 							/>
 							<Checkbox
 								label={this.state.monster.alignment ? 'alignment ' + this.state.monster.alignment : 'alignment'}
 								checked={this.state.similarFilter.alignment}
 								disabled={!this.state.monster.alignment}
-								onChecked={value => this.toggleMatch('alignment')}
+								onChecked={() => this.toggleMatch('alignment')}
 							/>
 							<Checkbox
 								label={'challenge rating ' + Gygax.challenge(this.state.monster.challenge)}
 								checked={this.state.similarFilter.challenge}
-								onChecked={value => this.toggleMatch('challenge')}
+								onChecked={() => this.toggleMatch('challenge')}
 							/>
 						</Expander>
 					);

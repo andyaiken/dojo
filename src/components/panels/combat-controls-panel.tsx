@@ -835,7 +835,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					);
 				}
 				let mountType = null;
-				if (!!combatant.mountID) {
+				if (combatant.mountID) {
 					mountType = (
 						<div>
 							<div className='subheading'>mount is:</div>

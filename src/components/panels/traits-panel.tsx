@@ -327,8 +327,8 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 										key={exp.expression}
 										content={(
 											<div>
-												<button onClick={e => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
-												<button onClick={e => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'disadvantage')}>dis</button>
+												<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
+												<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'disadvantage')}>dis</button>
 											</div>
 										)}
 										trigger='contextMenu'

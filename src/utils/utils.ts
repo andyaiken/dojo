@@ -102,7 +102,6 @@ export class Utils {
 			return 0;
 		}
 
-		// tslint:disable-next-line: insecure-random
 		return Math.floor(Math.random() * max);
 	}
 

@@ -697,7 +697,6 @@ export class Gygax {
 	}
 
 	public static getWildSurge() {
-		// tslint:disable: max-line-length
 		const list = [
 			'Roll on this table at the start of each of your turns for the next minute, ignoring this result on subsequent rolls.',
 			'For the next minute, you can see any invisible creature if you have line of sight to it.',
@@ -799,7 +798,6 @@ export class Gygax {
 			'A gentle gust of wind blows outward from you.',
 			'For one minute, an illusory duplicate of yourself appears in an empty space adjacent to you. The duplicate is under your control and shares your initiative, hit points, sorcery points, and spell slots. Any resources spent by the duplicate are also expended by you.'
 		];
-		// tslint:enable: max-line-length
 
 		const index = Utils.randomNumber(list.length);
 		return list[index].toLowerCase();

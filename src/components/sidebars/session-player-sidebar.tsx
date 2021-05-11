@@ -17,7 +17,7 @@ export class SessionPlayerSidebar extends React.Component<Props> {
 					<ConnectionsPanel
 						user='player'
 						people={Comms.data.people}
-						kick={id => null}
+						kick={() => null}
 					/>
 				</div>
 			);

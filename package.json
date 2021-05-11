@@ -1,6 +1,6 @@
 {
 	"name": "dojo",
-	"version": "15.19.0",
+	"version": "15.20.0",
 	"license": "MIT",
 	"repository": "https://github.com/andyaiken/dojo.git",
 	"homepage": "https://andyaiken.github.io/dojo/",
@@ -29,24 +29,64 @@
 		"@types/react-dom": "^17.0.3",
 		"@types/react-router-dom": "^5.1.7",
 		"@types/uuid": "^8.3.0",
+		"eslint": "^7.26.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^4.3.1",
+		"eslint-plugin-react": "^7.23.2",
 		"gh-pages": "^3.1.0",
 		"node-sass": "^5.0.0",
 		"react-scripts": "^4.0.3",
-		"tslint": "^6.1.3",
-		"tslint-microsoft-contrib": "^6.2.0",
-		"tslint-react": "^5.0.0",
 		"typescript": "^4.2.4"
 	},
 	"scripts": {
 		"start": "react-scripts start --display-error-details",
-		"lint": "tslint --config tslint.json --format verbose 'src/**/*.{ts,tsx}'",
+		"lint": "eslint src/**/*.ts src/**/*.tsx",
 		"predeploy": "react-scripts build",
 		"deploy": "gh-pages -d build"
 	},
 	"eslintConfig": {
+		"env": {
+			"browser": true,
+			"es6": true
+		},
 		"extends": [
+			"eslint:recommended",
+			"plugin:@typescript-eslint/eslint-recommended",
+			"plugin:@typescript-eslint/recommended",
+			"plugin:react/recommended",
 			"react-app"
-		]
+		],
+		"globals": {
+			"Atomics": "readonly",
+			"SharedArrayBuffer": "readonly"
+		},
+		"parser": "@typescript-eslint/parser",
+		"parserOptions": {
+			"ecmaFeatures": {
+				"jsx": true
+			},
+			"ecmaVersion": 2018,
+			"sourceType": "module"
+		},
+		"plugins": [
+			"@typescript-eslint",
+			"react"
+		],
+		"root": true,
+		"rules": {
+			"@typescript-eslint/explicit-module-boundary-types": "off",
+			"@typescript-eslint/no-empty-interface": "off",
+			"@typescript-eslint/no-explicit-any": "off",
+			"@typescript-eslint/no-inferrable-types": "off",
+			"no-case-declarations": "off",
+			"react/no-unescaped-entities": "off"
+		},
+		"settings": {
+			"react": {
+				"version": "detect"
+			}
+		}
 	},
 	"browserslist": [
 		">0.2%",

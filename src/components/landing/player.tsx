@@ -505,7 +505,7 @@ export class Player extends React.Component<Props, State> {
 				showDefeated={false}
 				help={null}
 				selectedItemIDs={[characterID]}
-				toggleItemSelection={(id, ctrl) => null}
+				toggleItemSelection={() => null}
 			/>
 		);
 
@@ -524,8 +524,8 @@ export class Player extends React.Component<Props, State> {
 						fog={combat.fog}
 						lighting={combat.lighting}
 						focussedSquare={highlightedSquare}
-						itemSelected={(id, ctrl) => null}
-						itemRemove={id => null}
+						itemSelected={() => null}
+						itemRemove={() => null}
 						gridSquareClicked={(x, y) => {
 							if (this.state.addingToMap) {
 								const list = Napoleon.getMountsAndRiders([characterID], combat.combatants);
@@ -576,7 +576,7 @@ export class Player extends React.Component<Props, State> {
 					fog={exploration.fog}
 					lighting={exploration.lighting}
 					focussedSquare={highlightedSquare}
-					itemSelected={(id, ctrl) => null}
+					itemSelected={() => null}
 					gridSquareClicked={(x, y) => {
 						if (this.state.addingToMap) {
 							const list = Napoleon.getMountsAndRiders([characterID], exploration.combatants);

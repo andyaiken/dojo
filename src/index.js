@@ -8,4 +8,5 @@ import './style/app.scss';
 
 import { App } from './components/app';
 
+// eslint-disable-next-line react/react-in-jsx-scope
 ReactDOM.render(<App />, document.getElementById('root'));

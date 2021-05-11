@@ -33,7 +33,7 @@ export class EncounterInfoPanel extends React.Component<Props> {
 			monsterName = monster.name || 'unnamed monster';
 		}
 
-		if (!!this.props.onMonsterClicked) {
+		if (this.props.onMonsterClicked !== null) {
 			return (
 				<div key={slot.id} className='content-then-info encounter-slot clickable' onClick={e => this.monsterClicked(e, monster)} role='button'>
 					<div className='content'>

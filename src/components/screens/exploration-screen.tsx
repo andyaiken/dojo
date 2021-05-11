@@ -612,7 +612,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				mapAdd={combatant => this.setAddingToMapID(this.state.addingToMapID ? null : combatant.id)}
 				mapMove={(combatants, dir, step) => this.props.mapMove(combatants.map(c => c.id), dir, step)}
 				mapRemove={combatants => this.mapRemove(combatants)}
-				undoStep={combatant => null}
+				undoStep={() => null}
 				// Adv tab
 				removeCombatants={null}
 				addCompanion={companion => this.addCompanion(companion)}

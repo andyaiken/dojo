@@ -395,7 +395,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				showDefeated={false}
 				help={null}
 				selectedItemIDs={this.state.selectedItemIDs}
-				toggleItemSelection={(id, ctrl) => null}
+				toggleItemSelection={() => null}
 			/>
 		);
 
@@ -930,7 +930,6 @@ export class CombatScreen extends React.Component<Props, State> {
 						<button onClick={() => CommsDM.prompt('initiative', null)}>ask for initiative rolls</button>
 					);
 				}
-				// tslint:disable: max-line-length
 				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
@@ -939,12 +938,10 @@ export class CombatScreen extends React.Component<Props, State> {
 						{ask}
 					</Note>
 				);
-				// tslint:enable: max-line-length
 			}
 
 			let initHelp = null;
 			if (!initHolder) {
-				// tslint:disable: max-line-length
 				initHelp = (
 					<Note key='init-help'>
 						<div className='section'>these are the combatants taking part in this encounter; you can select them to see their stat blocks (on the right); you can select multiple combatants by holding the <code>ctrl</code> key</div>
@@ -952,7 +949,6 @@ export class CombatScreen extends React.Component<Props, State> {
 						<div className='section'>this message will go away when combat starts</div>
 					</Note>
 				);
-				// tslint:enable: max-line-length
 			}
 			const initList = (
 				<InitiativeOrder

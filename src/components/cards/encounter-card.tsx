@@ -73,7 +73,7 @@ export class EncounterCard extends React.Component<Props> {
 			str += '(' + slot.faction + ')';
 		}
 
-		return !!str ? str : null;
+		return str || null;
 	}
 
 	public render() {

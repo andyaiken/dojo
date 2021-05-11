@@ -25,9 +25,9 @@ export class PlotPanel extends React.Component<Props> {
 		sceneClassNames: [],
 		selectedSceneID: null,
 		selectSceneID: () => null,
-		showNotes: (scene: Scene) => null,
-		exploreScene: (scene: Scene) => null,
-		addScene: (before: Scene | null, after: Scene | null) => null
+		showNotes: () => null,
+		exploreScene: () => null,
+		addScene: () => null
 	};
 
 	public render() {

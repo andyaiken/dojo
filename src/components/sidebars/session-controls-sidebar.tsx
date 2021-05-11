@@ -105,7 +105,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 							this.props.onUpdated();
 						}}
 						// Map tab
-						mapAdd={combatant => this.props.toggleAddingToMap()}
+						mapAdd={() => this.props.toggleAddingToMap()}
 						mapMove={(combatants, dir, step) => {
 							const ids = combatants.map(c => c.id);
 							Mercator.moveCombatants(ids, dir, allCombatants, map as Map, step);

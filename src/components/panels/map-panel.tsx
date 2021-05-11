@@ -187,7 +187,7 @@ export class MapPanel extends React.Component<Props, State> {
 				}
 			});
 		} else {
-			if (!!this.props.gridSquareEntered) {
+			if (this.props.gridSquareEntered) {
 				this.props.gridSquareEntered(x, y);
 			}
 		}
@@ -202,7 +202,7 @@ export class MapPanel extends React.Component<Props, State> {
 				selectionEndSquare: null
 			}, () => {
 				if ((x1 === x) && (y1 === y)) {
-					if (!!this.props.gridSquareClicked) {
+					if (this.props.gridSquareClicked) {
 						this.props.gridSquareClicked(x, y);
 					}
 				} else {
@@ -2151,7 +2151,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			if (messages.length > 0) {
 				const last = messages[messages.length - 1];
 				info.push(
-					<MessagePanel key='chat' user={this.props.user} message={last} showByline={false} openImage={data => null} />
+					<MessagePanel key='chat' user={this.props.user} message={last} showByline={false} openImage={() => null} />
 				);
 			}
 		}

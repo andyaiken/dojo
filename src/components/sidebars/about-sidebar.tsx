@@ -228,7 +228,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 					);
 					break;
 				case 'ogl':
-					/* tslint:disable:max-line-length */
 					content = (
 						<div>
 							<div className='subheading'>
@@ -256,7 +255,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 							</ol>
 						</div>
 					);
-					/* tslint:enable:max-line-length */
 					break;
 			}
 
