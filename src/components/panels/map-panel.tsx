@@ -971,8 +971,10 @@ export class MapPanel extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getLighting(dimensions: MapDimensions, walls: { horizontal: { start: number; end: number; y: number; }[]; vertical: { start: number; end: number; x: number; }[]; }) {
-		const lighting: (JSX.Element | null)[] = [];
+	private getLighting(dimensions: MapDimensions) {
+		const cells: { x: number, y: number, level: string }[] = [];
+
+		const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 
 		const actors: Combatant[] = [];
 		if (this.props.mode === 'interactive-dm') {
@@ -1040,8 +1042,8 @@ export class MapPanel extends React.Component<Props, State> {
 						lightSources.forEach(ls => {
 							const dist = Mercator.calculateDistance(ls, x, y, 0);
 							if ((ls.dim > 0) && (ls.dim >= dist)) {
-								const visible = this.canSee(walls, { x: ls.x + (ls.width / 2), y: ls.y + (ls.height / 2) }, { x: x + 0.5, y: y + 0.5 });
-								if (visible) {
+								const lit = this.canSee(walls, { x: ls.x + (ls.width / 2), y: ls.y + (ls.height / 2) }, { x: x + 0.5, y: y + 0.5 });
+								if (lit) {
 									if (level === 'darkness') {
 										level = 'dim light';
 									}
@@ -1081,20 +1083,80 @@ export class MapPanel extends React.Component<Props, State> {
 				}
 
 				if (level !== 'bright light') {
-					lighting.push(
-						<GridSquare
-							key={'light ' + x + ',' + y}
-							x={x}
-							y={y}
-							style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
-							mode={level.replaceAll(' ', '-')}
-						/>
-					);
+					cells.push({
+						x: x,
+						y: y,
+						level: level.replaceAll(' ', '-')
+					});
 				}
 			}
 		}
 
-		return lighting;
+		const elements: JSX.Element[] = [];
+
+		['dim-light', 'darkness'].forEach(level => {
+			let matrix: { x: number, y: number }[] = [];
+			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
+				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
+					if (cells.find(cell => (cell.x === x) && (cell.y === y) && (cell.level === level))) {
+						matrix.push({ x: x, y: y });
+					}
+				}
+			}
+
+			while (matrix.length > 0) {
+				const rect = { x1: matrix[0].x, y1: matrix[0].y, x2: matrix[0].x, y2: matrix[0].y };
+
+				// eslint-disable-next-line no-constant-condition
+				while (true) {
+					let extended = false;
+
+					let wideOK = true;
+					for (let x = rect.x1; x <= rect.x2 + 1; ++x) {
+						for (let y = rect.y1; y <= rect.y2; ++y) {
+							if (!matrix.find(pt => (pt.x === x) && (pt.y === y))) {
+								wideOK = false;
+							}
+						}
+					}
+					if (wideOK) {
+						rect.x2 += 1;
+						extended = true;
+					}
+
+					let tallOK = true;
+					for (let x = rect.x1; x <= rect.x2; ++x) {
+						for (let y = rect.y1; y <= rect.y2 + 1; ++y) {
+							if (!matrix.find(pt => (pt.x === x) && (pt.y === y))) {
+								tallOK = false;
+							}
+						}
+					}
+					if (tallOK) {
+						rect.y2 += 1;
+						extended = true;
+					}
+
+					if (!extended) {
+						break;
+					}
+				}
+
+				matrix = matrix.filter(pt => (pt.x < rect.x1) || (pt.x > rect.x2) || (pt.y < rect.y1) || (pt.y > rect.y2));
+
+				elements.push(
+					<GridSquare
+						key={'light ' + rect.x1 + ',' + rect.y1}
+						x={rect.x1}
+						y={rect.y1}
+						style={this.getStyle(rect.x1, rect.y1, (rect.x2 - rect.x1 + 1), (rect.y2 - rect.y1 + 1), 'square', dimensions)}
+						mode={level}
+					/>	
+				);
+			}
+		});
+
+		return elements;
 	}
 
 	private getLightSources(dimensions: MapDimensions) {
@@ -1192,7 +1254,6 @@ export class MapPanel extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const walls = Mercator.getWalls(this.props.map, wall => wall.blocksLineOfSight);
 			this.cache = [];
 
 			const mapDimensions = this.getMapDimensions();
@@ -1233,7 +1294,7 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getSteps(mapDimensions)}
 						{this.getDistances(mapDimensions)}
 						{this.getTokens(mapDimensions)}
-						{this.getLighting(mapDimensions, walls)}
+						{this.getLighting(mapDimensions)}
 						{this.getLightSources(mapDimensions)}
 						{this.getGrid(mapDimensions)}
 						{this.getWallVertices(mapDimensions)}
