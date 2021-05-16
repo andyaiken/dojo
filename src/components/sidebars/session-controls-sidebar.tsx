@@ -128,11 +128,13 @@ export class SessionControlsSidebar extends React.Component<Props> {
 							if (combatant.path && (combatant.path.length > 0)) {
 								const item = (map as Map).items.find(i => i.id === combatant.id);
 								if (item) {
-									const prev = combatant.path[combatant.path.length - 1];
-									item.x = prev.x;
-									item.y = prev.y;
-									item.z = prev.z;
-									combatant.path.splice(combatant.path.length - 1, 1);
+									combatant.path = combatant.path.filter(p => !!p);
+									const prev = combatant.path.pop();
+									if (prev) {
+										item.x = prev.x;
+										item.y = prev.y;
+										item.z = prev.z;
+									}
 									CommsPlayer.sendSharedUpdate();
 									this.props.onUpdated();
 								}

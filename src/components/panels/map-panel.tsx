@@ -824,31 +824,33 @@ export class MapPanel extends React.Component<Props, State> {
 			this.props.map.items.forEach(i => {
 				const combatant = this.props.combatants.find(c => c.id === i.id);
 				if (combatant && combatant.path && (combatant.path.filter(step => !!step).length > 0)) {
-					try {
-						let s = combatant.displaySize;
-						if (combatant.mountID) {
-							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-							if (mount) {
-								s = mount.displaySize;
+					if (!(this.props.mode === 'interactive-player') && (!combatant.showOnMap)) {
+						try {
+							let s = combatant.displaySize;
+							if (combatant.mountID) {
+								const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+								if (mount) {
+									s = mount.displaySize;
+								}
 							}
-						}
-						const miniSize = Gygax.miniSize(s);
+							const miniSize = Gygax.miniSize(s);
 
-						combatant.path.filter(step => !!step).forEach(step => {
-							steps.push(
-								<GridSquare
-									key={step.id}
-									x={step.x}
-									y={step.y}
-									style={this.getStyle(step.x, step.y, miniSize, miniSize, 'circle', dimensions)}
-									mode='step'
-								/>
-							);
-						});
-					} catch (e) {
-						console.error('drawing steps');
-						console.error('path is ' + combatant.path);
-						console.error(e);
+							combatant.path.filter(step => !!step).forEach(step => {
+								steps.push(
+									<GridSquare
+										key={step.id}
+										x={step.x}
+										y={step.y}
+										style={this.getStyle(step.x, step.y, miniSize, miniSize, 'circle', dimensions)}
+										mode='step'
+									/>
+								);
+							});
+						} catch (e) {
+							console.error('drawing steps');
+							console.error('path is ' + combatant.path);
+							console.error(e);
+						}
 					}
 				}
 			});
@@ -969,22 +971,6 @@ export class MapPanel extends React.Component<Props, State> {
 		return null;
 	}
 
-	private getFog(dimensions: MapDimensions) {
-		if ((this.props.mode !== 'edit') && (this.props.mode !== 'interactive-plot')) {
-			return this.props.fog.map(f => (
-				<GridSquare
-					key={'fog ' + f.x + ',' + f.y}
-					x={f.x}
-					y={f.y}
-					style={this.getStyle(f.x, f.y, 1, 1, 'square', dimensions)}
-					mode='fog'
-				/>
-			));
-		}
-
-		return null;
-	}
-
 	private getLighting(dimensions: MapDimensions, walls: { horizontal: { start: number; end: number; y: number; }[]; vertical: { start: number; end: number; x: number; }[]; }) {
 		const lighting: (JSX.Element | null)[] = [];
 
@@ -1031,10 +1017,25 @@ export class MapPanel extends React.Component<Props, State> {
 			for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 				// Start with the ambient lighting level
 				let level = this.props.lighting as 'bright light' | 'dim light' | 'darkness';
+				let visible = true;
+				// Fog of war automatically turns this cell into darkness
 				if (this.props.fog.find(f => (f.x === x) && (f.y === y))) {
 					level = 'darkness';
 				} else {
-					if (level !== 'bright light') {
+					// Take line-of-sight into account
+					visible = (actors.length === 0) || actors.some(combatant => {
+						const item = this.props.map.items.find(i => i.id === combatant.id);
+						if (item) {
+							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							return this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
+						}
+						return false;
+					});
+					if (!visible) {
+						level = 'darkness';
+					}
+
+					if (visible && (level !== 'bright light')) {
 						// Take light sources into account
 						lightSources.forEach(ls => {
 							const dist = Mercator.calculateDistance(ls, x, y, 0);
@@ -1052,7 +1053,7 @@ export class MapPanel extends React.Component<Props, State> {
 						});
 					}
 
-					if (level !== 'bright light') {
+					if (visible && (level !== 'bright light')) {
 						// Take darkvision into account
 						actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
 							const item = this.props.map.items.find(i => i.id === combatant.id);
@@ -1068,13 +1069,10 @@ export class MapPanel extends React.Component<Props, State> {
 								};
 								const dist = Mercator.calculateDistance(fromCube, x, y, 0);
 								if (combatant.darkvision >= dist) {
-									const visible = this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
-									if (visible) {
-										if (level === 'dim light') {
-											level = 'bright light';
-										} else if (level === 'darkness') {
-											level = 'dim light';
-										}
+									if (level === 'dim light') {
+										level = 'bright light';
+									} else if (level === 'darkness') {
+										level = 'dim light';
 									}
 								}
 							}
@@ -1089,7 +1087,7 @@ export class MapPanel extends React.Component<Props, State> {
 							x={x}
 							y={y}
 							style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
-							mode={'light ' + level.replaceAll(' ', '-')}
+							mode={level.replaceAll(' ', '-')}
 						/>
 					);
 				}
@@ -1115,52 +1113,6 @@ export class MapPanel extends React.Component<Props, State> {
 		}
 
 		return null;
-	}
-
-	private getVisibility(dimensions: MapDimensions, walls: { horizontal: { start: number; end: number; y: number; }[]; vertical: { start: number; end: number; x: number; }[]; }) {
-		const hiddenSquares: (JSX.Element | null)[] = [];
-
-		const actors: Combatant[] = [];
-		if (this.props.mode === 'interactive-dm') {
-			this.props.combatants.filter(c => c.current).forEach(c => actors.push(c));
-			this.props.combatants.filter(c => this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-		}
-		if (this.props.mode === 'interactive-player') {
-			this.props.combatants.filter(c => (c.type === 'pc') && this.props.selectedItemIDs.includes(c.id)).forEach(c => actors.push(c));
-		}
-
-		if (actors.length > 0) {
-			for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
-				for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
-					let visible = false;
-					if (this.props.fog.find(f => (f.x === x) && (f.y === y))) {
-						visible = false;
-					} else {
-						visible = actors.some(combatant => {
-							const item = this.props.map.items.find(i => i.id === combatant.id);
-							if (item) {
-								const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
-								return this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
-							}
-							return false;
-						});
-					}
-					if (!visible) {
-						hiddenSquares.push(
-							<GridSquare
-								key={'hidden ' + x + ',' + y}
-								x={x}
-								y={y}
-								style={this.getStyle(x, y, 1, 1, 'square', dimensions)}
-								mode='hidden'
-							/>
-						);
-					}
-				}
-			}
-		}
-
-		return hiddenSquares;
 	}
 
 	private getGrid(dimensions: MapDimensions) {
@@ -1281,10 +1233,8 @@ export class MapPanel extends React.Component<Props, State> {
 						{this.getSteps(mapDimensions)}
 						{this.getDistances(mapDimensions)}
 						{this.getTokens(mapDimensions)}
-						{this.getFog(mapDimensions)}
 						{this.getLighting(mapDimensions, walls)}
 						{this.getLightSources(mapDimensions)}
-						{this.getVisibility(mapDimensions, walls)}
 						{this.getGrid(mapDimensions)}
 						{this.getWallVertices(mapDimensions)}
 						{this.getFocus(mapDimensions)}

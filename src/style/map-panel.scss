@@ -75,10 +75,8 @@
 	&.edit,
 	&.setup,
 	&.interactive-dm {
-		.fog,
-		.light.dim-light,
-		.light.darkness,
-		.hidden {
+		.dim-light,
+		.darkness {
 			opacity: 0.5;
 			box-shadow: none !important;
 		}
@@ -110,27 +108,12 @@
 				}
 			}
 
-			&.fog {
-				background-color: black;
-				box-shadow: 0 0 10px 1px black;
+			&.dim-light {
+				background-color: rgba(0, 0, 0, 0.5);
 				pointer-events: none;
 			}
 
-			&.light {
-				pointer-events: none;
-
-				&.dim-light {
-					background-color: rgba(0, 0, 0, 0.5);
-					box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.5);
-				}
-
-				&.darkness {
-					background-color: black;
-					box-shadow: 0 0 10px 1px black;
-				}
-			}
-
-			&.hidden {
+			&.darkness {
 				background-color: black;
 				pointer-events: none;
 			}
