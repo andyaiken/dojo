@@ -66,7 +66,7 @@ export class HomeScreen extends React.Component<Props> {
 							<li>track monster hit points, rechargable actions, and legendary actions</li>
 							<li>track conditions, their durations, and the effects they impose</li>
 							<li>easily handle mounted combat</li>
-							<li>keep track of everyone's location, if you're using a tactical map</li>
+							<li>keep track of everyone&apos;s location, if you&apos;re using a tactical map</li>
 						</ul>
 					</div>
 					<div key='adventure'>
@@ -75,7 +75,7 @@ export class HomeScreen extends React.Component<Props> {
 						</div>
 						<ul>
 							<li>keep track of all the information you need to run an adventure</li>
-							<li>see the structure of a scenario as a flow chart - or as a map if you're running a dungeon delve</li>
+							<li>see the structure of a scenario as a flow chart - or as a map if you&apos;re running a dungeon delve</li>
 							<li>add encounters and check their difficulty for your pcs</li>
 							<li>keep handouts ready to show to your players</li>
 							<li>generate an entire dungeon delve with a single click</li>
@@ -87,7 +87,7 @@ export class HomeScreen extends React.Component<Props> {
 						</div>
 						<ul>
 							<li>check references for skill usage, condition effects, and action rules</li>
-							<li>see your party's passive skills, known languages, and darkvision ranges</li>
+							<li>see your party&apos;s passive skills, known languages, and darkvision ranges</li>
 							<li>come up with npc names and descriptions, place names, and descriptions of potions or art objects</li>
 						</ul>
 					</div>
@@ -99,7 +99,7 @@ export class HomeScreen extends React.Component<Props> {
 							<li>use a dedicated player app to share information with your group</li>
 							<li>send messages (or links, or images, or die rolls) to the whole table - or whisper them to just one player</li>
 							<li>during combat, show the initiative order and the encounter map to your players, and let them control their own characters</li>
-							<li>each player can update their character's stats, so you don't have to</li>
+							<li>each player can update their character&apos;s stats, so you don&apos;t have to</li>
 						</ul>
 					</div>
 					<div key='epilogue'>
@@ -107,7 +107,7 @@ export class HomeScreen extends React.Component<Props> {
 							to get started
 						</div>
 						<div className='section'>
-							use the buttons at the bottom of this screen to explore <span className='app-name'>dojo</span>'s main features
+							use the buttons at the bottom of this screen to explore <span className='app-name'>dojo</span>&apos;s main features
 						</div>
 						<div className='section'>
 							the arrow at the top right gives you additional tools like a die roller and a handout manager

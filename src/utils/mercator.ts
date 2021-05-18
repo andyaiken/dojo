@@ -495,39 +495,43 @@ export class Mercator {
 		switch (Utils.randomNumber(2)) {
 			case 0:
 				// Top or bottom
-				width = Utils.randomNumber(room.width - 2) + 2;
-				height = Gygax.dieRoll(4, 2);
-				const diffX = room.width - width;
-				for (let dx = 0; dx !== diffX; ++dx) {
-					const x = room.x + dx;
-					// Can we put this on the top?
-					const y1 = room.y - height;
-					if (this.canAddTileHere(map, x, y1, width, height, 1, 1)) {
-						candidates.push({ x: x, y: y1 });
-					}
-					// Can we put this on the bottom?
-					const y2 = room.y + room.height;
-					if (this.canAddTileHere(map, x, y2, width, height, 1, 1)) {
-						candidates.push({ x: x, y: y2 });
+				{
+					width = Utils.randomNumber(room.width - 2) + 2;
+					height = Gygax.dieRoll(4, 2);
+					const diffX = room.width - width;
+					for (let dx = 0; dx !== diffX; ++dx) {
+						const x = room.x + dx;
+						// Can we put this on the top?
+						const y1 = room.y - height;
+						if (this.canAddTileHere(map, x, y1, width, height, 1, 1)) {
+							candidates.push({ x: x, y: y1 });
+						}
+						// Can we put this on the bottom?
+						const y2 = room.y + room.height;
+						if (this.canAddTileHere(map, x, y2, width, height, 1, 1)) {
+							candidates.push({ x: x, y: y2 });
+						}
 					}
 				}
 				break;
 			case 1:
 				// Left or right
-				width = Gygax.dieRoll(4, 2);
-				height = Utils.randomNumber(room.height - 2) + 2;
-				const diffY = room.height - height;
-				for (let dy = 0; dy !== diffY; ++dy) {
-					const y = room.y + dy;
-					// Can we put this on the left?
-					const x1 = room.x - width;
-					if (this.canAddTileHere(map, x1, y, width, height, 1, 1)) {
-						candidates.push({ x: x1, y: y });
-					}
-					// Can we put this on the right?
-					const x2 = room.x + room.width;
-					if (this.canAddTileHere(map, x2, y, width, height, 1, 1)) {
-						candidates.push({ x: x2, y: y });
+				{
+					width = Gygax.dieRoll(4, 2);
+					height = Utils.randomNumber(room.height - 2) + 2;
+					const diffY = room.height - height;
+					for (let dy = 0; dy !== diffY; ++dy) {
+						const y = room.y + dy;
+						// Can we put this on the left?
+						const x1 = room.x - width;
+						if (this.canAddTileHere(map, x1, y, width, height, 1, 1)) {
+							candidates.push({ x: x1, y: y });
+						}
+						// Can we put this on the right?
+						const x2 = room.x + room.width;
+						if (this.canAddTileHere(map, x2, y, width, height, 1, 1)) {
+							candidates.push({ x: x2, y: y });
+						}
 					}
 				}
 				break;

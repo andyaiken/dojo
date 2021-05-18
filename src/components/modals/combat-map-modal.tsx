@@ -163,7 +163,7 @@ export class CombatMapModal extends React.Component<Props, State> {
 							no map is currently selected
 						</div>
 						<div className='section'>
-							this is fine - you don't have to use a map to run an encounter
+							this is fine - you don&apos;t have to use a map to run an encounter
 						</div>
 					</Note>
 					{selector}

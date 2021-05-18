@@ -177,7 +177,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 				return (
 					<Note>
 						<div className='section'>
-							you haven't been given control of your character
+							you haven&apos;t been given control of your character
 						</div>
 					</Note>
 				);
@@ -187,7 +187,7 @@ export class SessionControlsSidebar extends React.Component<Props> {
 		return (
 			<Note>
 				<div className='section'>
-					you're not connected
+					you&apos;re not connected
 				</div>
 			</Note>
 		);

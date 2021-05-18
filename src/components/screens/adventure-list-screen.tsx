@@ -46,7 +46,7 @@ export class AdventureListScreen extends React.Component<Props> {
 							<div className='section'>this page is where you can plan your adventures</div>
 							<hr/>
 							<div className='section'>on the right you will see the adventures that you have created</div>
-							<div className='section'>press an adventure's <b>open adventure</b> button to see its details</div>
+							<div className='section'>press an adventure&apos;s <b>open adventure</b> button to see its details</div>
 							<hr/>
 							<div className='section'>to get started creating an adventure, press the <b>add a new adventure</b> button</div>
 						</Note>

@@ -23,17 +23,19 @@ export class CombatCard extends React.Component<Props> {
 			case 'pc':
 				return 'pc';
 			case 'monster':
-				const current = combatant.hpCurrent ?? 0;
-				const max = combatant.hpMax ?? 0;
-				const temp = combatant.hpTemp ?? 0;
-				let str = current.toString();
-				if (temp > 0) {
-					str += '+' + temp;
+				{
+					const current = combatant.hpCurrent ?? 0;
+					const max = combatant.hpMax ?? 0;
+					const temp = combatant.hpTemp ?? 0;
+					let str = current.toString();
+					if (temp > 0) {
+						str += '+' + temp;
+					}
+					if (current < max) {
+						str += ' / ' + max;
+					}
+					return str + ' hp';
 				}
-				if (current < max) {
-					str += ' / ' + max;
-				}
-				return str + ' hp';
 		}
 
 		return null;

@@ -37,7 +37,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 						<div style={{ width: '400px' }}>
 							<Note>
 								<div className='section'>
-									to kickstart your monster collection, let's import all the monsters from the <a href='https://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>d&amp;d system reference document</a>
+									to kickstart your monster collection, let&apos;s import all the monsters from the <a href='https://dnd.wizards.com/articles/features/systems-reference-document-srd' target='_blank' rel='noopener noreferrer'>d&amp;d system reference document</a>
 								</div>
 								<hr/>
 								<button onClick={() => this.props.addOpenGameContent()}>import monsters</button>
@@ -75,7 +75,7 @@ export class MonsterGroupListScreen extends React.Component<Props> {
 							<hr/>
 							<div className='section'>on the right you will see your monster groups</div>
 							<div className='section'>select a monster group from the list to see stat blocks for monsters in that group</div>
-							<div className='section'>press a group's <b>open group</b> button to see monster details</div>
+							<div className='section'>press a group&apos;s <b>open group</b> button to see monster details</div>
 							<hr/>
 							<div className='section'>to start adding monsters, press the <b>add a new monster group</b> button</div>
 						</Note>

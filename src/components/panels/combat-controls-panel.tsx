@@ -777,9 +777,11 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 									this.props.changeValue(combatant, 'lightSource', { name: 'lantern', bright: 30, dim: 60 });
 									break;
 								case 'custom':
-									const bright = combatant.lightSource ? combatant.lightSource.bright : 0;
-									const dim = combatant.lightSource ? combatant.lightSource.dim : 0;
-									this.props.changeValue(combatant, 'lightSource', { name: 'custom', bright: bright, dim: dim });
+									{
+										const bright = combatant.lightSource ? combatant.lightSource.bright : 0;
+										const dim = combatant.lightSource ? combatant.lightSource.dim : 0;
+										this.props.changeValue(combatant, 'lightSource', { name: 'custom', bright: bright, dim: dim });
+									}
 									break;
 							}
 						}}

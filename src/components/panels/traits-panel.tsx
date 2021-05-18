@@ -48,70 +48,72 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 			switch (type) {
 				case 'legendary':
 				case 'mythic':
-					let count = null;
-					let usage = null;
-					if (this.props.combatant.legendaryActions > 0) {
-						count = (
-							<div>
-								<div className='section'><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
-								<hr/>
-							</div>
-						);
-						if (this.props.mode === 'legendary') {
-							let used = 0;
-							this.props.combatant.traits.filter(t => ((t.type === 'legendary') || (t.type === 'mythic')) && (t.uses > 0)).forEach(t => {
-								let value = 1;
-								if (t.usage) {
-									// Action usage might be: '[costs|counts as] N [legendary actions|actions]'
-									const found = t.usage.toLowerCase().match(/\D*(\d*)\D*/);
-									if (found) {
-										value = parseInt(found[1], 10);
-									}
-								}
-								used += value;
-							});
-							used = Math.min(used, this.props.combatant.legendaryActions);
-							const unused = Math.max(this.props.combatant.legendaryActions - used, 0);
-							const icons = [];
-							for (let n = 0; n !== used; ++n) {
-								icons.push(
-									<StarFilled key={'used ' + n} />
-								);
-							}
-							for (let n = 0; n !== unused; ++n) {
-								icons.push(
-									<StarOutlined key={'unused ' + n} />
-								);
-							}
-							usage = (
+					{
+						let count = null;
+						let usage = null;
+						if (this.props.combatant.legendaryActions > 0) {
+							count = (
 								<div>
+									<div className='section'><b>{this.props.combatant.legendaryActions}</b> legendary actions per round</div>
 									<hr/>
-									<div className='section centered legendary-usage'>
-										{icons}
-									</div>
 								</div>
 							);
+							if (this.props.mode === 'legendary') {
+								let used = 0;
+								this.props.combatant.traits.filter(t => ((t.type === 'legendary') || (t.type === 'mythic')) && (t.uses > 0)).forEach(t => {
+									let value = 1;
+									if (t.usage) {
+										// Action usage might be: '[costs|counts as] N [legendary actions|actions]'
+										const found = t.usage.toLowerCase().match(/\D*(\d*)\D*/);
+										if (found) {
+											value = parseInt(found[1], 10);
+										}
+									}
+									used += value;
+								});
+								used = Math.min(used, this.props.combatant.legendaryActions);
+								const unused = Math.max(this.props.combatant.legendaryActions - used, 0);
+								const icons = [];
+								for (let n = 0; n !== used; ++n) {
+									icons.push(
+										<StarFilled key={'used ' + n} />
+									);
+								}
+								for (let n = 0; n !== unused; ++n) {
+									icons.push(
+										<StarOutlined key={'unused ' + n} />
+									);
+								}
+								usage = (
+									<div>
+										<hr/>
+										<div className='section centered legendary-usage'>
+											{icons}
+										</div>
+									</div>
+								);
+							}
 						}
-					}
-					if (type === 'legendary') {
-						info = (
-							<Note>
-								{count}
-								<div className='section'>
-									one legendary action can be used at the end of each other combatant's turn; spent actions are refreshed at the start of the monster's turn
-								</div>
-								{usage}
-							</Note>
-						);
-					}
-					if (type === 'mythic') {
-						info = (
-							<Note>
-								<div className='section'>
-									while the monster's mythic trait is active, the following can be used as legendary actions
-								</div>
-							</Note>
-						);
+						if (type === 'legendary') {
+							info = (
+								<Note>
+									{count}
+									<div className='section'>
+										one legendary action can be used at the end of each other combatant&apos;s turn; spent actions are refreshed at the start of the monster&apos;s turn
+									</div>
+									{usage}
+								</Note>
+							);
+						}
+						if (type === 'mythic') {
+							info = (
+								<Note>
+									<div className='section'>
+										while the monster&apos;s mythic trait is active, the following can be used as legendary actions
+									</div>
+								</Note>
+							);
+						}
 					}
 					break;
 				case 'lair':
@@ -138,7 +140,7 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 				info = (
 					<Note>
 						<div className='section'>
-							while the monster's mythic trait is active, the following can be used as legendary actions
+							while the monster&apos;s mythic trait is active, the following can be used as legendary actions
 						</div>
 					</Note>
 				);
@@ -305,72 +307,74 @@ export class TraitPanel extends React.Component<TraitPanelProps> {
 				case 'combat':
 				case 'legendary':
 				case 'lair':
-					let style = '';
-					const buttons = [];
-					if (maxUses > 0) {
-						if (this.props.trait.uses >= maxUses) {
-							style = 'strikethrough';
-							buttons.push(
-								<button key='use' className='link' onClick={() => this.props.rechargeTrait(this.props.trait)}>recharge</button>
-							);
-						} else {
-							buttons.push(
-								<button key='use' className='link' onClick={() => this.props.useTrait(this.props.trait)}>use</button>
-							);
-						}
-					}
-					if (this.props.showRollButtons) {
-						Frankenstein.getToHitExpressions(this.props.trait)
-							.forEach(exp => {
+					{
+						let style = '';
+						const buttons = [];
+						if (maxUses > 0) {
+							if (this.props.trait.uses >= maxUses) {
+								style = 'strikethrough';
 								buttons.push(
-									<Popover
-										key={exp.expression}
-										content={(
-											<div>
-												<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
-												<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'disadvantage')}>dis</button>
-											</div>
-										)}
-										trigger='contextMenu'
-									>
+									<button key='use' className='link' onClick={() => this.props.rechargeTrait(this.props.trait)}>recharge</button>
+								);
+							} else {
+								buttons.push(
+									<button key='use' className='link' onClick={() => this.props.useTrait(this.props.trait)}>use</button>
+								);
+							}
+						}
+						if (this.props.showRollButtons) {
+							Frankenstein.getToHitExpressions(this.props.trait)
+								.forEach(exp => {
+									buttons.push(
+										<Popover
+											key={exp.expression}
+											content={(
+												<div>
+													<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'advantage')}>adv</button>
+													<button onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, 'disadvantage')}>dis</button>
+												</div>
+											)}
+											trigger='contextMenu'
+										>
+											<button
+												className='link'
+												onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, '')}
+											>
+												{exp.expression}
+											</button>
+										</Popover>
+									);
+								});
+							Frankenstein.getDiceExpressions(this.props.trait)
+								.forEach(exp => {
+									buttons.push(
 										<button
+											key={exp.expression}
 											className='link'
-											onClick={() => this.props.onRollDice(this.props.trait.name, 1, 20, exp.bonus, '')}
+											onClick={() => this.props.onRollDice(this.props.trait.name, exp.count, exp.sides, exp.bonus, '')}
 										>
 											{exp.expression}
 										</button>
-									</Popover>
-								);
-							});
-						Frankenstein.getDiceExpressions(this.props.trait)
-							.forEach(exp => {
-								buttons.push(
-									<button
-										key={exp.expression}
-										className='link'
-										onClick={() => this.props.onRollDice(this.props.trait.name, exp.count, exp.sides, exp.bonus, '')}
-									>
-										{exp.expression}
-									</button>
-								);
-							});
-					}
-					let buttonSection = null;
-					if (buttons.length > 0) {
-						buttonSection = (
-							<div className='trait-buttons'>
-								{buttons}
+									);
+								});
+						}
+						let buttonSection = null;
+						if (buttons.length > 0) {
+							buttonSection = (
+								<div className='trait-buttons'>
+									{buttons}
+								</div>
+							);
+						}
+						return (
+							<div key={this.props.trait.id} className='section trait'>
+								<div className={style}>
+									<ReactMarkdown>{markdown}</ReactMarkdown>
+								</div>
+								{buttonSection}
 							</div>
 						);
 					}
-					return (
-						<div key={this.props.trait.id} className='section trait'>
-							<div className={style}>
-								<ReactMarkdown>{markdown}</ReactMarkdown>
-							</div>
-							{buttonSection}
-						</div>
-					);
 			}
 		} catch (e) {
 			console.error(e);

@@ -62,10 +62,10 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 				<Conditional display={state === 'not started'}>
 					<Note>
 						<div className='section'>
-							you're not currently running a game session
+							you&apos;re not currently running a game session
 						</div>
 						<div className='section'>
-							select a party, then click the 'start' button to allow your players to connect to the game session
+							select a party, then click the <b>start the session</b> button to allow your players to connect to the game session
 						</div>
 						<div className='section'>
 							you can then send messages and share content such as handouts, combat encounters, and map explorations
@@ -125,93 +125,103 @@ export class SessionDMSidebar extends React.Component<Props, State> {
 					/>
 				);
 			case 'management':
-				let playerURL = 'https://andyaiken.github.io/dojo/#/player/' + Comms.getID();
-				if (window.location.hostname === 'localhost') {
-					playerURL = 'http://localhost:3000/dojo/#/player/' + Comms.getID();
-				}
+				{
+					let playerURL = 'https://andyaiken.github.io/dojo/#/player/' + Comms.getID();
+					if (window.location.hostname === 'localhost') {
+						playerURL = 'http://localhost:3000/dojo/#/player/' + Comms.getID();
+					}
 
-				let sharing = null;
-				switch (Comms.data.shared.type) {
-					case 'nothing':
-						sharing = '(nothing)';
-						break;
-					case 'combat':
-						const combat = Comms.data.shared.data as Combat;
-						sharing = 'encounter (' + (combat.encounter.name || 'unnamed encounter') + ')';
-						break;
-					case 'exploration':
-						const exploration = Comms.data.shared.data as Exploration;
-						sharing = 'map (' + (exploration.map.name || 'unnamed map') + ')';
-						break;
-					case 'handout':
-						const handout = Comms.data.shared.data as { title: string, src: string };
-						sharing = 'handout (' + (handout.title || 'untitled handout') + ')';
-						break;
-					case 'monster':
-						const monster = Comms.data.shared.data as Monster;
-						sharing = 'monster (' + (monster.name || 'unnamed monster') + ')';
-						break;
-				}
+					let sharing = null;
+					switch (Comms.data.shared.type) {
+						case 'nothing':
+							sharing = '(nothing)';
+							break;
+						case 'combat':
+							{
+								const combat = Comms.data.shared.data as Combat;
+								sharing = 'encounter (' + (combat.encounter.name || 'unnamed encounter') + ')';
+							}
+							break;
+						case 'exploration':
+							{
+								const exploration = Comms.data.shared.data as Exploration;
+								sharing = 'map (' + (exploration.map.name || 'unnamed map') + ')';
+							}
+							break;
+						case 'handout':
+							{
+								const handout = Comms.data.shared.data as { title: string, src: string };
+								sharing = 'handout (' + (handout.title || 'untitled handout') + ')';
+							}
+							break;
+						case 'monster':
+							{
+								const monster = Comms.data.shared.data as Monster;
+								sharing = 'monster (' + (monster.name || 'unnamed monster') + ')';
+							}
+							break;
+					}
 
-				let action = null;
-				if (Comms.data.shared.type === 'nothing') {
-					if (this.props.currentCombat) {
+					let action = null;
+					if (Comms.data.shared.type === 'nothing') {
+						if (this.props.currentCombat) {
+							action = (
+								<button onClick={() => CommsDM.shareCombat(this.props.currentCombat as Combat)}>start sharing combat</button>
+							);
+						} else if (this.props.currentExploration) {
+							action = (
+								<button onClick={() => CommsDM.shareExploration(this.props.currentExploration as Exploration)}>start sharing exploration</button>
+							);
+						}
+					} else {
 						action = (
-							<button onClick={() => CommsDM.shareCombat(this.props.currentCombat as Combat)}>start sharing combat</button>
-						);
-					} else if (this.props.currentExploration) {
-						action = (
-							<button onClick={() => CommsDM.shareExploration(this.props.currentExploration as Exploration)}>start sharing exploration</button>
+							<ConfirmButton onConfirm={() => CommsDM.shareNothing()}>stop sharing</ConfirmButton>
 						);
 					}
-				} else {
-					action = (
-						<ConfirmButton onConfirm={() => CommsDM.shareNothing()}>stop sharing</ConfirmButton>
+
+					return (
+						<div>
+							<Note>
+								<div className='section'>
+									give the following link to your players, and ask them to open the player app in their browser
+								</div>
+							</Note>
+							<Group>
+								<div className='content-then-icons'>
+									<div className='content'>
+										<div className='section'>
+											player app link:
+										</div>
+										<div className='section'>
+											<b>{playerURL}</b>
+										</div>
+									</div>
+									<div className='icons'>
+										<CopyOutlined title='copy to clipboard' onClick={() => navigator.clipboard.writeText(playerURL)} />
+									</div>
+								</div>
+							</Group>
+							<hr/>
+							<div className='subheading'>currently sharing</div>
+							<div className='section'>{sharing}</div>
+							{action}
+							{this.getTools()}
+							<hr/>
+							<div className='subheading'>options</div>
+							<Checkbox
+								label='allow chat'
+								checked={Comms.data.options.allowChat}
+								onChecked={value => CommsDM.setOption('allowChat', value)}
+							/>
+							<Checkbox
+								label='allow players to control their characters'
+								checked={Comms.data.options.allowControls}
+								onChecked={value => CommsDM.setOption('allowControls', value)}
+							/>
+							<ConfirmButton onConfirm={() => CommsDM.shutdown()}>end the session</ConfirmButton>
+						</div>
 					);
 				}
-
-				return (
-					<div>
-						<Note>
-							<div className='section'>
-								give the following link to your players, and ask them to open the player app in their browser
-							</div>
-						</Note>
-						<Group>
-							<div className='content-then-icons'>
-								<div className='content'>
-									<div className='section'>
-										player app link:
-									</div>
-									<div className='section'>
-										<b>{playerURL}</b>
-									</div>
-								</div>
-								<div className='icons'>
-									<CopyOutlined title='copy to clipboard' onClick={() => navigator.clipboard.writeText(playerURL)} />
-								</div>
-							</div>
-						</Group>
-						<hr/>
-						<div className='subheading'>currently sharing</div>
-						<div className='section'>{sharing}</div>
-						{action}
-						{this.getTools()}
-						<hr/>
-						<div className='subheading'>options</div>
-						<Checkbox
-							label='allow chat'
-							checked={Comms.data.options.allowChat}
-							onChecked={value => CommsDM.setOption('allowChat', value)}
-						/>
-						<Checkbox
-							label='allow players to control their characters'
-							checked={Comms.data.options.allowControls}
-							onChecked={value => CommsDM.setOption('allowControls', value)}
-						/>
-						<ConfirmButton onConfirm={() => CommsDM.shutdown()}>end the session</ConfirmButton>
-					</div>
-				);
 		}
 
 		return null;

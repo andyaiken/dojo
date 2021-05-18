@@ -920,236 +920,258 @@ export class Shakespeare {
 			case 0:
 			case 1:
 			case 2:
-				// Gemstone
-				let stone = stones[Utils.randomNumber(stones.length)];
+				{
+					// Gemstone
+					let stone = stones[Utils.randomNumber(stones.length)];
 
-				switch (Utils.randomBoolean()) {
-					case true:
-						stone = stone + ' gemstone';
-						break;
-					case false:
-						stone = 'piece of ' + stone;
-						break;
+					switch (Utils.randomBoolean()) {
+						case true:
+							stone = stone + ' gemstone';
+							break;
+						case false:
+							stone = 'piece of ' + stone;
+							break;
+					}
+
+					switch (Utils.randomNumber(12)) {
+						case 0:
+							stone = 'well cut ' + stone;
+							break;
+						case 1:
+							stone = 'rough-cut ' + stone;
+							break;
+						case 2:
+							stone = 'poorly cut ' + stone;
+							break;
+						case 3:
+							stone = 'small ' + stone;
+							break;
+						case 4:
+							stone = 'large ' + stone;
+							break;
+						case 5:
+							stone = 'oddly shaped ' + stone;
+							break;
+						case 6:
+							stone = 'highly polished ' + stone;
+							break;
+						default:
+							break;
+					}
+
+					result = stone;
 				}
-
-				switch (Utils.randomNumber(12)) {
-					case 0:
-						stone = 'well cut ' + stone;
-						break;
-					case 1:
-						stone = 'rough-cut ' + stone;
-						break;
-					case 2:
-						stone = 'poorly cut ' + stone;
-						break;
-					case 3:
-						stone = 'small ' + stone;
-						break;
-					case 4:
-						stone = 'large ' + stone;
-						break;
-					case 5:
-						stone = 'oddly shaped ' + stone;
-						break;
-					case 6:
-						stone = 'highly polished ' + stone;
-						break;
-					default:
-						break;
-				}
-
-				result = stone;
 				break;
 			case 3:
 			case 4:
 			case 5:
-				// Object
-				const fObjects = [
-					'medal', 'statuette', 'sculpture', 'idol', 'chalice', 'goblet', 'dish', 'bowl'
-				];
-				const object = fObjects[Utils.randomNumber(fObjects.length)];
+				{
+					// Object
+					const fObjects = [
+						'medal', 'statuette', 'sculpture', 'idol', 'chalice', 'goblet', 'dish', 'bowl'
+					];
+					const object = fObjects[Utils.randomNumber(fObjects.length)];
 
-				const objectAdjectives = [
-					'small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'
-				];
-				const objectAdjective = objectAdjectives[Utils.randomNumber(objectAdjectives.length)];
+					const objectAdjectives = [
+						'small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'
+					];
+					const objectAdjective = objectAdjectives[Utils.randomNumber(objectAdjectives.length)];
 
-				result = objectAdjective + ' ' + object;
+					result = objectAdjective + ' ' + object;
+				}
 				break;
 			case 6:
 			case 7:
 			case 8:
-				// Jewellery
-				const jewellery = [
-					'ring', 'necklace', 'crown', 'circlet', 'bracelet', 'anklet', 'torc', 'brooch', 'pendant', 'locket', 'diadem', 'tiara', 'earring'
-				];
-				const item = jewellery[Utils.randomNumber(jewellery.length)];
+				{
+					// Jewellery
+					const jewellery = [
+						'ring', 'necklace', 'crown', 'circlet', 'bracelet', 'anklet', 'torc', 'brooch', 'pendant', 'locket', 'diadem', 'tiara', 'earring'
+					];
+					const item = jewellery[Utils.randomNumber(jewellery.length)];
 
-				const metals = [
-					'gold', 'silver', 'bronze', 'platinum', 'electrum', 'mithral', 'orium', 'adamantine'
-				];
-				const metal = metals[Utils.randomNumber(metals.length)];
+					const metals = [
+						'gold', 'silver', 'bronze', 'platinum', 'electrum', 'mithral', 'orium', 'adamantine'
+					];
+					const metal = metals[Utils.randomNumber(metals.length)];
 
-				result = metal + ' ' + item;
+					result = metal + ' ' + item;
 
-				switch (Utils.randomNumber(5)) {
-					case 0:
-						// Enamelled or laquered
-						const deco1 = (Utils.randomBoolean()) ? 'enamelled' : 'laquered';
-						result = deco1 + ' ' + result;
-						break;
-					case 1:
-						// Filigree or plating
-						const metal2 = metals[Utils.randomNumber(metals.length)];
-						const deco2 = (Utils.randomBoolean()) ? 'plated' : 'filigreed';
-						result = metal2 + '-' + deco2 + ' ' + result;
-						break;
-				}
+					switch (Utils.randomNumber(5)) {
+						case 0:
+							{
+								// Enamelled or laquered
+								const deco1 = (Utils.randomBoolean()) ? 'enamelled' : 'laquered';
+								result = deco1 + ' ' + result;
+							}
+							break;
+						case 1:
+							{
+								// Filigree or plating
+								const metal2 = metals[Utils.randomNumber(metals.length)];
+								const deco2 = (Utils.randomBoolean()) ? 'plated' : 'filigreed';
+								result = metal2 + '-' + deco2 + ' ' + result;
+							}
+							break;
+					}
 
-				switch (Utils.randomNumber(10)) {
-					case 0:
-						result = 'delicate ' + result;
-						break;
-					case 1:
-						result = 'intricate ' + result;
-						break;
-					case 2:
-						result = 'elegant ' + result;
-						break;
-					case 3:
-						result = 'simple ' + result;
-						break;
-					case 4:
-						result = 'plain ' + result;
-						break;
-					default:
-						break;
+					switch (Utils.randomNumber(10)) {
+						case 0:
+							result = 'delicate ' + result;
+							break;
+						case 1:
+							result = 'intricate ' + result;
+							break;
+						case 2:
+							result = 'elegant ' + result;
+							break;
+						case 3:
+							result = 'simple ' + result;
+							break;
+						case 4:
+							result = 'plain ' + result;
+							break;
+						default:
+							break;
+					}
 				}
 				break;
 			case 9:
 			case 10:
-				// Artwork
-				let artwork = '';
-				switch (Utils.randomBoolean()) {
-					case true:
-						// Painting
-						artwork = 'painting';
+				{
+					// Artwork
+					let artwork = '';
+					switch (Utils.randomBoolean()) {
+						case true:
+							// Painting
+							artwork = 'painting';
 
-						switch (Utils.randomBoolean()) {
-							case true:
-								artwork = 'oil ' + artwork;
-								break;
-							case false:
-								artwork = 'watercolour ' + artwork;
-								break;
-						}
-						break;
-					case false:
-						// Drawing
-						artwork = 'drawing';
+							switch (Utils.randomBoolean()) {
+								case true:
+									artwork = 'oil ' + artwork;
+									break;
+								case false:
+									artwork = 'watercolour ' + artwork;
+									break;
+							}
+							break;
+						case false:
+							// Drawing
+							artwork = 'drawing';
 
-						switch (Utils.randomNumber(3)) {
-							case 0:
-								artwork = 'pencil ' + artwork;
-								break;
-							case 1:
-								artwork = 'charcoal ' + artwork;
-								break;
-							case 2:
-								artwork = 'pastel ' + artwork;
-								break;
-						}
-						break;
+							switch (Utils.randomNumber(3)) {
+								case 0:
+									artwork = 'pencil ' + artwork;
+									break;
+								case 1:
+									artwork = 'charcoal ' + artwork;
+									break;
+								case 2:
+									artwork = 'pastel ' + artwork;
+									break;
+							}
+							break;
+					}
+
+					const artAdjectives = [
+						'small', 'large', 'delicate', 'fragile', 'elegant', 'detailed'
+					];
+					const artAdjective = artAdjectives[Utils.randomNumber(artAdjectives.length)];
+
+					const media = [
+						'canvas', 'paper', 'parchment', 'wood panels', 'fabric'
+					];
+					const medium = media[Utils.randomNumber(media.length)];
+
+					result = artAdjective + ' ' + artwork + ' on ' + medium;
 				}
-
-				const artAdjectives = [
-					'small', 'large', 'delicate', 'fragile', 'elegant', 'detailed'
-				];
-				const artAdjective = artAdjectives[Utils.randomNumber(artAdjectives.length)];
-
-				const media = [
-					'canvas', 'paper', 'parchment', 'wood panels', 'fabric'
-				];
-				const medium = media[Utils.randomNumber(media.length)];
-
-				result = artAdjective + ' ' + artwork + ' on ' + medium;
 				break;
 			case 11:
-				// Musical instrument
-				const instruments = [
-					'lute', 'lyre', 'mandolin', 'violin', 'drum', 'flute', 'clarinet', 'accordion',
-					'banjo', 'bodhran', 'ocarina', 'zither', 'djembe', 'shawm'
-				];
-				const instrument = instruments[Utils.randomNumber(instruments.length)];
+				{
+					// Musical instrument
+					const instruments = [
+						'lute', 'lyre', 'mandolin', 'violin', 'drum', 'flute', 'clarinet', 'accordion',
+						'banjo', 'bodhran', 'ocarina', 'zither', 'djembe', 'shawm'
+					];
+					const instrument = instruments[Utils.randomNumber(instruments.length)];
 
-				const instrumentAdjectives = [
-					'small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'
-				];
-				const instrumentAdjective = instrumentAdjectives[Utils.randomNumber(instrumentAdjectives.length)];
+					const instrumentAdjectives = [
+						'small', 'large', 'light', 'heavy', 'delicate', 'fragile', 'masterwork', 'elegant'
+					];
+					const instrumentAdjective = instrumentAdjectives[Utils.randomNumber(instrumentAdjectives.length)];
 
-				result = instrumentAdjective + ' ' + instrument;
+					result = instrumentAdjective + ' ' + instrument;
+				}
 				break;
 		}
 
 		switch (Utils.randomNumber(5)) {
 			case 0:
-				const locations = [
-					'feywild', 'shadowfell', 'elemental chaos', 'astral plane', 'abyss',
-					'distant north', 'distant east', 'distant west', 'distant south'
-				];
-				const location = locations[Utils.randomNumber(locations.length)];
+				{
+					const locations = [
+						'feywild', 'shadowfell', 'elemental chaos', 'astral plane', 'abyss',
+						'distant north', 'distant east', 'distant west', 'distant south'
+					];
+					const location = locations[Utils.randomNumber(locations.length)];
 
-				result += ' from the ' + location;
+					result += ' from the ' + location;
+				}
 				break;
 			case 1:
-				const gerunds = [
-					'decorated with', 'inscribed with', 'engraved with', 'embossed with', 'carved with'
-				];
-				const gerund = gerunds[Utils.randomNumber(gerunds.length)];
+				{
+					const gerunds = [
+						'decorated with', 'inscribed with', 'engraved with', 'embossed with', 'carved with'
+					];
+					const gerund = gerunds[Utils.randomNumber(gerunds.length)];
 
-				const adjectives = [
-					'indecipherable', 'ancient', 'curious', 'unusual', 'dwarven', 'eladrin', 'elven', 'draconic', 'gith'
-				];
-				const adjective = adjectives[Utils.randomNumber(adjectives.length)];
+					const adjectives = [
+						'indecipherable', 'ancient', 'curious', 'unusual', 'dwarven', 'eladrin', 'elven', 'draconic', 'gith'
+					];
+					const adjective = adjectives[Utils.randomNumber(adjectives.length)];
 
-				const designs = ['script', 'designs', 'sigils', 'runes', 'glyphs', 'patterns'];
-				const design = designs[Utils.randomNumber(designs.length)];
+					const designs = ['script', 'designs', 'sigils', 'runes', 'glyphs', 'patterns'];
+					const design = designs[Utils.randomNumber(designs.length)];
 
-				result += ' ' + gerund + ' ' + adjective + ' ' + design;
+					result += ' ' + gerund + ' ' + adjective + ' ' + design;
+				}
 				break;
 			case 2:
-				const magicGerunds = [
-					'glowing with', 'suffused with', 'infused with', 'humming with', 'pulsing with'
-				];
-				const magicGerund = magicGerunds[Utils.randomNumber(magicGerunds.length)];
+				{
+					const magicGerunds = [
+						'glowing with', 'suffused with', 'infused with', 'humming with', 'pulsing with'
+					];
+					const magicGerund = magicGerunds[Utils.randomNumber(magicGerunds.length)];
 
-				const magics = [
-					'arcane', 'divine', 'primal', 'psionic', 'dark', 'shadow', 'elemental', 'ethereal', 'unknown'
-				];
-				const magic = magics[Utils.randomNumber(magics.length)];
+					const magics = [
+						'arcane', 'divine', 'primal', 'psionic', 'dark', 'shadow', 'elemental', 'ethereal', 'unknown'
+					];
+					const magic = magics[Utils.randomNumber(magics.length)];
 
-				const powers = [
-					'energy', 'power', 'magic'
-				];
-				const power = powers[Utils.randomNumber(powers.length)];
+					const powers = [
+						'energy', 'power', 'magic'
+					];
+					const power = powers[Utils.randomNumber(powers.length)];
 
-				result += ' ' + magicGerund + ' ' + magic + ' ' + power;
+					result += ' ' + magicGerund + ' ' + magic + ' ' + power;
+				}
 				break;
 			case 4:
-				let stone = stones[Utils.randomNumber(stones.length)];
+				{
+					let stone = stones[Utils.randomNumber(stones.length)];
 
-				if (Utils.randomBoolean()) {
-					stone += 's';
-				} else {
-					stone = 'a single ' + stone;
+					if (Utils.randomBoolean()) {
+						stone += 's';
+					} else {
+						stone = 'a single ' + stone;
+					}
+
+					const setGerunds = [
+						'set with', 'inlaid with', 'studded with', 'with shards of'
+					];
+					const setGerund = setGerunds[Utils.randomNumber(setGerunds.length)];
+
+					result += ' ' + setGerund + ' ' + stone;
 				}
-
-				const setGerunds = [
-					'set with', 'inlaid with', 'studded with', 'with shards of'
-				];
-				const setGerund = setGerunds[Utils.randomNumber(setGerunds.length)];
-
-				result += ' ' + setGerund + ' ' + stone;
 				break;
 		}
 
@@ -1535,9 +1557,11 @@ export class Shakespeare {
 			case 1:
 				return 'with flecks of ' + this.potionColour(false);
 			case 2:
-				const col = this.potionColour(true);
-				const article = Shakespeare.startsWithVowel(col) ? 'an' : 'a';
-				return 'with ' + article + ' ' + col + ' suspension';
+				{
+					const col = this.potionColour(true);
+					const article = Shakespeare.startsWithVowel(col) ? 'an' : 'a';
+					return 'with ' + article + ' ' + col + ' suspension';
+				}
 			case 3:
 				return 'with a floating ' + this.potionColour(true) + ' layer';
 			case 4:

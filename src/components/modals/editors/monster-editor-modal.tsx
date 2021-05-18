@@ -1223,7 +1223,7 @@ class AbilitiesTab extends React.Component<AbilitiesTabProps> {
 								content={(
 									<div>
 										<div className='section'>
-											this should include the monster's passive perception and the range of any special senses, which are:
+											this should include the monster&apos;s passive perception and the range of any special senses, which are:
 										</div>
 										<ul>
 											<li>blindsight</li>
@@ -1292,7 +1292,7 @@ class CombatTab extends React.Component<CombatTabProps> {
 						</FieldPanel>
 						<Note>
 							<div className='section'>
-								to calculate hit points, the die type is based on the monster's size, and the die roll is modified by the monster's constitution modifier
+								to calculate hit points, the die type is based on the monster&apos;s size, and the die roll is modified by the monster&apos;s constitution modifier
 							</div>
 							<hr/>
 							<div className='hp-value'>
@@ -1566,7 +1566,7 @@ class GuidelinesPanel extends React.Component<GuidelinesPanelProps> {
 							this table shows typical values for certain stats (ac, hp, etc) for a given challenge rating
 						</div>
 						<div className='section'>
-							to gauge a monster's cr, take the average of its defensive cr (from ac and hp) and offensive cr (from attack bonus, save dc, and damage per round)
+							to gauge a monster&apos;s cr, take the average of its defensive cr (from ac and hp) and offensive cr (from attack bonus, save dc, and damage per round)
 						</div>
 					</Note>
 					<div className='table alternating'>

@@ -191,7 +191,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 		if (scene.links.length === 0) {
 			return (
 				<Note>
-					<div className='section'>this scene doesn't lead to any other scenes</div>
+					<div className='section'>this scene doesn&apos;t lead to any other scenes</div>
 				</Note>
 			);
 		}
@@ -272,82 +272,86 @@ export class AdventureScreen extends React.Component<Props, State> {
 					canDelete = true;
 					break;
 				case 'image':
-					const img = Matisse.getImage(resource.content);
-					if (img) {
-						content = (
-							<img
-								className='nonselectable-image'
-								src={img.data}
-								alt='resource'
-							/>
-						);
-						canHandout = true;
-						canChat = true;
-						canDelete = true;
+					{
+						const img = Matisse.getImage(resource.content);
+						if (img) {
+							content = (
+								<img
+									className='nonselectable-image'
+									src={img.data}
+									alt='resource'
+								/>
+							);
+							canHandout = true;
+							canChat = true;
+							canDelete = true;
+						}
 					}
 					break;
 				case 'encounter':
-					const encounter = this.props.encounters.find(enc => enc.id === resource.content);
-					if (encounter) {
-						if (resource.data && resource.data.map) {
-							const combatants: Combatant[] = [];
-							const mapItems: MapItem[] = [];
+					{
+						const encounter = this.props.encounters.find(enc => enc.id === resource.content);
+						if (encounter) {
+							if (resource.data && resource.data.map) {
+								const combatants: Combatant[] = [];
+								const mapItems: MapItem[] = [];
 
-							(resource.data.slotInfo as CombatSlotInfo[]).forEach(slotInfo => {
-								slotInfo.members.forEach(m => {
-									if (m.location !== null) {
-										const monster = this.props.getMonster(slotInfo.monsterID);
-										if (monster) {
-											const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, 'foe');
-											combatants.push(c);
+								(resource.data.slotInfo as CombatSlotInfo[]).forEach(slotInfo => {
+									slotInfo.members.forEach(m => {
+										if (m.location !== null) {
+											const monster = this.props.getMonster(slotInfo.monsterID);
+											if (monster) {
+												const c = Napoleon.convertMonsterToCombatant(monster, m.init, m.hp, m.name, 'foe');
+												combatants.push(c);
 
-											const item = Factory.createMapItem();
-											item.id = c.id;
-											item.type = 'monster';
-											const size = Gygax.miniSize(monster.size);
-											item.height = size;
-											item.width = size;
-											item.depth = size;
-											item.x = m.location.x;
-											item.y = m.location.y;
-											item.z = m.location.z;
-											mapItems.push(item);
+												const item = Factory.createMapItem();
+												item.id = c.id;
+												item.type = 'monster';
+												const size = Gygax.miniSize(monster.size);
+												item.height = size;
+												item.width = size;
+												item.depth = size;
+												item.x = m.location.x;
+												item.y = m.location.y;
+												item.z = m.location.z;
+												mapItems.push(item);
+											}
 										}
-									}
+									});
 								});
-							});
 
-							const map = JSON.parse(JSON.stringify(resource.data.map));
-							map.items = map.items.concat(mapItems);
+								const map = JSON.parse(JSON.stringify(resource.data.map));
+								map.items = map.items.concat(mapItems);
 
-							content = (
-								<MapPanel
-									map={map}
-									selectedAreaID={resource.data.mapAreaID}
-									combatants={combatants}
-									fog={resource.data.fog}
-									lighting={resource.data.lighting}
-								/>
-							);
-						} else {
-							content = (
-								<EncounterInfoPanel
-									encounter={encounter}
-									getMonster={id => this.props.getMonster(id)}
-									onMonsterClicked={monster => this.props.showMonster(monster)}
-								/>
-							);
+								content = (
+									<MapPanel
+										map={map}
+										selectedAreaID={resource.data.mapAreaID}
+										combatants={combatants}
+										fog={resource.data.fog}
+										lighting={resource.data.lighting}
+									/>
+								);
+							} else {
+								content = (
+									<EncounterInfoPanel
+										encounter={encounter}
+										getMonster={id => this.props.getMonster(id)}
+										onMonsterClicked={monster => this.props.showMonster(monster)}
+									/>
+								);
+							}
+							const party = this.getParty();
+							if (party) {
+								const d = Napoleon.getEncounterDifficulty(encounter, null, party, id => this.props.getMonster(id));
+								diff = 'diff-' + Math.min(4, d.adjusted);
+							}
+							canRunEncounter = (this.state.plot.map === null);
+							canRunEncounterWithSceneMap = (this.state.plot.map !== null);
+							canEditEncounter = true;
+							canSetupEncounterMap = (this.props.maps.length > 0) && (this.state.plot.map === null);
+							canDelete = true;
 						}
-						const party = this.getParty();
-						if (party) {
-							const d = Napoleon.getEncounterDifficulty(encounter, null, party, id => this.props.getMonster(id));
-							diff = 'diff-' + Math.min(4, d.adjusted);
-						}
-						canRunEncounter = (this.state.plot.map === null);
-						canRunEncounterWithSceneMap = (this.state.plot.map !== null);
-						canEditEncounter = true;
-						canSetupEncounterMap = (this.props.maps.length > 0) && (this.state.plot.map === null);
-						canDelete = true;
 					}
 					break;
 				case 'readaloud':
@@ -402,9 +406,11 @@ export class AdventureScreen extends React.Component<Props, State> {
 												CommsDM.sendMessage([], resource.content, '', '');
 												break;
 											case 'image':
-												const img = Matisse.getImage(resource.content);
-												if (img) {
-													CommsDM.sendImage([], img.data);
+												{
+													const img = Matisse.getImage(resource.content);
+													if (img) {
+														CommsDM.sendImage([], img.data);
+													}
 												}
 												break;
 											case 'url':
@@ -473,7 +479,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				<Conditional display={(view === 'links') && (this.state.plot.map !== null)}>
 					<Note>
 						<div className='section'>
-							links aren't needed between map areas
+							links aren&apos;t needed between map areas
 						</div>
 					</Note>
 				</Conditional>
@@ -538,7 +544,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 						</div>
 						<Conditional display={this.state.plot.scenes.length === 0}>
 							<div className='section'>
-								alternatively, you can <b>use a map</b> to create scenes for each of its areas; this is handy if you're designing a dungeon crawl
+								alternatively, you can <b>use a map</b> to create scenes for each of its areas; this is handy if you&apos;re designing a dungeon crawl
 							</div>
 						</Conditional>
 					</Note>

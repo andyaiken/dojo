@@ -641,49 +641,53 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					/>
 				);
 			case 'companion':
-				let card = null;
-				const comp = combatant as Combatant & Companion;
-				if (comp.monsterID) {
-					this.props.library.forEach(group => {
-						const monster = group.monsters.find(m => m.id === comp.monsterID);
-						if (monster) {
-							card = (
-								<MonsterStatblockCard
-									monster={monster}
-									combat={true}
-									showRollButtons={this.props.options.showMonsterDieRolls}
-									useTrait={trait => this.props.useTrait(trait)}
-									rechargeTrait={trait => this.props.rechargeTrait(trait)}
-									onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
-								/>
+				{
+					let card = null;
+					const comp = combatant as Combatant & Companion;
+					if (comp.monsterID) {
+						this.props.library.forEach(group => {
+							const monster = group.monsters.find(m => m.id === comp.monsterID);
+							if (monster) {
+								card = (
+									<MonsterStatblockCard
+										monster={monster}
+										combat={true}
+										showRollButtons={this.props.options.showMonsterDieRolls}
+										useTrait={trait => this.props.useTrait(trait)}
+										rechargeTrait={trait => this.props.rechargeTrait(trait)}
+										onRollDice={(text, count, sides, constant, mode) => this.props.onRollDice(text, count, sides, constant, mode)}
+									/>
+								);
+							}
+						});
+					}
+					return card;
+				}
+			case 'placeholder':
+				{
+					const lair: JSX.Element[] = [];
+					this.props.exploration.combatants.forEach(c => {
+						const monster = c as (Combatant & Monster);
+						if (monster && monster.traits && monster.traits.some(t => t.type === 'lair')) {
+							lair.push(
+								<div className='card monster' key={'lair ' + monster.id}>
+									<div className='heading'>
+										<div className='title'>{monster.name}</div>
+									</div>
+									<div className='card-content'>
+										<TraitsPanel
+											combatant={monster}
+											mode='lair'
+											useTrait={trait => this.props.useTrait(trait)}
+											rechargeTrait={trait => this.props.rechargeTrait(trait)}
+										/>
+									</div>
+								</div>
 							);
 						}
 					});
+					return lair;
 				}
-				return card;
-			case 'placeholder':
-				const lair: JSX.Element[] = [];
-				this.props.exploration.combatants.forEach(c => {
-					const monster = c as (Combatant & Monster);
-					if (monster && monster.traits && monster.traits.some(t => t.type === 'lair')) {
-						lair.push(
-							<div className='card monster' key={'lair ' + monster.id}>
-								<div className='heading'>
-									<div className='title'>{monster.name}</div>
-								</div>
-								<div className='card-content'>
-									<TraitsPanel
-										combatant={monster}
-										mode='lair'
-										useTrait={trait => this.props.useTrait(trait)}
-										rechargeTrait={trait => this.props.rechargeTrait(trait)}
-									/>
-								</div>
-							</div>
-						);
-					}
-				});
-				return lair;
 		}
 
 		return null;

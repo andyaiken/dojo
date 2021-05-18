@@ -240,54 +240,56 @@ class LanguageTool extends React.Component<LanguageToolProps, LanguageToolState>
 					);
 					break;
 				case 'custom':
-					let selectedLanguages = this.props.selectedLanguages.join(', ');
-					if (selectedLanguages === '') {
-						selectedLanguages = 'none';
-					}
+					{
+						let selectedLanguages = this.props.selectedLanguages.join(', ');
+						if (selectedLanguages === '') {
+							selectedLanguages = 'none';
+						}
 
-					const languages = Shakespeare.getSourceLanguages()
-						.filter(lang => Sherlock.match(this.state.search, lang))
-						.map(lang => {
-							return (
-								<Checkbox
-									key={lang}
-									label={lang}
-									checked={this.props.selectedLanguages.includes(lang)}
-									onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
-								/>
-							);
-						});
+						const languages = Shakespeare.getSourceLanguages()
+							.filter(lang => Sherlock.match(this.state.search, lang))
+							.map(lang => {
+								return (
+									<Checkbox
+										key={lang}
+										label={lang}
+										checked={this.props.selectedLanguages.includes(lang)}
+										onChecked={value => value ? this.props.addLanguage(lang) : this.props.removeLanguage(lang)}
+									/>
+								);
+							});
 
-					languages.unshift(
-						<div key='search'>
-							<Textbox placeholder='filter languages...' text={this.state.search} onChange={value => this.setSearch(value)}/>
-							<hr/>
-						</div>
-					);
+						languages.unshift(
+							<div key='search'>
+								<Textbox placeholder='filter languages...' text={this.state.search} onChange={value => this.setSearch(value)}/>
+								<hr/>
+							</div>
+						);
 
-					content = (
-						<div id='custom'>
-							<Group>
-								<div className='content-then-icons'>
-									<div className='content'>
-										<div className='section'>
-											selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+						content = (
+							<div id='custom'>
+								<Group>
+									<div className='content-then-icons'>
+										<div className='content'>
+											<div className='section'>
+												selected languages: {this.props.selectedLanguages.sort().join(', ') || '(none)'}
+											</div>
+										</div>
+										<div className='icons'>
+											<CloseCircleOutlined
+												title='clear languages'
+												className={this.props.selectedLanguages.length === 0 ? 'disabled' : ''}
+												onClick={() => this.props.clearLanguages()}
+											/>
 										</div>
 									</div>
-									<div className='icons'>
-										<CloseCircleOutlined
-											title='clear languages'
-											className={this.props.selectedLanguages.length === 0 ? 'disabled' : ''}
-											onClick={() => this.props.clearLanguages()}
-										/>
-									</div>
-								</div>
-							</Group>
-							<Expander text='languages'>
-								{languages}
-							</Expander>
-						</div>
-					);
+								</Group>
+								<Expander text='languages'>
+									{languages}
+								</Expander>
+							</div>
+						);
+					}
 					break;
 				case 'random':
 					content = (

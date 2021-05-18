@@ -236,7 +236,7 @@ export class MapImportModal extends React.Component<Props, State> {
 										set the name and dimensions of this map image
 									</div>
 									<div className='section'>
-										changing the size of a map square, in pixels, will change the map's dimensions
+										changing the size of a map square, in pixels, will change the map&apos;s dimensions
 									</div>
 									<div className='section'>
 										you can then fine-tune the exact width and height of the map

@@ -386,16 +386,20 @@ export class Frankenstein {
 				const value = (attr.getElementsByClassName('mon-stat-block__attribute-data-value')[0] as HTMLElement).innerText.toLowerCase().trim();
 				switch (label) {
 					case 'armor class':
-						monster.ac = Number.parseInt(value, 10);
-						let info = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
-						if (info.startsWith('(')) {
-							info = info.substr(1, info.length - 2);
+						{
+							monster.ac = Number.parseInt(value, 10);
+							let info = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
+							if (info.startsWith('(')) {
+								info = info.substr(1, info.length - 2);
+							}
+							monster.acInfo = info;
 						}
-						monster.acInfo = info;
 						break;
 					case 'hit points':
-						const extra = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
-						monster.hitDice = Number.parseInt(extra.substring(1, extra.indexOf('d')), 10);
+						{
+							const extra = (attr.getElementsByClassName('mon-stat-block__attribute-data-extra')[0] as HTMLElement).innerText.toLowerCase().trim();
+							monster.hitDice = Number.parseInt(extra.substring(1, extra.indexOf('d')), 10);
+						}
 						break;
 					case 'speed':
 						monster.speed = value;
@@ -451,8 +455,10 @@ export class Frankenstein {
 						monster.languages = value;
 						break;
 					case 'challenge':
-						const sp = value.indexOf(' ');
-						monster.challenge = Number.parseInt(value.substring(0, sp), 10);
+						{
+							const sp = value.indexOf(' ');
+							monster.challenge = Number.parseInt(value.substring(0, sp), 10);
+						}
 						break;
 				}
 			}

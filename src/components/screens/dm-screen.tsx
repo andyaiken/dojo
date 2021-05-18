@@ -93,11 +93,13 @@ export class DMScreen extends React.Component<Props, State> {
 				}
 				break;
 			case 'place names':
-				const response = await fetch('/dojo/data/places.txt');
-				const text = await response.text();
-				Shakespeare.initModel([text]);
-				while (items.length < 10) {
-					items.push(Shakespeare.generateLine());
+				{
+					const response = await fetch('/dojo/data/places.txt');
+					const text = await response.text();
+					Shakespeare.initModel([text]);
+					while (items.length < 10) {
+						items.push(Shakespeare.generateLine());
+					}
 				}
 				break;
 			case 'npc':

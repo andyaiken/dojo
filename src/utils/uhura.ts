@@ -285,11 +285,13 @@ export class Comms {
 				}
 				break;
 			case 'player-info':
-				const playerID = packet.payload['player'];
-				const person = this.data.people.find(p => p.id === playerID);
-				if (person) {
-					person.status = packet.payload['status'];
-					person.characterID = packet.payload['characterID'];
+				{
+					const playerID = packet.payload['player'];
+					const person = this.data.people.find(p => p.id === playerID);
+					if (person) {
+						person.status = packet.payload['status'];
+						person.characterID = packet.payload['characterID'];
+					}
 				}
 				break;
 			case 'character-info':
@@ -320,19 +322,21 @@ export class Comms {
 				}
 				break;
 			case 'message':
-				const msg: Message = {
-					id: packet.payload['id'],
-					timestamp: packet.payload['timestamp'],
-					from: packet.payload['from'],
-					to: packet.payload['to'],
-					type: packet.payload['type'],
-					data: packet.payload['data']
-				};
-				this.data.messages.push(msg);
-				if (msg.from !== Comms.getID()) {
-					if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
-						if (this.onNewMessage) {
-							this.onNewMessage(msg);
+				{
+					const msg: Message = {
+						id: packet.payload['id'],
+						timestamp: packet.payload['timestamp'],
+						from: packet.payload['from'],
+						to: packet.payload['to'],
+						type: packet.payload['type'],
+						data: packet.payload['data']
+					};
+					this.data.messages.push(msg);
+					if (msg.from !== Comms.getID()) {
+						if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
+							if (this.onNewMessage) {
+								this.onNewMessage(msg);
+							}
 						}
 					}
 				}

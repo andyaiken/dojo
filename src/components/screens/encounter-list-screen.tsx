@@ -111,7 +111,7 @@ export class EncounterListScreen extends React.Component<Props> {
 							</div>
 							<hr/>
 							<div className='section'>on the right you will see the encounters that you have created</div>
-							<div className='section'>press an encounter's <b>open encounter</b> button to see its details and add monsters to it</div>
+							<div className='section'>press an encounter&apos;s <b>open encounter</b> button to see its details and add monsters to it</div>
 							<hr/>
 							<div className='section'>to start building an encounter, press the <b>add a new encounter</b> button</div>
 						</Note>

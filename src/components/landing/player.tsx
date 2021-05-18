@@ -172,21 +172,23 @@ export class Player extends React.Component<Props, State> {
 					}
 					break;
 				case 'award':
-					const awardee = data.awardee || 'someone';
-					const awardID = data.awardID;
-					const award = Streep.getAward(awardID);
-					if (award) {
-						notification.open({
-							key: Utils.guid(),
-							message: (
-								<div>
-									<div>awarded to <b>{awardee}</b>:</div>
-									<AwardPanel award={award} />
-								</div>
-							),
-							closeIcon: <CloseCircleOutlined />,
-							duration: null
-						});
+					{
+						const awardee = data.awardee || 'someone';
+						const awardID = data.awardID;
+						const award = Streep.getAward(awardID);
+						if (award) {
+							notification.open({
+								key: Utils.guid(),
+								message: (
+									<div>
+										<div>awarded to <b>{awardee}</b>:</div>
+										<AwardPanel award={award} />
+									</div>
+								),
+								closeIcon: <CloseCircleOutlined />,
+								duration: null
+							});
+						}
 					}
 			}
 		};
@@ -473,7 +475,7 @@ export class Player extends React.Component<Props, State> {
 			<Row align='middle' justify='center' className='scrollable'>
 				<Note>
 					<div className='section'>
-						the dm is not currently sharing anything with you; when they do, you'll see it here
+						the dm is not currently sharing anything with you; when they do, you&apos;ll see it here
 					</div>
 					{pcSection}
 				</Note>
@@ -668,30 +670,32 @@ export class Player extends React.Component<Props, State> {
 					</Row>
 				);
 			case 'connected':
-				let shared = null;
-				if ((Comms.getCharacterID(Comms.getID()) === '') || (Comms.data.shared.type === 'nothing')) {
-					shared = this.getNothingSection();
-				} else if (Comms.data.shared.type === 'combat') {
-					const combat = Comms.data.shared.data as Combat;
-					const additional = Comms.data.shared.additional;
-					shared = this.getCombatSection(combat, additional);
-				} else if (Comms.data.shared.type === 'exploration') {
-					const exploration = Comms.data.shared.data as Exploration;
-					const additional = Comms.data.shared.additional;
-					shared = this.getExplorationSection(exploration, additional);
-				} else if (Comms.data.shared.type === 'handout') {
-					const handout = Comms.data.shared.data as Handout;
-					shared = this.getHandoutSection(handout);
-				} else if (Comms.data.shared.type === 'monster') {
-					const monster = Comms.data.shared.data as Monster;
-					shared = this.getMonsterSection(monster);
-				}
+				{
+					let shared = null;
+					if ((Comms.getCharacterID(Comms.getID()) === '') || (Comms.data.shared.type === 'nothing')) {
+						shared = this.getNothingSection();
+					} else if (Comms.data.shared.type === 'combat') {
+						const combat = Comms.data.shared.data as Combat;
+						const additional = Comms.data.shared.additional;
+						shared = this.getCombatSection(combat, additional);
+					} else if (Comms.data.shared.type === 'exploration') {
+						const exploration = Comms.data.shared.data as Exploration;
+						const additional = Comms.data.shared.additional;
+						shared = this.getExplorationSection(exploration, additional);
+					} else if (Comms.data.shared.type === 'handout') {
+						const handout = Comms.data.shared.data as Handout;
+						shared = this.getHandoutSection(handout);
+					} else if (Comms.data.shared.type === 'monster') {
+						const monster = Comms.data.shared.data as Monster;
+						shared = this.getMonsterSection(monster);
+					}
 
-				return (
-					<div className='full-height'>
-						{shared}
-					</div>
-				);
+					return (
+						<div className='full-height'>
+							{shared}
+						</div>
+					);
+				}
 		}
 	}
 
@@ -985,7 +989,7 @@ class ConnectPanel extends React.Component<ConnectPanelProps, ConnectPanelState>
 				return (
 					<Note>
 						<div className='section'>
-							this url isn't a valid dojo player url - there's no 6-letter dm code at the end
+							this url isn&apos;t a valid dojo player url - there&apos;s no 6-letter dm code at the end
 						</div>
 					</Note>
 				);

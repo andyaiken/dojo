@@ -332,21 +332,23 @@ export class PageSidebar extends React.Component<Props> {
 					);
 					break;
 				case 'reference':
-					const monsters: Monster[] = [];
-					this.props.library.forEach(g => {
-						g.monsters.forEach(m => monsters.push(m));
-					});
-					Utils.sort(monsters);
-					content = (
-						<ReferenceSidebar
-							view={this.props.sidebar.subtype}
-							setView={view => {
-								const sidebar = this.props.sidebar;
-								sidebar.subtype = view;
-								this.props.onUpdateSidebar(sidebar);
-							}}
-						/>
-					);
+					{
+						const monsters: Monster[] = [];
+						this.props.library.forEach(g => {
+							g.monsters.forEach(m => monsters.push(m));
+						});
+						Utils.sort(monsters);
+						content = (
+							<ReferenceSidebar
+								view={this.props.sidebar.subtype}
+								setView={view => {
+									const sidebar = this.props.sidebar;
+									sidebar.subtype = view;
+									this.props.onUpdateSidebar(sidebar);
+								}}
+							/>
+						);
+					}
 					break;
 				case 'session':
 					content = (

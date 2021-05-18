@@ -254,74 +254,84 @@ export class MessagePanel extends React.Component<MessagePanelProps> {
 			let content: JSX.Element | null = null;
 			switch (this.props.message.type) {
 				case 'text':
-					const text = this.props.message.data['text'];
-					const language = this.props.message.data['language'];
-					const untranslated = this.props.message.data['untranslated'];
-					if ((this.props.user === 'player') && (language !== '')) {
-						// Only show the text if we know the language
-						let known = false;
-						if (Comms.data.party) {
-							const characterID = Comms.getCharacterID(Comms.getID());
-							const pc = Comms.data.party.pcs.find(p => p.id === characterID);
-							if (pc) {
-								known = pc.languages.toLowerCase().indexOf(language.toLowerCase()) !== -1;
+					{
+						const text = this.props.message.data['text'];
+						const language = this.props.message.data['language'];
+						const untranslated = this.props.message.data['untranslated'];
+						if ((this.props.user === 'player') && (language !== '')) {
+							// Only show the text if we know the language
+							let known = false;
+							if (Comms.data.party) {
+								const characterID = Comms.getCharacterID(Comms.getID());
+								const pc = Comms.data.party.pcs.find(p => p.id === characterID);
+								if (pc) {
+									known = pc.languages.toLowerCase().indexOf(language.toLowerCase()) !== -1;
+								}
+							}
+							if (!known) {
+								content = (
+									<div className='text'>
+										<div className='text untranslated'>{untranslated}</div>
+										<div className='language'>in an unknown language</div>
+									</div>
+								);
 							}
 						}
-						if (!known) {
-							content = (
-								<div className='text'>
-									<div className='text untranslated'>{untranslated}</div>
-									<div className='language'>in an unknown language</div>
-								</div>
-							);
-						}
-					}
-					if (!content) {
-						if (text.startsWith('/')) {
-							content = (
-								<div className='emote'>
-									{Comms.getName(this.props.message.from) + ' ' + text.substr(1)}
-								</div>
-							);
-						} else {
-							content = (
-								<div className='text'>
-									<ReactMarkdown>{text}</ReactMarkdown>
-									{language !== '' ? <div className='language'>in {language}</div> : null}
-								</div>
-							);
+						if (!content) {
+							if (text.startsWith('/')) {
+								content = (
+									<div className='emote'>
+										{Comms.getName(this.props.message.from) + ' ' + text.substr(1)}
+									</div>
+								);
+							} else {
+								content = (
+									<div className='text'>
+										<ReactMarkdown>{text}</ReactMarkdown>
+										{language !== '' ? <div className='language'>in {language}</div> : null}
+									</div>
+								);
+							}
 						}
 					}
 					break;
 				case 'link':
-					const url = this.props.message.data['url'];
-					content = (
-						<a className='link' href={url} target='_blank' rel='noopener noreferrer'>
-							{url}
-						</a>
-					);
+					{
+						const url = this.props.message.data['url'];
+						content = (
+							<a className='link' href={url} target='_blank' rel='noopener noreferrer'>
+								{url}
+							</a>
+						);
+					}
 					break;
 				case 'image':
-					const image = this.props.message.data['image'];
-					content = (
-						<img className='selectable-image' src={image} alt='shared' onClick={() => this.props.openImage(image)} />
-					);
+					{
+						const image = this.props.message.data['image'];
+						content = (
+							<img className='selectable-image' src={image} alt='shared' onClick={() => this.props.openImage(image)} />
+						);
+					}
 					break;
 				case 'roll':
-					const roll = this.props.message.data['roll'] as DieRollResult;
-					content = (
-						<DieRollResultPanel result={roll} />
-					);
+					{
+						const roll = this.props.message.data['roll'] as DieRollResult;
+						content = (
+							<DieRollResultPanel result={roll} />
+						);
+					}
 					break;
 				case 'card':
-					const card = this.props.message.data['card'] as CardDraw;
-					content = (
-						<Row justify='space-around'>
-							<Col span={10}>
-								<PlayingCardPanel card={card.card} reversed={card.reversed} />
-							</Col>
-						</Row>
-					);
+					{
+						const card = this.props.message.data['card'] as CardDraw;
+						content = (
+							<Row justify='space-around'>
+								<Col span={10}>
+									<PlayingCardPanel card={card.card} reversed={card.reversed} />
+								</Col>
+							</Row>
+						);
+					}
 					break;
 			}
 
@@ -619,58 +629,60 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 	private getMessageSection() {
 		switch (this.state.type) {
 			case 'text':
-				let languageSection = null;
-				if (Comms.data.party) {
-					let languages: string[] = [];
-					if (this.props.user === 'dm') {
-						// Show all languages
-						languages = Shakespeare.getKnownLanguages(Comms.data.party.pcs);
-						languages.push('(some other language)');
-					} else {
-						// Only show your languages
-						const characterID = Comms.getCharacterID(Comms.getID());
-						const character = Comms.data.party.pcs.find(pc => pc.id === characterID);
-						if (character) {
-							languages = Shakespeare.getKnownLanguages([character]);
+				{
+					let languageSection = null;
+					if (Comms.data.party) {
+						let languages: string[] = [];
+						if (this.props.user === 'dm') {
+							// Show all languages
+							languages = Shakespeare.getKnownLanguages(Comms.data.party.pcs);
+							languages.push('(some other language)');
+						} else {
+							// Only show your languages
+							const characterID = Comms.getCharacterID(Comms.getID());
+							const character = Comms.data.party.pcs.find(pc => pc.id === characterID);
+							if (character) {
+								languages = Shakespeare.getKnownLanguages([character]);
+							}
 						}
+						languageSection = (
+							<Dropdown
+								placeholder='(no language specified)'
+								options={Utils.arrayToItems(languages)}
+								selectedID={this.state.language}
+								onSelect={lang => this.setLanguage(lang)}
+								onClear={() => this.setLanguage('')}
+							/>
+						);
 					}
-					languageSection = (
-						<Dropdown
-							placeholder='(no language specified)'
-							options={Utils.arrayToItems(languages)}
-							selectedID={this.state.language}
-							onSelect={lang => this.setLanguage(lang)}
-							onClear={() => this.setLanguage('')}
-						/>
+					return (
+						<div className='content-then-icons'>
+							<div className='content'>
+								<Textbox
+									placeholder='send a message'
+									multiLine={this.state.multiline}
+									debounce={false}
+									text={this.state.message}
+									onChange={msg => this.setMessage(msg)}
+									onPressEnter={() => this.sendMessage()}
+								/>
+								{languageSection}
+							</div>
+							<div className='icons vertical'>
+								<SendOutlined
+									onClick={() => this.sendMessage()}
+									title='send message'
+									className={this.canSend() ? '' : 'disabled'}
+								/>
+								<ExpandOutlined
+									onClick={() => this.toggleMultiline()}
+									title={'expand'}
+									className={this.state.multiline ? 'active' : ''}
+								/>
+							</div>
+						</div>
 					);
 				}
-				return (
-					<div className='content-then-icons'>
-						<div className='content'>
-							<Textbox
-								placeholder='send a message'
-								multiLine={this.state.multiline}
-								debounce={false}
-								text={this.state.message}
-								onChange={msg => this.setMessage(msg)}
-								onPressEnter={() => this.sendMessage()}
-							/>
-							{languageSection}
-						</div>
-						<div className='icons vertical'>
-							<SendOutlined
-								onClick={() => this.sendMessage()}
-								title='send message'
-								className={this.canSend() ? '' : 'disabled'}
-							/>
-							<ExpandOutlined
-								onClick={() => this.toggleMultiline()}
-								title={'expand'}
-								className={this.state.multiline ? 'active' : ''}
-							/>
-						</div>
-					</div>
-				);
 			case 'link':
 				return (
 					<div className='content-then-icons'>
@@ -693,42 +705,44 @@ export class SendMessagePanel extends React.Component<SendMessagePanelProps, Sen
 					</div>
 				);
 			case 'image':
-				let content = null;
-				if (this.state.image === '') {
-					content = (
-						<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
-							<p className='ant-upload-drag-icon'>
-								<FileOutlined />
-							</p>
-							<p className='ant-upload-text'>
-								click here, or drag a file here, to upload it
-							</p>
-						</Upload.Dragger>
-					);
-				} else {
-					content = (
-						<img className='nonselectable-image' src={this.state.image} alt='shared' />
+				{
+					let content = null;
+					if (this.state.image === '') {
+						content = (
+							<Upload.Dragger accept='image/*' showUploadList={false} beforeUpload={file => this.readFile(file)}>
+								<p className='ant-upload-drag-icon'>
+									<FileOutlined />
+								</p>
+								<p className='ant-upload-text'>
+									click here, or drag a file here, to upload it
+								</p>
+							</Upload.Dragger>
+						);
+					} else {
+						content = (
+							<img className='nonselectable-image' src={this.state.image} alt='shared' />
+						);
+					}
+					return (
+						<div className='content-then-icons'>
+							<div className='content'>
+								{content}
+							</div>
+							<div className='icons vertical'>
+								<SendOutlined
+									onClick={() => this.sendImage()}
+									title='send image'
+									className={this.canSend() ? '' : 'disabled'}
+								/>
+								<DeleteOutlined
+									onClick={() => this.setImage('')}
+									title='clear'
+									className={this.canSend() ? '' : 'disabled'}
+								/>
+							</div>
+						</div>
 					);
 				}
-				return (
-					<div className='content-then-icons'>
-						<div className='content'>
-							{content}
-						</div>
-						<div className='icons vertical'>
-							<SendOutlined
-								onClick={() => this.sendImage()}
-								title='send image'
-								className={this.canSend() ? '' : 'disabled'}
-							/>
-							<DeleteOutlined
-								onClick={() => this.setImage('')}
-								title='clear'
-								className={this.canSend() ? '' : 'disabled'}
-							/>
-						</div>
-					</div>
-				);
 			case 'roll':
 				return (
 					<DieRollPanel

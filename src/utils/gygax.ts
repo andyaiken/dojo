@@ -599,23 +599,29 @@ export class Gygax {
 		if (condition.duration !== null) {
 			switch (condition.duration.type) {
 				case 'saves':
-					const saveDuration = condition.duration as ConditionDurationSaves;
-					let saveType = saveDuration.saveType.toString();
-					if (saveType !== 'death') {
-						saveType = saveType.toUpperCase();
+					{
+						const saveDuration = condition.duration as ConditionDurationSaves;
+						let saveType = saveDuration.saveType.toString();
+						if (saveType !== 'death') {
+							saveType = saveType.toUpperCase();
+						}
+						const saves = saveDuration.count > 1 ? 'saves' : 'save';
+						return 'until they make ' + saveDuration.count + ' ' + saveType + ' ' + saves + ' at dc ' + saveDuration.saveDC;
 					}
-					const saves = saveDuration.count > 1 ? 'saves' : 'save';
-					return 'until they make ' + saveDuration.count + ' ' + saveType + ' ' + saves + ' at dc ' + saveDuration.saveDC;
 				case 'combatant':
-					const combatantDuration = condition.duration as ConditionDurationCombatant;
-					const point = combatantDuration.point;
-					const c = combatants.find(cmb => cmb.id === combatantDuration.combatantID) as (Combatant & PC) | (Combatant & Monster);
-					const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'their';
-					return 'until the ' + point + ' of ' + combatant + ' next turn';
+					{
+						const combatantDuration = condition.duration as ConditionDurationCombatant;
+						const point = combatantDuration.point;
+						const c = combatants.find(cmb => cmb.id === combatantDuration.combatantID) as (Combatant & PC) | (Combatant & Monster);
+						const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'their';
+						return 'until the ' + point + ' of ' + combatant + ' next turn';
+					}
 				case 'rounds':
-					const roundsDuration = condition.duration as ConditionDurationRounds;
-					const rounds = roundsDuration.count > 1 ? 'rounds' : 'round';
-					return 'for ' + roundsDuration.count + ' ' + rounds;
+					{
+						const roundsDuration = condition.duration as ConditionDurationRounds;
+						const rounds = roundsDuration.count > 1 ? 'rounds' : 'round';
+						return 'for ' + roundsDuration.count + ' ' + rounds;
+					}
 				default:
 					return null;
 			}
