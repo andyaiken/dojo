@@ -40,6 +40,7 @@ import { CombatStartModal } from '../modals/combat-start-modal';
 import { ConditionModal } from '../modals/condition-modal';
 import { DemographicsModal } from '../modals/demographics-modal';
 import { MarkdownModal } from '../modals/markdown-modal';
+import { MinisChecklistModal } from '../modals/minis-checklist-modal';
 import { RandomGeneratorModal } from '../modals/random-generator-modal';
 import { StatBlockModal } from '../modals/stat-block-modal';
 import { CombatNotificationPanel } from '../panels/combat-notification-panel';
@@ -3630,6 +3631,7 @@ export class Main extends React.Component<Props, State> {
 								});
 							}}
 							showStatblock={monster => this.setState({drawer: { type: 'statblock', source: monster }})}
+							showMinisChecklist={encounter => this.setState({drawer: { type: 'minis-checklist', encounter: encounter }})}
 							getMonster={id => this.getMonster(id)}
 							changeValue={(encounter, type, value) => this.changeValue(encounter, type, value)}
 							nudgeValue={(encounter, type, delta) => this.nudgeValue(encounter, type, delta)}
@@ -4456,6 +4458,16 @@ export class Main extends React.Component<Props, State> {
 						/>
 					);
 					header = 'choose an encounter';
+					closable = true;
+					break;
+				case 'minis-checklist':
+					content = (
+						<MinisChecklistModal
+							encounter={this.state.drawer.encounter}
+							getMonster={id => this.getMonster(id)}
+						/>
+					);
+					header = 'miniatures checklist';
 					closable = true;
 					break;
 			}

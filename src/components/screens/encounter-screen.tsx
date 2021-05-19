@@ -41,6 +41,7 @@ interface Props {
 	splitTheme: (parent: Encounter | EncounterWave, slot: EncounterSlot) => void;
 	removeAdjustments: (encounter: Encounter, slot: EncounterSlot) => void;
 	showStatblock: (monster: Monster) => void;
+	showMinisChecklist: (encounter: Encounter) => void;
 	getMonster: (id: string) => Monster | null;
 	changeValue: (source: any, field: string, value: any) => void;
 	nudgeValue: (source: any, field: string, delta: number) => void;
@@ -178,6 +179,7 @@ export class EncounterScreen extends React.Component<Props> {
 							{waves}
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</Expander>
+						<button onClick={() => this.props.showMinisChecklist(this.props.encounter)}>miniatures checklist</button>
 						<EncounterOptions
 							encounter={this.props.encounter}
 							parties={this.props.parties}
