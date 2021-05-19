@@ -20,11 +20,11 @@ export class Shakespeare {
 	//#region Text generation
 
 	private static model: ModelLine[] = [];
-	private static maxLength: number = 0;
+	private static maxLength = 0;
 
 	public static initModel(sources: string[]) {
 		const model: ModelLine[] = [];
-		let maxLength: number = 0;
+		let maxLength = 0;
 
 		sources.forEach(source => {
 			const lines = source.split(/\r?\n/);

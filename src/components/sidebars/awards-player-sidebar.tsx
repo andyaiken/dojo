@@ -11,6 +11,7 @@ import { Note } from '../controls/note';
 import { Selector } from '../controls/selector';
 import { AwardPanel } from '../panels/award-panel';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 

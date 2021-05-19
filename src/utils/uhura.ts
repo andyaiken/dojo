@@ -87,33 +87,33 @@ export class Comms {
 	}
 
 	public static getID() {
-		return this.peer ? this.peer.id : '';
+		return Comms.peer ? Comms.peer.id : '';
 	}
 
 	public static getPartyID() {
-		return this.data.party ? this.data.party.id : '';
+		return Comms.data.party ? Comms.data.party.id : '';
 	}
 
 	public static getName(id: string) {
-		const person = this.data.people.find(p => p.id === id);
+		const person = Comms.data.people.find(p => p.id === id);
 		return person ? person.name : 'unknown person';
 	}
 
 	public static getStatus(id: string) {
-		const person = this.data.people.find(p => p.id === id);
+		const person = Comms.data.people.find(p => p.id === id);
 		return person ? person.status : '';
 	}
 
 	public static getCharacterID(id: string) {
-		const person = this.data.people.find(p => p.id === id);
+		const person = Comms.data.people.find(p => p.id === id);
 		return person ? person.characterID : '';
 	}
 
 	public static getCurrentName(id: string) {
-		if (this.data.party) {
-			const person = this.data.people.find(p => p.id === id);
+		if (Comms.data.party) {
+			const person = Comms.data.people.find(p => p.id === id);
 			if (person && person.characterID) {
-				const character = this.data.party.pcs.find(pc => pc.id === person.characterID);
+				const character = Comms.data.party.pcs.find(pc => pc.id === person.characterID);
 				if (character) {
 					return character.name;
 				}
@@ -266,28 +266,28 @@ export class Comms {
 		switch (packet.type) {
 			case 'update':
 				if (packet.payload['people']) {
-					this.data.people = packet.payload['people'];
+					Comms.data.people = packet.payload['people'];
 				}
 				if (packet.payload['party']) {
-					this.data.party = packet.payload['party'];
+					Comms.data.party = packet.payload['party'];
 				}
 				if (packet.payload['shared']) {
-					this.data.shared = packet.payload['shared'];
-					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(this.data.shared));
+					Comms.data.shared = packet.payload['shared'];
+					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
 				}
 				if (packet.payload['sharedDiff']) {
 					const diff = packet.payload['sharedDiff'];
-					recursivediff.applyDiff(Comms.data.shared, diff);
-					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(this.data.shared));
+					Comms.data.shared = recursivediff.applyDiff(Comms.data.shared, diff);
+					Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
 				}
 				if (packet.payload['options']) {
-					this.data.options = packet.payload['options'];
+					Comms.data.options = packet.payload['options'];
 				}
 				break;
 			case 'player-info':
 				{
 					const playerID = packet.payload['player'];
-					const person = this.data.people.find(p => p.id === playerID);
+					const person = Comms.data.people.find(p => p.id === playerID);
 					if (person) {
 						person.status = packet.payload['status'];
 						person.characterID = packet.payload['characterID'];
@@ -331,21 +331,21 @@ export class Comms {
 						type: packet.payload['type'],
 						data: packet.payload['data']
 					};
-					this.data.messages.push(msg);
+					Comms.data.messages.push(msg);
 					if (msg.from !== Comms.getID()) {
 						if ((msg.to.length === 0) || (msg.to.includes(Comms.getID()))) {
-							if (this.onNewMessage) {
-								this.onNewMessage(msg);
+							if (Comms.onNewMessage) {
+								Comms.onNewMessage(msg);
 							}
 						}
 					}
 				}
 				break;
 			case 'prompt':
-				if (this.onPrompt) {
+				if (Comms.onPrompt) {
 					const prompt = packet.payload['prompt'];
 					const data = packet.payload['data'];
-					this.onPrompt(prompt, data);
+					Comms.onPrompt(prompt, data);
 				}
 				break;
 			case 'roll-result':
@@ -366,7 +366,7 @@ export class Comms {
 				break;
 			case 'player-shared-update':
 				if (packet.payload['shared']) {
-					this.data.shared = packet.payload['shared'];
+					Comms.data.shared = packet.payload['shared'];
 				}
 				if (packet.payload['sharedDiff']) {
 					const diff = packet.payload['sharedDiff'];
@@ -382,7 +382,7 @@ export class Comms {
 			Comms.peer = null;
 		}
 
-		Comms.data = this.getDefaultData();
+		Comms.data = Comms.getDefaultData();
 	}
 }
 
@@ -391,7 +391,7 @@ export class CommsDM {
 	private static state: 'not started' | 'starting' | 'started' = 'not started';
 
 	public static getState() {
-		return this.state;
+		return CommsDM.state;
 	}
 
 	public static onStateChanged: (() => void) | null;
@@ -399,13 +399,13 @@ export class CommsDM {
 	public static onNewConnection: ((name: string) => void) | null;
 
 	public static init(party: Party) {
-		if (this.state !== 'not started') {
+		if (CommsDM.state !== 'not started') {
 			return;
 		}
 
-		this.state = 'starting';
-		if (this.onStateChanged) {
-			this.onStateChanged();
+		CommsDM.state = 'starting';
+		if (CommsDM.onStateChanged) {
+			CommsDM.onStateChanged();
 		}
 
 		Comms.data.party = party;
@@ -414,93 +414,93 @@ export class CommsDM {
 		Comms.peer = new Peer(dmCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
 
 		Comms.peer.on('open', () => {
-			setInterval(() => this.sendPulse(), PULSE_INTERVAL * 1000);
-			this.state = 'started';
-			if (this.onStateChanged) {
-				this.onStateChanged();
+			setInterval(() => CommsDM.sendPulse(), PULSE_INTERVAL * 1000);
+			CommsDM.state = 'started';
+			if (CommsDM.onStateChanged) {
+				CommsDM.onStateChanged();
 			}
 		});
 		Comms.peer.on('close', () => {
-			this.shutdown();
+			CommsDM.shutdown();
 		});
 		Comms.peer.on('disconnected', () => {
 			if (Comms.peer) {
 				Comms.peer.reconnect();
 			} else {
-				this.shutdown();
+				CommsDM.shutdown();
 			}
 		});
 		Comms.peer.on('error', err => {
 			console.error(err);
-			this.shutdown();
+			CommsDM.shutdown();
 		});
 		Comms.peer.on('connection', conn => {
-			this.connections.push(conn);
+			CommsDM.connections.push(conn);
 			conn.on('open', () => {
-				this.sendPeopleUpdate();
-				this.sendPartyUpdate(conn);
-				this.sendSharedUpdate(conn);
-				this.sendOptionsUpdate(conn);
-				if (this.onNewConnection) {
-					this.onNewConnection(conn.label);
+				CommsDM.sendPeopleUpdate();
+				CommsDM.sendPartyUpdate(conn);
+				CommsDM.sendSharedUpdate(conn);
+				CommsDM.sendOptionsUpdate(conn);
+				if (CommsDM.onNewConnection) {
+					CommsDM.onNewConnection(conn.label);
 				}
-				if (this.onDataChanged) {
-					this.onDataChanged();
+				if (CommsDM.onDataChanged) {
+					CommsDM.onDataChanged();
 				}
 			});
 			conn.on('close', () => {
 				// Remove this connection
-				const index = this.connections.indexOf(conn);
+				const index = CommsDM.connections.indexOf(conn);
 				if (index !== -1) {
-					this.connections.splice(index, 1);
+					CommsDM.connections.splice(index, 1);
 				}
-				this.sendPeopleUpdate();
+				CommsDM.sendPeopleUpdate();
 			});
 			conn.on('error', err => {
 				console.error(err);
-				this.kick(conn.peer);
+				CommsDM.kick(conn.peer);
 			});
 			conn.on('data', data => {
 				const packet = Comms.stringToPacket(data);
-				this.onDataReceived(packet);
+				CommsDM.onDataReceived(packet);
 			});
 		});
 
 	}
 
 	public static shutdown() {
-		this.connections.forEach(conn => conn.close());
-		this.connections = [];
+		CommsDM.connections.forEach(conn => conn.close());
+		CommsDM.connections = [];
 
 		Comms.finish();
 
-		this.state = 'not started';
-		if (this.onStateChanged) {
-			this.onStateChanged();
+		CommsDM.state = 'not started';
+		if (CommsDM.onStateChanged) {
+			CommsDM.onStateChanged();
 		}
 	}
 
 	public static kick(id: string) {
-		const conn = this.connections
+		const conn = CommsDM.connections
 			.filter(c => c.open)
 			.find(c => c.peer === id);
 
 		if (conn) {
 			conn.close();
 
-			const index = this.connections.indexOf(conn);
+			const index = CommsDM.connections.indexOf(conn);
 			if (index !== -1) {
-				this.connections.splice(index, 1);
+				CommsDM.connections.splice(index, 1);
 			}
 
-			this.sendPeopleUpdate();
+			CommsDM.sendPeopleUpdate();
 		}
 	}
 
 	public static setOption(option: 'allowChat' | 'allowControls', value: any) {
 		Comms.data.options[option] = value;
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
 		const packet: Packet = {
 			type: 'update',
@@ -508,18 +508,18 @@ export class CommsDM {
 				options: Comms.data.options
 			}
 		};
-		this.broadcast(packet);
+		CommsDM.broadcast(packet);
 	}
 
 	public static sendPulse() {
-		this.sendPeopleUpdate();
-		this.sendPartyUpdate();
-		this.sendSharedUpdate();
-		this.sendOptionsUpdate();
+		CommsDM.sendPeopleUpdate();
+		CommsDM.sendPartyUpdate();
+		CommsDM.sendSharedUpdate();
+		CommsDM.sendOptionsUpdate();
 	}
 
 	public static sendPeopleUpdate() {
-		const people = this.connections
+		const people = CommsDM.connections
 			.filter(conn => conn.open)
 			.map(conn => ({
 				id: conn.peer,
@@ -544,7 +544,7 @@ export class CommsDM {
 			}
 		};
 		Comms.processPacket(packet);
-		this.broadcast(packet);
+		CommsDM.broadcast(packet);
 	}
 
 	public static sendPartyUpdate(conn: DataConnection | null = null) {
@@ -554,7 +554,7 @@ export class CommsDM {
 				party: Comms.data.party
 			}
 		};
-		this.broadcast(packet, conn);
+		CommsDM.broadcast(packet, conn);
 	}
 
 	public static sendSharedUpdate(conn: DataConnection | null = null) {
@@ -564,7 +564,7 @@ export class CommsDM {
 				shared: Comms.data.shared
 			}
 		};
-		this.broadcast(packet, conn);
+		CommsDM.broadcast(packet, conn);
 
 		if (conn === null) {
 			// Store the current state
@@ -573,31 +573,33 @@ export class CommsDM {
 	}
 
 	public static sendSharedDiffUpdate() {
-		Utils.debounce(() => {
-			const packet: Packet = {
-				type: 'update',
-				payload: {
-					shared: Comms.data.shared
-				}
-			};
-
-			let send = true;
-			if (Comms.previousSentSharedState !== null) {
-				const diff = recursivediff.getDiff(Comms.previousSentSharedState, Comms.data.shared);
-				send = diff.length > 0;
-				packet.payload = {
-					sharedDiff: diff
-				};
-			}
-
-			if (send) {
-				this.broadcast(packet);
-
-				// Store the current state
-				Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
-			}
-		}, 500)();
+		CommsDM.sendAfterDelay();
 	}
+
+	private static sendAfterDelay = Utils.debounce(() => {
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				shared: Comms.data.shared
+			}
+		};
+
+		let send = true;
+		if (Comms.previousSentSharedState !== null) {
+			const diff = recursivediff.getDiff(Comms.previousSentSharedState, Comms.data.shared);
+			send = diff.length > 0;
+			packet.payload = {
+				sharedDiff: diff
+			};
+		}
+
+		if (send) {
+			CommsDM.broadcast(packet);
+
+			// Store the current state
+			Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+		}
+	});
 
 	public static sendOptionsUpdate(conn: DataConnection | null = null) {
 		const packet: Packet = {
@@ -606,27 +608,27 @@ export class CommsDM {
 				options: Comms.data.options
 			}
 		};
-		this.broadcast(packet, conn);
+		CommsDM.broadcast(packet, conn);
 	}
 
 	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
-		this.onDataReceived(Comms.createTextPacket(to, text, language, untranslated));
+		CommsDM.onDataReceived(Comms.createTextPacket(to, text, language, untranslated));
 	}
 
 	public static sendLink(to: string[], url: string) {
-		this.onDataReceived(Comms.createLinkPacket(to, url));
+		CommsDM.onDataReceived(Comms.createLinkPacket(to, url));
 	}
 
 	public static sendImage(to: string[], image: string) {
-		this.onDataReceived(Comms.createImagePacket(to, image));
+		CommsDM.onDataReceived(Comms.createImagePacket(to, image));
 	}
 
 	public static sendRoll(to: string[], roll: DieRollResult) {
-		this.onDataReceived(Comms.createRollPacket(to, roll));
+		CommsDM.onDataReceived(Comms.createRollPacket(to, roll));
 	}
 
 	public static sendCard(to: string[], card: CardDraw) {
-		this.onDataReceived(Comms.createCardPacket(to, card));
+		CommsDM.onDataReceived(Comms.createCardPacket(to, card));
 	}
 
 	public static shareNothing() {
@@ -638,10 +640,10 @@ export class CommsDM {
 			images: [],
 			additional: {}
 		};
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		CommsDM.sendSharedUpdate();
 	}
 
 	public static shareCombat(combat: Combat) {
@@ -664,10 +666,10 @@ export class CommsDM {
 			images: images,
 			additional: {}
 		};
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		CommsDM.sendSharedUpdate();
 	}
 
 	public static shareExploration(exploration: Exploration) {
@@ -688,10 +690,10 @@ export class CommsDM {
 			images: images,
 			additional: {}
 		};
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		CommsDM.sendSharedUpdate();
 	}
 
 	public static shareHandout(handout: Handout) {
@@ -703,10 +705,10 @@ export class CommsDM {
 			images: [],
 			additional: {}
 		};
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		CommsDM.sendSharedUpdate();
 	}
 
 	public static shareMonster(monster: Monster) {
@@ -718,10 +720,10 @@ export class CommsDM {
 			images: [],
 			additional: {}
 		};
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
-		this.sendSharedUpdate();
+		CommsDM.sendSharedUpdate();
 	}
 
 	public static prompt(type: string, data: any) {
@@ -732,24 +734,24 @@ export class CommsDM {
 				data: data
 			}
 		};
-		this.broadcast(packet);
+		CommsDM.broadcast(packet);
 	}
 
 	private static onDataReceived(packet: Packet) {
 		Comms.processPacket(packet);
-		if (this.onDataChanged) {
-			this.onDataChanged();
+		if (CommsDM.onDataChanged) {
+			CommsDM.onDataChanged();
 		}
 
 		// If it's a player shared content update, we've incorporated it into our shared content, so just send an update
 		// If it's a character update, same
 		// Otherwise, broadcast it
 		if (packet.type === 'player-shared-update') {
-			this.sendSharedDiffUpdate();
+			CommsDM.sendSharedDiffUpdate();
 		} else if (packet.type === 'character-info') {
-			this.sendSharedDiffUpdate();
+			CommsDM.sendSharedDiffUpdate();
 		} else {
-			this.broadcast(packet);
+			CommsDM.broadcast(packet);
 		}
 	}
 
@@ -758,7 +760,7 @@ export class CommsDM {
 		if (connection) {
 			connection.send(str);
 		} else {
-			this.connections
+			CommsDM.connections
 				.filter(conn => conn.open)
 				.forEach(conn => conn.send(str));
 		}
@@ -770,20 +772,20 @@ export class CommsPlayer {
 	private static state: 'not connected' | 'connecting' | 'connected' = 'not connected';
 
 	public static getState() {
-		return this.state;
+		return CommsPlayer.state;
 	}
 
 	public static onStateChanged: (() => void) | null;
 	public static onDataChanged: (() => void) | null;
 
 	public static connect(dmCode: string, name: string) {
-		if (this.state !== 'not connected') {
+		if (CommsPlayer.state !== 'not connected') {
 			return;
 		}
 
-		this.state = 'connecting';
-		if (this.onStateChanged) {
-			this.onStateChanged();
+		CommsPlayer.state = 'connecting';
+		if (CommsPlayer.onStateChanged) {
+			CommsPlayer.onStateChanged();
 		}
 
 		const playerCode = 'player-' + Utils.guid();
@@ -793,26 +795,26 @@ export class CommsPlayer {
 			if (Comms.peer) {
 				// Connect to the DM
 				const conn = Comms.peer.connect(dmCode, { label: name, reliable: true });
-				this.connection = conn;
+				CommsPlayer.connection = conn;
 				conn.on('open', () => {
-					this.state = 'connected';
-					if (this.onStateChanged) {
-						this.onStateChanged();
+					CommsPlayer.state = 'connected';
+					if (CommsPlayer.onStateChanged) {
+						CommsPlayer.onStateChanged();
 					}
 				});
 				conn.on('close', () => {
-					this.disconnect();
+					CommsPlayer.disconnect();
 				});
 				conn.on('error', err => {
 					console.error(err);
-					this.disconnect();
+					CommsPlayer.disconnect();
 				});
 				conn.on('data', data => {
 					try {
 						const packet = Comms.stringToPacket(data);
 						Comms.processPacket(packet);
-						if (this.onDataChanged) {
-							this.onDataChanged();
+						if (CommsPlayer.onDataChanged) {
+							CommsPlayer.onDataChanged();
 						}
 					} catch (ex) {
 						console.error(ex);
@@ -821,37 +823,37 @@ export class CommsPlayer {
 			}
 		});
 		Comms.peer.on('close', () => {
-			this.disconnect();
+			CommsPlayer.disconnect();
 		});
 		Comms.peer.on('disconnected', () => {
 			if (Comms.peer) {
 				Comms.peer.reconnect();
 			} else {
-				this.disconnect();
+				CommsPlayer.disconnect();
 			}
 		});
 		Comms.peer.on('error', err => {
 			console.error(err);
-			this.disconnect();
+			CommsPlayer.disconnect();
 		});
 	}
 
 	public static disconnect() {
-		if (this.connection) {
-			this.connection.close();
-			this.connection = null;
+		if (CommsPlayer.connection) {
+			CommsPlayer.connection.close();
+			CommsPlayer.connection = null;
 		}
 
 		Comms.finish();
 
-		this.state = 'not connected';
-		if (this.onStateChanged) {
-			this.onStateChanged();
+		CommsPlayer.state = 'not connected';
+		if (CommsPlayer.onStateChanged) {
+			CommsPlayer.onStateChanged();
 		}
 	}
 
 	public static sendUpdate(status: string, characterID: string) {
-		this.sendPacket({
+		CommsPlayer.sendPacket({
 			type: 'player-info',
 			payload: {
 				player: Comms.getID(),
@@ -862,27 +864,27 @@ export class CommsPlayer {
 	}
 
 	public static sendMessage(to: string[], text: string, language: string, untranslated: string) {
-		this.sendPacket(Comms.createTextPacket(to, text, language, untranslated));
+		CommsPlayer.sendPacket(Comms.createTextPacket(to, text, language, untranslated));
 	}
 
 	public static sendLink(to: string[], url: string) {
-		this.sendPacket(Comms.createLinkPacket(to, url));
+		CommsPlayer.sendPacket(Comms.createLinkPacket(to, url));
 	}
 
 	public static sendImage(to: string[], image: string) {
-		this.sendPacket(Comms.createImagePacket(to, image));
+		CommsPlayer.sendPacket(Comms.createImagePacket(to, image));
 	}
 
 	public static sendRoll(to: string[], roll: DieRollResult) {
-		this.sendPacket(Comms.createRollPacket(to, roll));
+		CommsPlayer.sendPacket(Comms.createRollPacket(to, roll));
 	}
 
 	public static sendCard(to: string[], card: CardDraw) {
-		this.sendPacket(Comms.createCardPacket(to, card));
+		CommsPlayer.sendPacket(Comms.createCardPacket(to, card));
 	}
 
 	public static sendCharacter(pc: PC) {
-		this.sendPacket({
+		CommsPlayer.sendPacket({
 			type: 'character-info',
 			payload: {
 				pc: pc
@@ -891,7 +893,7 @@ export class CommsPlayer {
 	}
 
 	public static sendRollResult(type: string, result: number) {
-		this.sendPacket({
+		CommsPlayer.sendPacket({
 			type: 'roll-result',
 			payload: {
 				id: Comms.getCharacterID(Comms.getID()),
@@ -902,35 +904,38 @@ export class CommsPlayer {
 	}
 
 	public static sendSharedUpdate() {
-		Utils.debounce(() => {
-			const packet: Packet = {
-				type: 'update',
-				payload: {
-					shared: Comms.data.shared
-				}
-			};
-
-			let send = true;
-			if (Comms.previousReceivedSharedState !== null) {
-				const diff = recursivediff.getDiff(Comms.previousReceivedSharedState, Comms.data.shared);
-				send = diff.length > 0;
-				packet.payload = {
-					sharedDiff: diff
-				};
-			}
-
-			if (send) {
-				this.sendPacket(packet);
-
-				// Store the current state
-				Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
-			}
-		}, 500)();
+		CommsPlayer.sendAfterDelay();
 	}
 
+	private static sendAfterDelay = Utils.debounce(() => {
+		const packet: Packet = {
+			type: 'update',
+			payload: {
+				shared: Comms.data.shared
+			}
+		};
+
+		let send = true;
+		if (Comms.previousSentSharedState !== null) {
+			const diff = recursivediff.getDiff(Comms.previousSentSharedState, Comms.data.shared);
+			send = diff.length > 0;
+			packet.payload = {
+				sharedDiff: diff
+			};
+		}
+
+		if (send) {
+			console.log(packet.payload);
+			CommsPlayer.sendPacket(packet);
+
+			// Store the current state
+			Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+		}
+	});
+
 	private static sendPacket(packet: Packet) {
-		if (this.connection) {
-			this.connection.send(Comms.packetToString(packet));
+		if (CommsPlayer.connection) {
+			CommsPlayer.connection.send(Comms.packetToString(packet));
 		}
 	}
 }

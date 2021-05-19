@@ -26,7 +26,7 @@ export class Gygax {
 		return str;
 	}
 
-	public static dieRoll(sides: number = 20, count: number = 1): number {
+	public static dieRoll(sides = 20, count = 1): number {
 		let total = 0;
 		for (let n = 0; n !== count; ++n) {
 			total += Utils.randomNumber(sides) + 1;

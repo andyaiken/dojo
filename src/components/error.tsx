@@ -4,6 +4,7 @@ import React, { ErrorInfo } from 'react';
 
 import { Textbox } from './controls/textbox';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface ErrorBoundaryProps {
 }
 

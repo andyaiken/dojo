@@ -1,7 +1,7 @@
 import { v4 as uuid4 } from 'uuid';
 
 export class Utils {
-	public static guid(short: boolean = false): string {
+	public static guid(short = false): string {
 		if (short) {
 			const letters = 'abcdefghijklmnopqrstuvwxyz';
 			let str = '';
@@ -54,7 +54,7 @@ export class Utils {
 		return array.map(o => ({ id: o, text: o, disabled: false }));
 	}
 
-	public static debounce(func: () => void, delay: number = 500) {
+	public static debounce(func: () => void, delay = 500) {
 		let timeout: NodeJS.Timeout;
 		return () => {
 			clearTimeout(timeout);

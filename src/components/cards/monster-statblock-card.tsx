@@ -52,7 +52,7 @@ export class MonsterStatblockCard extends React.Component<Props> {
 		return hp + ' (' + str + ')';
 	}
 
-	private statSection(text: string, value: string, showButtons: boolean = false) {
+	private statSection(text: string, value: string, showButtons = false) {
 		if (!value) {
 			return null;
 		}

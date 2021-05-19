@@ -4,6 +4,7 @@ import { Comms, CommsPlayer } from '../../utils/uhura';
 
 import { ConnectionsPanel, PlayerStatusPanel } from '../panels/session-panel';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 

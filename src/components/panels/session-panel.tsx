@@ -96,6 +96,7 @@ export class ConnectionsPanel extends React.Component<ConnectionsPanelProps> {
 
 //#region PlayerStatusPanel
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface PlayerStatusPanelProps {
 }
 

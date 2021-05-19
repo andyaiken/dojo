@@ -63,6 +63,7 @@ import { MonsterGroupScreen } from '../screens/monster-group-screen';
 import { PartyListScreen } from '../screens/party-list-screen';
 import { PartyScreen } from '../screens/party-screen';
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 
@@ -2280,7 +2281,7 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
-	private endCombat(combat: Combat, goToMap: boolean = false) {
+	private endCombat(combat: Combat, goToMap = false) {
 		if (Comms.data.shared.type === 'combat') {
 			CommsDM.shareNothing();
 		}

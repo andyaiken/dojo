@@ -537,7 +537,7 @@ export class Napoleon {
 		combatant.url = pc.url;
 	}
 
-	public static encounterTemplates(includeRandom: boolean = false) {
+	public static encounterTemplates(includeRandom = false) {
 		const slots = [
 			{
 				name: 'battlefield control',
