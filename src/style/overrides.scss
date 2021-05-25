@@ -269,6 +269,8 @@ button {
 	right: 2px;
 	top: 2px;
 	padding: 5px;
+	position: absolute;
+    margin-right: 0;
 }
 
 .ant-collapse-item-active:hover > .ant-collapse-header {
