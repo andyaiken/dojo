@@ -166,19 +166,19 @@ export class DMScreen extends React.Component<Props, State> {
 						<div>
 							<hr/>
 							<Group>
-								<div className='section'><b>age:</b> {(this.state.npc as NPC).age}</div>
-								<div className='section'><b>profession:</b> {(this.state.npc as NPC).profession}</div>
-								<div className='section'><b>height:</b> {(this.state.npc as NPC).height}</div>
-								<div className='section'><b>weight:</b> {(this.state.npc as NPC).weight}</div>
-								<div className='section'><b>hair:</b> {(this.state.npc as NPC).hair}</div>
-								<div className='section'><b>physical:</b> {(this.state.npc as NPC).physical}</div>
-								<div className='section'><b>personality:</b> {(this.state.npc as NPC).mental}</div>
-								<div className='section'><b>speech:</b> {(this.state.npc as NPC).speech}</div>
+								<div className='section large'><b>age:</b> {(this.state.npc as NPC).age}</div>
+								<div className='section large'><b>profession:</b> {(this.state.npc as NPC).profession}</div>
+								<div className='section large'><b>height:</b> {(this.state.npc as NPC).height}</div>
+								<div className='section large'><b>weight:</b> {(this.state.npc as NPC).weight}</div>
+								<div className='section large'><b>hair:</b> {(this.state.npc as NPC).hair}</div>
+								<div className='section large'><b>physical:</b> {(this.state.npc as NPC).physical}</div>
+								<div className='section large'><b>personality:</b> {(this.state.npc as NPC).mental}</div>
+								<div className='section large'><b>speech:</b> {(this.state.npc as NPC).speech}</div>
 								<hr/>
-								<div className='section'><b>trait:</b> {(this.state.npc as NPC).trait}</div>
-								<div className='section'><b>ideal:</b> {(this.state.npc as NPC).ideal}</div>
-								<div className='section'><b>bond:</b> {(this.state.npc as NPC).bond}</div>
-								<div className='section'><b>flaw:</b> {(this.state.npc as NPC).flaw}</div>
+								<div className='section large'><b>trait:</b> {(this.state.npc as NPC).trait}</div>
+								<div className='section large'><b>ideal:</b> {(this.state.npc as NPC).ideal}</div>
+								<div className='section large'><b>bond:</b> {(this.state.npc as NPC).bond}</div>
+								<div className='section large'><b>flaw:</b> {(this.state.npc as NPC).flaw}</div>
 							</Group>
 						</div>
 					);
@@ -308,7 +308,7 @@ class GeneratedItem extends React.Component<GeneratedItemProps> {
 				<Group>
 					<div className='content-then-icons'>
 						<div className='content'>
-							<div className='section'>
+							<div className='section large'>
 								{this.props.text.toLowerCase()}
 							</div>
 						</div>

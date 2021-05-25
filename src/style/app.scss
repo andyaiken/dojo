@@ -215,6 +215,10 @@ p,
 	margin: 5px 0;
 	break-inside: avoid;
 
+	&.large {
+		font-size: 16px;
+	}
+
 	&.centered {
 		text-align: center;
 	}

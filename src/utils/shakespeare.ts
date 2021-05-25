@@ -351,7 +351,6 @@ export class Shakespeare {
 		const startElf = 'Ad All Aram Berri Car Enial Gann Im Per Sorvi Var Adr An Beth Bir Jelen Key Lesh Mer Mia Naiv Quel Sar Shan';
 		const startHalfling = 'Al An C Cor Eld Er Finn Gar Lin Mer Os Per Ros An Cal Cor Kith Lav Ned Pae Seraph T V Chen';
 		const startDragonborn = 'Are Bala Bhar Don Gh Hesk Med Meh Nad Pand Patr Sham Shed Ak Bir Farid Fla Ka Ko Mish Thav Uad Eder Hener';
-		const startValerian = 'Ae Ar Au Bae Bale Ca Cor Dae Elae Gae Helae Jacae Jae Jaehae Lae Luce Mae Me Monte Nae Rha Rhae Sae Shae Sy Te Ty Va Vae Valae Vale Ver Vha Vise';
 		const startMisc = 'Alu Stos Fa Ravay Leo Stok Vic El Yeng Car Ric Ar Guir Es My Pey';
 
 		const maleHuman = 'Eir Eid Eed El Ar An Or Ef Al Vin Orn Dur Stag Elm Ur Us';
@@ -368,15 +367,21 @@ export class Shakespeare {
 		const femaleDragonborn = 'Ra Ir Eh Ann Ilar Rinn Ann La Ra A Ina Va Hit Ederei Ere Eila';
 		const femaleMisc = 'Ina Ceryn Vyn Ella Aella Vyre';
 
-		const endValerian = 'gar gal gel gelle gon gor kar, l la larr leys lla lon lor lora lys lyx max mion mithor mon mond na naera nar nara nerys nor nora nya nyra nys ra rax raxes rea rion ron rra ryn rys than xes';
+		const startValerian = 'Ae Ar Au Bae Bale Ca Cor Dae Elae Gae Helae Jacae Jae Jaehae Lae Luce Mae Me Monte Nae Rha Rhae Sae Shae Sy Te Ty Va Vae Valae Vale Ver Vha Vise';
+		const startLannister = 'Alys Ce Cer Da Dar Dor El Er Ge Ger Ja Jai Jo Joa Joy Ke La Lan Le Lo Lor Lu Ly Ma Mar Myr No Nor Sta Te Ti To Ty Wil Will';
+		const startStark = 'Al Alys Areg Ar Arr Art Barth Ben Benj Benn Ber Brand Creg Donn Dorr Ed Edd Edder El Ell Err Ey Gill Harl Joc Jon Jonn Jor Karl Ly Lyn Lys Mar Marg Marn Mel Os Ray Rick Rob Rod Sar Sans Ser The Torrh Walt Will';
+		const endValerian = 'gar gal gel gelle gon gor kar l la larr leys lla lon lor lora lys lyx max mion mithor mon mond na naera nar nara nerys nor nora nya nyra nys ra rax raxes rea rion ron rra ryn rys than xes';
+		const endLannister = 'a anne balt bolt casta cella cion dict elle em en enna fford ford ffrey frey gett got hanna ielle issa la land ler lessa lia man me men mion mon mond na nna ne nei n nn nora old on ora rek reon rick rion sei sha shara son tos tyn van ven wald well win';
+		const endStark = 'a ah am an anna anne antha ara ard aret aric arra edict el elle elyn en ena erick ert iah iane ion ogan old on or os ra ric rick rik ron rra well wyle wyn ya yn ys';
 
 		const starts = [
-			startHuman1, startHuman2, startDwarf, startElf, startHalfling, startDragonborn, startValerian, startMisc
+			startHuman1, startHuman2, startDwarf, startElf, startHalfling, startDragonborn, startMisc,
+			startValerian, startLannister, startStark
 		].join(' ').toLowerCase().split(' ');
 		const ends = [
 			maleHuman, maleDwarf, maleElf, maleHalfling, maleDragonborn, maleMisc,
 			femaleHuman, femaleDwarf, femaleElf, femaleHalfling, femaleDragonborn, femaleMisc,
-			endValerian
+			endValerian, endLannister, endStark
 		].join(' ').toLowerCase().split(' ');
 
 		const startIndex = Utils.randomNumber(starts.length);
