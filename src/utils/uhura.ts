@@ -916,8 +916,8 @@ export class CommsPlayer {
 		};
 
 		let send = true;
-		if (Comms.previousSentSharedState !== null) {
-			const diff = recursivediff.getDiff(Comms.previousSentSharedState, Comms.data.shared);
+		if (Comms.previousReceivedSharedState !== null) {
+			const diff = recursivediff.getDiff(Comms.previousReceivedSharedState, Comms.data.shared);
 			send = diff.length > 0;
 			packet.payload = {
 				sharedDiff: diff
@@ -925,11 +925,10 @@ export class CommsPlayer {
 		}
 
 		if (send) {
-			console.log(packet.payload);
 			CommsPlayer.sendPacket(packet);
 
 			// Store the current state
-			Comms.previousSentSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
+			Comms.previousReceivedSharedState = JSON.parse(JSON.stringify(Comms.data.shared));
 		}
 	});
 
