@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/dojo/static/css/main.db619e37.chunk.css",
-    "main.js": "/dojo/static/js/main.3570e5d7.chunk.js",
+    "main.js": "/dojo/static/js/main.2876a6cd.chunk.js",
     "runtime-main.js": "/dojo/static/js/runtime-main.486b1375.js",
     "static/css/2.3b14a002.chunk.css": "/dojo/static/css/2.3b14a002.chunk.css",
     "static/js/2.0686db2f.chunk.js": "/dojo/static/js/2.0686db2f.chunk.js",
@@ -13,6 +13,6 @@
     "static/css/2.3b14a002.chunk.css",
     "static/js/2.0686db2f.chunk.js",
     "static/css/main.db619e37.chunk.css",
-    "static/js/main.3570e5d7.chunk.js"
+    "static/js/main.2876a6cd.chunk.js"
   ]
 }
