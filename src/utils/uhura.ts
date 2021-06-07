@@ -15,9 +15,6 @@ import { CardDraw, Handout, SavedImage } from '../models/misc';
 import { Monster } from '../models/monster';
 import { Party, PC } from '../models/party';
 
-// This controls the interval, in seconds, between pulses
-const PULSE_INTERVAL = 60;
-
 export interface Packet {
 	type: 'update' | 'player-info' | 'character-info' | 'message' | 'prompt' | 'roll-result' | 'player-shared-update';
 	payload: any;
@@ -414,7 +411,6 @@ export class CommsDM {
 		Comms.peer = new Peer(dmCode, { host: 'dojoserver.herokuapp.com', port: 443, secure: true });
 
 		Comms.peer.on('open', () => {
-			setInterval(() => CommsDM.sendPulse(), PULSE_INTERVAL * 1000);
 			CommsDM.state = 'started';
 			if (CommsDM.onStateChanged) {
 				CommsDM.onStateChanged();
@@ -463,9 +459,9 @@ export class CommsDM {
 			conn.on('data', data => {
 				const packet = Comms.stringToPacket(data);
 				CommsDM.onDataReceived(packet);
+				CommsDM.sendPulse();
 			});
 		});
-
 	}
 
 	public static shutdown() {
@@ -511,12 +507,12 @@ export class CommsDM {
 		CommsDM.broadcast(packet);
 	}
 
-	public static sendPulse() {
+	public static sendPulse = Utils.debounce(() => {
 		CommsDM.sendPeopleUpdate();
 		CommsDM.sendPartyUpdate();
 		CommsDM.sendSharedUpdate();
 		CommsDM.sendOptionsUpdate();
-	}
+	}, 30 * 1000);
 
 	public static sendPeopleUpdate() {
 		const people = CommsDM.connections

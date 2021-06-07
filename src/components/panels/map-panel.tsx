@@ -867,35 +867,38 @@ export class MapPanel extends React.Component<Props, State> {
 
 			this.props.map.items.forEach(i => {
 				const combatant = this.props.combatants.find(c => c.id === i.id);
-				if (combatant && combatant.path && (combatant.path.length > 0)) {
-					try {
-						let s = combatant.displaySize;
-						if (combatant.mountID) {
-							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-							if (mount) {
-								s = mount.displaySize;
+				if (combatant && combatant.path) {
+					const path = combatant.path.filter(step => !!step);
+					if (path.length > 0) {
+						try {
+							let s = combatant.displaySize;
+							if (combatant.mountID) {
+								const mount = this.props.combatants.find(m => m.id === combatant.mountID);
+								if (mount) {
+									s = mount.displaySize;
+								}
 							}
-						}
-						const miniSize = Gygax.miniSize(s);
+							const miniSize = Gygax.miniSize(s);
 
-						const d = Mercator.getDistance(i, combatant.path, this.props.options ? this.props.options.diagonals : '');
-						const firstStep = combatant.path[0];
-						const firstStepStyle = this.getStyle(firstStep.x, firstStep.y, miniSize, miniSize, 'circle', dimensions);
-						firstStepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
-						distances.push(
-							<GridSquare
-								key={combatant.id + '-distance'}
-								x={firstStep.x}
-								y={firstStep.y}
-								style={firstStepStyle}
-								mode='step'
-								content={(d * 5) + ' ft'}
-							/>
-						);
-					} catch (e) {
-						console.error('drawing distances');
-						console.error('path is ' + combatant.path);
-						console.error(e);
+							const d = Mercator.getDistance(i, path, this.props.options ? this.props.options.diagonals : '');
+							const firstStep = path[0];
+							const firstStepStyle = this.getStyle(firstStep.x, firstStep.y, miniSize, miniSize, 'circle', dimensions);
+							firstStepStyle.fontSize = (miniSize * this.state.size / 5) + 'px';
+							distances.push(
+								<GridSquare
+									key={combatant.id + '-distance'}
+									x={firstStep.x}
+									y={firstStep.y}
+									style={firstStepStyle}
+									mode='step'
+									content={(d * 5) + ' ft'}
+								/>
+							);
+						} catch (e) {
+							console.error('drawing distances');
+							console.error('path is ' + path);
+							console.error(e);
+						}
 					}
 				}
 			});

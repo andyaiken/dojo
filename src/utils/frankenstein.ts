@@ -125,6 +125,45 @@ export class Frankenstein {
 		monster.legendaryActions = 0;
 	}
 
+	public static copyFields(monster: Monster, source: Monster) {
+		Frankenstein.clear(monster);
+
+		monster.name = source.name;
+		monster.size = source.size;
+		monster.role = source.role;
+		monster.category = source.category;
+		monster.tag = source.tag;
+		monster.alignment = source.alignment;
+		monster.challenge = source.challenge;
+		monster.abilityScores.str = source.abilityScores.str;
+		monster.abilityScores.dex = source.abilityScores.dex;
+		monster.abilityScores.con = source.abilityScores.con;
+		monster.abilityScores.int = source.abilityScores.int;
+		monster.abilityScores.wis = source.abilityScores.wis;
+		monster.abilityScores.cha = source.abilityScores.cha;
+		monster.ac = source.ac;
+		monster.acInfo = source.acInfo;
+		monster.hitDice = source.hitDice;
+		monster.damage.resist = source.damage.resist;
+		monster.damage.vulnerable = source.damage.vulnerable;
+		monster.damage.immune = source.damage.immune;
+		monster.savingThrows = source.savingThrows;
+		monster.speed = source.speed;
+		monster.skills = source.skills;
+		monster.senses = source.senses;
+		monster.languages = source.languages;
+		monster.conditionImmunities = source.conditionImmunities;
+		monster.portrait = source.portrait;
+		monster.legendaryActions = source.legendaryActions;
+
+		source.traits.forEach(t => {
+			const copy = JSON.parse(JSON.stringify(t)) as Trait;
+			monster.traits.push(copy);
+		});
+
+		return monster;
+	}
+
 	public static sortTraits(monster: Monster) {
 		Utils.sort(monster.traits);
 

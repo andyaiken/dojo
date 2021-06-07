@@ -471,7 +471,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				options={this.props.options}
 				combatants={this.props.exploration.combatants}
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare || this.state.addingLightSource) && !playerView}
-				selectedItemIDs={this.state.selectedItemIDs}
+				selectedItemIDs={playerView ? this.props.exploration.combatants.filter(c => c.type === 'pc').map(c => c.id) : this.state.selectedItemIDs}
 				selectedAreaID={this.props.exploration.mapAreaID}
 				fog={this.props.exploration.fog}
 				lighting={this.props.exploration.lighting}

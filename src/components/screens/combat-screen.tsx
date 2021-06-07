@@ -410,7 +410,7 @@ export class CombatScreen extends React.Component<Props, State> {
 								mode='interactive-player'
 								options={this.props.options}
 								combatants={this.props.combat.combatants}
-								selectedItemIDs={this.state.selectedItemIDs}
+								selectedItemIDs={this.props.combat.combatants.filter(c => c.type === 'pc').map(c => c.id)}
 								selectedAreaID={this.props.combat.mapAreaID}
 								fog={this.props.combat.fog}
 								lighting={this.props.combat.lighting}

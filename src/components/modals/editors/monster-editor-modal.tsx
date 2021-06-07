@@ -154,8 +154,10 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 	}
 
 	private applyTheme(monster: Monster) {
+		const edited = Frankenstein.applyTheme(this.state.monster, monster);
+		Frankenstein.copyFields(this.state.monster, edited);
 		this.setState({
-			monster: Frankenstein.applyTheme(this.state.monster, monster)
+			monster: this.state.monster
 		});
 	}
 
