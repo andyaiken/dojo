@@ -144,10 +144,10 @@ export class Napoleon {
 			adjusted = basic;
 			const pcs = party.pcs.filter(pc => pc.active);
 			if (pcs.length < 3) {
-				adjusted = Math.max(0, basic - 1);
+				adjusted = basic + 1;
 			}
 			if (pcs.length > 5) {
-				adjusted = basic + 1;
+				adjusted = Math.max(0, basic - 1);
 			}
 		}
 
