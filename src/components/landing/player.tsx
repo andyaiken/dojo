@@ -531,7 +531,7 @@ export class Player extends React.Component<Props, State> {
 						gridSquareClicked={(x, y) => {
 							if (this.state.addingToMap) {
 								const list = Napoleon.getMountsAndRiders([characterID], combat.combatants);
-								list.forEach(c => Mercator.add(combat.map as Map, c, x, y));
+								list.forEach(c => Mercator.add(combat.map as Map, c, combat.combatants, x, y));
 								this.setAddingToMap(false);
 								CommsPlayer.sendSharedUpdate();
 								this.forceUpdate();
@@ -582,7 +582,7 @@ export class Player extends React.Component<Props, State> {
 					gridSquareClicked={(x, y) => {
 						if (this.state.addingToMap) {
 							const list = Napoleon.getMountsAndRiders([characterID], exploration.combatants);
-							list.forEach(c => Mercator.add(exploration.map as Map, c, x, y));
+							list.forEach(c => Mercator.add(exploration.map as Map, c, exploration.combatants, x, y));
 							this.setAddingToMap(false);
 							CommsPlayer.sendSharedUpdate();
 							this.forceUpdate();

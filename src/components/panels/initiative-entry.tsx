@@ -16,6 +16,7 @@ import { Note } from '../controls/note';
 import { NumberSpin } from '../controls/number-spin';
 import { HitPointGauge } from './hit-point-gauge';
 import { PortraitPanel } from './portrait-panel';
+import { Napoleon } from '../../utils/napoleon';
 
 interface InitiativeEntryProps {
 	combatant: Combatant;
@@ -247,13 +248,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				portrait = <PortraitPanel source={pcOrMonster} inline={true} />;
 			}
 
-			let name = this.props.combatant.displayName || 'combatant';
-			if (this.props.combatant.mountID) {
-				const mount = this.props.combat.combatants.find(c => c.id === this.props.combatant.mountID);
-				if (mount) {
-					name += ' on ' + (mount.displayName || 'unnamed mount');
-				}
-			}
+			const name = Napoleon.getCombatantName(this.props.combatant, this.props.combat.combatants);
 
 			const stats = this.getStats();
 			const tags = this.getTags();

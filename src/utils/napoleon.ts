@@ -714,4 +714,17 @@ export class Napoleon {
 		const index = Utils.randomNumber(conditions.length);
 		return conditions[index];
 	}
+
+	public static getCombatantName(combatant: Combatant, combatants: Combatant[]) {
+		let name = combatant.displayName || 'combatant';
+
+		if (combatant.mountID) {
+			const mount = combatants.find(c => c.id === combatant.mountID);
+			if (mount) {
+				name += ' (on ' + (mount.displayName || 'unnamed mount') + ')';
+			}
+		}
+
+		return name;
+	}
 }

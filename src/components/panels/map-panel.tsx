@@ -26,6 +26,7 @@ import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { CombatantTags } from './combat-controls-panel';
 import { MessagePanel } from './session-panel';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	map: Map;
@@ -391,7 +392,7 @@ export class MapPanel extends React.Component<Props, State> {
 							actors.forEach(combatant => {
 								const item = this.props.map.items.find(i => i.id === combatant.id);
 								if (item) {
-									const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+									const size = Math.max(Mercator.getTokenSize(combatant, this.props.combatants), 1);
 									if (this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 })) {
 										isVisible = true;
 									}
@@ -489,7 +490,7 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getActiveToken() {
-		let activeToken: { token: MapItem, combatant: Combatant | null } | null = null;
+		let activeToken: { token: MapItem, combatant: Combatant | null, combatants: Combatant[] } | null = null;
 		const characterID = Comms.getCharacterID(Comms.getID());
 		if (characterID) {
 			// The active token is my character's token
@@ -497,7 +498,8 @@ export class MapPanel extends React.Component<Props, State> {
 			if (token) {
 				activeToken = {
 					token: token,
-					combatant: null
+					combatant: null,
+					combatants: []
 				};
 			}
 		} else {
@@ -508,7 +510,8 @@ export class MapPanel extends React.Component<Props, State> {
 				if (token) {
 					activeToken = {
 						token: token,
-						combatant: combatant
+						combatant: combatant,
+						combatants: this.props.combatants
 					};
 				}
 			}
@@ -799,7 +802,7 @@ export class MapPanel extends React.Component<Props, State> {
 					const mi = this.props.map.items.find(i => i.id === c.id);
 					if (mi) {
 						const sizeInSquares = c.aura.radius / 5;
-						const dim = (sizeInSquares * 2) + Math.max(Gygax.miniSize(c.displaySize), 1);
+						const dim = (sizeInSquares * 2) + Math.min(Mercator.getTokenSize(c, this.props.combatants), 1);
 						const auraStyle = this.getStyle(mi.x - sizeInSquares, mi.y - sizeInSquares, dim, dim, c.aura.style, dimensions);
 						auraStyle.backgroundColor = c.aura.color;
 						return (
@@ -826,14 +829,7 @@ export class MapPanel extends React.Component<Props, State> {
 				if (combatant && combatant.path && (combatant.path.filter(step => !!step).length > 0)) {
 					if (!(this.props.mode === 'interactive-player') && (!combatant.showOnMap)) {
 						try {
-							let s = combatant.displaySize;
-							if (combatant.mountID) {
-								const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-								if (mount) {
-									s = mount.displaySize;
-								}
-							}
-							const miniSize = Gygax.miniSize(s);
+							const miniSize = Mercator.getTokenSize(combatant, this.props.combatants);
 
 							combatant.path.filter(step => !!step).forEach(step => {
 								steps.push(
@@ -871,14 +867,7 @@ export class MapPanel extends React.Component<Props, State> {
 					const path = combatant.path.filter(step => !!step);
 					if (path.length > 0) {
 						try {
-							let s = combatant.displaySize;
-							if (combatant.mountID) {
-								const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-								if (mount) {
-									s = mount.displaySize;
-								}
-							}
-							const miniSize = Gygax.miniSize(s);
+							const miniSize = Mercator.getTokenSize(combatant, this.props.combatants);
 
 							const d = Mercator.getDistance(i, path, this.props.options ? this.props.options.diagonals : '');
 							const firstStep = path[0];
@@ -921,9 +910,9 @@ export class MapPanel extends React.Component<Props, State> {
 				.sort((a, b) => {
 					const combatantA = this.props.combatants.find(c => c.id === a.id);
 					const combatantB = this.props.combatants.find(c => c.id === b.id);
-					const sizeA = combatantA ? combatantA.displaySize : a.size;
-					const sizeB = combatantB ? combatantB.displaySize : b.size;
-					return Gygax.miniSize(sizeB) - Gygax.miniSize(sizeA);
+					const sizeA = combatantA ? Mercator.getTokenSize(combatantA, this.props.combatants) : Gygax.miniSize(a.size);
+					const sizeB = combatantB ? Mercator.getTokenSize(combatantB, this.props.combatants) : Gygax.miniSize(b.size);
+					return sizeB - sizeA;
 				})
 				.forEach(i => {
 					let miniSize = Gygax.miniSize(i.size);
@@ -931,14 +920,7 @@ export class MapPanel extends React.Component<Props, State> {
 					let isMe = false;
 					const combatant = this.props.combatants.find(c => c.id === i.id);
 					if (combatant) {
-						let s = combatant.displaySize;
-						if (combatant.mountID) {
-							const mount = this.props.combatants.find(m => m.id === combatant.mountID);
-							if (mount) {
-								s = mount.displaySize;
-							}
-						}
-						miniSize = Gygax.miniSize(s);
+						miniSize = Mercator.getTokenSize(combatant, this.props.combatants);
 						isPC = (combatant.type === 'pc');
 						isMe = (combatant.id === Comms.getCharacterID(Comms.getID())) && Comms.data.options.allowControls;
 					}
@@ -949,6 +931,7 @@ export class MapPanel extends React.Component<Props, State> {
 							key={i.id}
 							token={i}
 							combatant={combatant || null}
+							combatants={this.props.combatants}
 							user={this.props.mode === 'interactive-player' ? 'player' : 'dm'}
 							activeToken={activeToken}
 							style={tokenStyle}
@@ -1002,7 +985,7 @@ export class MapPanel extends React.Component<Props, State> {
 			});
 		});
 		this.props.combatants.filter(combatant => combatant.lightSource !== null).forEach(combatant => {
-			const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+			const size = Math.max(Mercator.getTokenSize(combatant, this.props.combatants), 1);
 			const item = this.props.map.items.find(i => i.id === combatant.id);
 			if (item) {
 				lightSources.push({
@@ -1031,7 +1014,7 @@ export class MapPanel extends React.Component<Props, State> {
 					visible = (actors.length === 0) || actors.some(combatant => {
 						const item = this.props.map.items.find(i => i.id === combatant.id);
 						if (item) {
-							const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+							const size = Math.max(Mercator.getTokenSize(combatant, this.props.combatants), 1);
 							return this.canSee(walls, { x: item.x + (size / 2), y: item.y + (size / 2) }, { x: x + 0.5, y: y + 0.5 });
 						}
 						return false;
@@ -1063,7 +1046,7 @@ export class MapPanel extends React.Component<Props, State> {
 						actors.filter(combatant => combatant.darkvision > 0).forEach(combatant => {
 							const item = this.props.map.items.find(i => i.id === combatant.id);
 							if (item) {
-								const size = Math.max(Gygax.miniSize(combatant.displaySize), 1);
+								const size = Math.max(Mercator.getTokenSize(combatant, this.props.combatants), 1);
 								const fromCube = {
 									x: item.x,
 									y: item.y,
@@ -1354,7 +1337,7 @@ interface GridSquareProps {
 	style: MapItemStyle;
 	mode: string;
 	selected: boolean;
-	showDistanceTo: { token: MapItem, combatant: Combatant | null } | null;
+	showDistanceTo: { token: MapItem, combatant: Combatant | null, combatants: Combatant[] } | null;
 	content: string | JSX.Element | null;
 	onMouseDown: (x: number, y: number) => void;
 	onMouseUp: (x: number, y: number) => void;
@@ -1430,7 +1413,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 					<Popover
 						content={(
 							<div className='section'>
-								{dist} ft away from {this.props.showDistanceTo.combatant ? this.props.showDistanceTo.combatant.displayName : 'you'}
+								{dist} ft away from {this.props.showDistanceTo.combatant ? Napoleon.getCombatantName(this.props.showDistanceTo.combatant, this.props.showDistanceTo.combatants) : 'you'}
 							</div>
 						)}
 						placement='bottom'
@@ -2011,6 +1994,7 @@ class MapOverlay extends React.Component<MapOverlayProps> {
 interface MapTokenProps {
 	token: MapItem;
 	combatant: Combatant | null;
+	combatants: Combatant[];
 	user: 'dm' | 'player';
 	activeToken: { token: MapItem, combatant: Combatant | null } | null;
 	style: MapItemStyle;
@@ -2069,32 +2053,34 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 		const info: JSX.Element[] = [];
 
 		if (this.props.activeToken && (this.props.activeToken.token.id !== this.props.token.id)) {
+			const fromSize = this.props.combatant ? Mercator.getTokenSize(this.props.combatant, this.props.combatants) : 0;
+			const toSize = this.props.activeToken.combatant ? Mercator.getTokenSize(this.props.activeToken.combatant, this.props.combatants) : 0;
 			const fromCube = {
 				x: this.props.token.x,
 				y: this.props.token.y,
 				z: this.props.token.z,
-				width: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.width,
-				height: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.height,
-				depth: this.props.combatant ? Gygax.miniSize(this.props.combatant.displaySize) : this.props.token.depth
+				width: this.props.combatant ? fromSize : this.props.token.width,
+				height: this.props.combatant ? fromSize : this.props.token.height,
+				depth: this.props.combatant ? fromSize : this.props.token.depth
 			};
 			const toCube = {
 				x: this.props.activeToken.token.x,
 				y: this.props.activeToken.token.y,
 				z: this.props.activeToken.token.z,
-				width: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.width,
-				height: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.height,
-				depth: this.props.activeToken.combatant ? Gygax.miniSize(this.props.activeToken.combatant.displaySize) : this.props.activeToken.token.depth
+				width: this.props.activeToken.combatant ? toSize : this.props.activeToken.token.width,
+				height: this.props.activeToken.combatant ? toSize : this.props.activeToken.token.height,
+				depth: this.props.activeToken.combatant ? toSize : this.props.activeToken.token.depth
 			};
 			const dist = Mercator.getDistanceBetweenItems(fromCube, toCube) * 5;
 			info.push(
 				<div key='distance' className='section'>
-					{dist} ft away from {this.props.activeToken.combatant ? this.props.activeToken.combatant.displayName : 'you'}
+					{dist} ft away from {this.props.activeToken.combatant ? Napoleon.getCombatantName(this.props.activeToken.combatant, this.props.combatants) : 'you'}
 				</div>
 			);
 		}
 
 		if (this.props.combatant) {
-			name = this.props.combatant.displayName || 'unnamed combatant';
+			name = Napoleon.getCombatantName(this.props.combatant, this.props.combatants);
 
 			tags = (
 				<CombatantTags
@@ -2200,7 +2186,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 			}
 
 			if (this.props.combatant) {
-				name = this.props.combatant.displayName || 'combatant';
+				name = Napoleon.getCombatantName(this.props.combatant, this.props.combatants);
 				style += ' ' + this.props.combatant.faction;
 
 				if (this.props.combatant.current) {
@@ -2226,7 +2212,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 						<img className='portrait' src={c.portrait} alt={name} />
 					);
 				} else {
-					const inits = name.toUpperCase()
+					const inits = (this.props.combatant.displayName || 'combatant').toUpperCase()
 									.replace(/[^A-Z0-9 ]/, '')
 									.split(' ')
 									.map(s => s[0])

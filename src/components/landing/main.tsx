@@ -2097,7 +2097,7 @@ export class Main extends React.Component<Props, State> {
 				combat.lighting = combatSetup.lighting;
 
 				locations.forEach(c => {
-					Mercator.add(combat.map as Map, c.combatant, c.x, c.y);
+					Mercator.add(combat.map as Map, c.combatant, combat.combatants, c.x, c.y);
 				})
 			}
 
@@ -2959,7 +2959,7 @@ export class Main extends React.Component<Props, State> {
 
 	private mapAdd(combatant: Combatant, x: number, y: number, allCombatants: Combatant[], map: Map) {
 		const list = Napoleon.getMountsAndRiders([combatant.id], allCombatants);
-		list.forEach(c => Mercator.add(map, c, x, y));
+		list.forEach(c => Mercator.add(map, c, allCombatants, x, y));
 
 		this.setState({
 			combats: this.state.combats,

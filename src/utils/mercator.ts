@@ -43,7 +43,7 @@ export class Mercator {
 					for (let x = dimensions.minX; x <= dimensions.maxX; ++x) {
 						for (let y = dimensions.minY; y <= dimensions.maxY; ++y) {
 							// Could we add this monster to this square?
-							const canAddHere = this.canAddMonsterHere(map, combatant, x, y);
+							const canAddHere = this.canAddMonsterHere(map, combatant, combatants, x, y);
 							if (canAddHere) {
 								candidateSquares.push({x: x, y: y});
 							}
@@ -53,7 +53,7 @@ export class Mercator {
 					if (candidateSquares.length > 0) {
 						const index = Utils.randomNumber(candidateSquares.length);
 						const square = candidateSquares[index];
-						const size = Gygax.miniSize(combatant.displaySize);
+						const size = this.getTokenSize(combatant, combatants);
 
 						const item = Factory.createMapItem();
 						item.id = combatant.id;
@@ -100,7 +100,7 @@ export class Mercator {
 
 			const combatant = combatants.find(c => c.id === id);
 			if (combatant) {
-				const size = Math.max(1, Gygax.miniSize(combatant.displaySize));
+				const size = Math.max(1, this.getTokenSize(combatant, combatants));
 				cube.width = size;
 				cube.height = size;
 				cube.depth = size;
@@ -251,10 +251,10 @@ export class Mercator {
 		return coveredSquares.every(square => square);
 	}
 
-	public static canAddMonsterHere(map: Map, combatant: Combatant, x: number, y: number) {
+	public static canAddMonsterHere(map: Map, combatant: Combatant, combatants: Combatant[], x: number, y: number) {
 		const coveredSquares: boolean[] = [];
 
-		const size = Gygax.miniSize(combatant.displaySize);
+		const size = this.getTokenSize(combatant, combatants);
 		const right = x + Math.max(1, size) - 1;
 		const bottom = y + Math.max(1, size) - 1;
 		for (let x1 = x; x1 <= right; ++x1) {
@@ -571,14 +571,14 @@ export class Mercator {
 		return null;
 	}
 
-	public static add(map: Map, combatant: Combatant, x: number, y: number) {
+	public static add(map: Map, combatant: Combatant, combatants: Combatant[], x: number, y: number) {
 		let item = map.items.find(mi => mi.id === combatant.id);
 		if (!item) {
 			item = Factory.createMapItem();
 			item.id = combatant.id;
 			item.type = combatant.type as 'pc' | 'monster' | 'companion';
 
-			const size = Gygax.miniSize(combatant.displaySize);
+			const size = this.getTokenSize(combatant, combatants);
 			item.height = size;
 			item.width = size;
 			item.depth = size;
@@ -1038,5 +1038,18 @@ export class Mercator {
 			horizontal: horizontalWalls,
 			vertical: verticalWalls
 		};
+	}
+
+	public static getTokenSize(combatant: Combatant, combatants: Combatant[]) {
+		let size = combatant.displaySize;
+
+		if (combatant.mountID) {
+			const mount = combatants.find(m => m.id === combatant.mountID);
+			if (mount) {
+				size = mount.displaySize;
+			}
+		}
+
+		return Gygax.miniSize(size);
 	}
 }
