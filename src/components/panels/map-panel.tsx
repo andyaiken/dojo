@@ -2092,6 +2092,15 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 				/>
 			);
 
+			if (this.props.combatant.type === 'monster') {
+				const state = Napoleon.getCombatantState(this.props.combatant);
+				if (state !== 'unhurt') {
+					info.push(
+						<div key='injury' className='section'>{state}</div>
+					);
+				}
+			}
+
 			if (this.props.token.z !== 0) {
 				info.push(
 					<div key='altitude' className='section'>altitude: {Math.abs(this.props.token.z * 5)} ft {this.props.token.z > 0 ? 'up' : 'down'}</div>

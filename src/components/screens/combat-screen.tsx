@@ -404,6 +404,7 @@ export class CombatScreen extends React.Component<Props, State> {
 				<Popout title='Encounter' onCloseWindow={() => this.setPlayerViewOpen(false)}>
 					<Row className='full-height full-width'>
 						<Col span={18} className='scrollable both-ways'>
+							<div className='heading'>encounter map</div>
 							<MapPanel
 								key='map'
 								map={this.props.combat.map}
@@ -1071,28 +1072,30 @@ export class CombatScreen extends React.Component<Props, State> {
 			}
 
 			const legendary: JSX.Element[] = [];
-			this.props.combat.combatants
-				.filter(c => !c.pending && c.active && !c.defeated)
-				.forEach(c => {
-					const monster = c as (Combatant & Monster);
-					if (monster && monster.traits && monster.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) && !monster.current) {
-						legendary.push(
-							<div className='card monster' key={'leg ' + monster.id}>
-								<div className='heading'>
-									<div className='title'>{monster.name}</div>
+			if (initHolder) {
+				this.props.combat.combatants
+					.filter(c => !c.pending && c.active && !c.defeated)
+					.forEach(c => {
+						const monster = c as (Combatant & Monster);
+						if (monster && monster.traits && monster.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) && !monster.current) {
+							legendary.push(
+								<div className='card monster' key={'leg ' + monster.id}>
+									<div className='heading'>
+										<div className='title'>{monster.name}</div>
+									</div>
+									<div className='card-content'>
+										<TraitsPanel
+											combatant={monster}
+											mode='legendary'
+											useTrait={trait => this.props.useTrait(trait)}
+											rechargeTrait={trait => this.props.rechargeTrait(trait)}
+										/>
+									</div>
 								</div>
-								<div className='card-content'>
-									<TraitsPanel
-										combatant={monster}
-										mode='legendary'
-										useTrait={trait => this.props.useTrait(trait)}
-										rechargeTrait={trait => this.props.rechargeTrait(trait)}
-									/>
-								</div>
-							</div>
-						);
-					}
-				});
+							);
+						}
+					});
+			}
 
 			const middleWidth = this.state.middleColumnWidth;
 			const sideWidth = (24 - middleWidth) / 2;

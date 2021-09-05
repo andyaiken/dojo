@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Napoleon } from '../../utils/napoleon';
+
 import { Combatant } from '../../models/combat';
 
 import { RenderError } from '../error';
@@ -14,16 +16,9 @@ export class HitPointGauge extends React.Component<Props> {
 			const hpCurrent = this.props.combatant.hpCurrent || 0;
 			const hpMax = this.props.combatant.hpMax || 0;
 			const hpTemp = this.props.combatant.hpTemp || 0;
-
-			const hpBloodied = hpMax / 2;
 			const hpWidth = 100 * Math.max(hpCurrent, 0) / (hpMax + hpTemp);
 
-			let style = 'bar injured';
-			if (hpCurrent >= hpMax) {
-				style = 'bar unhurt';
-			} else if (hpCurrent <= hpBloodied) {
-				style = 'bar bloodied';
-			}
+			const style = 'bar ' + Napoleon.getCombatantState(this.props.combatant);
 
 			let hpTempBar = null;
 			if ((this.props.combatant.hpTemp !== null) && (this.props.combatant.hpTemp > 0)) {

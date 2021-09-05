@@ -727,4 +727,18 @@ export class Napoleon {
 
 		return name;
 	}
+
+	public static getCombatantState(c: Combatant) {
+		const hpCurrent = c.hpCurrent || 0;
+		const hpMax = c.hpMax || 0;
+		const hpBloodied = hpMax / 2;
+
+		if (hpCurrent >= hpMax) {
+			return 'unhurt';
+		} else if (hpCurrent <= hpBloodied) {
+			return 'bloodied';
+		}
+
+		return 'injured';
+	}
 }
