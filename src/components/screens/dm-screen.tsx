@@ -28,7 +28,7 @@ interface Props {
 
 interface State {
 	leftView: string;
-	rightView: string;
+	rightView: string | null;
 	selectedPartyID: string | null;
 	generatorType: string;
 	generatedItems: string[];
@@ -40,7 +40,7 @@ export class DMScreen extends React.Component<Props, State> {
 		super(props);
 		this.state = {
 			leftView: 'skills',
-			rightView: 'party breakdown',
+			rightView: null,
 			selectedPartyID: props.parties.length === 1 ? props.parties[0].id : null,
 			generatorType: 'names',
 			generatedItems: [],
@@ -236,10 +236,15 @@ export class DMScreen extends React.Component<Props, State> {
 	public render() {
 		try {
 			const referenceTabs = Utils.arrayToItems(['skills', 'conditions', 'actions']);
-			const partyTabs = ['party breakdown', 'generators'];
+			const partyTabs = [];
+			if (this.props.parties.length > 0) {
+				partyTabs.push('party breakdown');
+			}
+			partyTabs.push('generators');
 			if (this.props.showAwards) {
 				partyTabs.push('awards');
 			}
+			const selectedRight = this.state.rightView ?? partyTabs[0];
 
 			return (
 				<Row gutter={10} className='full-height'>
@@ -264,21 +269,21 @@ export class DMScreen extends React.Component<Props, State> {
 					<Col span={8} className='full-height'>
 						<Tabs
 							options={Utils.arrayToItems(partyTabs)}
-							selectedID={this.state.rightView}
+							selectedID={selectedRight}
 							onSelect={view => this.setRightView(view)}
 						/>
 						<div className='scrollable' style={{ height: 'calc(100% - 52px)' }}>
-							<Conditional display={this.state.rightView === 'party breakdown'}>
+							<Conditional display={selectedRight === 'party breakdown'}>
 								{this.getPartyHeader()}
 								<PartyBreakdownPanel
 									party={this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null}
 									showAwards={this.props.showAwards}
 								/>
 							</Conditional>
-							<Conditional display={this.state.rightView === 'generators'}>
+							<Conditional display={selectedRight === 'generators'}>
 								{this.getGeneratorsSection()}
 							</Conditional>
-							<Conditional display={this.state.rightView === 'awards'}>
+							<Conditional display={selectedRight === 'awards'}>
 								{this.getAwardsSection()}
 							</Conditional>
 						</div>
