@@ -990,7 +990,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						closable={false}
 						maskClosable={true}
 						width='30%'
-						visible={drawer.visible}
+						open={drawer.visible}
 						onClose={() => drawer.onClose()}
 					>
 						<div className='drawer-header'><div className='app-title'>{drawer.title}</div></div>

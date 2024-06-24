@@ -94,7 +94,6 @@ export class Shakespeare {
 	private static extractLine() {
 		let line = String.fromCharCode(0, 1);
 
-		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const prev = line.substr(line.length - 2, 2);
 			const item = Shakespeare.model.find(x => x.prev === prev);

@@ -23,9 +23,4 @@ If there are any build errors, you will see them in the terminal and the browser
 
 ## Making a change to the app
 
-Check that your changes don't break the project's style rules:
-
-* Open a terminal in the root folder
-* Run `npm run lint`
-
 Remember to update the app version number in `package.json` before creating a pull request.

@@ -4480,7 +4480,7 @@ export class Main extends React.Component<Props, State> {
 							closable={false}
 							maskClosable={drawer.closable}
 							width={drawer.width}
-							visible={drawer.content !== null}
+							open={drawer.content !== null}
 							onClose={() => this.closeDrawer()}
 						>
 							<div className='drawer-header'><div className='app-title'>{drawer.header}</div></div>

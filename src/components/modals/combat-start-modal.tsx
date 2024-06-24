@@ -519,7 +519,7 @@ class MapSection extends React.Component<MapSectionProps, MapSectionState> {
 					closable={false}
 					maskClosable={true}
 					width='50%'
-					visible={this.state.editing}
+					open={this.state.editing}
 					onClose={() => this.setEditing(false)}
 				>
 					<div className='drawer-header'>

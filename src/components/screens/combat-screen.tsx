@@ -1150,7 +1150,7 @@ export class CombatScreen extends React.Component<Props, State> {
 						closable={false}
 						maskClosable={true}
 						width='33%'
-						visible={this.state.showOptions}
+						open={this.state.showOptions}
 						onClose={() => this.toggleShowOptions()}
 					>
 						<div className='drawer-header'><div className='app-title'>options</div></div>

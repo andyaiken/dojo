@@ -1074,7 +1074,6 @@ export class MapPanel extends React.Component<Props, State> {
 			while (matrix.length > 0) {
 				const rect = { x1: matrix[0].x, y1: matrix[0].y, x2: matrix[0].x, y2: matrix[0].y };
 
-				// eslint-disable-next-line no-constant-condition
 				while (true) {
 					let extended = false;
 
@@ -1770,16 +1769,16 @@ class Wall extends React.Component<WallProps, WallState> {
 						content={this.getPopoverContent(false)}
 						placement='bottom'
 						overlayClassName='map-hover-tooltip'
-						visible={this.state.hovered}
-						onVisibleChange={value => this.handleHoverChange(value)}
+						open={this.state.hovered}
+						onOpenChange={value => this.handleHoverChange(value)}
 					>
 						<Popover
 							content={this.getPopoverContent(true)}
 							trigger='contextMenu'
 							placement='bottom'
 							overlayClassName='map-click-tooltip'
-							visible={this.state.clicked}
-							onVisibleChange={value => this.handleClickChange(value)}
+							open={this.state.clicked}
+							onOpenChange={value => this.handleClickChange(value)}
 						>
 							<ColumnHeightOutlined className='wall-icon' rotate={Mercator.getWallOrientation(this.props.wall) === 'horizontal' ? 0 : 90} />
 						</Popover>
@@ -1905,16 +1904,16 @@ class LightSource extends React.Component<LightSourceProps, LightSourceState> {
 					content={this.getPopoverContent(false)}
 					placement='bottom'
 					overlayClassName='map-hover-tooltip'
-					visible={this.state.hovered}
-					onVisibleChange={value => this.handleHoverChange(value)}
+					open={this.state.hovered}
+					onOpenChange={value => this.handleHoverChange(value)}
 				>
 					<Popover
 						content={this.getPopoverContent(true)}
 						trigger='contextMenu'
 						placement='bottom'
 						overlayClassName='map-click-tooltip'
-						visible={this.state.clicked}
-						onVisibleChange={value => this.handleClickChange(value)}
+						open={this.state.clicked}
+						onOpenChange={value => this.handleClickChange(value)}
 					>
 						<BulbOutlined className='light-source-icon' />
 					</Popover>
@@ -2290,16 +2289,16 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 					content={this.getPopoverContent(false)}
 					placement='bottom'
 					overlayClassName='map-hover-tooltip'
-					visible={this.state.hovered}
-					onVisibleChange={value => this.handleHoverChange(value)}
+					open={this.state.hovered}
+					onOpenChange={value => this.handleHoverChange(value)}
 				>
 					<Popover
 						content={this.getPopoverContent(true)}
 						trigger='contextMenu'
 						placement='bottom'
 						overlayClassName='map-click-tooltip'
-						visible={this.state.clicked}
-						onVisibleChange={value => this.handleClickChange(value)}
+						open={this.state.clicked}
+						onOpenChange={value => this.handleClickChange(value)}
 					>
 						{token}
 					</Popover>

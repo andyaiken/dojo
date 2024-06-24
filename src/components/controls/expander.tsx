@@ -35,7 +35,7 @@ export class Expander extends React.Component<Props> {
 					className={style}
 					defaultActiveKey={[]}
 					expandIcon={p => <DownCircleOutlined rotate={p.isActive ? -180 : 0} />}
-					expandIconPosition={'right'}
+					expandIconPosition={'end'}
 				>
 					<Collapse.Panel key='one' header={<div className='collapse-header-text'>{this.props.text}</div>}>
 						{this.props.children}

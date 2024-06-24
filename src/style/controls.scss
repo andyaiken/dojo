@@ -420,16 +420,12 @@ blockquote,
 			align-items: center;
 
 			.radio-item-text {
-				flex-grow: 1;
-				flex-shrink: 1;
-				flex-basis: 0;
+				flex: 1 1 0;
 				font-weight: 600;
 			}
 
 			.radio-item-info {
-				flex-grow: 0;
-				flex-shrink: 0;
-				flex-basis: auto;
+				flex: 0 0 auto;
 				font-size: 10px;
 			}
 		}
@@ -509,9 +505,7 @@ blockquote,
 	display: flex;
 
 	.tab {
-		flex-basis: 0;
-		flex-grow: 1;
-		flex-shrink: 1;
+		flex: 1 1 0;
 		text-align: center;
 		border-bottom: 2px solid $control-border;
 		padding: 3px;

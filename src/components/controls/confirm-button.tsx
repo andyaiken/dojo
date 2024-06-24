@@ -68,8 +68,8 @@ export class ConfirmButton extends React.Component<Props, State> {
 					)}
 					trigger='click'
 					overlayClassName='confirm-tooltip'
-					visible={this.state.visible}
-					onVisibleChange={visible => this.setState({ visible: visible })}
+					open={this.state.visible}
+					onOpenChange={visible => this.setState({ visible: visible })}
 				>
 					{btn}
 				</Popover>
