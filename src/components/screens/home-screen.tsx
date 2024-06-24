@@ -3,7 +3,6 @@ import React from 'react';
 
 import { RenderError } from '../error';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 
@@ -90,17 +89,6 @@ export class HomeScreen extends React.Component<Props> {
 							<li>check references for skill usage, condition effects, and action rules</li>
 							<li>see your party&apos;s passive skills, known languages, and darkvision ranges</li>
 							<li>come up with npc names and descriptions, place names, and descriptions of potions or art objects</li>
-						</ul>
-					</div>
-					<div key='session'>
-						<div className='heading'>
-							connect with your players
-						</div>
-						<ul>
-							<li>use a dedicated player app to share information with your group</li>
-							<li>send messages (or links, or images, or die rolls) to the whole table - or whisper them to just one player</li>
-							<li>during combat, show the initiative order and the encounter map to your players, and let them control their own characters</li>
-							<li>each player can update their character&apos;s stats, so you don&apos;t have to</li>
 						</ul>
 					</div>
 					<div key='epilogue'>

@@ -6,7 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
-import { Comms } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -25,7 +24,6 @@ import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { CombatantTags } from './combat-controls-panel';
-import { MessagePanel } from './session-panel';
 import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
@@ -490,34 +488,19 @@ export class MapPanel extends React.Component<Props, State> {
 	}
 
 	private getActiveToken() {
-		let activeToken: { token: MapItem, combatant: Combatant | null, combatants: Combatant[] } | null = null;
-		const characterID = Comms.getCharacterID(Comms.getID());
-		if (characterID) {
-			// The active token is my character's token
-			const token = this.props.map.items.find(i => i.id === characterID);
+		const combatant = this.props.combatants.find(c => c.current);
+		if (combatant) {
+			const token = this.props.map.items.find(i => i.id === combatant.id);
 			if (token) {
-				activeToken = {
+				return {
 					token: token,
-					combatant: null,
-					combatants: []
+					combatant: combatant,
+					combatants: this.props.combatants
 				};
-			}
-		} else {
-			// The active token is the initiative holder
-			const combatant = this.props.combatants.find(c => c.current);
-			if (combatant) {
-				const token = this.props.map.items.find(i => i.id === combatant.id);
-				if (token) {
-					activeToken = {
-						token: token,
-						combatant: combatant,
-						combatants: this.props.combatants
-					};
-				}
 			}
 		}
 
-		return activeToken;
+		return null;
 	}
 
 	private canSee(
@@ -917,12 +900,10 @@ export class MapPanel extends React.Component<Props, State> {
 				.forEach(i => {
 					let miniSize = Gygax.miniSize(i.size);
 					let isPC = false;
-					let isMe = false;
 					const combatant = this.props.combatants.find(c => c.id === i.id);
 					if (combatant) {
 						miniSize = Mercator.getTokenSize(combatant, this.props.combatants);
 						isPC = (combatant.type === 'pc');
-						isMe = (combatant.id === Comms.getCharacterID(Comms.getID())) && Comms.data.options.allowControls;
 					}
 					const tokenStyle = this.getStyle(i.x, i.y, miniSize, miniSize, 'circle', dimensions);
 					tokenStyle.fontSize = (miniSize * this.state.size / 4) + 'px';
@@ -939,7 +920,7 @@ export class MapPanel extends React.Component<Props, State> {
 							simple={this.props.mode === 'thumbnail'}
 							showGauge={this.props.mode === 'interactive-dm'}
 							showHidden={(this.props.mode === 'interactive-dm') || isPC}
-							selectable={this.props.mode === 'interactive-dm' || ((this.props.mode === 'interactive-player') && isMe)}
+							selectable={this.props.mode === 'interactive-dm'}
 							selected={this.props.selectedItemIDs.includes(i.id)}
 							select={(id, ctrl) => this.props.itemSelected(id, ctrl)}
 							remove={id => this.props.itemRemove(id)}
@@ -2151,16 +2132,6 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 					<div key='note' className='section'>
 						<ReactMarkdown>{this.props.combatant.note}</ReactMarkdown>
 					</div>
-				);
-			}
-		}
-
-		if (this.props.combatant) {
-			const messages = Comms.getMessagesFromCharacter(this.props.combatant.id);
-			if (messages.length > 0) {
-				const last = messages[messages.length - 1];
-				info.push(
-					<MessagePanel key='chat' user={this.props.user} message={last} showByline={false} openImage={() => null} />
 				);
 			}
 		}

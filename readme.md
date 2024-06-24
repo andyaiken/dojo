@@ -54,16 +54,6 @@ You can even generate an entire dungeon delve, with a map and encounters, with a
 
 ![Dungeon Delve](./public/screenshots/delve.png)
 
-### For Players
-
-You can use Dojo as a virtual game table, allowing your players to move their own PCs around the map.
-
-![Player App](./public/screenshots/sessioncombat.png)
-
-It's also got built-in chat, die roll sharing, and the ability to show handouts to your players.
-
-![Chat](./public/screenshots/sessionchat.png)
-
 ### DM Tools
 
 Who needs a DM screen, when you have all this at your fingertips?

@@ -7,87 +7,49 @@
 	"dependencies": {
 		"@ant-design/icons": "^4.6.4",
 		"antd": "^4.16.13",
-		"html2canvas": "^1.3.2",
-		"lz-string": "^1.4.4",
+		"html2canvas": "^1.4.1",
+		"lz-string": "^1.5.0",
 		"mousetrap": "^1.6.5",
-		"peerjs": "^1.3.2",
+		"peerjs": "^1.5.4",
 		"react": "^17.0.2",
-		"react-debounce-input": "^3.2.5",
+		"react-debounce-input": "^3.3.0",
 		"react-dom": "^17.0.2",
 		"react-markdown": "^7.0.1",
 		"react-mde": "^11.5.0",
 		"react-movable": "^2.5.4",
 		"react-router-dom": "^5.2.1",
-		"recursive-diff": "^1.0.8",
+		"recursive-diff": "^1.0.9",
 		"uuid": "^8.3.2"
 	},
 	"devDependencies": {
-		"@types/html2canvas": "^0.0.36",
+		"@types/html2canvas": "^0.5.35",
 		"@types/lz-string": "^1.3.34",
-		"@types/mousetrap": "^1.6.8",
+		"@types/mousetrap": "^1.6.15",
 		"@types/react": "^17.0.19",
 		"@types/react-dom": "^17.0.9",
-		"@types/react-router-dom": "^5.1.8",
+		"@types/react-router-dom": "^5.3.3",
 		"@types/uuid": "^8.3.1",
-		"eslint": "^7.32.0",
-		"eslint-plugin-import": "^2.24.2",
-		"eslint-plugin-node": "^11.1.0",
-		"eslint-plugin-promise": "^5.1.0",
-		"eslint-plugin-react": "^7.25.1",
-		"gh-pages": "^3.2.3",
-		"node-sass": "^6.0.1",
-		"react-scripts": "^4.0.3",
-		"typescript": "^4.4.2"
+		"gh-pages": "^6.1.1",
+		"react-scripts": "^5.0.1",
+		"sass": "^1.77.6",
+		"typescript": "^5.5.2"
 	},
 	"scripts": {
+		"update": "npx npm-check-updates --interactive --format group",
 		"start": "react-scripts start --display-error-details",
-		"lint": "eslint src/**/*.ts src/**/*.tsx",
 		"predeploy": "react-scripts build",
 		"deploy": "gh-pages -d build"
 	},
-	"eslintConfig": {
-		"env": {
-			"browser": true,
-			"es6": true
-		},
-		"extends": [
-			"eslint:recommended",
-			"plugin:@typescript-eslint/eslint-recommended",
-			"plugin:@typescript-eslint/recommended",
-			"plugin:react/recommended",
-			"react-app"
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
 		],
-		"globals": {
-			"Atomics": "readonly",
-			"SharedArrayBuffer": "readonly"
-		},
-		"parser": "@typescript-eslint/parser",
-		"parserOptions": {
-			"ecmaFeatures": {
-				"jsx": true
-			},
-			"ecmaVersion": 2018,
-			"sourceType": "module"
-		},
-		"plugins": [
-			"@typescript-eslint",
-			"react"
-		],
-		"root": true,
-		"rules": {
-			"@typescript-eslint/explicit-module-boundary-types": "off",
-			"@typescript-eslint/no-explicit-any": "off"
-		},
-		"settings": {
-			"react": {
-				"version": "detect"
-			}
-		}
-	},
-	"browserslist": [
-		">0.2%",
-		"not dead",
-		"not ie <= 11",
-		"not op_mini all"
-	]
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
 }

@@ -1,7 +1,6 @@
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
 import { Encounter } from '../../models/encounter';
@@ -33,9 +32,6 @@ interface Props {
 
 export class PartyListScreen extends React.Component<Props> {
 	public componentDidUpdate() {
-		if (Comms.data.party) {
-			CommsDM.sendPartyUpdate();
-		}
 	}
 
 	public render() {

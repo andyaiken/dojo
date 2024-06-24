@@ -6,7 +6,6 @@ import 'react-mde/lib/styles/css/react-mde-toolbar.css';
 
 import './style/app.scss';
 
-import { App } from './components/app';
+import { Main } from './components/main';
 
-// eslint-disable-next-line react/react-in-jsx-scope
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<Main />, document.getElementById('root'));

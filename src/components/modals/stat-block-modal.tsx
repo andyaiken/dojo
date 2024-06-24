@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Matisse } from '../../utils/matisse';
 import { Streep } from '../../utils/streep';
-import { CommsDM } from '../../utils/uhura';
 
 import { Combatant } from '../../models/combat';
 import { Options } from '../../models/misc';
@@ -42,9 +41,6 @@ export class StatBlockModal extends React.Component<Props> {
 				tools = (
 					<div>
 						<button onClick={() => Matisse.takeScreenshot('statblock')}>export statblock image</button>
-						<Conditional display={CommsDM.getState() === 'started'}>
-							<button onClick={() => CommsDM.shareMonster(this.props.source as Monster)}>share in session</button>
-						</Conditional>
 					</div>
 				);
 			}

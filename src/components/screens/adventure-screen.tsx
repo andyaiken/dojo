@@ -6,7 +6,6 @@ import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
 import { Matisse } from '../../utils/matisse';
 import { Napoleon } from '../../utils/napoleon';
-import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
 
@@ -395,30 +394,6 @@ export class AdventureScreen extends React.Component<Props, State> {
 							</Conditional>
 							<Conditional display={canHandout}>
 								<ShareAltOutlined className={resource.content === '' ? 'disabled' : ''} title='show' onClick={() => this.props.showResource(resource)} />
-							</Conditional>
-							<Conditional display={canChat && (CommsDM.getState() === 'started') && Comms.data.options.allowChat}>
-								<MessageOutlined
-									title='send in chat'
-									onClick={() => {
-										switch (resource.type) {
-											case 'text':
-											case 'readaloud':
-												CommsDM.sendMessage([], resource.content, '', '');
-												break;
-											case 'image':
-												{
-													const img = Matisse.getImage(resource.content);
-													if (img) {
-														CommsDM.sendImage([], img.data);
-													}
-												}
-												break;
-											case 'url':
-												CommsDM.sendLink([], resource.content);
-												break;
-										}
-									}}
-								/>
 							</Conditional>
 							<Conditional display={canDelete}>
 								<ConfirmButton onConfirm={() => this.props.removeResourceFromScene(scene, resource.id)}>

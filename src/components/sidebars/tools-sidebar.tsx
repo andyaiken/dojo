@@ -6,8 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import { Shakespeare } from '../../utils/shakespeare';
 import { Sherlock } from '../../utils/sherlock';
 import { Svengali } from '../../utils/svengali';
-import { Comms, CommsDM } from '../../utils/uhura';
-import { Ustinov } from '../../utils/ustinov';
 import { Utils } from '../../utils/utils';
 
 import { DieRollResult } from '../../models/dice';
@@ -361,11 +359,6 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 		navigator.clipboard.writeText(this.props.text);
 	}
 
-	private say(e: React.MouseEvent) {
-		e.stopPropagation();
-		Ustinov.say(this.props.text, this.props.languages);
-	}
-
 	public render() {
 		try {
 			return (
@@ -378,7 +371,6 @@ class GeneratedText extends React.Component<GeneratedTextProps> {
 						</div>
 						<div className='icons vertical'>
 							<CopyOutlined title='copy to clipboard' onClick={e => this.copy(e)} />
-							<SoundOutlined title='say (experimental)' onClick={e => this.say(e)} />
 						</div>
 					</div>
 				</Group>
@@ -439,10 +431,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 	}
 
 	private clear() {
-		if (Comms.data.shared.type === 'handout') {
-			CommsDM.shareNothing();
-		}
-
 		this.setState({
 			playerViewOpen: false
 		}, () => {
@@ -532,12 +520,6 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 							label='share in player view'
 							checked={this.state.playerViewOpen}
 							onChecked={value => this.setPlayerViewOpen(value)}
-						/>
-						<Checkbox
-							label='share in session'
-							disabled={CommsDM.getState() !== 'started'}
-							checked={Comms.data.shared.type === 'handout'}
-							onChecked={value => value ? CommsDM.shareHandout(this.props.handout as Handout) : CommsDM.shareNothing()}
 						/>
 						<hr/>
 						<button onClick={() => this.clear()}>change handout</button>

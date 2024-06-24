@@ -5,7 +5,6 @@ import React from 'react';
 import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
 import { Mercator } from '../../utils/mercator';
-import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
@@ -62,7 +61,6 @@ interface Props {
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
 	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
-	onOpenSession: () => void;
 	pauseExploration: () => void;
 	endExploration: (exploration: Exploration) => void;
 }
@@ -102,12 +100,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 	}
 
 	public componentDidUpdate() {
-		if (Comms.data.shared.type === 'exploration') {
-			Comms.data.shared.additional = {
-				highlightedSquare: this.state.highlightedSquare
-			};
-			CommsDM.sendSharedDiffUpdate();
-		}
 	}
 
 	private toggleShowOptions() {
@@ -387,31 +379,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 			);
 		}
 
-		let session = null;
-		if (CommsDM.getState() === 'started') {
-			session = (
-				<Checkbox
-					label='share in session'
-					checked={Comms.data.shared.type === 'exploration'}
-					onChecked={value => value ? CommsDM.shareExploration(this.props.exploration) : CommsDM.shareNothing()}
-				/>
-			);
-		} else {
-			session = (
-				<button
-					onClick={() => {
-						this.setState({
-							showOptions: false
-						}, () => {
-							this.props.onOpenSession();
-						});
-					}}
-				>
-					start a session
-				</button>
-			);
-		}
-
 		return (
 			<div className='scrollable'>
 				<div className='heading'>exploration</div>
@@ -457,7 +424,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					checked={this.state.playerViewOpen}
 					onChecked={value => this.setPlayerViewOpen(value)}
 				/>
-				{session}
 			</div>
 		);
 	}

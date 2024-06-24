@@ -6,7 +6,6 @@ import ReactMarkdown from 'react-markdown';
 import { Factory } from '../../utils/factory';
 import { Mercator } from '../../utils/mercator';
 import { Napoleon } from '../../utils/napoleon';
-import { Comms, CommsDM } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
 import { Combat, Combatant } from '../../models/combat';
@@ -76,7 +75,6 @@ interface Props {
 	setFog: (fog: { x: number, y: number }[]) => void;
 	addOverlay: (overlay: MapItem) => void;
 	onRollDice: (text: string, count: number, sides: number, constant: number, mode: '' | 'advantage' | 'disadvantage') => void;
-	onOpenSession: () => void;
 }
 
 interface State {
@@ -119,12 +117,6 @@ export class CombatScreen extends React.Component<Props, State> {
 	}
 
 	public componentDidUpdate() {
-		if (Comms.data.shared.type === 'combat') {
-			Comms.data.shared.additional = {
-				highlightedSquare: this.state.highlightedSquare
-			};
-			CommsDM.sendSharedDiffUpdate();
-		}
 	}
 
 	private toggleShowOptions() {
@@ -521,31 +513,6 @@ export class CombatScreen extends React.Component<Props, State> {
 			);
 		}
 
-		let session = null;
-		if (CommsDM.getState() === 'started') {
-			session = (
-				<Checkbox
-					label='share in session'
-					checked={Comms.data.shared.type === 'combat'}
-					onChecked={value => value ? CommsDM.shareCombat(this.props.combat) : CommsDM.shareNothing()}
-				/>
-			);
-		} else {
-			session = (
-				<button
-					onClick={() => {
-						this.setState({
-							showOptions: false
-						}, () => {
-							this.props.onOpenSession();
-						});
-					}}
-				>
-					start a session
-				</button>
-			);
-		}
-
 		return (
 			<div className='scrollable'>
 				<div>
@@ -582,15 +549,6 @@ export class CombatScreen extends React.Component<Props, State> {
 					</button>
 				</div>
 				{map}
-				<div>
-					<div className='heading'>sharing</div>
-					<Checkbox
-						label='share in player view'
-						checked={this.state.playerViewOpen}
-						onChecked={value => this.setPlayerViewOpen(value)}
-					/>
-					{session}
-				</div>
 				<div>
 					<div className='heading'>layout</div>
 					<Checkbox
@@ -929,18 +887,11 @@ export class CombatScreen extends React.Component<Props, State> {
 				/>
 			));
 			if (pending.length !== 0) {
-				let ask = null;
-				if ((CommsDM.getState() === 'started') && (Comms.data.shared.type === 'combat') && (Comms.data.people.some(p => p.characterID !== ''))) {
-					ask = (
-						<button onClick={() => CommsDM.prompt('initiative', null)}>ask for initiative rolls</button>
-					);
-				}
 				pendingList.unshift(
 					<Note key='pending-help'>
 						<div className='section'>these combatants are not yet part of the encounter</div>
 						<div className='section'>set initiative on each of them, then press the <CheckCircleOutlined /> button to add them to the initiative order - or press <CloseCircleOutlined/> to remove someone from the combat</div>
 						<div className='section'>you can hide this section by clicking on the <UpCircleOutlined /> button above</div>
-						{ask}
 					</Note>
 				);
 			}

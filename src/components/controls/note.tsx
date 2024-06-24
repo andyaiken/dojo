@@ -2,7 +2,6 @@ import React from 'react';
 
 import { RenderError } from '../error';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 

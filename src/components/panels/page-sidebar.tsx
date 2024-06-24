@@ -3,7 +3,6 @@ import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
 import { Shakespeare } from '../../utils/shakespeare';
-import { Comms, CommsPlayer } from '../../utils/uhura';
 import { Utils } from '../../utils/utils';
 
 import { Adventure } from '../../models/adventure';
@@ -17,13 +16,8 @@ import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { AboutSidebar } from '../sidebars/about-sidebar';
-import { AwardsPlayerSidebar } from '../sidebars/awards-player-sidebar';
 import { ReferenceSidebar } from '../sidebars/reference-sidebar';
 import { SearchSidebar } from '../sidebars/search-sidebar';
-import { SessionChatSidebar } from '../sidebars/session-chat-sidebar';
-import { SessionControlsSidebar } from '../sidebars/session-controls-sidebar';
-import { SessionDMSidebar } from '../sidebars/session-dm-sidebar';
-import { SessionPlayerSidebar } from '../sidebars/session-player-sidebar';
 import { ToolsSidebar } from '../sidebars/tools-sidebar';
 
 interface Props {
@@ -104,14 +98,6 @@ export class PageSidebar extends React.Component<Props> {
 						/>
 					);
 					options.push(
-						<ShareAltOutlined
-							key='session'
-							className={this.props.sidebar.type === 'session' ? 'sidebar-icon selected' : 'sidebar-icon'}
-							title='session'
-							onClick={() => this.props.onSelectSidebar('session')}
-						/>
-					);
-					options.push(
 						<SearchOutlined
 							key='search'
 							className={this.props.sidebar.type === 'search' ? 'sidebar-icon selected' : 'sidebar-icon'}
@@ -137,55 +123,6 @@ export class PageSidebar extends React.Component<Props> {
 							onClick={() => this.props.onSelectSidebar('reference')}
 						/>
 					);
-					if (CommsPlayer.getState() === 'connected') {
-						if (Comms.data.options.allowChat) {
-							options.push(
-								<MessageOutlined
-									key='session-chat'
-									className={this.props.sidebar.type === 'session-chat' ? 'sidebar-icon selected' : 'sidebar-icon'}
-									title='chat'
-									onClick={() => this.props.onSelectSidebar('session-chat')}
-								/>
-							);
-						}
-						if (Comms.data.options.allowControls) {
-							let allowControls = false;
-							switch (Comms.data.shared.type) {
-								case 'combat':
-								case 'exploration':
-									allowControls = true;
-									break;
-							}
-							if (allowControls) {
-								options.push(
-									<ControlOutlined
-										key='session-controls'
-										className={this.props.sidebar.type === 'session-controls' ? 'sidebar-icon selected' : 'sidebar-icon'}
-										title='controls'
-										onClick={() => this.props.onSelectSidebar('session-controls')}
-									/>
-								);
-							}
-						}
-						options.push(
-							<ShareAltOutlined
-								key='session-player'
-								className={this.props.sidebar.type === 'session-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
-								title='session'
-								onClick={() => this.props.onSelectSidebar('session-player')}
-							/>
-						);
-						if (this.props.options.showAwards) {
-							options.push(
-								<TrophyOutlined
-									key='awards-player'
-									className={this.props.sidebar.type === 'awards-player' ? 'sidebar-icon selected' : 'sidebar-icon'}
-									title='awards'
-									onClick={() => this.props.onSelectSidebar('awards-player')}
-								/>
-							);
-						}
-					}
 					options.push(
 						<InfoCircleOutlined
 							key='about'
@@ -349,52 +286,6 @@ export class PageSidebar extends React.Component<Props> {
 							/>
 						);
 					}
-					break;
-				case 'session':
-					content = (
-						<SessionDMSidebar
-							view={this.props.sidebar.subtype}
-							setView={view => {
-								const sidebar = this.props.sidebar;
-								sidebar.subtype = view;
-								this.props.onUpdateSidebar(sidebar);
-							}}
-							parties={this.props.parties}
-							currentCombat={this.props.currentCombat}
-							currentExploration={this.props.currentExploration}
-							openImage={data => this.props.openImage(data)}
-						/>
-					);
-					break;
-				case 'session-player':
-					content = (
-						<SessionPlayerSidebar
-						/>
-					);
-					break;
-				case 'session-chat':
-					content = (
-						<SessionChatSidebar
-							openImage={data => this.props.openImage(data)}
-						/>
-					);
-					break;
-				case 'session-controls':
-					content = (
-						<SessionControlsSidebar
-							options={this.props.options}
-							addCondition={(combatants, allCombatants) => this.props.addCondition(combatants, allCombatants)}
-							editCondition={(combatant, condition, allCombatants) => this.props.editCondition(combatant, condition, allCombatants)}
-							toggleAddingToMap={() => this.props.toggleAddingToMap()}
-							onUpdated={() => this.props.onUpdated()}
-						/>
-					);
-					break;
-				case 'awards-player':
-					content = (
-						<AwardsPlayerSidebar
-						/>
-					);
 					break;
 				case 'search':
 					content = (

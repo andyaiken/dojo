@@ -3,68 +3,65 @@ import { Col, Drawer, notification, Row } from 'antd';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
-import { Factory } from '../../utils/factory';
-import { Frankenstein } from '../../utils/frankenstein';
-import { Gygax } from '../../utils/gygax';
-import { Matisse } from '../../utils/matisse';
-import { Mercator } from '../../utils/mercator';
-import { Napoleon } from '../../utils/napoleon';
-import { Shakespeare } from '../../utils/shakespeare';
-import { Comms, CommsDM } from '../../utils/uhura';
-import { Utils } from '../../utils/utils';
-import { Verne } from '../../utils/verne';
+import { Factory } from '../utils/factory';
+import { Frankenstein } from '../utils/frankenstein';
+import { Gygax } from '../utils/gygax';
+import { Matisse } from '../utils/matisse';
+import { Mercator } from '../utils/mercator';
+import { Napoleon } from '../utils/napoleon';
+import { Shakespeare } from '../utils/shakespeare';
+import { Utils } from '../utils/utils';
+import { Verne } from '../utils/verne';
 
-import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/adventure';
-import { Combat, Combatant, CombatSetup, CombatSlotInfo, Notification } from '../../models/combat';
-import { Condition } from '../../models/condition';
-import { Encounter, EncounterSlot, EncounterWave } from '../../models/encounter';
-import { Exploration, Map, MapArea, MapItem, MapLightSource, MapWall } from '../../models/map';
-import { Options, SavedImage, Sidebar } from '../../models/misc';
-import { Monster, MonsterGroup, Trait } from '../../models/monster';
-import { Companion, Party, PC } from '../../models/party';
+import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../models/adventure';
+import { Combat, Combatant, CombatSetup, CombatSlotInfo, Notification } from '../models/combat';
+import { Condition } from '../models/condition';
+import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
+import { Exploration, Map, MapArea, MapItem, MapLightSource, MapWall } from '../models/map';
+import { Options, SavedImage, Sidebar } from '../models/misc';
+import { Monster, MonsterGroup, Trait } from '../models/monster';
+import { Companion, Party, PC } from '../models/party';
 
-import { ErrorBoundary, RenderError } from '../error';
-import { MonsterEditorModal } from '../modals/editors/monster-editor-modal';
-import { PCEditorModal } from '../modals/editors/pc-editor-modal';
-import { MapImportModal } from '../modals/import/map-import-modal';
-import { MonsterImportModal } from '../modals/import/monster-import-modal';
-import { PartyImportModal } from '../modals/import/party-import-modal';
-import { PCImportModal } from '../modals/import/pc-import-modal';
-import { EncounterSelectionModal } from '../modals/selection/encounter-selection-modal';
-import { ImageSelectionModal } from '../modals/selection/image-selection-modal';
-import { MapSelectionModal } from '../modals/selection/map-selection-modal';
-import { MonsterSelectionModal } from '../modals/selection/monster-selection-modal';
-import { ThemeSelectionModal } from '../modals/selection/theme-selection-modal';
-import { CombatMapModal } from '../modals/combat-map-modal';
-import { CombatStartModal } from '../modals/combat-start-modal';
-import { ConditionModal } from '../modals/condition-modal';
-import { DemographicsModal } from '../modals/demographics-modal';
-import { MarkdownModal } from '../modals/markdown-modal';
-import { MinisChecklistModal } from '../modals/minis-checklist-modal';
-import { RandomGeneratorModal } from '../modals/random-generator-modal';
-import { StatBlockModal } from '../modals/stat-block-modal';
-import { CombatNotificationPanel } from '../panels/combat-notification-panel';
-import { DieRollResultPanel } from '../panels/die-roll-panel';
-import { PageFooter } from '../panels/page-footer';
-import { PageHeader } from '../panels/page-header';
-import { PageSidebar } from '../panels/page-sidebar';
-import { MessagePanel } from '../panels/session-panel';
-import { AdventureListScreen } from '../screens/adventure-list-screen';
-import { AdventureScreen } from '../screens/adventure-screen';
-import { CombatScreen } from '../screens/combat-screen';
-import { DMScreen } from '../screens/dm-screen';
-import { EncounterListScreen } from '../screens/encounter-list-screen';
-import { EncounterScreen } from '../screens/encounter-screen';
-import { ExplorationScreen } from '../screens/exploration-screen';
-import { HomeScreen } from '../screens/home-screen';
-import { MapListScreen } from '../screens/map-list-screen';
-import { MapScreen } from '../screens/map-screen';
-import { MonsterGroupListScreen } from '../screens/monster-group-list-screen';
-import { MonsterGroupScreen } from '../screens/monster-group-screen';
-import { PartyListScreen } from '../screens/party-list-screen';
-import { PartyScreen } from '../screens/party-screen';
+import { ErrorBoundary, RenderError } from './error';
+import { MonsterEditorModal } from './modals/editors/monster-editor-modal';
+import { PCEditorModal } from './modals/editors/pc-editor-modal';
+import { MapImportModal } from './modals/import/map-import-modal';
+import { MonsterImportModal } from './modals/import/monster-import-modal';
+import { PartyImportModal } from './modals/import/party-import-modal';
+import { PCImportModal } from './modals/import/pc-import-modal';
+import { EncounterSelectionModal } from './modals/selection/encounter-selection-modal';
+import { ImageSelectionModal } from './modals/selection/image-selection-modal';
+import { MapSelectionModal } from './modals/selection/map-selection-modal';
+import { MonsterSelectionModal } from './modals/selection/monster-selection-modal';
+import { ThemeSelectionModal } from './modals/selection/theme-selection-modal';
+import { CombatMapModal } from './modals/combat-map-modal';
+import { CombatStartModal } from './modals/combat-start-modal';
+import { ConditionModal } from './modals/condition-modal';
+import { DemographicsModal } from './modals/demographics-modal';
+import { MarkdownModal } from './modals/markdown-modal';
+import { MinisChecklistModal } from './modals/minis-checklist-modal';
+import { RandomGeneratorModal } from './modals/random-generator-modal';
+import { StatBlockModal } from './modals/stat-block-modal';
+import { CombatNotificationPanel } from './panels/combat-notification-panel';
+import { DieRollResultPanel } from './panels/die-roll-panel';
+import { PageFooter } from './panels/page-footer';
+import { PageHeader } from './panels/page-header';
+import { PageSidebar } from './panels/page-sidebar';
+import { AdventureListScreen } from './screens/adventure-list-screen';
+import { AdventureScreen } from './screens/adventure-screen';
+import { CombatScreen } from './screens/combat-screen';
+import { DMScreen } from './screens/dm-screen';
+import { EncounterListScreen } from './screens/encounter-list-screen';
+import { EncounterScreen } from './screens/encounter-screen';
+import { ExplorationScreen } from './screens/exploration-screen';
+import { HomeScreen } from './screens/home-screen';
+import { MapListScreen } from './screens/map-list-screen';
+import { MapScreen } from './screens/map-screen';
+import { MonsterGroupListScreen } from './screens/monster-group-list-screen';
+import { MonsterGroupScreen } from './screens/monster-group-screen';
+import { PartyListScreen } from './screens/party-list-screen';
+import { PartyScreen } from './screens/party-screen';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Props {
 }
 
@@ -474,51 +471,10 @@ export class Main extends React.Component<Props, State> {
 			e.preventDefault();
 			this.setSidebar('search');
 		});
-
-		CommsDM.onStateChanged = () => this.setState(this.state);
-		CommsDM.onDataChanged = () => this.setState(this.state);
-		CommsDM.onNewConnection = name => {
-			const peopleVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'people');
-			if (!peopleVisible) {
-				notification.open({
-					message: (
-						<div className='section'>
-							<b>{name}</b> has joined
-						</div>
-					),
-					closeIcon: <CloseCircleOutlined />,
-					duration: 5
-				});
-			}
-		};
-		Comms.onNewMessage = message => {
-			const messagesVisible = this.state.sidebar.visible && (this.state.sidebar.type === 'session') && (this.state.sidebar.subtype === 'messages');
-			if (!messagesVisible) {
-				notification.open({
-					message: (
-						<MessagePanel
-							user='dm'
-							message={message}
-							showByline={true}
-							openImage={data => this.setState({drawer: { type: 'image', data: data }})}
-						/>
-					),
-					closeIcon: <CloseCircleOutlined />,
-					duration: 5
-				});
-			}
-		};
 	}
 
 	public componentWillUnmount() {
 		Mousetrap.unbind('ctrl+f');
-
-		CommsDM.onStateChanged = null;
-		CommsDM.onDataChanged = null;
-		CommsDM.onNewConnection = null;
-		Comms.onNewMessage = null;
-
-		CommsDM.shutdown();
 	}
 
 	public componentDidUpdate() {
@@ -544,9 +500,6 @@ export class Main extends React.Component<Props, State> {
 				break;
 			case 'reference':
 				subtype = 'skills';
-				break;
-			case 'session':
-				subtype = 'management';
 				break;
 			case 'about':
 				subtype = 'dojo';
@@ -731,17 +684,6 @@ export class Main extends React.Component<Props, State> {
 				closeIcon: <CloseCircleOutlined />,
 				duration: 5
 			});
-		});
-	}
-
-	private openSession() {
-		const sidebar = this.state.sidebar;
-		sidebar.visible = true;
-		sidebar.type = 'session';
-		sidebar.subtype = 'management';
-
-		this.setState({
-			sidebar: sidebar
 		});
 	}
 
@@ -2260,10 +2202,6 @@ export class Main extends React.Component<Props, State> {
 	// Combat management
 
 	private pauseCombat() {
-		if (Comms.data.shared.type === 'combat') {
-			CommsDM.shareNothing();
-		}
-
 		const combat = this.state.combats.find(c => c.id === this.state.selectedCombatID);
 		if (combat) {
 			this.setState({
@@ -2283,10 +2221,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private endCombat(combat: Combat, goToMap = false) {
-		if (Comms.data.shared.type === 'combat') {
-			CommsDM.shareNothing();
-		}
-
 		const index = this.state.combats.indexOf(combat);
 		this.state.combats.splice(index, 1);
 		this.setState({
@@ -2761,10 +2695,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private pauseExploration() {
-		if (Comms.data.shared.type === 'exploration') {
-			CommsDM.shareNothing();
-		}
-
 		this.setState({
 			view: 'maps',
 			explorations: this.state.explorations,
@@ -2781,10 +2711,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private endExploration(exploration: Exploration) {
-		if (Comms.data.shared.type === 'exploration') {
-			CommsDM.shareNothing();
-		}
-
 		const index = this.state.explorations.indexOf(exploration);
 		this.state.explorations.splice(index, 1);
 		this.setState({
@@ -3433,7 +3359,6 @@ export class Main extends React.Component<Props, State> {
 								this.addMapItem(overlay, combat.map as Map);
 							}}
 							onRollDice={(text, count, sides, constant, mode) => this.rollDice(text, count, sides, constant, mode)}
-							onOpenSession={() => this.openSession()}
 						/>
 					);
 				}
@@ -3725,7 +3650,6 @@ export class Main extends React.Component<Props, State> {
 								this.addMapItem(overlay, ex.map);
 							}}
 							onRollDice={(text, count, sides, constant, mode) => this.rollDice(text, count, sides, constant, mode)}
-							onOpenSession={() => this.openSession()}
 							pauseExploration={() => this.pauseExploration()}
 							endExploration={exploration => this.endExploration(exploration)}
 						/>
@@ -3870,20 +3794,12 @@ export class Main extends React.Component<Props, State> {
 							awardee.awards.push(awardID);
 							this.setState({
 								parties: this.state.parties
-							}, () => {
-								CommsDM.sendPartyUpdate();
-								CommsDM.prompt('award', {
-									awardee: awardee.name,
-									awardID: awardID
-								});
 							});
 						}}
 						deleteAward={(awardID, awardee) => {
 							awardee.awards = awardee.awards.filter(id => id !== awardID);
 							this.setState({
 								parties: this.state.parties
-							}, () => {
-								CommsDM.sendPartyUpdate();
 							});
 						}}
 					/>

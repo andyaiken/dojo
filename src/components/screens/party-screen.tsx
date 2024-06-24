@@ -2,8 +2,6 @@ import { CaretLeftOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import React from 'react';
 
-import { Comms, CommsDM } from '../../utils/uhura';
-
 import { Encounter } from '../../models/encounter';
 import { Map } from '../../models/map';
 import { Party, PC } from '../../models/party';
@@ -38,9 +36,6 @@ interface Props {
 
 export class PartyScreen extends React.Component<Props> {
 	public componentDidUpdate() {
-		if (Comms.data.party) {
-			CommsDM.sendPartyUpdate();
-		}
 	}
 
 	public render() {
