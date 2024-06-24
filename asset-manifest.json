@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.css": "/dojo/static/css/main.a3edd23a.css",
-    "main.js": "/dojo/static/js/main.f39dc2b7.js",
+    "main.css": "/dojo/static/css/main.5fcd5f41.css",
+    "main.js": "/dojo/static/js/main.d8e0c79b.js",
     "index.html": "/dojo/index.html"
   },
   "entrypoints": [
-    "static/css/main.a3edd23a.css",
-    "static/js/main.f39dc2b7.js"
+    "static/css/main.5fcd5f41.css",
+    "static/js/main.d8e0c79b.js"
   ]
 }
