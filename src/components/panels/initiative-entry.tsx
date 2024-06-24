@@ -42,6 +42,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 
 	private onClick(e: React.MouseEvent) {
 		e.stopPropagation();
+		e.preventDefault();
 		if (this.props.select) {
 			this.props.select(this.props.combatant, e.ctrlKey);
 		}
@@ -96,7 +97,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 							this.props.select(rider, false);
 						}}
 					>
-						{rider.displayName}
+						{Napoleon.getCombatantName(rider, [])}
 					</button>
 				</Tag>
 			);
@@ -162,7 +163,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 									this.props.select(mount, false);
 								}}
 							>
-								{mount.displayName}
+								{Napoleon.getCombatantName(mount, [])}
 							</button>
 						</div>
 						{info}
@@ -304,7 +305,7 @@ export class PendingInitiativeEntry extends React.Component<PendingProps> {
 						<div className='content'>
 							<div className='subheading'>
 								{portrait}
-								{this.props.combatant.displayName || 'combatant'}
+								{Napoleon.getCombatantName(this.props.combatant, [])}
 							</div>
 							<NumberSpin
 								label='initiative'
@@ -353,7 +354,7 @@ export class NotOnMapInitiativeEntry extends React.Component<NotOnMapProps> {
 						<div className='content'>
 							<div className='subheading'>
 								{portrait}
-								{this.props.combatant.displayName || 'combatant'}
+								{Napoleon.getCombatantName(this.props.combatant, [])}
 							</div>
 						</div>
 						<div className='icons'>

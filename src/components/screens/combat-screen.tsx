@@ -620,7 +620,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							<Group key={c.id}>
 								<div className='content-then-icons'>
 									<div className='content'>
-										{c.displayName}
+										{Napoleon.getCombatantName(c, this.props.combat.combatants)}
 									</div>
 									<div className='icons'>
 										<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />

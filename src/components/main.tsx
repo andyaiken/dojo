@@ -2482,7 +2482,7 @@ export class Main extends React.Component<Props, State> {
 
 				// If anyone is engaged with this combatant, remove that
 				combat.combatants.forEach(cmb => {
-					cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + c.displayName);
+					cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + Napoleon.getCombatantName(c, combat.combatants));
 				});
 
 				// If this combatant is on the map, remove them from it
@@ -2519,7 +2519,7 @@ export class Main extends React.Component<Props, State> {
 
 				// If anyone is engaged with this combatant, remove that
 				combat.combatants.forEach(cmb => {
-					cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + c.displayName);
+					cmb.tags = cmb.tags.filter(t => t !== 'engaged:' + Napoleon.getCombatantName(c, combat.combatants));
 				});
 
 				if (combat.map) {

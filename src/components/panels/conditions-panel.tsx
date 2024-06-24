@@ -10,6 +10,7 @@ import { RenderError } from '../error';
 import { Group } from '../controls/group';
 import { NumberSpin } from '../controls/number-spin';
 import { Conditional } from '../controls/conditional';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	combatants: Combatant[];
@@ -75,7 +76,7 @@ class ConditionPanel extends React.Component<ConditionPanelProps> {
 				name += ' (' + this.props.condition.level + ')';
 			}
 			if (this.props.showCombatantName) {
-				name = this.props.combatant.displayName + ': ' + name;
+				name = Napoleon.getCombatantName(this.props.combatant, this.props.combatants) + ': ' + name;
 			}
 
 			const description = [];

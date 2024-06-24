@@ -16,6 +16,7 @@ import { NumberSpin } from '../controls/number-spin';
 import { RadioGroup } from '../controls/radio-group';
 import { Selector } from '../controls/selector';
 import { Textbox } from '../controls/textbox';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	condition: Condition;
@@ -183,7 +184,7 @@ export class ConditionModal extends React.Component<Props, State> {
 					const c = combatant as (Combatant & PC) | (Combatant & Monster);
 					return {
 						id: c.id,
-						text: (c.displayName || c.name || 'unnamed monster')
+						text: Napoleon.getCombatantName(c, this.props.allCombatants)
 					};
 				});
 			Utils.sort(combatantOptions, [{ field: 'text', dir: 'asc' }]);

@@ -25,6 +25,7 @@ import { Textbox } from '../controls/textbox';
 import { ConditionsPanel } from './conditions-panel';
 import { MarkdownEditor } from './markdown-editor';
 import { MovementPanel } from './movement-panel';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	combatants: Combatant[];
@@ -260,14 +261,15 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			if (this.props.combatants.every(c => c.type !== 'pc')) {
 				const pcs = this.props.allCombatants.filter(c => c.type === 'pc');
 				pcs.forEach(pc => {
-					const tag = 'engaged:' + pc.displayName;
+					const name = Napoleon.getCombatantName(pc, []);
+					const tag = 'engaged:' + name;
 					engaged.push(
 						<Tag.CheckableTag
 							key={pc.id}
 							checked={this.props.combatants.every(c => c.tags.includes(tag))}
 							onChange={() => this.props.toggleTag(this.props.combatants, tag)}
 						>
-							{pc.displayName}
+							{name}
 						</Tag.CheckableTag>
 					);
 				});
@@ -281,7 +283,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					notes.push(
 						<Note key='light'>
 							<div className='section'>
-								{c.displayName} is in {this.props.lighting}, and has no darkvision or light source
+								{Napoleon.getCombatantName(c, [])} is in {this.props.lighting}, and has no darkvision or light source
 							</div>
 						</Note>
 					);
@@ -343,28 +345,28 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			if (monster.damage.resist) {
 				resist = (
 					<div className='section'>
-						<b>resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>resistances</b> {monster.damage.resist} {this.props.combatants.length > 1 ? <i> - {Napoleon.getCombatantName(c, [])}</i> : null}
 					</div>
 				);
 			}
 			if (monster.damage.vulnerable) {
 				vuln = (
 					<div className='section'>
-						<b>vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>vulnerabilities</b> {monster.damage.vulnerable} {this.props.combatants.length > 1 ? <i> - {Napoleon.getCombatantName(c, [])}</i> : null}
 					</div>
 				);
 			}
 			if (monster.damage.immune) {
 				immune = (
 					<div className='section'>
-						<b>immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>immunities</b> {monster.damage.immune} {this.props.combatants.length > 1 ? <i> - {Napoleon.getCombatantName(c, [])}</i> : null}
 					</div>
 				);
 			}
 			if (monster.tags.includes('conc')) {
 				conc = (
 					<div className='section'>
-						{monster.displayName} is <b>concentrating</b>, and will need to make a check if they take damage
+						{Napoleon.getCombatantName(monster, [])} is <b>concentrating</b>, and will need to make a check if they take damage
 					</div>
 				);
 			}
@@ -448,7 +450,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				return (
 					<Row key={c.id} align='middle' justify='center'>
 						<Col span={8}>
-							<div>{c.displayName}</div>
+							<div>{Napoleon.getCombatantName(c, [])}</div>
 						</Col>
 						<Col span={16}>
 							{this.getDamageMultiplier(c.id)}
@@ -496,7 +498,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			if (this.props.combatants.length > 1) {
 				names = (
 					<ul>
-						{atZero.map(c => <li key={c.id}>{c.displayName}</li>)}
+						{atZero.map(c => <li key={c.id}>{Napoleon.getCombatantName(c, [])}</li>)}
 					</ul>
 				);
 			}
@@ -531,7 +533,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			return (
 				<Note key={c.id}>
 					<div className='section'>
-						<b>immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {c.displayName}</i> : null}
+						<b>immunities</b> {monster.conditionImmunities} {this.props.combatants.length > 1 ? <i> - {Napoleon.getCombatantName(c, [])}</i> : null}
 					</div>
 				</Note>
 			);
@@ -814,7 +816,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 					.filter(c => c.type !== 'placeholder')			// Don't include placeholders
 					.filter(c => !c.mountID)						// Don't include anyone that's mounted
 					.filter(c => !currentMountIDs.includes(c.id))	// Don't include anyone that is a mount for anyone else
-					.map(c => ({ id: c.id, text: c.displayName }));
+					.map(c => ({ id: c.id, text: Napoleon.getCombatantName(c, []) }));
 				Utils.sort(mountOptions, [{ field: 'text', dir: 'asc' }]);
 				let mountSelector = null;
 				if (mountOptions.length > 0) {

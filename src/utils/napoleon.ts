@@ -716,7 +716,8 @@ export class Napoleon {
 	}
 
 	public static getCombatantName(combatant: Combatant, combatants: Combatant[]) {
-		let name = combatant.displayName || 'combatant';
+		const cbt = combatant as (Combatant & PC) | (Combatant & Monster);
+		let name = combatant.displayName || cbt.name || ('unnamed ' + combatant.type);
 
 		if (combatant.mountID) {
 			const mount = combatants.find(c => c.id === combatant.mountID);

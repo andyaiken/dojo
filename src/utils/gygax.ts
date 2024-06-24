@@ -613,7 +613,7 @@ export class Gygax {
 						const combatantDuration = condition.duration as ConditionDurationCombatant;
 						const point = combatantDuration.point;
 						const c = combatants.find(cmb => cmb.id === combatantDuration.combatantID) as (Combatant & PC) | (Combatant & Monster);
-						const combatant = c ? (c.displayName || c.name || 'unnamed monster') + '\'s' : 'their';
+						const combatant = c ? Napoleon.getCombatantName(c, combatants) + '\'s' : 'their';
 						return 'until the ' + point + ' of ' + combatant + ' next turn';
 					}
 				case 'rounds':

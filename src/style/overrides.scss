@@ -220,6 +220,15 @@ button {
 	user-select: none;
 }
 
+.anticon.ant-collapse-arrow {
+	right: 7px !important;
+
+	svg {
+		width: 16px;
+		height: 16px;
+	}
+}
+
 .ant-collapse {
 	font-size: 12px;
 	border: 1px solid $control-border;
@@ -414,6 +423,7 @@ button {
 
 		.ant-popover-inner-content {
 			padding: 5px 10px;
+			width: 100%;
 		}
 	}
 
@@ -592,5 +602,6 @@ body .react-mde {
 
 	.mde-preview {
 		padding: 0 5px;
+		min-height: 200px !important
 	}
 }

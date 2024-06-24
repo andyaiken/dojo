@@ -9,6 +9,7 @@ import { RenderError } from '../error';
 import { CombatOptions } from '../options/combat-options';
 import { MapPanel } from '../panels/map-panel';
 import { PortraitPanel } from '../panels/portrait-panel';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	combat: Combat;
@@ -64,7 +65,7 @@ export class CombatCard extends React.Component<Props> {
 						<div className='content-then-info'>
 							<div className='content'>
 								<PortraitPanel source={c as (Combatant & PC) | (Combatant & Monster)} inline={true}/>
-								{c.displayName}
+								{Napoleon.getCombatantName(c, this.props.combat.combatants)}
 							</div>
 							<div className='info'>
 								{this.getValue(c)}

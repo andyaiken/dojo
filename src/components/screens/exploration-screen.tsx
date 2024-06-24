@@ -30,6 +30,7 @@ import { NotOnMapInitiativeEntry } from '../panels/initiative-entry';
 import { MapPanel } from '../panels/map-panel';
 import { Popout } from '../panels/popout';
 import { TraitsPanel } from '../panels/traits-panel';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	exploration: Exploration;
@@ -514,7 +515,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 							<Group key={c.id}>
 								<div className='content-then-icons'>
 									<div className='content'>
-										{c.displayName}
+										{Napoleon.getCombatantName(c, this.props.exploration.combatants)}
 									</div>
 									<div className='icons'>
 										<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />

@@ -6,6 +6,7 @@ import { Condition, ConditionDurationSaves } from '../../models/condition';
 import { Monster, Trait } from '../../models/monster';
 
 import { RenderError } from '../error';
+import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	notification: Notification;
@@ -46,8 +47,7 @@ export class CombatNotificationPanel extends React.Component<Props> {
 
 	public render() {
 		try {
-			const combatant = this.props.notification.combatant as (Combatant & Monster);
-			const name = combatant.displayName || combatant.name || 'unnamed monster';
+			const name = Napoleon.getCombatantName(this.props.notification.combatant as Combatant, []);
 
 			switch (this.props.notification.type) {
 				case 'condition-save':

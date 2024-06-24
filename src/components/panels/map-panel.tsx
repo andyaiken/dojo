@@ -2191,7 +2191,7 @@ class MapToken extends React.Component<MapTokenProps, MapTokenState> {
 						<img className='portrait' src={c.portrait} alt={name} />
 					);
 				} else {
-					const inits = (this.props.combatant.displayName || 'combatant').toUpperCase()
+					const inits = Napoleon.getCombatantName(this.props.combatant, this.props.combatants).toUpperCase()
 									.replace(/[^A-Z0-9 ]/, '')
 									.split(' ')
 									.map(s => s[0])
