@@ -6,7 +6,7 @@ import { Condition, ConditionDurationCombatant, ConditionDurationRounds, Conditi
 import { Encounter, EncounterSlot, EncounterWave, MonsterFilter } from '../models/encounter';
 import { Exploration, Map, MapArea, MapItem, MapLightSource, MapWall } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
-import { Award, Companion, Party, PC } from '../models/party';
+import { Companion, Party, PC } from '../models/party';
 
 export class Factory {
 
@@ -14,8 +14,7 @@ export class Factory {
 		return {
 			id: Utils.guid(),
 			name: '',
-			pcs: [],
-			awards: []
+			pcs: []
 		};
 	}
 
@@ -37,8 +36,7 @@ export class Factory {
 			darkvision: 0,
 			portrait: '',
 			url: '',
-			companions: [],
-			awards: []
+			companions: []
 		};
 	}
 
@@ -47,15 +45,6 @@ export class Factory {
 			id: Utils.guid(),
 			name: '',
 			monsterID: null
-		};
-	}
-
-	public static createAward(): Award {
-		return {
-			id: Utils.guid(),
-			category: '',
-			name: '',
-			description: ''
 		};
 	}
 

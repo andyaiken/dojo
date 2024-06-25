@@ -4,7 +4,7 @@ import { Adventure, Plot, Scene } from '../models/adventure';
 import { Encounter, EncounterSlot, EncounterWave } from '../models/encounter';
 import { Map, MapArea } from '../models/map';
 import { Monster, MonsterGroup, Trait } from '../models/monster';
-import { Award, Companion, Party, PC } from '../models/party';
+import { Companion, Party, PC } from '../models/party';
 
 export class Sherlock {
 	public static matchParty(filter: string, party: Party) {
@@ -174,18 +174,6 @@ export class Sherlock {
 		}
 
 		if (Sherlock.matchPlot(filter, scene.plot)) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public static matchAward(filter: string, award: Award) {
-		if (Sherlock.match(filter, award.name)) {
-			return true;
-		}
-
-		if (Sherlock.match(filter, award.description)) {
 			return true;
 		}
 

@@ -128,11 +128,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 									checked={this.props.options.showMonsterDieRolls}
 									onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
 								/>
-								<Checkbox
-									label='show party awards'
-									checked={this.props.options.showAwards}
-									onChecked={checked => this.props.setOption('showAwards', checked)}
-								/>
 								<div className='subheading'>
 									settings
 								</div>

@@ -2,17 +2,14 @@ import { Progress, Tag } from 'antd';
 import React from 'react';
 
 import { Shakespeare } from '../../utils/shakespeare';
-import { Streep } from '../../utils/streep';
 
 import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Note } from '../controls/note';
-import { AwardPanel } from '../panels/award-panel';
 
 interface Props {
 	party: Party | null;
-	showAwards: boolean;
 }
 
 export class PartyBreakdownPanel extends React.Component<Props> {
@@ -38,7 +35,7 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 			const known = Shakespeare.getKnownLanguages(activePCs);
 			const knownRows = known.map(lang => {
 				const speakers = activePCs.filter(pc => pc.languages.toLowerCase().includes(lang.toLowerCase()));
-				const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name).join(', ');
+				const pcs = speakers.length === activePCs.length ? 'all pcs' : speakers.map(pc => pc.name || 'unnamed pc').join(', ');
 				const langName = Shakespeare.capitalise(lang);
 				return (
 					<div key={langName} className='table-row'>
@@ -70,7 +67,7 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 				.sort();
 			const dvRows = dvRanges.map(range => {
 				const rangePCs = activePCs.filter(pc => pc.darkvision === range);
-				const pcs = rangePCs.length === activePCs.length ? 'all pcs' : rangePCs.map(pc => pc.name).join(', ');
+				const pcs = rangePCs.length === activePCs.length ? 'all pcs' : rangePCs.map(pc => pc.name || 'unnamed pc').join(', ');
 				return (
 					<div key={range} className='table-row'>
 						<div className='table-cell l small'>{range > 0 ? range + ' ft' : 'none'}</div>
@@ -97,9 +94,9 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 
 			const rows = [];
 			for (let n = max; n >= min; --n) {
-				const ins = activePCs.filter(pc => pc.passiveInsight === n).map(pc => pc.name).join(', ');
-				const inv = activePCs.filter(pc => pc.passiveInvestigation === n).map(pc => pc.name).join(', ');
-				const per = activePCs.filter(pc => pc.passivePerception === n).map(pc => pc.name).join(', ');
+				const ins = activePCs.filter(pc => pc.passiveInsight === n).map(pc => pc.name || 'unnamed pc').join(', ');
+				const inv = activePCs.filter(pc => pc.passiveInvestigation === n).map(pc => pc.name || 'unnamed pc').join(', ');
+				const per = activePCs.filter(pc => pc.passivePerception === n).map(pc => pc.name || 'unnamed pc').join(', ');
 				rows.push(
 					<div key={n} className='table-row'>
 						<div className='table-cell l small'>{n}</div>
@@ -108,78 +105,6 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 						<div className='table-cell l'>{per}</div>
 					</div>
 				);
-			}
-
-			let awards = null;
-			if (this.props.showAwards) {
-				const list = Streep.getAwards().filter(award => {
-					let achieved = false;
-
-					if (this.props.party?.awards.includes(award.id)) {
-						achieved = true;
-					}
-
-					this.props.party?.pcs.forEach(pc => {
-						if (pc.awards.includes(award.id)) {
-							achieved = true;
-						}
-					});
-
-					return achieved;
-				}).map(award => {
-					const awardees = [];
-					if (this.props.party?.awards.includes(award.id)) {
-						awardees.push(this.props.party.name || 'unnamed party');
-					}
-					this.props.party?.pcs.forEach(pc => {
-						if (pc.awards.includes(award.id)) {
-							awardees.push(pc.name || 'unnamed pc');
-						}
-					});
-					let awardeesSection = null;
-					if (awardees.length > 0) {
-						awardeesSection = (
-							<div>
-								<hr/>
-								<div className='section'>
-									awarded to:
-									{awardees.map(awardee => <Tag key={awardee}>{awardee}</Tag>)}
-								</div>
-							</div>
-						);
-					}
-					return (
-						<AwardPanel key={award.id} award={award}>
-							<div>
-								{awardeesSection}
-							</div>
-						</AwardPanel>
-					);
-				});
-				awards = (
-					<div>
-						<hr/>
-						<div className='section subheading'>
-							awards
-						</div>
-						<Note>
-							<div className='section'>
-								no awards yet
-							</div>
-						</Note>
-					</div>
-				);
-				if (list.length > 0) {
-					awards = (
-						<div>
-							<hr/>
-							<div className='section subheading'>
-								awards
-							</div>
-							{list}
-						</div>
-					);
-				}
 			}
 
 			return (
@@ -231,7 +156,6 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 							remember that advantage / disadvantage grants +/- 5 to passive rolls
 						</div>
 					</Note>
-					{awards}
 				</div>
 			);
 		} catch (e) {

@@ -1,4 +1,4 @@
-import { BookOutlined, ControlOutlined, InfoCircleOutlined, MessageOutlined, SearchOutlined, ShareAltOutlined, ToolOutlined, TrophyOutlined } from '@ant-design/icons';
+import { BookOutlined, InfoCircleOutlined, SearchOutlined, ToolOutlined } from '@ant-design/icons';
 import React from 'react';
 
 import { Gygax } from '../../utils/gygax';
@@ -68,8 +68,6 @@ export class PageSidebar extends React.Component<Props> {
 		selectAdventure: null,
 		openImage: null,
 		openStatBlock: null,
-		addAward: null,
-		deleteAward: null,
 		addCondition: null,
 		editCondition: null,
 		toggleAddingToMap: null,

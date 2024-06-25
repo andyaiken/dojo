@@ -102,17 +102,9 @@ export class Main extends React.Component<Props, State> {
 				parties = JSON.parse(str);
 
 				parties.forEach(party => {
-					if (party.awards === undefined) {
-						party.awards = [];
-					}
-
 					party.pcs.forEach(pc => {
 						if (pc.darkvision === undefined) {
 							pc.darkvision = 0;
-						}
-
-						if (pc.awards === undefined) {
-							pc.awards = [];
 						}
 					});
 				});
@@ -393,7 +385,6 @@ export class Main extends React.Component<Props, State> {
 
 		let options: Options = {
 			showMonsterDieRolls: false,
-			showAwards: false,
 			theme: 'light',
 			diagonals: 'onepointfive',
 			featureFlags: []
@@ -403,9 +394,6 @@ export class Main extends React.Component<Props, State> {
 			if (str) {
 				options = JSON.parse(str);
 
-				if (options.showAwards === undefined) {
-					options.showAwards = false;
-				}
 				if (options.theme === undefined) {
 					options.theme = 'light';
 				}
@@ -3789,19 +3777,6 @@ export class Main extends React.Component<Props, State> {
 				return (
 					<DMScreen
 						parties={this.state.parties}
-						showAwards={this.state.options.showAwards}
-						addAward={(awardID, awardee) => {
-							awardee.awards.push(awardID);
-							this.setState({
-								parties: this.state.parties
-							});
-						}}
-						deleteAward={(awardID, awardee) => {
-							awardee.awards = awardee.awards.filter(id => id !== awardID);
-							this.setState({
-								parties: this.state.parties
-							});
-						}}
 					/>
 				);
 		}

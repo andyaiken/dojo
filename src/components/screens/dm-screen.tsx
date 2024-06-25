@@ -7,7 +7,7 @@ import { Shakespeare } from '../../utils/shakespeare';
 import { Utils } from '../../utils/utils';
 
 import { NPC } from '../../models/misc';
-import { Party, PC } from '../../models/party';
+import { Party } from '../../models/party';
 
 import { RenderError } from '../error';
 import { Conditional } from '../controls/conditional';
@@ -15,15 +15,11 @@ import { Dropdown } from '../controls/dropdown';
 import { Group } from '../controls/group';
 import { Selector } from '../controls/selector';
 import { Tabs } from '../controls/tabs';
-import { AwardsBreakdownPanel } from '../panels/awards-breakdown-panel';
 import { PartyBreakdownPanel } from '../panels/party-breakdown-panel';
 import { MarkdownReference } from '../sidebars/reference-sidebar';
 
 interface Props {
 	parties: Party[];
-	showAwards: boolean;
-	addAward: (awardID: string, awardee: Party | PC) => void;
-	deleteAward: (awardID: string, awardee: Party | PC) => void;
 }
 
 interface State {
@@ -220,19 +216,6 @@ export class DMScreen extends React.Component<Props, State> {
 		);
 	}
 
-	private getAwardsSection() {
-		return (
-			<div>
-				{this.getPartyHeader()}
-				<AwardsBreakdownPanel
-					party={this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null}
-					addAward={(id, awardee) => this.props.addAward(id, awardee)}
-					deleteAward={(id, awardee) => this.props.deleteAward(id, awardee)}
-				/>
-			</div>
-		);
-	}
-
 	public render() {
 		try {
 			const referenceTabs = Utils.arrayToItems(['skills', 'conditions', 'actions']);
@@ -241,9 +224,6 @@ export class DMScreen extends React.Component<Props, State> {
 				partyTabs.push('party breakdown');
 			}
 			partyTabs.push('generators');
-			if (this.props.showAwards) {
-				partyTabs.push('awards');
-			}
 			const selectedRight = this.state.rightView ?? partyTabs[0];
 
 			return (
@@ -279,14 +259,10 @@ export class DMScreen extends React.Component<Props, State> {
 								</div>
 								<PartyBreakdownPanel
 									party={this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null}
-									showAwards={this.props.showAwards}
 								/>
 							</Conditional>
 							<Conditional display={selectedRight === 'generators'}>
 								{this.getGeneratorsSection()}
-							</Conditional>
-							<Conditional display={selectedRight === 'awards'}>
-								{this.getAwardsSection()}
 							</Conditional>
 						</div>
 					</Col>

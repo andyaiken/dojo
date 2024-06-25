@@ -2,7 +2,6 @@ import { DieRollResult } from './dice';
 
 export interface Options {
 	showMonsterDieRolls: boolean;
-	showAwards: boolean;
 	theme: string;
 	diagonals: string;
 	featureFlags: string[];
