@@ -500,7 +500,9 @@ class HandoutTool extends React.Component<HandoutToolProps, HandoutToolState> {
 		if (this.state.playerViewOpen) {
 			return (
 				<Popout title='Handout' onCloseWindow={() => this.setPlayerViewOpen(false)}>
-					{this.getDisplay()}
+					<div>
+						{this.getDisplay()}
+					</div>
 				</Popout>
 			);
 		}

@@ -167,20 +167,22 @@ export class AboutSidebar extends React.Component<Props, State> {
 											<PlusCircleOutlined title='add' onClick={() => this.addFlag()} />
 										</div>
 									</div>
-									{
-										this.props.options.featureFlags.map(flag => (
-											<Group key='flag'>
-												<div className='content-then-icons'>
-													<div className='content'>
-														{flag}
+									<div>
+										{
+											this.props.options.featureFlags.map(flag => (
+												<Group key='flag'>
+													<div className='content-then-icons'>
+														<div className='content'>
+															{flag}
+														</div>
+														<div className='icons'>
+															<DeleteOutlined title='remove' onClick={() => this.props.removeFlag(flag)} />
+														</div>
 													</div>
-													<div className='icons'>
-														<DeleteOutlined title='remove' onClick={() => this.props.removeFlag(flag)} />
-													</div>
-												</div>
-											</Group>
-										))
-									}
+												</Group>
+											))
+										}
+									</div>
 								</Expander>
 								<Conditional display={this.props.user === 'dm'}>
 									<Expander text='stored data'>

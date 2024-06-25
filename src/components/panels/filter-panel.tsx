@@ -105,7 +105,7 @@ export class FilterPanel extends React.Component<Props> {
 							itemsPerRow={3}
 							onSelect={optionID => this.props.changeValue('category', optionID)}
 						/>
-						{roleSection}
+						<div>{roleSection}</div>
 						<hr/>
 						<div className='section'>
 							<button onClick={() => this.props.resetFilter()}>clear filter</button>

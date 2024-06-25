@@ -23,11 +23,13 @@ export class EncounterListOptions extends React.Component<Props> {
 								these templates give you a good framework for creating an encounter
 							</div>
 						</Note>
-						{
-							Napoleon.encounterTemplates().map(t => (
-								<button key={t.name} onClick={() => this.props.addEncounter(t.name)}>{t.name}</button>
-							))
-						}
+						<div>
+							{
+								Napoleon.encounterTemplates().map(t => (
+									<button key={t.name} onClick={() => this.props.addEncounter(t.name)}>{t.name}</button>
+								))
+							}
+						</div>
 					</Expander>
 					<button onClick={() => this.props.createEncounter()}>generate a random encounter</button>
 				</div>

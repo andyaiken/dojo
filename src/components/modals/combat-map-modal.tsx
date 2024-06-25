@@ -248,7 +248,9 @@ export class CombatMapModal extends React.Component<Props, State> {
 							you can add these monsters to the map by clicking on the <EnvironmentOutlined/> button and then clicking on a map square
 						</div>
 					</Note>
-					{notOnMap}
+					<div>
+						{notOnMap}
+					</div>
 				</Conditional>
 				<Conditional display={notOnMap.length === 0}>
 					<button onClick={() => this.removeAll()}>remove all from map</button>

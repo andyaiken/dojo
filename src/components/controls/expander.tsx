@@ -8,6 +8,7 @@ interface Props {
 	text: string | JSX.Element;
 	className: string | null;
 	disabled: boolean;
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 }
 
 export class Expander extends React.Component<Props> {

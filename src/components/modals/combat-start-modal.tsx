@@ -880,7 +880,7 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 						onChecked={checked => this.setState({ standardInitOptions: checked })}
 					/>
 					<Conditional display={!this.state.standardInitOptions}>
-						{this.getSlots(slotsContainer, 'initiative')}
+						<div>{this.getSlots(slotsContainer, 'initiative')}</div>
 						<hr/>
 					</Conditional>
 					<Checkbox
@@ -889,7 +889,7 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 						onChecked={checked => this.setState({ standardHPOptions: checked })}
 					/>
 					<Conditional display={!this.state.standardHPOptions}>
-						{this.getSlots(slotsContainer, 'hit points')}
+						<div>{this.getSlots(slotsContainer, 'hit points')}</div>
 						<hr/>
 					</Conditional>
 					<Checkbox
@@ -899,7 +899,7 @@ class OptionsSection extends React.Component<OptionsSectionProps, OptionsSection
 					/>
 					<Conditional display={this.state.additionalOptions}>
 						<Selector options={Utils.arrayToItems(['count', 'names', 'faction'])} selectedID={this.state.view} onSelect={id => this.setView(id)} />
-						{this.getSlots(slotsContainer, this.state.view)}
+						<div>{this.getSlots(slotsContainer, this.state.view)}</div>
 					</Conditional>
 				</div>
 			);

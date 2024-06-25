@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import 'react-mde/lib/styles/css/react-mde.css';
 import 'react-mde/lib/styles/css/react-mde-editor.css';
@@ -8,4 +8,5 @@ import './style/app.scss';
 
 import { Main } from './components/main';
 
-ReactDOM.render(<Main />, document.getElementById('root'));
+const container = document.getElementById('root');
+createRoot(container).render(<Main />);

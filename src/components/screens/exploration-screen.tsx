@@ -511,18 +511,22 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				<div>
 					<Note>
 						<div className='section'>multiple combatants are selected:</div>
-						{combatants.map(c => (
-							<Group key={c.id}>
-								<div className='content-then-icons'>
-									<div className='content'>
-										{Napoleon.getCombatantName(c, this.props.exploration.combatants)}
-									</div>
-									<div className='icons'>
-										<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />
-									</div>
-								</div>
-							</Group>
-						))}
+						<div>
+							{
+								combatants.map(c => (
+									<Group key={c.id}>
+										<div className='content-then-icons'>
+											<div className='content'>
+												{Napoleon.getCombatantName(c, this.props.exploration.combatants)}
+											</div>
+											<div className='icons'>
+												<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />
+											</div>
+										</div>
+									</Group>
+								))
+							}
+						</div>
 					</Note>
 					{this.createControls(combatants)}
 				</div>

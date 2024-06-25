@@ -8,6 +8,7 @@ interface Props {
 	prompt: string | JSX.Element | JSX.Element[];
 	info: string | JSX.Element | JSX.Element[] | null;
 	disabled: boolean;
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 	onConfirm: () => void;
 }
 

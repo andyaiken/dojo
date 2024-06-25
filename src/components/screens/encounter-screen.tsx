@@ -176,7 +176,7 @@ export class EncounterScreen extends React.Component<Props> {
 									if your encounter is large or occurs in stages, you can split it into waves
 								</div>
 							</Note>
-							{waves}
+							<div>{waves}</div>
 							<button onClick={() => this.props.addWave(this.props.encounter)}>add a new wave</button>
 						</Expander>
 						<button onClick={() => this.props.showMinisChecklist(this.props.encounter)}>miniatures checklist</button>

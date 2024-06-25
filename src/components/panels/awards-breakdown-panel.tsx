@@ -185,7 +185,9 @@ export class AwardsBreakdownPanel extends React.Component<Props, State> {
 
 				return (
 					<AwardPanel key={award.id} award={award}>
-						{party}
+						<div>
+							{party}
+						</div>
 					</AwardPanel>
 				);
 			});

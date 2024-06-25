@@ -166,7 +166,7 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 								{Napoleon.getCombatantName(mount, [])}
 							</button>
 						</div>
-						{info}
+						<div>{info}</div>
 						<div className='note-details'>
 							if you’re knocked prone, or an effect moves your mount against its will, you must succeed on a dex save (dc 10) or land prone in a space within 5 feet of your mount
 						</div>
@@ -211,8 +211,8 @@ export class InitiativeEntry extends React.Component<InitiativeEntryProps> {
 				}
 				notes.push(
 					<Note key={c.id}>
-						{heading}
-						{description}
+						<div>{heading}</div>
+						<div>{description}</div>
 					</Note>
 				);
 			});

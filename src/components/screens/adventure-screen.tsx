@@ -442,7 +442,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</Conditional>
 				<Conditional display={(view === 'links') && (this.state.plot.map === null)}>
 					<Group transparent={true}>
-						{this.getLinks(scene)}
+						<div>{this.getLinks(scene)}</div>
 						<hr/>
 						<Dropdown
 							placeholder='select a scene to link to...'
@@ -460,7 +460,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				</Conditional>
 				<Conditional display={view === 'resources'}>
 					<Group transparent={true}>
-						{this.getResources(scene)}
+						<div>{this.getResources(scene)}</div>
 						<hr/>
 						<button onClick={() => this.props.addResourceToScene(scene, 'text')}>add a text handout</button>
 						<button onClick={() => this.props.addResourceToScene(scene, 'url')}>add a url</button>

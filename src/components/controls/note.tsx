@@ -3,6 +3,7 @@ import React from 'react';
 import { RenderError } from '../error';
 
 interface Props {
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 }
 
 export class Note extends React.Component<Props> {

@@ -64,14 +64,14 @@ export class SearchSidebar extends React.Component<Props, State> {
 						pcs.push(
 							<Group key={pc.id}>
 								<div className='section'>{pc.name}</div>
-								{companions}
+								<div>{companions}</div>
 							</Group>
 						);
 					});
 					results.push(
 						<Group key={party.id} onClick={() => this.props.openParty(party.id)}>
 							<div className='section'>{party.name}</div>
-							{pcs}
+							<div>{pcs}</div>
 						</Group>
 					);
 				});
@@ -90,14 +90,14 @@ export class SearchSidebar extends React.Component<Props, State> {
 						monsters.push(
 							<Group key={monster.id}>
 								<div className='section'>{monster.name}</div>
-								{traits}
+								<div>{traits}</div>
 							</Group>
 						);
 					});
 					results.push(
 						<Group key={group.id} onClick={() => this.props.openGroup(group.id)}>
 							<div className='section'>{group.name}</div>
-							{monsters}
+							<div>{monsters}</div>
 						</Group>
 					);
 				});
@@ -126,15 +126,15 @@ export class SearchSidebar extends React.Component<Props, State> {
 						waves.push(
 							<Group key={wave.id}>
 								<div className='section'>{wave.name}</div>
-								{waveSlots}
+								<div>{waveSlots}</div>
 							</Group>
 						);
 					});
 					results.push(
 						<Group key={encounter.id} onClick={() => this.props.openEncounter(encounter.id)}>
 							<div className='section'>{encounter.name}</div>
-							{slots}
-							{waves}
+							<div>{slots}</div>
+							<div>{waves}</div>
 						</Group>
 					);
 				});
@@ -151,7 +151,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 					results.push(
 						<Group key={map.id} onClick={() => this.props.openMap(map.id)}>
 							<div className='section'>{map.name}</div>
-							{areas}
+							<div>{areas}</div>
 						</Group>
 					);
 				});
@@ -168,7 +168,7 @@ export class SearchSidebar extends React.Component<Props, State> {
 					results.push(
 						<Group key={adventure.id} onClick={() => this.props.openAdventure(adventure.id)}>
 							<div className='section'>{adventure.name}</div>
-							{scenes}
+							<div>{scenes}</div>
 						</Group>
 					);
 				});

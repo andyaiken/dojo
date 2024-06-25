@@ -274,7 +274,9 @@ export class DMScreen extends React.Component<Props, State> {
 						/>
 						<div className='scrollable' style={{ height: 'calc(100% - 52px)' }}>
 							<Conditional display={selectedRight === 'party breakdown'}>
-								{this.getPartyHeader()}
+								<div>
+									{this.getPartyHeader()}
+								</div>
 								<PartyBreakdownPanel
 									party={this.props.parties.find(p => p.id === this.state.selectedPartyID) ?? null}
 									showAwards={this.props.showAwards}

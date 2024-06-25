@@ -361,21 +361,23 @@ export class MapScreen extends React.Component<Props, State> {
 										</div>
 									</Note>
 								</Conditional>
-								{
-									this.props.map.areas.map(area => (
-										<div key={area.id} onMouseEnter={() => this.setSelectedAreaID(area.id)} onMouseLeave={() => this.setSelectedAreaID(null)}>
-											<Expander text={area.name || 'unnamed area'}>
-												<MapAreaPanel
-													area={area}
-													changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
-													nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
-													moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
-													deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
-												/>
-											</Expander>
-										</div>
-									))
-								}
+								<div>
+									{
+										this.props.map.areas.map(area => (
+											<div key={area.id} onMouseEnter={() => this.setSelectedAreaID(area.id)} onMouseLeave={() => this.setSelectedAreaID(null)}>
+												<Expander text={area.name || 'unnamed area'}>
+													<MapAreaPanel
+														area={area}
+														changeValue={(source, field, value) => this.props.changeValue(source, field, value)}
+														nudgeValue={(source, field, delta) => this.props.nudgeValue(source, field, delta)}
+														moveMapArea={(a, dir, step) => this.props.moveMapArea(this.props.map, a, dir, step)}
+														deleteMapArea={a => this.props.deleteMapArea(this.props.map, a)}
+													/>
+												</Expander>
+											</div>
+										))
+									}
+								</div>
 								<hr/>
 								<button onClick={() => this.toggleAddingArea()}>
 									{this.state.addingArea ? 'click and drag on the map to create a map area, or click here to cancel' : 'add a map area'}

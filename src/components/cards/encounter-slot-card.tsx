@@ -87,7 +87,7 @@ export class EncounterSlotCard extends React.Component<Props, State> {
 
 		return (
 			<Expander text='move monster'>
-				{count}
+				<div>{count}</div>
 				<Dropdown
 					options={waves}
 					placeholder={text}

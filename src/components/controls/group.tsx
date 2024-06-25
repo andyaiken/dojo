@@ -5,6 +5,7 @@ import { RenderError } from '../error';
 interface Props {
 	className: string | null;
 	transparent: boolean;
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 	onClick: (() => void) | null;
 }
 

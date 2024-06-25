@@ -373,10 +373,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			if (resist || vuln || immune || conc) {
 				return (
 					<Note key={c.id}>
-						{resist}
-						{vuln}
-						{immune}
-						{conc}
+						<div>{resist}</div>
+						<div>{vuln}</div>
+						<div>{immune}</div>
+						<div>{conc}</div>
 					</Note>
 				);
 			}
@@ -622,7 +622,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 							downEnabled={combatant.aura.radius > 0}
 							onNudgeValue={delta => this.props.nudgeValue(combatant.aura, 'radius', delta * 5)}
 						/>
-						{auraDetails}
+						<div>{auraDetails}</div>
 					</Expander>
 				);
 				place = (
@@ -854,7 +854,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 				mountedCombat = (
 					<Expander text='mounted combat'>
 						{mountSelector}
-						{mountType}
+						<div>{mountType}</div>
 					</Expander>
 				);
 			}

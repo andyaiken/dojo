@@ -5,6 +5,7 @@ import { RenderError } from '../error';
 
 interface Props {
 	title: string;
+	children: JSX.Element | JSX.Element[] | string;
 	onCloseWindow: () => void;
 }
 

@@ -616,18 +616,22 @@ export class CombatScreen extends React.Component<Props, State> {
 				<div>
 					<Note>
 						<div className='section'>multiple combatants are selected:</div>
-						{combatants.map(c => (
-							<Group key={c.id}>
-								<div className='content-then-icons'>
-									<div className='content'>
-										{Napoleon.getCombatantName(c, this.props.combat.combatants)}
-									</div>
-									<div className='icons'>
-										<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />
-									</div>
-								</div>
-							</Group>
-						))}
+						<div>
+							{
+								combatants.map(c => (
+									<Group key={c.id}>
+										<div className='content-then-icons'>
+											<div className='content'>
+												{Napoleon.getCombatantName(c, this.props.combat.combatants)}
+											</div>
+											<div className='icons'>
+												<CloseCircleOutlined title='deselect' onClick={() => this.toggleItemSelection(c.id, true)} />
+											</div>
+										</div>
+									</Group>
+								))
+							}
+						</div>
 					</Note>
 					{this.createControls(combatants)}
 				</div>
@@ -703,22 +707,24 @@ export class CombatScreen extends React.Component<Props, State> {
 			sections.push(
 				<Group key='traits'>
 					<div className='section subheading'>traits</div>
-					{
-						traits.map(t => (
-							<div key={t.trait.id} className='section'>
-								{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
-								<Popover
-									content={(
-										<TraitPanel trait={t.trait} />
-									)}
-									placement='bottom'
-									overlayClassName='combat-info-tooltip'
-								>
-									<button className='link'>{t.trait.name}</button>
-								</Popover>
-							</div>
-						))
-					}
+					<div>
+						{
+							traits.map(t => (
+								<div key={t.trait.id} className='section'>
+									{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
+									<Popover
+										content={(
+											<TraitPanel trait={t.trait} />
+										)}
+										placement='bottom'
+										overlayClassName='combat-info-tooltip'
+									>
+										<button className='link'>{t.trait.name}</button>
+									</Popover>
+								</div>
+							))
+						}
+					</div>
 				</Group>
 			);
 		}
@@ -727,22 +733,24 @@ export class CombatScreen extends React.Component<Props, State> {
 			sections.push(
 				<Group key='reactions'>
 					<div className='section subheading'>reactions</div>
-					{
-						reactions.map(t => (
-							<div key={t.trait.id} className='section'>
-								{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
-								<Popover
-									content={(
-										<TraitPanel trait={t.trait} />
-									)}
-									placement='bottom'
-									overlayClassName='combat-info-tooltip'
-								>
-									<button className='link'>{t.trait.name}</button>
-								</Popover>
-							</div>
-						))
-					}
+					<div>
+						{
+							reactions.map(t => (
+								<div key={t.trait.id} className='section'>
+									{t.combatants.sort().join(', ') + ' ' + (t.combatants.length === 1 ? 'has' : 'have') + ' '}
+									<Popover
+										content={(
+											<TraitPanel trait={t.trait} />
+										)}
+										placement='bottom'
+										overlayClassName='combat-info-tooltip'
+									>
+										<button className='link'>{t.trait.name}</button>
+									</Popover>
+								</div>
+							))
+						}
+					</div>
 				</Group>
 			);
 		}

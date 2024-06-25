@@ -605,7 +605,7 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 								</button>
 							</Col>
 						</Row>
-						{list}
+						<div>{list}</div>
 					</Expander>
 					<div className='monster-help'>
 						{selector}
@@ -781,42 +781,46 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 					<Conditional display={this.state.browseFeatureID === null}>
 						<Textbox text={this.state.browseFeatureText} placeholder='search...' onChange={txt => this.setState({ browseFeatureText: txt })} />
 						<hr/>
-						{
-							featureData.map(fd => (
-								<Group key={fd.id}>
-									<TraitPanel
-										trait={fd.traits[0]}
-										mode='template'
-										source={traitIdToMonster[fd.traits[0].id]}
-										showMultiple={fd.traits.length > 1}
-										copyTrait={tr => {
-											const monster = traitIdToMonster[tr.id];
-											this.copyTrait(tr, monster);
-										}}
-										viewMultiple={() => this.setState({ browseFeatureID: fd.id })}
-									/>
-								</Group>
-							))
-						}
+						<div>
+							{
+								featureData.map(fd => (
+									<Group key={fd.id}>
+										<TraitPanel
+											trait={fd.traits[0]}
+											mode='template'
+											source={traitIdToMonster[fd.traits[0].id]}
+											showMultiple={fd.traits.length > 1}
+											copyTrait={tr => {
+												const monster = traitIdToMonster[tr.id];
+												this.copyTrait(tr, monster);
+											}}
+											viewMultiple={() => this.setState({ browseFeatureID: fd.id })}
+										/>
+									</Group>
+								))
+							}
+						</div>
 					</Conditional>
 					<Conditional display={this.state.browseFeatureID !== null}>
 						<button onClick={() => this.setState({ browseFeatureID: null })}><CaretLeftOutlined style={{ fontSize: '10px' }} /> back to the list</button>
 						<hr/>
-						{
-							featureData.find(fd => fd.id === this.state.browseFeatureID)?.traits.map(trait => (
-								<Group key={trait.id}>
-									<TraitPanel
-										trait={trait}
-										mode='template'
-										source={traitIdToMonster[trait.id]}
-										copyTrait={tr => {
-											const monster = traitIdToMonster[tr.id];
-											this.copyTrait(tr, monster);
-										}}
-									/>
-								</Group>
-							))
-						}
+						<div>
+							{
+								featureData.find(fd => fd.id === this.state.browseFeatureID)?.traits.map(trait => (
+									<Group key={trait.id}>
+										<TraitPanel
+											trait={trait}
+											mode='template'
+											source={traitIdToMonster[trait.id]}
+											copyTrait={tr => {
+												const monster = traitIdToMonster[tr.id];
+												this.copyTrait(tr, monster);
+											}}
+										/>
+									</Group>
+								))
+							}
+						</div>
 					</Conditional>
 				</div>
 			);
@@ -1460,6 +1464,7 @@ class FeaturesTab extends React.Component<FeaturesTabProps> {
 
 interface FieldPanelProps {
 	allowRandomize: boolean;
+	children: JSX.Element | JSX.Element[] | string;
 	onRandomize: () => void;
 }
 

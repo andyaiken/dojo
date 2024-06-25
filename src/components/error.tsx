@@ -5,6 +5,7 @@ import React, { ErrorInfo } from 'react';
 import { Textbox } from './controls/textbox';
 
 interface ErrorBoundaryProps {
+	children: JSX.Element | JSX.Element[] | string;
 }
 
 interface ErrorBoundaryState {

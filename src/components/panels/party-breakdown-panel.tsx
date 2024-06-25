@@ -150,7 +150,9 @@ export class PartyBreakdownPanel extends React.Component<Props> {
 					}
 					return (
 						<AwardPanel key={award.id} award={award}>
-							{awardeesSection}
+							<div>
+								{awardeesSection}
+							</div>
 						</AwardPanel>
 					);
 				});

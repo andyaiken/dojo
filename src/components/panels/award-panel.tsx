@@ -9,6 +9,7 @@ import { Group } from '../controls/group';
 
 interface AwardPanelProps {
 	award: Award;
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 }
 
 export class AwardPanel extends React.Component<AwardPanelProps> {

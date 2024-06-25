@@ -4,6 +4,7 @@ import { RenderError } from '../error';
 
 interface Props {
 	display: boolean;
+	children?: string | number | JSX.Element | null | (string | number | JSX.Element | null)[];
 }
 
 export class Conditional extends React.Component<Props> {

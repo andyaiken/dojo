@@ -97,11 +97,11 @@ export class TraitsPanel extends React.Component<TraitsPanelProps> {
 						if (type === 'legendary') {
 							info = (
 								<Note>
-									{count}
+									<div>{count}</div>
 									<div className='section'>
 										one legendary action can be used at the end of each other combatant&apos;s turn; spent actions are refreshed at the start of the monster&apos;s turn
 									</div>
-									{usage}
+									<div>{usage}</div>
 								</Note>
 							);
 						}
