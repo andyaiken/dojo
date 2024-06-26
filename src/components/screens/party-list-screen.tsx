@@ -22,7 +22,6 @@ interface Props {
 	openParty: (party: Party) => void;
 	deleteParty: (party: Party) => void;
 	addPC: () => void;
-	importPC: () => void;
 	createEncounter: (partyID: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
@@ -46,7 +45,6 @@ export class PartyListScreen extends React.Component<Props> {
 					maps={this.props.maps}
 					openParty={party => this.props.openParty(party)}
 					addPC={() => this.props.addPC()}
-					importPC={() => this.props.importPC()}
 					createEncounter={partyID => this.props.createEncounter(partyID)}
 					startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 					startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}

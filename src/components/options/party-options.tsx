@@ -13,7 +13,6 @@ interface Props {
 	encounters: Encounter[];
 	maps: Map[];
 	addPC: () => void;
-	importPC: () => void;
 	createEncounter: (partyID: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
@@ -80,7 +79,6 @@ export class PartyOptions extends React.Component<Props> {
 			return (
 				<div>
 					<button onClick={() => this.props.addPC()}>add a new pc</button>
-					<button onClick={() => this.props.importPC()}>import a pc</button>
 					{run}
 					{explore}
 					{create}

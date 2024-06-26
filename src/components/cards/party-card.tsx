@@ -16,7 +16,6 @@ interface Props {
 	maps: Map[];
 	openParty: (party: Party) => void;
 	addPC: () => void;
-	importPC: () => void;
 	createEncounter: (partyID: string) => void;
 	startEncounter: (partyID: string, encounterID: string) => void;
 	startExploration: (partyID: string, mapID: string) => void;
@@ -77,7 +76,6 @@ export class PartyCard extends React.Component<Props> {
 								encounters={this.props.encounters}
 								maps={this.props.maps}
 								addPC={() => this.props.addPC()}
-								importPC={() => this.props.importPC()}
 								createEncounter={partyID => this.props.createEncounter(partyID)}
 								startEncounter={(partyID, encounterID) => this.props.startEncounter(partyID, encounterID)}
 								startExploration={(partyID, mapID) => this.props.startExploration(partyID, mapID)}

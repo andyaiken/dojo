@@ -28,7 +28,6 @@ import { PCEditorModal } from './modals/editors/pc-editor-modal';
 import { MapImportModal } from './modals/import/map-import-modal';
 import { MonsterImportModal } from './modals/import/monster-import-modal';
 import { PartyImportModal } from './modals/import/party-import-modal';
-import { PCImportModal } from './modals/import/pc-import-modal';
 import { EncounterSelectionModal } from './modals/selection/encounter-selection-modal';
 import { ImageSelectionModal } from './modals/selection/image-selection-modal';
 import { MapSelectionModal } from './modals/selection/map-selection-modal';
@@ -660,27 +659,6 @@ export class Main extends React.Component<Props, State> {
 				pc: copy
 			}
 		});
-	}
-
-	private importPC() {
-		this.setState({
-			drawer: {
-				type: 'import-pc',
-				pc: Factory.createPC()
-			}
-		});
-	}
-
-	private acceptImportedPC() {
-		const party = this.state.parties.find(p => p.id === this.state.selectedPartyID);
-		if (party) {
-			party.pcs.push(this.state.drawer.pc);
-			Utils.sort(party.pcs);
-			this.setState({
-				parties: this.state.parties,
-				drawer: null
-			});
-		}
 	}
 
 	private savePC() {
@@ -2905,7 +2883,6 @@ export class Main extends React.Component<Props, State> {
 							goBack={() => this.selectParty(null)}
 							deleteParty={party => this.deleteParty(party)}
 							addPC={() => this.editPC(null)}
-							importPC={() => this.importPC()}
 							editPC={pc => this.editPC(pc)}
 							deletePC={pc => this.deletePC(pc)}
 							clonePC={(pc, name) => this.clonePC(pc, name)}
@@ -2934,7 +2911,6 @@ export class Main extends React.Component<Props, State> {
 						importParty={() => this.importParty()}
 						openParty={party => this.selectParty(party)}
 						addPC={() => this.editPC(null)}
-						importPC={() => this.importPC()}
 						createEncounter={partyID => this.createEncounter(partyID)}
 						startEncounter={(partyID, encounterID) => {
 							const encounter = this.state.encounters.find(enc => enc.id === encounterID) as Encounter;
@@ -3623,20 +3599,6 @@ export class Main extends React.Component<Props, State> {
 							</Col>
 						</Row>
 					);
-					break;
-				case 'import-pc':
-					content = (
-						<PCImportModal
-							pc={this.state.drawer.pc}
-						/>
-					);
-					header = 'import pc';
-					footer = (
-						<button onClick={() => this.acceptImportedPC()}>
-							accept pc
-						</button>
-					);
-					closable = true;
 					break;
 				case 'monster':
 					content = (
