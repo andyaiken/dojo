@@ -1,12 +1,12 @@
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { Col, Drawer, notification, Row } from 'antd';
+import localforage from 'localforage';
 import Mousetrap from 'mousetrap';
 import React from 'react';
 
 import { Factory } from '../utils/factory';
 import { Frankenstein } from '../utils/frankenstein';
 import { Gygax } from '../utils/gygax';
-import { Matisse } from '../utils/matisse';
 import { Mercator } from '../utils/mercator';
 import { Napoleon } from '../utils/napoleon';
 import { Shakespeare } from '../utils/shakespeare';
@@ -63,6 +63,15 @@ import { PartyListScreen } from './screens/party-list-screen';
 import { PartyScreen } from './screens/party-screen';
 
 interface Props {
+	parties: Party[];
+	library: MonsterGroup[];
+	encounters: Encounter[];
+	maps: Map[];
+	adventures: Adventure[];
+	combats: Combat[];
+	explorations: Exploration[];
+	images: SavedImage[];
+	options: Options;
 }
 
 interface State {
@@ -77,6 +86,7 @@ interface State {
 	adventures: Adventure[];
 	combats: Combat[];
 	explorations: Exploration[];
+	images: SavedImage[];
 	options: Options;
 
 	selectedPartyID: string | null;
@@ -94,315 +104,6 @@ export class Main extends React.Component<Props, State> {
 
 	constructor(props: Props) {
 		super(props);
-
-		let parties: Party[] = [];
-		try {
-			const str = window.localStorage.getItem('data-parties');
-			if (str) {
-				parties = JSON.parse(str);
-
-				parties.forEach(party => {
-					party.pcs.forEach(pc => {
-						if (pc.darkvision === undefined) {
-							pc.darkvision = 0;
-						}
-					});
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let library: MonsterGroup[] = [];
-		try {
-			const str = window.localStorage.getItem('data-library');
-			if (str) {
-				library = JSON.parse(str);
-
-				library.forEach(group => {
-					group.monsters.forEach(m => {
-						if (m.acInfo === undefined) {
-							m.acInfo = '';
-						}
-						if (m.legendaryActions === undefined) {
-							const value = m.traits.some(t => (t.type === 'legendary') || (t.type === 'mythic')) ? 3 : 0;
-							m.legendaryActions = value;
-						}
-						m.role = Frankenstein.getRole(m);
-					});
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let encounters: Encounter[] = [];
-		try {
-			const str = window.localStorage.getItem('data-encounters');
-			if (str) {
-				encounters = JSON.parse(str);
-
-				encounters.forEach(encounter => {
-					encounter.slots.forEach(slot => {
-						if (slot.roles === undefined) {
-							slot.roles = [];
-						}
-						if (slot.faction === undefined) {
-							slot.faction = 'foe';
-						}
-						if (slot.deltaCR === undefined) {
-							slot.deltaCR = 0;
-						}
-					});
-
-					encounter.waves.forEach(wave => {
-						wave.slots.forEach(slot => {
-							if (slot.roles === undefined) {
-								slot.roles = [];
-							}
-							if (slot.faction === undefined) {
-								slot.faction = 'foe';
-							}
-							if (slot.deltaCR === undefined) {
-								slot.deltaCR = 0;
-							}
-						});
-					});
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let maps: Map[] = [];
-		try {
-			const str = window.localStorage.getItem('data-maps');
-			if (str) {
-				maps = JSON.parse(str);
-
-				maps.forEach(m => {
-					m.items.forEach(item => {
-						if (item.customLink === undefined) {
-							item.customLink = '';
-						}
-						if (item.z === undefined) {
-							item.z = 0;
-						}
-						if (item.depth === undefined) {
-							item.depth = 1;
-						}
-					});
-					if (m.walls === undefined) {
-						m.walls = [];
-					}
-					if (m.areas === undefined) {
-						m.areas = [];
-					}
-					m.areas.forEach(area => {
-						if (area.z === undefined) {
-							area.z = 0;
-						}
-						if (area.depth === undefined) {
-							area.depth = 1;
-						}
-					});
-					if (m.lightSources === undefined) {
-						m.lightSources = [];
-					}
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let adventures: Adventure[] = [];
-		try {
-			const str = window.localStorage.getItem('data-adventures');
-			if (str) {
-				adventures = JSON.parse(str);
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let combats: Combat[] = [];
-		try {
-			const str = window.localStorage.getItem('data-combats');
-			if (str) {
-				combats = JSON.parse(str);
-
-				combats.forEach(combat => {
-					combat.combatants.forEach(c => {
-						if (c.faction === undefined) {
-							switch (c.type) {
-								case 'pc':
-								case 'companion':
-									c.faction = 'ally';
-									break;
-								case 'monster':
-									c.faction = 'foe';
-									break;
-								default:
-									c.faction = 'neutral';
-									break;
-							}
-						}
-						if (c.note === undefined) {
-							c.note = '';
-						}
-						if (c.mountID === undefined) {
-							c.mountID = null;
-						}
-						if (c.mountType === undefined) {
-							c.mountType = 'controlled';
-						}
-						if (c.darkvision === undefined) {
-							c.darkvision = 0;
-						}
-						if (c.lightSource === undefined) {
-							c.lightSource = null;
-						}
-						if (c.path === undefined) {
-							c.path = null;
-						}
-					});
-
-					if (combat.encounter) {
-						combat.encounter.slots.forEach(slot => {
-							if (slot.roles === undefined) {
-								slot.roles = [];
-							}
-							if (slot.faction === undefined) {
-								slot.faction = 'foe';
-							}
-						});
-
-						combat.encounter.waves.forEach(wave => {
-							wave.slots.forEach(slot => {
-								if (slot.roles === undefined) {
-									slot.roles = [];
-								}
-								if (slot.faction === undefined) {
-									slot.faction = 'foe';
-								}
-							});
-						});
-					}
-
-					if (combat.map) {
-						combat.map.items.forEach(item => {
-							if (item.customLink === undefined) {
-								item.customLink = '';
-							}
-							if (item.z === undefined) {
-								item.z = 0;
-							}
-							if (item.depth === undefined) {
-								item.depth = 1;
-							}
-						});
-						if (combat.map.walls === undefined) {
-							combat.map.walls = [];
-						}
-						if (combat.map.areas === undefined) {
-							combat.map.areas = [];
-						}
-						combat.map.areas.forEach(area => {
-							if (area.z === undefined) {
-								area.z = 0;
-							}
-							if (area.depth === undefined) {
-								area.depth = 1;
-							}
-						});
-						if (combat.map.lightSources === undefined) {
-							combat.map.lightSources = [];
-						}
-					}
-
-					if (combat.fog === undefined) {
-						combat.fog = [];
-					}
-
-					if (combat.lighting === undefined) {
-						combat.lighting = 'bright light';
-					}
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let explorations: Exploration[] = [];
-		try {
-			const str = window.localStorage.getItem('data-explorations');
-			if (str) {
-				explorations = JSON.parse(str);
-
-				explorations.forEach(ex => {
-					ex.map.items.forEach(item => {
-						if (item.customLink === undefined) {
-							item.customLink = '';
-						}
-					});
-					if (ex.map.walls === undefined) {
-						ex.map.walls = [];
-					}
-					if (ex.map.areas === undefined) {
-						ex.map.areas = [];
-					}
-					ex.map.areas.forEach(area => {
-						if (area.z === undefined) {
-							area.z = 0;
-						}
-						if (area.depth === undefined) {
-							area.depth = 1;
-						}
-					});
-					if (ex.map.lightSources === undefined) {
-						ex.map.lightSources = [];
-					}
-					ex.combatants.forEach(c => {
-						if (c.darkvision === undefined) {
-							c.darkvision = 0;
-						}
-						if (c.lightSource === undefined) {
-							c.lightSource = null;
-						}
-						if (c.path === undefined) {
-							c.path = null;
-						}
-					});
-
-					if (ex.lighting === undefined) {
-						ex.lighting = 'bright light';
-					}
-				});
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
-
-		let options: Options = {
-			showMonsterDieRolls: false,
-			diagonals: 'onepointfive',
-			featureFlags: []
-		};
-		try {
-			const str = window.localStorage.getItem('data-options');
-			if (str) {
-				options = JSON.parse(str);
-
-				if (options.diagonals === undefined) {
-					options.diagonals = 'onepointfive';
-				}
-				if (options.featureFlags === undefined) {
-					options.featureFlags = [];
-				}
-			}
-		} catch (ex) {
-			console.error('Could not parse JSON: ', ex);
-		}
 
 		const dice: { [sides: number]: number } = {};
 		[4, 6, 8, 10, 12, 20, 100].forEach(n => dice[n] = 0);
@@ -426,14 +127,15 @@ export class Main extends React.Component<Props, State> {
 				draws: [],
 				selectedPartyID: null
 			},
-			parties: parties,
-			library: library,
-			encounters: encounters,
-			maps: maps,
-			adventures: adventures,
-			combats: combats,
-			explorations: explorations,
-			options: options,
+			parties: props.parties,
+			library: props.library,
+			encounters: props.encounters,
+			maps: props.maps,
+			adventures: props.adventures,
+			combats: props.combats,
+			explorations: props.explorations,
+			images: props.images,
+			options: props.options,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
 			selectedEncounterID: null,
@@ -442,8 +144,6 @@ export class Main extends React.Component<Props, State> {
 			selectedCombatID: null,
 			selectedExplorationID: null
 		};
-
-		Matisse.clearUnusedImages(maps, adventures, combats, explorations);
 	}
 
 	//#endregion
@@ -470,7 +170,6 @@ export class Main extends React.Component<Props, State> {
 	//#region Helper methods
 
 	private setView(view: string) {
-		this.save();
 		this.setState({
 			view: view
 		});
@@ -518,7 +217,7 @@ export class Main extends React.Component<Props, State> {
 	private openSceneResource(resource: SceneResource) {
 		let src = resource.content;
 		if (resource.type === 'image') {
-			const img = Matisse.getImage(resource.content);
+			const img = this.state.images.find(i => i.id === resource.content);
 			if (img) {
 				src = img.data;
 			}
@@ -588,7 +287,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectPartyByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'parties',
 			selectedPartyID: id
@@ -596,7 +294,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectMonsterGroupByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'library',
 			selectedMonsterGroupID: id
@@ -604,7 +301,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectEncounterByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'encounters',
 			selectedEncounterID: id,
@@ -613,7 +309,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectMapByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'maps',
 			selectedMapID: id,
@@ -622,7 +317,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectAdventureByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'adventures',
 			selectedAdventureID: id
@@ -630,7 +324,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectCombatByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'encounters',
 			selectedEncounterID: null,
@@ -639,7 +332,6 @@ export class Main extends React.Component<Props, State> {
 	}
 
 	private selectExplorationByID(id: string | null) {
-		this.save();
 		this.setState({
 			view: 'maps',
 			selectedMapID: null,
@@ -681,6 +373,81 @@ export class Main extends React.Component<Props, State> {
 		});
 	}
 
+	private addImage(id: string, fileName: string, content: string) {
+		const image: SavedImage = {
+			id: id,
+			name: fileName,
+			data: content
+		};
+
+		let images = this.state.images;
+		images.push(image);
+		images = Utils.sort(images);
+
+		this.setState({
+			images: images
+		});
+	}
+
+	private removeImage(id: string) {
+		let images = this.state.images.filter(i => i.id !== id);
+		images = Utils.sort(images);
+
+		this.setState({
+			images: images
+		});
+	}
+
+	private clearUnusedImages() {
+		const used = this.state.images.filter(img => {
+			let used = false;
+
+			this.state.maps.forEach(map => {
+				if (map.items.find(mi => mi.customBackground === img.id)) {
+					used = true;
+				}
+			});
+
+			this.state.adventures.forEach(adventure => {
+				if (adventure.plot.map !== null) {
+					if (adventure.plot.map.items.find(mi => mi.customBackground === img.id)) {
+						used = true;
+					}
+				}
+				Verne.getScenes(adventure.plot).forEach(scene => {
+					if (scene.plot.map) {
+						if (scene.plot.map.items.find(mi => mi.customBackground === img.id)) {
+							used = true;
+						}
+					}
+					scene.resources.forEach(resource => {
+						if ((resource.type === 'image') && (resource.content === img.id)) {
+							used = true;
+						}
+					});
+				});
+			});
+
+			this.state.combats.forEach(combat => {
+				if (combat.map && combat.map.items.find(mi => mi.customBackground === img.id)) {
+					used = true;
+				}
+			});
+
+			this.state.explorations.forEach(exploration => {
+				if (exploration.map.items.find(mi => mi.customBackground === img.id)) {
+					used = true;
+				}
+			});
+
+			return used;
+		});
+
+		this.setState({
+			images: used
+		});
+	}
+
 	// This is an internal dictionary to speed up monster lookup
 	private monsterIdToGroup: { [id: string]: Monster } = {};
 
@@ -715,6 +482,7 @@ export class Main extends React.Component<Props, State> {
 		Utils.sort(this.state.adventures);
 		Utils.sort(this.state.combats);
 		Utils.sort(this.state.explorations);
+		Utils.sort(this.state.images);
 
 		if (type === 'initiative') {
 			if (!(combatant as Combatant).pending) {
@@ -2935,51 +2703,23 @@ export class Main extends React.Component<Props, State> {
 
 	private saveAfterDelay = Utils.debounce(() => this.saveAll(), 5 * 1000);
 
-	private save() {
-		switch (this.state.view) {
-			case 'parties':
-				this.saveKey(this.state.parties, 'data-parties');
-				break;
-			case 'library':
-				this.saveKey(this.state.library, 'data-library');
-				break;
-			case 'encounters':
-				this.saveKey(this.state.encounters, 'data-encounters');
-				this.saveKey(this.state.combats, 'data-combats');
-				break;
-			case 'maps':
-				this.saveKey(this.state.maps, 'data-maps');
-				this.saveKey(this.state.explorations, 'data-explorations');
-				break;
-			case 'adventures':
-				this.saveKey(this.state.adventures, 'data-adventures');
-				break;
-		}
-
-		this.saveKey(this.state.options, 'data-options');
-	}
-
 	private saveAll() {
-		this.saveKey(this.state.parties, 'data-parties');
-		this.saveKey(this.state.library, 'data-library');
-		this.saveKey(this.state.encounters, 'data-encounters');
-		this.saveKey(this.state.maps, 'data-maps');
-		this.saveKey(this.state.adventures, 'data-adventures');
-		this.saveKey(this.state.combats, 'data-combats');
-		this.saveKey(this.state.explorations, 'data-explorations');
-		this.saveKey(this.state.options, 'data-options');
-	}
+		this.clearUnusedImages();
 
-	private saveKey(obj: any, key: string) {
-		try {
-			const json = JSON.stringify(obj);
-			window.localStorage.setItem(key, json);
-		} catch (ex) {
-			console.error('Could not stringify data: ', ex);
-		}
+		localforage.setItem<Party[]>('dojo-parties', this.state.parties);
+		localforage.setItem<MonsterGroup[]>('dojo-library', this.state.library);
+		localforage.setItem<Encounter[]>('dojo-encounters', this.state.encounters);
+		localforage.setItem<Map[]>('dojo-maps', this.state.maps);
+		localforage.setItem<Adventure[]>('dojo-adventures', this.state.adventures);
+		localforage.setItem<Combat[]>('dojo-combats', this.state.combats);
+		localforage.setItem<Exploration[]>('dojo-explorations', this.state.explorations);
+		localforage.setItem<SavedImage[]>('dojo-images', this.state.images);
+		localforage.setItem<Options>('dojo-options', this.state.options);
 	}
 
 	private exportAll() {
+		this.clearUnusedImages();
+
 		const data = {
 			parties: this.state.parties,
 			library: this.state.library,
@@ -2988,8 +2728,8 @@ export class Main extends React.Component<Props, State> {
 			adventures: this.state.adventures,
 			combats: this.state.combats,
 			explorations: this.state.explorations,
-			options: this.state.options,
-			images: Matisse.allImages()
+			images: this.state.images,
+			options: this.state.options
 		};
 
 		Utils.saveFile('data.dojo', data);
@@ -2997,10 +2737,6 @@ export class Main extends React.Component<Props, State> {
 
 	private importAll(json: string) {
 		const data = JSON.parse(json);
-
-		data.images.forEach((img: SavedImage) => {
-			Matisse.saveImage(img.id, img.name, img.data);
-		});
 
 		const sidebar = this.state.sidebar;
 		sidebar.visible = false;
@@ -3016,6 +2752,7 @@ export class Main extends React.Component<Props, State> {
 			adventures: data.adventures,
 			combats: data.combats,
 			explorations: data.explorations,
+			images: data.images,
 			options: data.options,
 			selectedPartyID: null,
 			selectedMonsterGroupID: null,
@@ -3261,6 +2998,7 @@ export class Main extends React.Component<Props, State> {
 							parties={this.state.parties}
 							library={this.state.library}
 							encounters={this.state.encounters}
+							images={this.state.images}
 							options={this.state.options}
 							pauseCombat={() => this.pauseCombat()}
 							endCombat={(combat, goToMap) => this.endCombat(combat, goToMap)}
@@ -3554,6 +3292,7 @@ export class Main extends React.Component<Props, State> {
 						combats={this.state.combats}
 						parties={this.state.parties}
 						adventures={this.state.adventures}
+						images={this.state.images}
 						hasMonsters={hasMonsters}
 						createEncounter={() => this.createEncounter(null)}
 						addEncounter={templateID => this.addEncounter(templateID)}
@@ -3578,6 +3317,7 @@ export class Main extends React.Component<Props, State> {
 							exploration={this.state.explorations.find(e => e.id === this.state.selectedExplorationID) as Exploration}
 							parties={this.state.parties}
 							library={this.state.library}
+							images={this.state.images}
 							options={this.state.options}
 							startCombat={ex => this.createCombat(ex.partyID, null, ex.map, ex.mapAreaID, ex.fog, ex.lighting, ex.combatants)}
 							toggleTag={(combatants, tag) => this.toggleTag(combatants, tag)}
@@ -3644,6 +3384,7 @@ export class Main extends React.Component<Props, State> {
 						<MapScreen
 							map={this.state.maps.find(m => m.id === this.state.selectedMapID) as Map}
 							parties={this.state.parties}
+							images={this.state.images}
 							cloneMap={(map, name) => this.cloneMap(map, name)}
 							rotateMap={map => this.rotateMap(map)}
 							deleteMap={map => this.deleteMap(map)}
@@ -3689,6 +3430,7 @@ export class Main extends React.Component<Props, State> {
 						maps={this.state.maps}
 						parties={this.state.parties}
 						explorations={this.state.explorations}
+						images={this.state.images}
 						addMap={() => this.addMap()}
 						importMap={() => this.importMap()}
 						generateMap={() => this.generateMap()}
@@ -3715,6 +3457,7 @@ export class Main extends React.Component<Props, State> {
 							parties={this.state.parties}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
+							images={this.state.images}
 							options={this.state.options}
 							goBack={() => this.selectAdventure(null)}
 							addScene={(plot, sceneBefore, sceneAfter) => this.addScene(plot, sceneBefore, sceneAfter)}
@@ -3762,6 +3505,7 @@ export class Main extends React.Component<Props, State> {
 					<AdventureListScreen
 						adventures={this.state.adventures}
 						parties={this.state.parties}
+						images={this.state.images}
 						addAdventure={() => this.addAdventure()}
 						generateAdventure={() => this.generateAdventure()}
 						openAdventure={adventure => this.selectAdventure(adventure)}
@@ -4096,6 +3840,9 @@ export class Main extends React.Component<Props, State> {
 					content = (
 						<MapImportModal
 							map={this.state.drawer.map}
+							images={this.state.images}
+							addImage={(id, fileName, content) => this.addImage(id, fileName, content)}
+							removeImage={id => this.removeImage(id)}
 						/>
 					);
 					header = 'import map';
@@ -4164,6 +3911,7 @@ export class Main extends React.Component<Props, State> {
 							library={this.state.library}
 							encounters={this.state.encounters}
 							maps={this.state.maps}
+							images={this.state.images}
 							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
@@ -4186,6 +3934,7 @@ export class Main extends React.Component<Props, State> {
 							type='add-wave'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
+							images={this.state.images}
 							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							notify={() => this.setState({drawer: this.state.drawer})}
@@ -4208,6 +3957,7 @@ export class Main extends React.Component<Props, State> {
 							type='add-combatants'
 							combatSetup={this.state.drawer.combatSetup}
 							library={this.state.library}
+							images={this.state.images}
 							options={this.state.options}
 							getMonster={id => this.getMonster(id)}
 							addMonster={monster => this.addMonsterToAddCombatantsModal(monster)}
@@ -4229,6 +3979,7 @@ export class Main extends React.Component<Props, State> {
 					content = (
 						<CombatMapModal
 							maps={this.state.maps}
+							images={this.state.images}
 							map={this.state.drawer.data.map}
 							setMap={map => {
 								const data = this.state.drawer.data;
@@ -4313,7 +4064,11 @@ export class Main extends React.Component<Props, State> {
 					break;
 				case 'select-image':
 					content = (
-						<ImageSelectionModal select={id => this.state.drawer.onAccept(id)} />
+						<ImageSelectionModal
+							images={this.state.images}
+							addImage={(id, fileName, content) => this.addImage(id, fileName, content)}
+							select={id => this.state.drawer.onAccept(id)}
+						/>
 					);
 					header = 'choose an image';
 					width = '25%';
@@ -4329,6 +4084,7 @@ export class Main extends React.Component<Props, State> {
 					content = (
 						<MapSelectionModal
 							maps={this.state.maps.filter(m => m.areas.length > 0)}
+							images={this.state.images}
 							onSelect={map => this.state.drawer.accept(map)}
 						/>
 					);
@@ -4424,7 +4180,6 @@ export class Main extends React.Component<Props, State> {
 									options: options
 								});
 							}}
-							clearUnusedImages={() => Matisse.clearUnusedImages(this.state.maps, this.state.adventures, this.state.combats, this.state.explorations)}
 							exportAll={() => this.exportAll()}
 							importAll={json => this.importAll(json)}
 							addFlag={flag => {

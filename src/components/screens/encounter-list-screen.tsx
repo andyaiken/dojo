@@ -17,12 +17,14 @@ import { EncounterCard } from '../cards/encounter-card';
 import { Note } from '../controls/note';
 import { EncounterListOptions } from '../options/encounter-list-options';
 import { GridPanel } from '../panels/grid-panel';
+import { SavedImage } from '../../models/misc';
 
 interface Props {
 	encounters: Encounter[];
 	combats: Combat[];
 	parties: Party[];
 	adventures: Adventure[];
+	images: SavedImage[];
 	hasMonsters: boolean;
 	createEncounter: () => void;
 	addEncounter: (templateID: string | null) => void;
@@ -75,6 +77,7 @@ export class EncounterListScreen extends React.Component<Props> {
 				<CombatCard
 					key={c.id}
 					combat={c}
+					images={this.props.images}
 					resumeCombat={combat => this.props.resumeCombat(combat)}
 					deleteCombat={combat => this.props.deleteCombat(combat)}
 					openStatBlock={combatant => this.props.openStatBlock(combatant)}

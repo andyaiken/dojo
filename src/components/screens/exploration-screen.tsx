@@ -10,7 +10,7 @@ import { Utils } from '../../utils/utils';
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Exploration, Map, MapItem, MapLightSource } from '../../models/map';
-import { Options } from '../../models/misc';
+import { Options, SavedImage } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
@@ -36,6 +36,7 @@ interface Props {
 	exploration: Exploration;
 	parties: Party[];
 	library: MonsterGroup[];
+	images: SavedImage[];
 	options: Options;
 	startCombat: (exploration: Exploration) => void;
 	toggleTag: (combatants: Combatant[], tag: string) => void;
@@ -435,6 +436,7 @@ export class ExplorationScreen extends React.Component<Props, State> {
 				map={this.props.exploration.map}
 				mode={playerView ? 'interactive-player' : 'interactive-dm'}
 				features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog, lightSource: this.state.addingLightSource }}
+				images={this.props.images}
 				options={this.props.options}
 				combatants={this.props.exploration.combatants}
 				showGrid={((this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare || this.state.addingLightSource) && !playerView}

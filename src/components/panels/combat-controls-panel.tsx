@@ -209,7 +209,10 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 	private getDamageMultiplier(combatantID: string) {
 		let selected = 'normal';
 		const multiplier = this.state.damageMultipliers[combatantID] ?? 1;
-		if (multiplier < 1) {
+		if (multiplier === 0.25) {
+			selected = 'quarter';
+		}
+		if (multiplier === 0.5) {
 			selected = 'half';
 		}
 		if (multiplier > 1) {
@@ -218,10 +221,13 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 
 		return (
 			<Selector
-				options={Utils.arrayToItems(['half', 'normal', 'double'])}
+				options={Utils.arrayToItems(['quarter', 'half', 'normal', 'double'])}
 				selectedID={selected}
 				onSelect={id => {
 					let value = 1;
+					if (id === 'quarter') {
+						value = 0.25;
+					}
 					if (id === 'half') {
 						value = 0.5;
 					}
@@ -390,16 +396,9 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			let value: number | JSX.Element = this.state.value;
 			if ((this.state.damageMode === 'damage') && (this.state.value > 0)) {
 				const multiplier = this.state.damageMultipliers[combatantID] ?? 1;
-				if (multiplier < 1) {
-					// Halved
+				if (multiplier !== 1) {
 					value = (
-						<div>{this.state.value} hp <ArrowRightOutlined className='inline-text'/> {Math.floor(this.state.value / 2)} hp</div>
-					);
-				}
-				if (multiplier > 1) {
-					// Doubled
-					value = (
-						<div>{this.state.value} hp <ArrowRightOutlined className='inline-text'/> {this.state.value * 2} hp</div>
+						<div>{this.state.value} hp <ArrowRightOutlined className='inline-text'/> {Math.floor(this.state.value * multiplier)} hp</div>
 					);
 				}
 			}
@@ -680,6 +679,7 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 		let changeLight = null;
 		let mountedCombat = null;
 		let notes = null;
+
 		if (this.props.combatants.length === 1) {
 			const combatant = this.props.combatants[0];
 			changeName = (
@@ -860,10 +860,9 @@ export class CombatControlsPanel extends React.Component<Props, State> {
 			}
 
 			notes = (
-				<div>
-					<hr/>
+				<Expander text='notes'>
 					<MarkdownEditor text={combatant.note} onChange={text => this.props.changeValue(combatant, 'note', text)} />
-				</div>
+				</Expander>
 			);
 		}
 

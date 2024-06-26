@@ -1,5 +1,5 @@
-import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
-import { Col, notification, Row, Upload } from 'antd';
+import { FileOutlined } from '@ant-design/icons';
+import { Col, Row, Upload } from 'antd';
 import React from 'react';
 
 import { Factory } from '../../../utils/factory';
@@ -13,9 +13,13 @@ import { NumberSpin } from '../../controls/number-spin';
 import { Tabs } from '../../controls/tabs';
 import { Textbox } from '../../controls/textbox';
 import { MapPanel } from '../../panels/map-panel';
+import { SavedImage } from '../../../models/misc';
 
 interface Props {
 	map: Map;
+	images: SavedImage[];
+	removeImage: (id: string) => void;
+	addImage: (id: string, fileName: string, content: string) => void;
 }
 
 interface State {
@@ -64,49 +68,33 @@ export class MapImportModal extends React.Component<Props, State> {
 				const content = progress.target.result as string;
 
 				if (this.state.imageID) {
-					// Remove previous image from localStorage
-					window.localStorage.removeItem('image-' + this.state.imageID);
+					this.props.removeImage(this.state.imageID);
 				}
 
-				try {
-					const image = {
-						id: Utils.guid(),
-						name: file.name,
-						data: content
-					};
-					const json = JSON.stringify(image);
-					window.localStorage.setItem('image-' + image.id, json);
+				const id = Utils.guid();
+				this.props.addImage(id, file.name, content);
 
-					const img = new Image();
-					img.onload = () => {
-						// Assume a map will be 10 squares on its smallest side
-						const square = Math.round(Math.min(img.width, img.height) / 10);
-						this.setState({
-							imageID: image.id,
-							size: content.length,
-							square: square,
-							imageDimensions: {
-								width: img.width,
-								height: img.height
-							},
-							mapDimensions: {
-								width: Math.round(img.width / square),
-								height: Math.round(img.height / square)
-							}
-						}, () => {
-							this.updateMap(image.name);
-						});
-					};
-					img.src = content;
-				} catch {
-					// ERROR: Quota exceeded (probably)
-					notification.open({
-						message: 'can\'t upload this image',
-						description: 'not enough storage space for this image (' + Utils.toData(content.length) + '); try reducing the resolution or removing unused images',
-						closeIcon: <CloseCircleOutlined />,
-						duration: 5
+				const img = new Image();
+				img.onload = () => {
+					// Assume a map will be 10 squares on its smallest side
+					const square = Math.round(Math.min(img.width, img.height) / 10);
+					this.setState({
+						imageID: id,
+						size: content.length,
+						square: square,
+						imageDimensions: {
+							width: img.width,
+							height: img.height
+						},
+						mapDimensions: {
+							width: Math.round(img.width / square),
+							height: Math.round(img.height / square)
+						}
+					}, () => {
+						this.updateMap(file.name);
 					});
-				}
+				};
+				img.src = content;
 			}
 		};
 		reader.readAsDataURL(file);
@@ -286,9 +274,6 @@ export class MapImportModal extends React.Component<Props, State> {
 									<p className='ant-upload-text'>
 										click here, or drag a file here, to upload it
 									</p>
-									<p className='ant-upload-text'>
-										try to upload small images if possible
-									</p>
 								</Upload.Dragger>
 							</div>
 						);
@@ -306,6 +291,7 @@ export class MapImportModal extends React.Component<Props, State> {
 						<MapPanel
 							map={this.state.map}
 							mode='edit'
+							images={this.props.images}
 							showGrid={true}
 							gridSquareClicked={() => null}
 						/>

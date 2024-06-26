@@ -5,9 +5,11 @@ import { Map } from '../../../models/map';
 import { RenderError } from '../../error';
 import { Group } from '../../controls/group';
 import { MapPanel } from '../../panels/map-panel';
+import { SavedImage } from '../../../models/misc';
 
 interface Props {
 	maps: Map[];
+	images: SavedImage[];
 	onSelect: (map: Map) => void;
 }
 
@@ -21,6 +23,7 @@ export class MapSelectionModal extends React.Component<Props> {
 					<div className='section subheading'>{map.name || 'unnamed map'}</div>
 					<MapPanel
 						map={map}
+						images={this.props.images}
 						showAreaNames={true}
 					/>
 				</Group>

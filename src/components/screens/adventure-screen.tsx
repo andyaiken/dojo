@@ -4,7 +4,6 @@ import React from 'react';
 
 import { Factory } from '../../utils/factory';
 import { Gygax } from '../../utils/gygax';
-import { Matisse } from '../../utils/matisse';
 import { Napoleon } from '../../utils/napoleon';
 import { Utils } from '../../utils/utils';
 import { Verne } from '../../utils/verne';
@@ -13,7 +12,7 @@ import { Adventure, Plot, Scene, SceneLink, SceneResource } from '../../models/a
 import { Combatant, CombatSlotInfo } from '../../models/combat';
 import { Encounter } from '../../models/encounter';
 import { Map, MapItem } from '../../models/map';
-import { Options } from '../../models/misc';
+import { Options, SavedImage } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { Party } from '../../models/party';
 
@@ -38,6 +37,7 @@ interface Props {
 	parties: Party[];
 	encounters: Encounter[];
 	maps: Map[];
+	images: SavedImage[];
 	options: Options;
 	goBack: () => void;
 	addScene: (plot: Plot, sceneBefore: Scene | null, sceneAfter: Scene | null) => Scene;
@@ -272,7 +272,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 					break;
 				case 'image':
 					{
-						const img = Matisse.getImage(resource.content);
+						const img = this.props.images.find(i => i.id === resource.content);
 						if (img) {
 							content = (
 								<img
@@ -325,6 +325,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 								content = (
 									<MapPanel
 										map={map}
+										images={this.props.images}
 										selectedAreaID={resource.data.mapAreaID}
 										combatants={combatants}
 										fog={resource.data.fog}
@@ -614,6 +615,7 @@ export class AdventureScreen extends React.Component<Props, State> {
 				<MapPanel
 					map={this.state.plot.map}
 					mode='interactive-plot'
+					images={this.props.images}
 					showAreaNames={true}
 					areaClassNames={sceneClassNames}
 					selectedItemIDs={this.state.selectedSceneID ? [this.state.selectedSceneID] : []}

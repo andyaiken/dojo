@@ -3,6 +3,7 @@ import React from 'react';
 import { Combat, Combatant } from '../../models/combat';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
+import { SavedImage } from '../../models/misc';
 import { Group } from '../controls/group';
 
 import { RenderError } from '../error';
@@ -13,6 +14,7 @@ import { Napoleon } from '../../utils/napoleon';
 
 interface Props {
 	combat: Combat;
+	images: SavedImage[];
 	resumeCombat: (combat: Combat) => void;
 	deleteCombat: (combat: Combat) => void;
 	openStatBlock: (combatant: Combatant) => void;
@@ -50,6 +52,7 @@ export class CombatCard extends React.Component<Props> {
 					<div className='section'>
 						<MapPanel
 							map={this.props.combat.map}
+							images={this.props.images}
 							fog={this.props.combat.fog}
 							combatants={this.props.combat.combatants}
 						/>

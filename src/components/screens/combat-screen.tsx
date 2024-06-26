@@ -12,7 +12,7 @@ import { Combat, Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Encounter } from '../../models/encounter';
 import { Map, MapItem, MapLightSource } from '../../models/map';
-import { Options } from '../../models/misc';
+import { Options, SavedImage } from '../../models/misc';
 import { Monster, MonsterGroup, Trait } from '../../models/monster';
 import { Companion, Party, PC } from '../../models/party';
 
@@ -40,6 +40,7 @@ interface Props {
 	parties: Party[];
 	library: MonsterGroup[];
 	encounters: Encounter[];
+	images: SavedImage[];
 	options: Options;
 	pauseCombat: () => void;
 	endCombat: (combat: Combat, goToMap: boolean) => void;
@@ -401,6 +402,7 @@ export class CombatScreen extends React.Component<Props, State> {
 								key='map'
 								map={this.props.combat.map}
 								mode='interactive-player'
+								images={this.props.images}
 								options={this.props.options}
 								combatants={this.props.combat.combatants}
 								selectedItemIDs={this.props.combat.combatants.filter(c => c.type === 'pc').map(c => c.id)}
@@ -988,6 +990,7 @@ export class CombatScreen extends React.Component<Props, State> {
 							map={this.props.combat.map}
 							mode='interactive-dm'
 							features={{ highlight: this.state.highlightMapSquare, editFog: this.state.editFog, lightSource: this.state.addingLightSource }}
+							images={this.props.images}
 							options={this.props.options}
 							showGrid={(this.state.addingToMapID !== null) || this.state.addingOverlay || this.state.editFog || this.state.highlightMapSquare || this.state.addingLightSource}
 							combatants={this.props.combat.combatants}

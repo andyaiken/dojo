@@ -3,6 +3,7 @@ import React from 'react';
 import { Adventure } from '../../models/adventure';
 import { Map } from '../../models/map';
 import { Party } from '../../models/party';
+import { SavedImage } from '../../models/misc';
 
 import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
@@ -13,6 +14,7 @@ import { MapPanel } from '../panels/map-panel';
 interface Props {
 	adventure: Adventure;
 	parties: Party[];
+	images: SavedImage[];
 	openAdventure: (adventure: Adventure) => void;
 	exploreMap: (map: Map, partyID: string) => void;
 	deleteAdventure: (adventure: Adventure) => void;
@@ -24,6 +26,7 @@ export class AdventureCard extends React.Component<Props> {
 			return (
 				<MapPanel
 					map={this.props.adventure.plot.map}
+					images={this.props.images}
 				/>
 			);
 		}

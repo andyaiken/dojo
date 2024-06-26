@@ -7,10 +7,12 @@ import { RenderError } from '../error';
 import { Expander } from '../controls/expander';
 import { MapOptions } from '../options/map-options';
 import { MapPanel } from '../panels/map-panel';
+import { SavedImage } from '../../models/misc';
 
 interface Props {
 	map: Map;
 	parties: Party[];
+	images: SavedImage[];
 	openMap: (map: Map) => void;
 	cloneMap: (map: Map, name: string) => void;
 	startEncounter: (partyID: string, mapID: string) => void;
@@ -32,6 +34,7 @@ export class MapCard extends React.Component<Props> {
 						<div className='fixed-height'>
 							<MapPanel
 								map={this.props.map}
+								images={this.props.images}
 							/>
 						</div>
 						<hr/>

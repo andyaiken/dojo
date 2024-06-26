@@ -12,10 +12,12 @@ import { AdventureCard } from '../cards/adventure-card';
 import { Note } from '../controls/note';
 import { AdventureListOptions } from '../options/adventure-list-options';
 import { GridPanel } from '../panels/grid-panel';
+import { SavedImage } from '../../models/misc';
 
 interface Props {
 	adventures: Adventure[];
 	parties: Party[];
+	images: SavedImage[];
 	addAdventure: () => void;
 	generateAdventure: () => void;
 	openAdventure: (adventure: Adventure) => void;
@@ -33,6 +35,7 @@ export class AdventureListScreen extends React.Component<Props> {
 					key={a.id}
 					adventure={a}
 					parties={this.props.parties}
+					images={this.props.images}
 					openAdventure={adventure => this.props.openAdventure(adventure)}
 					exploreMap={(map, partyID) => this.props.exploreMap(map, partyID)}
 					deleteAdventure={adventure => this.props.deleteAdventure(adventure)}

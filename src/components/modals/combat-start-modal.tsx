@@ -12,7 +12,7 @@ import { Utils } from '../../utils/utils';
 import { Combatant, CombatSetup, CombatSlotInfo, CombatSlotMember } from '../../models/combat';
 import { Encounter, EncounterSlot, MonsterFilter } from '../../models/encounter';
 import { Map, MapItem } from '../../models/map';
-import { Options } from '../../models/misc';
+import { Options, SavedImage } from '../../models/misc';
 import { Monster, MonsterGroup } from '../../models/monster';
 
 import { RenderError } from '../error';
@@ -35,6 +35,7 @@ interface Props {
 	library: MonsterGroup[];
 	encounters: Encounter[];
 	maps: Map[];
+	images: SavedImage[];
 	options: Options;
 	getMonster: (id: string) => Monster | null;
 	addMonster: (monster: Monster) => void;
@@ -187,6 +188,7 @@ export class CombatStartModal extends React.Component<Props, State> {
 							<MapSection
 								combatSetup={this.state.combatSetup}
 								maps={this.props.maps}
+								images={this.props.images}
 								options={this.props.options}
 								fixed={this.state.mapFixed}
 								clearMap={() => this.clearMap()}
@@ -407,6 +409,7 @@ class EncounterSection extends React.Component<EncounterSectionProps> {
 interface MapSectionProps {
 	combatSetup: CombatSetup;
 	maps: Map[];
+	images: SavedImage[];
 	options: Options;
 	fixed: boolean;
 	clearMap: () => void;
@@ -484,6 +487,7 @@ class MapSection extends React.Component<MapSectionProps, MapSectionState> {
 					<MapPanel
 						map={map}
 						mode='thumbnail'
+						images={this.props.images}
 						combatants={this.props.combatSetup.combatants.concat(combatants)}
 						selectedAreaID={this.props.combatSetup.mapAreaID}
 						fog={this.props.combatSetup.fog}
@@ -528,6 +532,7 @@ class MapSection extends React.Component<MapSectionProps, MapSectionState> {
 						<CombatMapModal
 							maps={this.props.maps}
 							map={this.props.combatSetup.map}
+							images={this.props.images}
 							setMap={mp => this.props.changeValue(this.props.combatSetup, 'map', mp)}
 							areaID={this.props.combatSetup.mapAreaID}
 							setAreaID={id => this.props.changeValue(this.props.combatSetup, 'mapAreaID', id)}

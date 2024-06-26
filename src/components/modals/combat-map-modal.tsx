@@ -9,6 +9,7 @@ import { Napoleon } from '../../utils/napoleon';
 import { Combatant, CombatSlotInfo } from '../../models/combat';
 import { Map, MapItem } from '../../models/map';
 import { Monster } from '../../models/monster';
+import { SavedImage } from '../../models/misc';
 
 import { Conditional } from '../controls/conditional';
 import { Dropdown } from '../controls/dropdown';
@@ -18,6 +19,7 @@ import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	maps: Map[];
+	images: SavedImage[];
 	map: Map | null;
 	setMap: (map: Map | null) => void;
 	areaID: string | null;
@@ -222,6 +224,7 @@ export class CombatMapModal extends React.Component<Props, State> {
 					map={map}
 					mode='setup'
 					features={{ highlight: false, editFog: this.state.editFog, lightSource: false }}
+					images={this.props.images}
 					showGrid={(this.state.addingToMapID !== null) || this.state.editFog}
 					combatants={combatants}
 					selectedAreaID={this.props.areaID}

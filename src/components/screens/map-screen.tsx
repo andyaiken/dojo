@@ -27,10 +27,12 @@ import { MapPanel } from '../panels/map-panel';
 import { MarkdownEditor } from '../panels/markdown-editor';
 import { MovementPanel } from '../panels/movement-panel';
 import { Checkbox } from '../controls/checkbox';
+import { SavedImage } from '../../models/misc';
 
 interface Props {
 	map: Map;
 	parties: Party[];
+	images: SavedImage[];
 	cloneMap: (map: Map, name: string) => void;
 	rotateMap: (map: Map) => void;
 	deleteMap: (map: Map) => void;
@@ -424,6 +426,7 @@ export class MapScreen extends React.Component<Props, State> {
 							map={this.props.map}
 							mode='edit'
 							features={{ highlight: false, editFog: false, lightSource: this.state.addingLightSource }}
+							images={this.props.images}
 							paddingSquares={this.state.addingTile ? 5 : 0}
 							selectedItemIDs={selectedIDs}
 							showGrid={this.state.addingTile || this.state.addingArea || this.state.addingLightSource}

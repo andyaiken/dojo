@@ -1,8 +1,7 @@
-import { CloseCircleOutlined, FileOutlined } from '@ant-design/icons';
-import { notification, Upload } from 'antd';
+import { FileOutlined } from '@ant-design/icons';
+import { Upload } from 'antd';
 import React from 'react';
 
-import { Matisse } from '../../../utils/matisse';
 import { Sherlock } from '../../../utils/sherlock';
 import { Utils } from '../../../utils/utils';
 
@@ -14,11 +13,12 @@ import { Note } from '../../controls/note';
 import { Textbox } from '../../controls/textbox';
 
 interface Props {
+	images: SavedImage[];
 	select: (id: string) => void;
+	addImage: (id: string, fileName: string, content: string) => void;
 }
 
 interface State {
-	images: SavedImage[];
 	filter: string;
 }
 
@@ -27,7 +27,6 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 		super(props);
 
 		this.state = {
-			images: Matisse.allImages(),
 			filter: ''
 		};
 	}
@@ -42,21 +41,8 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 		const reader = new FileReader();
 		reader.onload = progress => {
 			if (progress.target) {
-				try {
-					const content = progress.target.result as string;
-					Matisse.saveImage(Utils.guid(), file.name, content);
-					this.setState({
-						images: Matisse.allImages()
-					});
-				} catch {
-					// ERROR: Quota exceeded (probably)
-					notification.open({
-						message: 'can\'t upload this image',
-						description: 'not enough storage space; try reducing the resolution or removing unused images',
-						closeIcon: <CloseCircleOutlined />,
-						duration: 5
-					});
-				}
+				const content = progress.target.result as string;
+				this.props.addImage(Utils.guid(), file.name, content);
 			}
 		};
 		reader.readAsDataURL(file);
@@ -65,7 +51,7 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 
 	public render() {
 		try {
-			const images = this.state.images
+			const images = this.props.images
 				.filter(img => Sherlock.match(this.state.filter, img.name))
 				.map(img => (
 					<Group key={img.id} onClick={() => this.props.select ? this.props.select(img.id) : null}>
@@ -86,7 +72,7 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 				);
 			}
 
-			if (this.state.images.length > 0) {
+			if (this.props.images.length > 0) {
 				images.unshift(
 					<Textbox
 						key='search'
@@ -106,9 +92,6 @@ export class ImageSelectionModal extends React.Component<Props, State> {
 							</p>
 							<p className='ant-upload-text'>
 								click here, or drag a file here, to upload it
-							</p>
-							<p className='ant-upload-text'>
-								try to upload small images if possible
 							</p>
 						</Upload.Dragger>
 					</div>

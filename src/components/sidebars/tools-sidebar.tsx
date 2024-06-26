@@ -1,4 +1,4 @@
-import { CloseCircleOutlined, CopyOutlined, FileOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { CloseCircleOutlined, CopyOutlined, FileOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Col, Row, Upload } from 'antd';
 import React from 'react';
 import ReactMarkdown from 'react-markdown';

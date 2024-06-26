@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Exploration } from '../../models/map';
+import { SavedImage } from '../../models/misc';
 
 import { RenderError } from '../error';
 import { ExplorationOptions } from '../options/exploration-options';
@@ -8,6 +9,7 @@ import { MapPanel } from '../panels/map-panel';
 
 interface Props {
 	exploration: Exploration;
+	images: SavedImage[]
 	resumeExploration: (exploration: Exploration) => void;
 	deleteExploration: (exploration: Exploration) => void;
 }
@@ -26,6 +28,7 @@ export class ExplorationCard extends React.Component<Props> {
 						<div className='fixed-height'>
 							<MapPanel
 								map={this.props.exploration.map}
+								images={this.props.images}
 								fog={this.props.exploration.fog}
 								combatants={this.props.exploration.combatants}
 							/>

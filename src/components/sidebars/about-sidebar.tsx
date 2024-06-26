@@ -1,5 +1,5 @@
 import { DeleteOutlined, FileOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { Col, Row, Upload } from 'antd';
+import { Upload } from 'antd';
 import React from 'react';
 
 import { Utils } from '../../utils/utils';
@@ -22,7 +22,6 @@ interface Props {
 	user: 'dm' | 'player';
 	options: Options;
 	setOption: (option: string, value: any) => void;
-	clearUnusedImages: () => void;
 	exportAll: () => void;
 	importAll: (json: string) => void;
 	addFlag: (flag: string) => void;
@@ -64,14 +63,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 		})
 	}
 
-	private clearImages() {
-		this.props.clearUnusedImages();
-
-		this.setState({
-			view: this.state.view
-		});
-	}
-
 	private readFile(file: File) {
 		file.text().then(json => this.props.importAll(json));
 		return false;
@@ -101,23 +92,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 					break;
 				case 'settings':
 					{
-						const themeOptions = ['light', 'dark'].map(o => ({ id: o, text: o + ' theme' }));
-						let data = 0;
-						let images = 0;
-						for (let n = 0; n !== window.localStorage.length; ++n) {
-							const key = window.localStorage.key(n);
-							if (key) {
-								const value = window.localStorage.getItem(key);
-								if (value) {
-									if (key.startsWith('data')) {
-										data += value.length;
-									}
-									if (key.startsWith('image')) {
-										images += value.length;
-									}
-								}
-							}
-						}
 						content = (
 							<div>
 								<div className='subheading'>
@@ -173,26 +147,6 @@ export class AboutSidebar extends React.Component<Props, State> {
 								</Expander>
 								<Conditional display={this.props.user === 'dm'}>
 									<Expander text='stored data'>
-										<div className='section'>
-											<Row>
-												<Col span={16}>total</Col>
-												<Col span={8} className='right-value'>{Utils.toData(data + images)}</Col>
-											</Row>
-											<Row>
-												<Col span={16}>data</Col>
-												<Col span={8} className='right-value'>{Utils.toData(data)}</Col>
-											</Row>
-											<Row>
-												<Col span={16}>images</Col>
-												<Col span={8} className='right-value'>{Utils.toData(images)}</Col>
-											</Row>
-										</div>
-										<Note>
-											<div className='section'>
-												the browser has a limited amount of storage space; if you run into problems, try removing any unused images
-											</div>
-										</Note>
-										<button onClick={() => this.clearImages()}>remove unused images</button>
 										<Note>
 											<div className='section'>
 												make a backup of your data, or move it between computers, by exporting it

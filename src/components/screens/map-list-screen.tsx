@@ -12,11 +12,13 @@ import { MapCard } from '../cards/map-card';
 import { Note } from '../controls/note';
 import { MapListOptions } from '../options/map-list-options';
 import { GridPanel } from '../panels/grid-panel';
+import { SavedImage } from '../../models/misc';
 
 interface Props {
 	maps: Map[];
 	parties: Party[];
 	explorations: Exploration[];
+	images: SavedImage[];
 	addMap: () => void;
 	importMap: () => void;
 	generateMap: () => void;
@@ -38,6 +40,7 @@ export class MapListScreen extends React.Component<Props> {
 				<ExplorationCard
 					key={exploration.id}
 					exploration={exploration}
+					images={this.props.images}
 					resumeExploration={ex => this.props.resumeExploration(ex)}
 					deleteExploration={ex => this.props.deleteExploration(ex)}
 				/>
@@ -50,6 +53,7 @@ export class MapListScreen extends React.Component<Props> {
 					key={map.id}
 					map={map}
 					parties={this.props.parties}
+					images={this.props.images}
 					openMap={m => this.props.openMap(m)}
 					cloneMap={(m, name) => this.props.cloneMap(m, name)}
 					deleteMap={m => this.props.deleteMap(m)}

@@ -4,14 +4,13 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import { Gygax } from '../../utils/gygax';
-import { Matisse } from '../../utils/matisse';
 import { Mercator } from '../../utils/mercator';
 import { Utils } from '../../utils/utils';
 
 import { Combatant } from '../../models/combat';
 import { Condition } from '../../models/condition';
 import { Map, MapArea, MapDimensions, MapItem, MapLightSource, MapWall } from '../../models/map';
-import { Options } from '../../models/misc';
+import { Options, SavedImage } from '../../models/misc';
 import { Monster } from '../../models/monster';
 import { PC } from '../../models/party';
 
@@ -34,6 +33,7 @@ interface Props {
 		editFog: boolean;
 		lightSource: boolean;
 	};
+	images: SavedImage[];
 	options: Options | null;
 	paddingSquares: number;
 	combatants: Combatant[];
@@ -684,6 +684,7 @@ export class MapPanel extends React.Component<Props, State> {
 					key={i.id}
 					tile={i}
 					style={this.getStyle(i.x, i.y, i.width, i.height, i.style, dimensions)}
+					images={this.props.images}
 					selectable={this.props.mode === 'edit'}
 					selected={this.props.selectedItemIDs.includes(i.id)}
 					select={(id, ctrl) => this.props.mode === 'edit' ? this.props.itemSelected(id, ctrl) : null}
@@ -1415,6 +1416,7 @@ class GridSquare extends React.Component<GridSquareProps> {
 interface TileProps {
 	tile: MapItem;
 	style: MapItemStyle;
+	images: SavedImage[];
 	selectable: boolean;
 	selected: boolean;
 	select: (tileID: string, ctrl: boolean) => void;
@@ -1437,7 +1439,7 @@ class Tile extends React.Component<TileProps> {
 
 			let customImage = null;
 			if (this.props.tile.terrain === 'custom') {
-				const image = Matisse.getImage(this.props.tile.customBackground);
+				const image = this.props.images.find(i => i.id === this.props.tile.customBackground);
 				if (image) {
 					customImage = (
 						<img className='custom-image' alt='map tile' src={image.data} />
