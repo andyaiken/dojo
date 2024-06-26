@@ -990,7 +990,6 @@ export class MonsterEditorModal extends React.Component<Props, State> {
 						{this.getSidebar()}
 					</Col>
 					<Drawer
-						className={this.props.options.theme}
 						closable={false}
 						maskClosable={true}
 						width='30%'

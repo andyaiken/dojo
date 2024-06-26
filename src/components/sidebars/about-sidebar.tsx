@@ -121,20 +121,12 @@ export class AboutSidebar extends React.Component<Props, State> {
 						content = (
 							<div>
 								<div className='subheading'>
-									optional features
+									settings
 								</div>
 								<Checkbox
 									label='add die roll buttons to monster stat blocks'
 									checked={this.props.options.showMonsterDieRolls}
 									onChecked={checked => this.props.setOption('showMonsterDieRolls', checked)}
-								/>
-								<div className='subheading'>
-									settings
-								</div>
-								<Dropdown
-									options={themeOptions}
-									selectedID={this.props.options.theme}
-									onSelect={value => this.props.setOption('theme', value)}
 								/>
 								<Dropdown
 									options={[

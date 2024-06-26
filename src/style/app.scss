@@ -1,6 +1,29 @@
+$background: rgb(255, 255, 255);
+
+$foreground: rgba(0, 0, 0, 0.65);
+
+$header-background: rgb(70, 70, 70);
+
+$header-foreground: rgb(255, 255, 255);
+
+$top-row-background: rgb(240, 240, 240);
+
+$sidebar-background: rgb(240, 240, 240);
+
+$highlight: rgb(60, 120, 220);
+$highlight01: rgba(60, 120, 220, 0.1);
+$highlight02: rgba(60, 120, 220, 0.2);
+$highlight05: rgba(60, 120, 220, 0.5);
+
+$control-border: rgb(195, 195, 195);
+$control-border-02: rgba(195, 195, 195, 0.2);
+$control-border-05: rgba(195, 195, 195, 0.5);
+
+$card-background: rgb(250, 250, 225);
+$card-background-outer: rgb(245, 245, 220);
+
 @import '~antd/dist/antd.css';
 
-@import './theme.scss';
 @import './overrides.scss';
 
 @import './ability-score-panel.scss';

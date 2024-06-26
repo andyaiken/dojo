@@ -515,7 +515,6 @@ class MapSection extends React.Component<MapSectionProps, MapSectionState> {
 				</div>
 				{content}
 				<Drawer
-					className={this.props.options.theme}
 					closable={false}
 					maskClosable={true}
 					width='50%'

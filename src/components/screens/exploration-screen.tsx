@@ -727,7 +727,6 @@ export class ExplorationScreen extends React.Component<Props, State> {
 					</Row>
 					{this.getPlayerView()}
 					<Drawer
-						className={this.props.options.theme}
 						placement='left'
 						closable={false}
 						maskClosable={true}
