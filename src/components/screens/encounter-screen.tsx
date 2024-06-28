@@ -124,7 +124,6 @@ export class EncounterScreen extends React.Component<Props> {
 						key={wave.id}
 						heading={wave.name || 'unnamed wave'}
 						content={this.getMonsterCards(wave)}
-						columns={3}
 					/>
 				);
 			});
@@ -196,7 +195,6 @@ export class EncounterScreen extends React.Component<Props> {
 						<GridPanel
 							heading='encounter'
 							content={this.getMonsterCards(null)}
-							columns={3}
 						/>
 						{waveSections}
 					</Col>

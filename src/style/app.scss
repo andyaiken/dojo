@@ -209,6 +209,7 @@ code {
 			flex: 1 1 auto;
 			white-space: nowrap;
 			text-overflow: ellipsis;
+			text-transform: uppercase;
 		}
 
 		> .anticon {
@@ -218,6 +219,22 @@ code {
 
 			&.selected {
 				background-color: $highlight02;
+			}
+		}
+	}
+
+	.card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 10px;
+	
+		.card-grid-item {
+			display: flex;
+			align-items: flex-start;
+			margin: 10px 0;	
+
+			&>* {
+				width: 100%;
 			}
 		}
 	}

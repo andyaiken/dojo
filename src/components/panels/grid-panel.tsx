@@ -65,7 +65,7 @@ export class GridPanel extends React.Component<Props, State> {
 
 			let content = null;
 			if (this.state.showContent) {
-				let span = 6;
+				let span = 0;
 				switch (this.props.columns) {
 					case 1:
 						// We specifically want one column
@@ -79,17 +79,41 @@ export class GridPanel extends React.Component<Props, State> {
 						// We specifically want three columns
 						span = 8;
 						break;
+					case 4:
+						// We specifically want four columns
+						span = 6;
+						break;
+					case 6:
+						// We specifically want six columns
+						span = 2;
+						break;
 				}
 
-				content = (
-					<Row align='top' gutter={10}>
-						{items.map(item => (
-							<Col key={items.indexOf(item)} span={span}>
-								{item}
-							</Col>
-						))}
-					</Row>
-				);
+				if (span > 0) {
+					content = (
+						<Row align='top' gutter={10}>
+							{
+								items.map((item, n) => (
+									<Col key={n} span={span}>
+										{item}
+									</Col>
+								))
+							}
+						</Row>
+					);
+				} else {
+					content = (
+						<div className='card-grid'>
+							{
+								items.map((item, n) => (
+									<div key={n} className='card-grid-item'>
+										{item}
+									</div>
+								))
+							}
+						</div>
+					)
+				}
 			}
 
 			return (
